@@ -59,7 +59,7 @@
   "lava": {
     "tile_m": 4.0,
     "normal_scale": 0.6,
-    "emission_energy": 3.0,
+    "emission_energy": 1.8,
     "source": "Material Maker example: lava"
   },
   "crate_large": {

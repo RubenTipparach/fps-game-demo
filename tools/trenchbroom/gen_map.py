@@ -426,7 +426,8 @@ def build():
         ent("light_wall", p, yaw)
     ent("light", (0, 13.6, 5.4), light=160, _color="255 96 40", range=14, shadows=1)   # furnace sky glow
     for x in (-12, -4, 4, 12):
-        ent("light", (x, 0.6, 7), light=200, _color="255 110 40", range=9, shadows=0)
+        # low: they hang 1.5 m over the emissive lava, and more light just blows it out to white
+        ent("light", (x, 0.6, 7), light=90, _color="255 110 40", range=9, shadows=0)
     ent("light", (-23, 3.2, 18), light=220, _color="255 120 50", range=8, shadows=0)
 
     # monsters

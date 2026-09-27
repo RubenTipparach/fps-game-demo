@@ -3490,7 +3490,7 @@
 {
 "classname" "light"
 "origin" "224 -384 19.2"
-"light" "200"
+"light" "90"
 "_color" "255 110 40"
 "range" "9"
 "shadows" "0"
@@ -3499,7 +3499,7 @@
 {
 "classname" "light"
 "origin" "224 -128 19.2"
-"light" "200"
+"light" "90"
 "_color" "255 110 40"
 "range" "9"
 "shadows" "0"
@@ -3508,7 +3508,7 @@
 {
 "classname" "light"
 "origin" "224 128 19.2"
-"light" "200"
+"light" "90"
 "_color" "255 110 40"
 "range" "9"
 "shadows" "0"
@@ -3517,7 +3517,7 @@
 {
 "classname" "light"
 "origin" "224 384 19.2"
-"light" "200"
+"light" "90"
 "_color" "255 110 40"
 "range" "9"
 "shadows" "0"
