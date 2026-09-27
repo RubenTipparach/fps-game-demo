@@ -40,6 +40,10 @@ cross-references SHALL resolve, as checked by a core test.
 - **WHEN** a dialog tree gives an item id that `items.json` does not define
 - **THEN** `DataValidationTests` fails and names the file, the node and the id
 
+#### Scenario: A misspelt key
+- **WHEN** `perception.json` contains `"rang_m"` instead of `"range_m"`
+- **THEN** the game refuses to start and names the file and the key
+
 #### Scenario: Zero is a value
 - **WHEN** an item's `noise_radius_m` is 0
 - **THEN** the item makes no noise, and no default replaces the 0
@@ -73,6 +77,10 @@ NOT draw random numbers.
 A save SHALL be JSON with a `version` field. Loading a save from an older version SHALL run an
 explicit migration or refuse with a message. Loading SHALL NOT silently default missing
 fields.
+
+#### Scenario: A damaged save
+- **WHEN** a save holds a stack of 90 medkits (stack limit 5)
+- **THEN** it loads as a stack of 5 and the repair is logged
 
 #### Scenario: A save from before a new field
 - **WHEN** a version 1 save is loaded by a version 2 build that added faction reputation

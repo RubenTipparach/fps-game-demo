@@ -81,6 +81,11 @@ can't swap a service without global state.
   - every value is in range.
 - **One source for each default.** Defaults are declared in the schema. The loader never
   invents one, and zero is a value, not "unset".
+- **Unknown keys are errors.** The loader sets `JsonUnmappedMemberHandling.Disallow`, so a
+  misspelt knob fails at startup with its file and key instead of silently doing nothing
+  (the failure Pale-Blue-Dot's config loader was written to prevent).
+- **A file that fails to parse or validate stops startup** with its path and field. It never
+  falls back to defaults.
 
 ### 4. Identity, persistence, determinism
 
@@ -90,7 +95,11 @@ can't swap a service without global state.
 - **One serializable state.** `GameState` is a plain serializable object: character,
   inventory, flags, quests, faction reputation, and per-level `taken`, `opened`, `dead`,
   `unconscious` and `door` sets.
-- **Saves.** They are JSON at `user://saves/<slot>.json` with `"version"`. The game saves
+- **Damaged saves are repaired, not trusted.** A save is player data, not authored data.
+  Out-of-range values load as the nearest legal state (a stack clamped to its limit, an
+  unknown item id dropped), each with a logged warning.
+- **Saves.** They are JSON at `user://saves/<slot>.json` with `"version"`, written to a temp
+  file and renamed, so a crash mid-write leaves the old save intact. The game saves
   automatically on every level transition and on quicksave. Loading an older version runs an
   explicit migration or refuses; it never guesses.
 - **Seeded randomness.** `IRandomSource` is seeded by

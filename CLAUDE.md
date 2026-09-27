@@ -59,6 +59,10 @@ Contents:
 - **Use OpenSpec and these best practices (owner, 2026-09-27).** "I want this code to use best
   practices and organization." The rules below were adapted from the owner's other two
   projects, the-federation and Pale-Blue-Dot.
+- **Pale-Blue-Dot's coding practices (owner, 2026-09-27).** "Add best coding practices from
+  pale blue dot": they are sections 5.6 and 9 below.
+- **Artifacts and surveys (owner, 2026-09-27).** "Always show new or updated artifacts at the end
+  of each run", and "always ask questions inside of survey artifacts": see section 10.
 
 ## 2. Spec-driven work: OpenSpec
 
@@ -222,6 +226,48 @@ this is the rule for all new gameplay code from then on.
   2. a Godot resource, where the engine requires one;
   3. a node's inspector field, only as a last resort.
 
+### 5.6 Code conventions (from Pale-Blue-Dot)
+
+- **Document the contract.**
+  - Every file opens with a summary comment: what it owns, and why it lives where it
+    lives. Example: "It lives in the core because how a stack merges is a rule a save has to
+    agree about."
+  - Every public type and member has an XML doc comment.
+  - Units go in the name or the doc. Distances are metres, times seconds, angles radians in
+    code; data files name their unit in the key (`range_m`, `angle_deg`).
+- **Tests sit with the rule and read as sentences.**
+  - Core tests live in `Undercity.Core.Tests`, mirroring the core's folders.
+  - A test's name states the behaviour (`A_full_pack_leaves_the_jacket_in_the_locker`), one
+    behaviour per test.
+  - An assertion that isn't obvious carries a message saying why it matters.
+- **A bug fix brings its regression test.** Commit the test that failed before the fix with
+  the fix, and name the boundary it pins.
+- **Defaults live in code, once.**
+  - A shipped data file repeats them so a designer can turn a knob without a compiler.
+  - A missing field inherits the code default. A present zero is zero.
+  - An unknown key is an error, because a misspelt knob that silently does nothing is the
+    worst kind of bug. Use `JsonUnmappedMemberHandling.Disallow`.
+  - A data file that exists but fails to parse or validate stops the game at startup with its
+    path and field. It never falls back to defaults silently.
+- **Authored data fails loudly; player data is repaired.** A damaged save loads as the nearest
+  legal state, such as a stack clamped to its limit, with a logged warning. It never loads as
+  an illegal one.
+- **Warnings are errors, and style is checked.**
+  - New projects set `Nullable`, `TreatWarningsAsErrors` and `EnforceCodeStyleInBuild`.
+  - `.editorconfig` is the one style source, checked by `dotnet format --verify-no-changes`.
+- **Guard the edges.**
+  - Check indices before use (grid cells, belt slots, dialog choices).
+  - Reject non-finite numbers where they enter: data loads, physics results, saves.
+  - A capacity limit is handled whole, never by writing half an operation. An add that doesn't
+    fit reports what's left and changes nothing it can't finish.
+- **Validate the real artifact.** When two things must agree (C# data classes and the JSON
+  files, a scene and the core ids it names, a shader and its uniforms), a check loads the
+  actual files and compares them. It never compares two hand-written copies of an expected
+  value.
+- **Borrowed code keeps its provenance.** Code or assets copied from another repository (the
+  owner's other projects, a reference snapshot) record their source and revision beside them.
+  A reference checkout is never part of a build.
+
 ## 6. Godot rules
 
 ### 6.1 No procedural scenes or meshes
@@ -352,12 +398,18 @@ Before claiming anything is done, run what applies:
 
 | Check | Command |
 |---|---|
-| Build | `dotnet build` in `game/` |
-| Core tests | `dotnet test` |
+| Format | `dotnet format --verify-no-changes` (the core and new projects) |
+| Build | `dotnet build` in `game/`, warnings as errors in the core |
+| Core tests | `dotnet test core` |
 | Specs | `openspec validate --all` |
 | Dash check | Section 4 |
 | Z-fighting | Every level generator asserts it |
+| Design maps and page | `python3 tools/levels/render_map.py && python3 tools/design/build_page.py` |
 | Scripted playtests and screenshots | `BRUSHFIRE_AUTOTEST=script.json` |
+
+- **One script runs every check.** `scripts/check.sh` runs the table above in order and stops at
+  the first failure (Pale-Blue-Dot's `check_all`). Run it before every push. It's created by
+  `undercity-architecture` task 1.3; until then, run the rows by hand.
 
 - **Know what is proven.** Distinguish implemented, validated and proposed work in docs, PRs
   and replies. A design is not a feature, and a green test is not a visual sign-off.
@@ -367,19 +419,48 @@ Before claiming anything is done, run what applies:
   - Stills otherwise.
 
   Each shot names what it shows and which requirement it demonstrates.
+- **Validation records say what was and wasn't proven.** A step's record
+  (`docs/validation/<date>-<topic>.md`) states:
+  - the environment: machine, GPU or lavapipe, Godot, .NET and the seed;
+  - each check and its result;
+  - what the checks establish, and what they don't.
+
+  Passing checks establish the listed contracts, not a blanket acceptance.
+- **Measure performance the repeatable way.**
+  - Measure an exported release build, in real time, with nothing else running. Capture
+    mode steps time and is for pictures only.
+  - Compare the old build against the new, interleaved in the same sitting, never against a
+    number from another day.
+  - Report the machine, resolution, build, repeats, percentiles with warm-up excluded, and
+    the spread between repeats. A difference smaller than that spread is not a result.
+  - Never call an unmeasured design a speedup.
 - **Cloud sessions.** A Claude Code cloud session renders on lavapipe without a GPU, so it
   doesn't measure frame time; say so in the PR. It does render the change: captures go in
   `docs/screenshots/` with the change.
 
 ## 10. Working with the owner
 
-- **End every reply with the artifact links.** Name each claude.ai artifact published,
-  republished or edited since the owner's last message, with one line on what is new. If
-  nothing was published, say so in one line.
-- **Open questions go in a survey, not a chat list.** List them in the design page's open
-  questions section (or a survey doc), each with its options, a recommendation and a place for
-  the answer. Fold the answers back into the OpenSpec changes they shape. One quick yes-or-no
-  can still go in chat.
+- **Show the new and updated artifacts at the end of every run (owner, 2026-09-27).** "Always
+  show new or updated artifacts at the end of each run."
+  - Every reply ends with a short list of links: each claude.ai artifact published,
+    republished or edited since the owner's last message, with one line on what is new. That
+    covers pages, maps, mockups, reports, the survey and any other Claude Doc.
+  - A newly made artifact is also opened for the owner (the Artifact tool's `open`).
+  - If nothing was published or edited, say so in one line, so a missing list is never
+    mistaken for a forgotten one.
+- **Ask the owner with a survey, never in chat (owner, 2026-09-27).** "Always ask questions
+  inside of survey artifacts."
+  - Every question for the owner goes into the survey Claude Doc, with its options, a
+    recommendation and an answer column. That includes a single yes-or-no.
+  - The reply gives the survey's link and the ids of the new questions, not the questions
+    themselves.
+  - The `owner-survey` skill (`.claude/skills/owner-survey`) says how.
+  - The current survey is https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J. Keep editing it
+    rather than starting another.
+  - Answers are folded back into the OpenSpec changes they shape, and the row moves to the
+    survey's "Already decided".
+  - If a session has no Claude Docs connector, say so, and publish the same tables as an
+    artifact page with an answer field per question.
 - **No self-scheduled check-ins.** Don't schedule recurring check-ins, polling loops or
   re-arming reminders unless the owner asks for them. Reacting to events that arrive on their
   own (PR webhooks, task notifications) is fine; a self-scheduled timer is off by default.
@@ -434,6 +515,9 @@ Nothing is an exception until it is listed here with its reason.
 - **Tool-owned files keep their tool's text.** The OpenSpec CLI writes
   `.claude/skills/openspec-*` and `.claude/commands/opsx/*`, and `openspec update` rewrites
   them. The dash check excludes `.claude/` for that reason. Don't hand-edit them.
+- **Brushfire's project doesn't treat warnings as errors yet.** `game/Brushfire.csproj`
+  predates section 5.6. Code there is cleaned up when it's touched, and the setting is turned
+  on once it builds clean. `Undercity.Core` has it from its first commit.
 - **The first RPG spike is parked, not built.** `docs/spikes/rpg-core/` holds an early sketch
   of the inventory, dialog and disguise code. It predates these rules and doesn't compile. It
   is kept as reference for the OpenSpec changes and is not part of any build.
