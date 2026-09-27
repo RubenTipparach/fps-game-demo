@@ -9,6 +9,8 @@ extends EditorPlugin
 ##
 ## Batch mode (used to bake the shipped levels headlessly under Xvfb):
 ##   BRUSHFIRE_BATCH="res://a.tscn:csg,nav,lightmap;res://b.tscn:map,nav,lightmap" godot --editor --path game
+## A sectorized level (one LightmapGI per sector) bakes one .lmbake per sector, named after the
+## sector node; "lightmap@<sector>" bakes just the sectors whose name contains <sector>.
 
 const BakeCSG := preload("res://addons/brushfire_tools/bake_csg.gd")
 
@@ -80,6 +82,8 @@ func _run_steps(root: Node, steps: Array) -> void:
 				_bake_navigation(root)
 			"lightmap":
 				await _bake_lightmaps(root)
+			_ when str(step).begins_with("lightmap@"):
+				await _bake_lightmaps(root, str(step).trim_prefix("lightmap@"))
 
 
 func _build_maps(root: Node) -> void:
@@ -140,10 +144,16 @@ func _find_button(n: Node, text: String) -> Button:
 	return null
 
 
-func _bake_lightmaps(root: Node) -> void:
-	for lm in root.find_children("*", "LightmapGI", true, false):
-		# Give the bake a destination file next to the scene so no save dialog pops up.
-		var data_path := root.scene_file_path.get_basename() + ".lmbake"
+func _bake_lightmaps(root: Node, only := "") -> void:
+	var all := root.find_children("*", "LightmapGI", true, false)
+	for lm in all:
+		var sector := String(lm.get_parent().name) if lm.get_parent() != root else String(lm.name)
+		if only != "" and not sector.to_lower().contains(only.to_lower()):
+			continue
+		# Give the bake a destination file next to the scene so no save dialog pops up; one file
+		# per LightmapGI when the level has several (one per sector).
+		var suffix := "" if all.size() == 1 else "_" + sector.to_snake_case()
+		var data_path := root.scene_file_path.get_basename() + suffix + ".lmbake"
 		if lm.light_data == null or lm.light_data.resource_path != data_path:
 			var data := LightmapGIData.new()
 			ResourceSaver.save(data, data_path)
@@ -159,4 +169,4 @@ func _bake_lightmaps(root: Node) -> void:
 			return
 		var t0 := Time.get_ticks_msec()
 		button.pressed.emit()
-		print("[Brushfire] lightmaps baked for %s in %d s" % [root.name, (Time.get_ticks_msec() - t0) / 1000])
+		print("[Brushfire] lightmaps baked for %s / %s in %d s" % [root.name, sector, (Time.get_ticks_msec() - t0) / 1000])

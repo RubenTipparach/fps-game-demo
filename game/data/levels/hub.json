@@ -369,13 +369,22 @@
     }
    ]
   },
-  "hub:depot": {
+  "hub:depot_back": {
    "faction": "sanitation",
-   "name": "the depot"
+   "name": "the depot lockers"
+  },
+  "hub:depot_office": {
+   "faction": "sanitation",
+   "name": "the depot office"
   },
   "hub:precinct": {
    "faction": "mersec",
-   "name": "Precinct 9"
+   "name": "Precinct 9",
+   "allow": [
+    {
+     "outfit": "sanitation"
+    }
+   ]
   },
   "hub:station_gates": {
    "faction": "mersec",
@@ -402,6 +411,7 @@
   "hub:dace": "dace",
   "hub:mersec_gate": "mersec_gate",
   "hub:mersec_station": "mersec_station",
+  "hub:mersec_desk": "mersec_desk",
   "hub:mersec_patrol_a": "mersec_patrol_a",
   "hub:mersec_patrol_b": "mersec_patrol_b",
   "hub:skiv": "skiv",

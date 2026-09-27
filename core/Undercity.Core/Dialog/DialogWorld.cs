@@ -95,6 +95,7 @@ public sealed class DialogWorld : IDialogWorld
             (c, w, _) => w._s.Reputation.Get(c.Rep!) >= (c.Min ?? -100) && w._s.Reputation.Get(c.Rep!) <= (c.Max ?? 100),
             (c, w, _) => $"[{w._s.Data.Factions.Factions.First(f => f.Id == c.Rep).Name} {(c.Min is { } m ? m.ToString(CultureInfo.InvariantCulture) + "+" : "")}]"),
         new(c => c.Parley is not null, (c, w, _) => w._s.World.Parleys.Contains(c.Parley!)),
+        new(c => c.Outfit is not null, (c, w, _) => w._s.Inventory.OutfitFaction == c.Outfit),
         new(c => c.CanAfford is not null,
             (c, w, t) => t.Vendor is not null && w._s.InStock(t.Vendor, c.CanAfford!) >= c.Count
                 && w._s.Inventory.Credits >= w._s.BuyPrice(t.Vendor, c.CanAfford!) * c.Count,

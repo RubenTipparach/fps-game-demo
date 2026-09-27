@@ -270,6 +270,7 @@ public sealed class GameData
             item(c.CanAfford, where);
             faction(c.Rep, where);
             faction(c.Parley, where);
+            faction(c.Outfit, where);
             if (c.Quest is not null && !Quests.Exists(c.Quest))
             {
                 errors.Add($"{where}: unknown quest '{c.Quest}'");

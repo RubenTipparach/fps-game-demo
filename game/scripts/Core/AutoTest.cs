@@ -15,7 +15,7 @@ namespace Brushfire;
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
 ///         {"goto": "hub:tank", "distance": m} (stand facing a stable entity) | {"talk": "tank"}
-///         {"setup": {"credits": n, "items": ["id:n"], "flags": [..], "skills": {"persuasion": 2},
+///         {"setup": {"credits": n, "items": ["id:n"], "wear": ["id"], "flags": [..], "skills": {"persuasion": 2},
 ///                    "quests": [..], "health": n}} | {"state": true} (log the run)
 /// </summary>
 public partial class AutoTest : Node
@@ -162,6 +162,9 @@ public partial class AutoTest : Node
                     var (id, n) = Undercity.Core.GameState.ParseSpec(spec.AsString());
                     state.PickUp(id, n);
                 }
+            if (d.TryGetValue("wear", out var wear))
+                foreach (var id in wear.AsGodotArray())
+                    state.Inventory.Wear(state.Data.Items.Get(id.AsString()));
             if (d.TryGetValue("flags", out var flags))
                 foreach (var f in flags.AsGodotArray())
                     state.World.SetFlag(f.AsString());

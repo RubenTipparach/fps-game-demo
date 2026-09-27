@@ -120,4 +120,15 @@ public class DialogSessionTests
         Assert.Equal(lineA, lineB);
         Assert.Contains(lineA, TestData.Data.Npcs.Civilians.SmallTalk);
     }
+
+    [Fact]
+    public void Sanitation_overalls_are_leave_to_walk_Precinct_9()
+    {
+        var s = TestData.NewGame();
+        var allow = TestData.Data.Levels["hub"].Zones["hub:precinct"].Allow;
+        Assert.False(s.Holds(allow));
+        s.PickUp("sanitation_overalls", 1);
+        s.Inventory.Equip(s.Inventory.Pack.Stacks.First(x => x.Def.Id == "sanitation_overalls"));
+        Assert.True(s.Holds(allow));
+    }
 }

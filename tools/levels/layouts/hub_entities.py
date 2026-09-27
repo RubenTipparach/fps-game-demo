@@ -61,6 +61,7 @@ NPCS = [
     _npc("dace", (169, 155.5), 0),
     _npc("mersec_gate", (168, 160), 0),
     _npc("mersec_station", (120, 31), 180),
+    _npc("mersec_desk", (228, 132.2), 270),
     _npc("mersec_patrol_a", (40, 39), 90, patrol=PATROL, patrol_start=0),
     _npc("mersec_patrol_b", (146, 96), 135, patrol=PATROL, patrol_start=3),
     _npc("skiv", (50, 146), 270),
@@ -211,10 +212,14 @@ TERMINALS = [
 ZONES = [
     {"kind": "zone", "id": "checkpoint", "at": (179, 157), "facing_deg": 0, "props": {"size": "14,18"},
      "data": {"faction": "mersec", "name": "MerSec checkpoint", "allow": [{"flag": "dace_waves"}]}},
-    {"kind": "zone", "id": "depot", "at": (231.5, 113), "facing_deg": 0, "props": {"size": "17,18"},
-     "data": {"faction": "sanitation", "name": "the depot"}},
-    {"kind": "zone", "id": "precinct", "at": (231, 134), "facing_deg": 0, "props": {"size": "18,16"},
-     "data": {"faction": "mersec", "name": "Precinct 9"}},
+    # The depot's front desk is public (Petra works there); its lockers and manager's office aren't.
+    {"kind": "zone", "id": "depot_back", "at": (235.5, 108), "facing_deg": 0, "props": {"size": "9,8"},
+     "data": {"faction": "sanitation", "name": "the depot lockers"}},
+    {"kind": "zone", "id": "depot_office", "at": (227, 117), "facing_deg": 0, "props": {"size": "8,10"},
+     "data": {"faction": "sanitation", "name": "the depot office"}},
+    # Sanitation overalls get you in to "check the drains" (design section 6).
+    {"kind": "zone", "id": "precinct", "at": (232, 134), "facing_deg": 0, "props": {"size": "16,12"},
+     "data": {"faction": "mersec", "name": "Precinct 9", "allow": [{"outfit": "sanitation"}]}},
     {"kind": "zone", "id": "station_gates", "at": (123, 9), "facing_deg": 0, "props": {"size": "34,10"},
      "data": {"faction": "mersec", "name": "the station gates"}},
 ]

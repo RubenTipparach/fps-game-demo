@@ -18,6 +18,7 @@
     {"id": "mersec_station", "name": "MerSec trooper", "role": "station guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
     {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
     {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
+    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
     {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true}
   ],
   "civilians": {

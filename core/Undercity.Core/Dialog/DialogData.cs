@@ -68,6 +68,9 @@ public sealed class DialogCond
     /// <summary>A faction whose truce must be in force.</summary>
     public string? Parley { get; init; }
 
+    /// <summary>The runner wears this faction's colours (their body piece): overalls in the precinct.</summary>
+    public string? Outfit { get; init; }
+
     /// <summary>An item the tree's vendor has in stock and the runner can afford (a build condition).</summary>
     public string? CanAfford { get; init; }
 }
