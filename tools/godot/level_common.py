@@ -43,7 +43,7 @@ def setup_root(scene, title):
     scene.nodes[0][3].update(script=scene.ext_res("Script", "res://scripts/World/LevelRoot.cs"), LevelTitle=title)
 
 
-def add_environment(scene, fog_color="#20232a", fog_density=0.006, exposure=1.15, sky_color="#0a0b0e"):
+def add_environment(scene, fog_color="#20232a", fog_density=0.006, exposure=1.35, sky_color="#0a0b0e"):
     env = scene.sub_res(
         "Environment",
         background_mode=1,                       # clear colour; interiors don't see the sky
