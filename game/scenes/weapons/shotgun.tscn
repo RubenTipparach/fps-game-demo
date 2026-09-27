@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Player/ShotgunWeapon.cs" id="1_ShotgunWeapo"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/models/shotgun_model.tscn" id="2_shotgun_mode"]
+
+[node name="Shotgun" type="Node3D"]
+script = ExtResource("1_ShotgunWeapo")
+DisplayName = "Shotgun"
+Slot = 1
+Owned = true
+Ammo = 0
+AmmoPerShot = 1
+FireInterval = 0.9
+Damage = 7.0
+Pellets = 11
+SpreadDegrees = 5.0
+Range = 120.0
+ViewKick = 3.2
+KickPush = Vector3(0.0, 0.02, 0.16)
+KickPitch = 11.0
+FireSound = "shotgun_fire"
+FireVolumeDb = 0.0
+NoiseRadius = 40.0
+
+[node name="Model" parent="." instance=ExtResource("2_shotgun_mode")]
+position = Vector3(0.24, -0.25, -0.42)

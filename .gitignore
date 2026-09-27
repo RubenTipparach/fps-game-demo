@@ -1,0 +1,9 @@
+# Godot
+game/.godot/
+game/.mono/
+*.unwrap_cache
+# tooling scratch
+tools/material_maker/raw/
+__pycache__/
+*.pyc
+*.blend1

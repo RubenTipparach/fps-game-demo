@@ -1,0 +1,21 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_func_godot_f"]
+[ext_resource type="Script" path="res://scripts/World/Trigger.cs" id="2_Trigger"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+spawn_type = 2
+origin_type = 4
+build_visuals = false
+global_illumination_mode = 0
+collision_shape_type = 1
+collision_layer = 0
+collision_mask = 0
+classname = "trigger_exit"
+description = "Ends the level when the player enters."
+meta_properties = Dictionary[String, Variant]({
+"color": Color(0.9, 0.6, 0.2, 1.0)
+})
+node_class = "Area3D"
+script_class = ExtResource("2_Trigger")

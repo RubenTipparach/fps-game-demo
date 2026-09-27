@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_func_godot_f"]
+[ext_resource type="PackedScene" path="res://scenes/props/archway_400x350.tscn" id="2_archway_400x"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+classname = "misc_archway_4x35"
+description = "Framed archway for a 128x112 unit opening."
+meta_properties = Dictionary[String, Variant]({
+"size": AABB(-88, -24, 0, 88, 24, 144),
+"color": Color(0.4, 0.8, 1.0, 1.0)
+})
+scene_file = ExtResource("2_archway_400x")
+apply_rotation_on_map_build = true

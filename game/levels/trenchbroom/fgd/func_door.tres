@@ -1,0 +1,33 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_func_godot_f"]
+[ext_resource type="Script" path="res://scripts/World/Door.cs" id="2_Door"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+spawn_type = 2
+origin_type = 4
+build_visuals = true
+global_illumination_mode = 2
+collision_shape_type = 1
+collision_layer = 64
+collision_mask = 0
+classname = "func_door"
+description = "Sliding door. 'angle' sets the direction it opens (-1 = up, -2 = down)."
+class_properties = Dictionary[String, Variant]({
+"angle": -1,
+"speed": 110,
+"wait": 2.5,
+"lip": 4
+})
+class_property_descriptions = Dictionary[String, Variant]({
+"angle": "Open direction (Quake yaw, -1 up, -2 down).",
+"speed": "Units per second.",
+"wait": "Seconds before closing.",
+"lip": "Units left visible when open."
+})
+meta_properties = Dictionary[String, Variant]({
+"color": Color(0.4, 0.8, 1.0, 1.0)
+})
+node_class = "AnimatableBody3D"
+script_class = ExtResource("2_Door")

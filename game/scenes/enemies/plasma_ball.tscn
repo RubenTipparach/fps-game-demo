@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Core/Projectile.cs" id="1_Projectile"]
+[ext_resource type="Material" path="res://materials/fx/plasma.tres" id="3_plasma"]
+[ext_resource type="Texture2D" path="res://textures/fx/soft_particle.png" id="4_soft_particl"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_2"]
+radius = 0.14
+height = 0.28
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+billboard_mode = 3
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("4_soft_particl")
+
+[sub_resource type="QuadMesh" id="QuadMesh_6"]
+size = Vector2(0.3, 0.3)
+material = SubResource("StandardMaterial3D_5")
+
+[sub_resource type="Gradient" id="Gradient_7"]
+offsets = PackedFloat32Array(0.0, 1.0)
+colors = PackedColorArray(0.6, 1.0, 1.0, 0.9, 0.1, 0.4, 1.0, 0.0)
+
+[sub_resource type="Curve" id="Curve_8"]
+_data = [Vector2(0.0, 0.5), 0.0, 0.0, 0, 0, Vector2(1.0, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="PlasmaBall" type="Node3D"]
+script = ExtResource("1_Projectile")
+Speed = 17.0
+DirectDamage = 14.0
+SplashDamage = 0.0
+SplashRadius = 0.0
+Knockback = 4.0
+Kind = 3
+Explodes = false
+Radius = 0.2
+ImpactColor = Color(0.4, 0.9, 1.0, 1.0)
+
+[node name="Core" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_2")
+material_override = ExtResource("3_plasma")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Light" type="OmniLight3D" parent="."]
+light_color = Color(0.352941, 0.901961, 1.0, 1.0)
+light_energy = 2.0
+omni_range = 4.0
+light_bake_mode = 0
+
+[node name="Trail" type="CPUParticles3D" parent="."]
+amount = 30
+lifetime = 0.35
+local_coords = false
+mesh = SubResource("QuadMesh_6")
+direction = Vector3(0.0, 0.0, 1.0)
+spread = 12.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.1
+gravity = Vector3(0.0, 0.0, 0.0)
+scale_amount_curve = SubResource("Curve_8")
+color_ramp = SubResource("Gradient_7")
+cast_shadow = 0

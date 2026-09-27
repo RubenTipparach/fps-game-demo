@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Door.cs" id="1_Door"]
+[ext_resource type="Material" path="res://materials/props/door_metal.tres" id="4_door_metal"]
+[ext_resource type="Material" path="res://materials/props/hazard_triplanar.tres" id="6_hazard_tripl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(3.0, 3.2, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(3.0, 3.2, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+size = Vector3(0.3, 3.2, 0.32)
+
+[node name="Door" type="AnimatableBody3D"]
+script = ExtResource("1_Door")
+OpenOffset = Vector3(0.0, 3.1, 0.0)
+collision_layer = 64
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 1.6, 0.0)
+shape = SubResource("BoxShape3D_2")
+
+[node name="Slab" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_3")
+material_override = ExtResource("4_door_metal")
+position = Vector3(0.0, 1.6, 0.0)
+gi_mode = 2
+
+[node name="StripeL" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("6_hazard_tripl")
+position = Vector3(-1.35, 1.6, 0.0)
+gi_mode = 2
+
+[node name="StripeR" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("6_hazard_tripl")
+position = Vector3(1.35, 1.6, 0.0)
+gi_mode = 2

@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Player/PlayerController.cs" id="1_PlayerContro"]
+[ext_resource type="Script" path="res://scripts/Player/WeaponManager.cs" id="3_WeaponManage"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/shotgun.tscn" id="4_shotgun"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/chaingun.tscn" id="5_chaingun"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/rocket_launcher.tscn" id="6_rocket_launc"]
+[ext_resource type="Script" path="res://scripts/UI/Hud.cs" id="7_Hud"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
+height = 1.8
+radius = 0.4
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_PlayerContro")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.9, 0.0)
+shape = SubResource("CylinderShape3D_2")
+
+[node name="CameraRig" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+current = true
+fov = 67.0
+near = 0.02
+far = 400.0
+
+[node name="WeaponManager" type="Node3D" parent="CameraRig/Camera3D"]
+script = ExtResource("3_WeaponManage")
+
+[node name="ViewmodelRoot" type="Node3D" parent="CameraRig/Camera3D/WeaponManager"]
+
+[node name="Shotgun" parent="CameraRig/Camera3D/WeaponManager/ViewmodelRoot" instance=ExtResource("4_shotgun")]
+
+[node name="Chaingun" parent="CameraRig/Camera3D/WeaponManager/ViewmodelRoot" instance=ExtResource("5_chaingun")]
+
+[node name="RocketLauncher" parent="CameraRig/Camera3D/WeaponManager/ViewmodelRoot" instance=ExtResource("6_rocket_launc")]
+
+[node name="Flashlight" type="SpotLight3D" parent="CameraRig/Camera3D"]
+visible = false
+position = Vector3(0.15, -0.1, 0.0)
+light_color = Color(1.0, 0.945098, 0.839216, 1.0)
+light_energy = 4.0
+light_bake_mode = 0
+shadow_enabled = true
+spot_range = 32.0
+spot_angle = 26.0
+spot_angle_attenuation = 0.6
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("7_Hud")

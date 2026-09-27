@@ -1,0 +1,13 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map_settings.gd" id="1_func_godot_m"]
+[ext_resource type="Resource" path="res://levels/trenchbroom/brushfire_fgd.tres" id="2_brushfire_fg"]
+
+[resource]
+script = ExtResource("1_func_godot_m")
+inverse_scale_factor = 32.0
+entity_fgd = ExtResource("2_brushfire_fg")
+uv_unwrap_texel_size = 3.2
+base_texture_dir = "res://textures"
+base_material_dir = "res://materials"
+save_generated_materials = false

@@ -1,0 +1,117 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Doorway.cs" id="1_Doorway"]
+[ext_resource type="PackedScene" path="res://models/doorway/door_frame.glb" id="2_door_frame"]
+[ext_resource type="Script" path="res://scripts/World/Door.cs" id="3_Door"]
+[ext_resource type="ArrayMesh" path="res://models/doorway/leaf_l.res" id="4_leaf_l"]
+[ext_resource type="ArrayMesh" path="res://models/doorway/leaf_r.res" id="6_leaf_r"]
+[ext_resource type="Material" path="res://materials/fx/corona_warm.tres" id="9_corona_warm"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5"]
+size = Vector3(1.5, 3.18, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7"]
+size = Vector3(1.5, 3.18, 0.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_8"]
+size = Vector2(0.7, 0.7)
+
+[sub_resource type="QuadMesh" id="QuadMesh_10"]
+size = Vector2(0.9, 0.9)
+
+[node name="Doorway" type="Node3D"]
+script = ExtResource("1_Doorway")
+
+[node name="Frame" parent="." instance=ExtResource("2_door_frame")]
+
+[node name="LeafL" type="AnimatableBody3D" parent="."]
+collision_layer = 64
+script = ExtResource("3_Door")
+Controlled = true
+OpenOffset = Vector3(-1.45, 0.0, 0.0)
+Speed = 2.6
+
+[node name="Mesh" type="MeshInstance3D" parent="LeafL"]
+mesh = ExtResource("4_leaf_l")
+gi_mode = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeafL"]
+position = Vector3(-0.75, 1.61, 0.0)
+shape = SubResource("BoxShape3D_5")
+
+[node name="LeafR" type="AnimatableBody3D" parent="."]
+collision_layer = 64
+script = ExtResource("3_Door")
+Controlled = true
+OpenOffset = Vector3(1.45, 0.0, 0.0)
+Speed = 2.6
+
+[node name="Mesh" type="MeshInstance3D" parent="LeafR"]
+mesh = ExtResource("6_leaf_r")
+gi_mode = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeafR"]
+position = Vector3(0.75, 1.61, 0.0)
+shape = SubResource("BoxShape3D_7")
+
+[node name="Light0" type="OmniLight3D" parent="."]
+position = Vector3(0.0, 3.0, 1.05)
+light_color = Color(1.0, 0.784314, 0.564706, 1.0)
+light_energy = 1.1
+omni_range = 4.5
+omni_attenuation = 1.3
+light_size = 0.3
+light_bake_mode = 1
+shadow_enabled = true
+
+[node name="CoronaL0" type="MeshInstance3D" parent="."]
+position = Vector3(-0.9, 3.25, 0.756)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_8")
+material_override = ExtResource("9_corona_warm")
+
+[node name="CoronaR0" type="MeshInstance3D" parent="."]
+position = Vector3(0.9, 3.25, 0.756)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_8")
+material_override = ExtResource("9_corona_warm")
+
+[node name="CoronaStatus0" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 3.7, 0.735)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_10")
+material_override = ExtResource("9_corona_warm")
+
+[node name="Light1" type="OmniLight3D" parent="."]
+position = Vector3(0.0, 3.0, -1.05)
+light_color = Color(1.0, 0.784314, 0.564706, 1.0)
+light_energy = 1.1
+omni_range = 4.5
+omni_attenuation = 1.3
+light_size = 0.3
+light_bake_mode = 1
+shadow_enabled = true
+
+[node name="CoronaL1" type="MeshInstance3D" parent="."]
+position = Vector3(-0.9, 3.25, -0.756)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_8")
+material_override = ExtResource("9_corona_warm")
+
+[node name="CoronaR1" type="MeshInstance3D" parent="."]
+position = Vector3(0.9, 3.25, -0.756)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_8")
+material_override = ExtResource("9_corona_warm")
+
+[node name="CoronaStatus1" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 3.7, -0.735)
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("QuadMesh_10")
+material_override = ExtResource("9_corona_warm")

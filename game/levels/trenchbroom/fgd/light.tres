@@ -1,0 +1,28 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_func_godot_f"]
+[ext_resource type="Script" path="res://addons/brushfire_tools/light_entity.gd" id="2_light_entity"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+classname = "light"
+description = "Quake-style point light, baked into lightmaps."
+class_properties = Dictionary[String, Variant]({
+"light": 300,
+"_color": Color(1.0, 0.86, 0.7, 1.0),
+"range": 0.0,
+"shadows": {"Yes": 1, "No": 0}
+})
+class_property_descriptions = Dictionary[String, Variant]({
+"light": "Brightness (Quake scale, 300 = normal).",
+"_color": "Light colour.",
+"range": "Radius in metres (0 = derived from brightness).",
+"shadows": "Cast baked shadows."
+})
+meta_properties = Dictionary[String, Variant]({
+"size": AABB(-8, -8, -8, 8, 8, 8),
+"color": Color(1.0, 0.8, 0.2, 1.0)
+})
+node_class = "OmniLight3D"
+script_class = ExtResource("2_light_entity")
+apply_rotation_on_map_build = false

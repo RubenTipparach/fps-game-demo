@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_func_godot_f"]
+[ext_resource type="PackedScene" path="res://scenes/props/player_start.tscn" id="2_player_start"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+classname = "info_player_start"
+description = "Player spawn point."
+meta_properties = Dictionary[String, Variant]({
+"size": AABB(-16, -16, 0, 16, 16, 56),
+"color": Color(0.2, 0.9, 0.3, 1.0)
+})
+scene_file = ExtResource("2_player_start")
+apply_rotation_on_map_build = true

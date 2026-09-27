@@ -1,0 +1,21 @@
+[gd_resource type="ORMMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/rust_metal.png" id="1_rust_metal"]
+[ext_resource type="Texture2D" path="res://textures/rust_metal_orm.png" id="2_rust_metal_o"]
+[ext_resource type="Texture2D" path="res://textures/rust_metal_normal.png" id="3_rust_metal_n"]
+
+[resource]
+resource_name = "brute_armor"
+albedo_color = Color(0.752941, 0.533333, 0.439216, 1.0)
+albedo_texture = ExtResource("1_rust_metal")
+metallic = 1.0
+roughness = 1.0
+orm_texture = ExtResource("2_rust_metal_o")
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource("3_rust_metal_n")
+texture_filter = 5
+uv1_scale = Vector3(1.0, 1.0, 1.0)
+uv1_triplanar = true
+uv1_world_triplanar = false
+uv1_triplanar_sharpness = 4.0

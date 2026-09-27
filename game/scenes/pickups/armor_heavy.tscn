@@ -1,0 +1,60 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Pickup.cs" id="1_Pickup"]
+[ext_resource type="Material" path="res://materials/props/armor_red.tres" id="4_armor_red"]
+[ext_resource type="Material" path="res://materials/props/stripe_yellow.tres" id="7_stripe_yello"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(0.5, 0.56, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+size = Vector3(0.16, 0.1, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+size = Vector3(0.4, 0.04, 0.02)
+
+[node name="ArmorHeavy" type="Area3D"]
+collision_layer = 8
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_Pickup")
+Kind = 3
+Amount = 100
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+shape = SubResource("SphereShape3D_2")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0.0, 0.4, 0.0)
+
+[node name="Plate" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_3")
+material_override = ExtResource("4_armor_red")
+position = Vector3(0.0, 0.15, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="ShoulderL" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("4_armor_red")
+position = Vector3(-0.2, 0.45, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="ShoulderR" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("4_armor_red")
+position = Vector3(0.2, 0.45, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Stripe" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_6")
+material_override = ExtResource("7_stripe_yello")
+position = Vector3(0.0, 0.2, -0.085)
+cast_shadow = 0
+gi_mode = 2

@@ -1,0 +1,1002 @@
+[gd_scene format=3 uid="uid://drmlvspi7bv3u"]
+
+[ext_resource type="Script" uid="uid://cyo1lsvny5xxh" path="res://scripts/World/LevelRoot.cs" id="1_LevelRoot"]
+[ext_resource type="Material" path="res://materials/concrete.tres" id="2_concrete"]
+[ext_resource type="Material" path="res://materials/tech_panel.tres" id="3_tech_panel"]
+[ext_resource type="Material" path="res://materials/floor_tiles.tres" id="4_floor_tiles"]
+[ext_resource type="Material" path="res://materials/ceiling_tiles.tres" id="5_ceiling_tile"]
+[ext_resource type="Material" path="res://materials/hazard_stripes.tres" id="6_hazard_strip"]
+[ext_resource type="Material" path="res://materials/crate.tres" id="7_crate"]
+[ext_resource type="Material" path="res://materials/brick_wall.tres" id="8_brick_wall"]
+[ext_resource type="Material" path="res://materials/diamond_plate.tres" id="9_diamond_plat"]
+[ext_resource type="Material" path="res://materials/rust_metal.tres" id="10_rust_metal"]
+[ext_resource type="Material" path="res://materials/crate_large.tres" id="11_crate_large"]
+[ext_resource type="Material" path="res://materials/stone_blocks.tres" id="12_stone_blocks"]
+[ext_resource type="NavigationMesh" uid="uid://s6bj2lnhiw2" path="res://levels/csg/level_csg_navmesh.res" id="13_n3cx3"]
+[ext_resource type="ArrayMesh" uid="uid://r2cjbf4ipnbr" path="res://levels/csg/level_csg_geometry.res" id="14_xt7qh"]
+[ext_resource type="Shape3D" uid="uid://dnxjeovabbwxs" path="res://levels/csg/level_csg_collision.res" id="15_6xlfo"]
+[ext_resource type="PackedScene" path="res://scenes/props/ceiling_light.tscn" id="15_ceiling_ligh"]
+[ext_resource type="PackedScene" path="res://scenes/props/wall_lamp.tscn" id="16_wall_lamp"]
+[ext_resource type="PackedScene" path="res://scenes/props/player_start.tscn" id="17_player_start"]
+[ext_resource type="PackedScene" path="res://scenes/props/doorway.tscn" id="18_doorway"]
+[ext_resource type="PackedScene" path="res://scenes/props/archway_400x400.tscn" id="19_archway_400x"]
+[ext_resource type="PackedScene" path="res://scenes/props/archway_400x350.tscn" id="20_archway_400x"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/grunt.tscn" id="21_grunt"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/drone.tscn" id="22_drone"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brute.tscn" id="23_brute"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/shells.tscn" id="24_shells"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/armor.tscn" id="25_armor"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/health.tscn" id="26_health"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_chaingun.tscn" id="27_weapon_chain"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/bullets.tscn" id="28_bullets"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_rocket_launcher.tscn" id="29_weapon_rocke"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/rockets.tscn" id="30_rockets"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/megahealth.tscn" id="31_megahealth"]
+[ext_resource type="PackedScene" path="res://scenes/props/explosive_barrel.tscn" id="32_explosive_ba"]
+[ext_resource type="PackedScene" path="res://scenes/props/exit.tscn" id="33_exit"]
+[ext_resource type="Script" uid="uid://delu8pv1fial1" path="res://scripts/World/Trigger.cs" id="34_Trigger"]
+
+[sub_resource type="Environment" id="Environment_14"]
+background_mode = 1
+background_color = Color(0.039216, 0.043137, 0.054902, 1)
+ambient_light_source = 1
+tonemap_mode = 4
+tonemap_exposure = 1.15
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.6
+ssao_light_affect = 0.15
+glow_enabled = true
+glow_intensity = 0.55
+glow_bloom = 0.04
+glow_hdr_threshold = 1.1
+fog_enabled = true
+fog_light_color = Color(0.164706, 0.14902, 0.133333, 1)
+fog_density = 0.004
+fog_sky_affect = 0.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_35"]
+size = Vector3(3.2, 2, 2.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_36"]
+size = Vector3(4, 3, 2)
+
+[node name="LevelCSG" type="Node3D" unique_id=75411153]
+script = ExtResource("1_LevelRoot")
+LevelTitle = "E1M1: Pump Station"
+
+[node name="CSGSource" type="CSGCombiner3D" parent="." unique_id=1709778397 groups=["csg_source", "editor_only"]]
+visible = false
+
+[node name="Rock" type="CSGBox3D" parent="CSGSource" unique_id=1784702779]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.25, 3)
+size = Vector3(54, 13.5, 86)
+material = ExtResource("2_concrete")
+
+[node name="Start_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1206130470]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 36)
+operation = 2
+size = Vector3(12, 5.1, 12)
+material = ExtResource("3_tech_panel")
+
+[node name="Start_Floor" type="CSGBox3D" parent="CSGSource" unique_id=873463411]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 36)
+size = Vector3(12, 0.35, 12)
+material = ExtResource("4_floor_tiles")
+
+[node name="Start_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1632872578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.675, 36)
+size = Vector3(12, 0.35, 12)
+material = ExtResource("5_ceiling_tile")
+
+[node name="StartTrimS" type="CSGBox3D" parent="CSGSource" unique_id=1111631038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 41.8)
+size = Vector3(12, 0.6, 0.4)
+material = ExtResource("6_hazard_strip")
+
+[node name="StartTrimW" type="CSGBox3D" parent="CSGSource" unique_id=1175065487]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, 0.3, 36)
+size = Vector3(0.4, 0.6, 12)
+material = ExtResource("6_hazard_strip")
+
+[node name="StartTrimE" type="CSGBox3D" parent="CSGSource" unique_id=663297620]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0.3, 36)
+size = Vector3(0.4, 0.6, 12)
+material = ExtResource("6_hazard_strip")
+
+[node name="StartCrateA" type="CSGBox3D" parent="CSGSource" unique_id=1849061036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, 40)
+size = Vector3(2, 1, 2)
+material = ExtResource("7_crate")
+
+[node name="StartCrateB" type="CSGBox3D" parent="CSGSource" unique_id=802010542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, 40)
+material = ExtResource("7_crate")
+
+[node name="StartCrateC" type="CSGBox3D" parent="CSGSource" unique_id=645966218]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.5, 31.5)
+material = ExtResource("7_crate")
+
+[node name="CorridorA_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1383852905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 23.155)
+operation = 2
+size = Vector3(4, 4.6, 13.71)
+material = ExtResource("8_brick_wall")
+
+[node name="CorridorA_Floor" type="CSGBox3D" parent="CSGSource" unique_id=180955655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 23.155)
+size = Vector3(4, 0.35, 13.71)
+material = ExtResource("9_diamond_plat")
+
+[node name="CorridorA_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1692093967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.175, 23.155)
+size = Vector3(4, 0.35, 13.71)
+material = ExtResource("5_ceiling_tile")
+
+[node name="CorrRibW0" type="CSGBox3D" parent="CSGSource" unique_id=620911682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, 20)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrRibE0" type="CSGBox3D" parent="CSGSource" unique_id=1361129327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, 20)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrRibW1" type="CSGBox3D" parent="CSGSource" unique_id=1530909584]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, 26)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrRibE1" type="CSGBox3D" parent="CSGSource" unique_id=282459525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, 26)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="DoorSouth_Carve" type="CSGBox3D" parent="CSGSource" unique_id=3080497]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 16.05)
+operation = 2
+size = Vector3(3, 3.5, 0.7)
+material = ExtResource("3_tech_panel")
+
+[node name="DoorSouth_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1727403217]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 16.05)
+size = Vector3(3, 0.35, 0.7)
+material = ExtResource("9_diamond_plat")
+
+[node name="Hall_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1470254067]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0.9)
+operation = 2
+size = Vector3(28, 10.6, 29.8)
+material = ExtResource("2_concrete")
+
+[node name="Hall_Floor" type="CSGBox3D" parent="CSGSource" unique_id=629617364]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 0.9)
+size = Vector3(28, 0.35, 29.8)
+material = ExtResource("2_concrete")
+
+[node name="Hall_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=797894527]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.175, 0.9)
+size = Vector3(28, 0.35, 29.8)
+material = ExtResource("10_rust_metal")
+
+[node name="HallTrimW1" type="CSGBox3D" parent="CSGSource" unique_id=1001725295]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.9, 0.65, -7)
+size = Vector3(0.2, 1.3, 14)
+material = ExtResource("3_tech_panel")
+
+[node name="HallTrimW2" type="CSGBox3D" parent="CSGSource" unique_id=565996170]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.9, 0.65, 9.9)
+size = Vector3(0.2, 1.3, 11.8)
+material = ExtResource("3_tech_panel")
+
+[node name="HallTrimN1" type="CSGBox3D" parent="CSGSource" unique_id=1151847207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.75, 0.65, -13.9)
+size = Vector3(12.5, 1.3, 0.2)
+material = ExtResource("3_tech_panel")
+
+[node name="HallTrimN2" type="CSGBox3D" parent="CSGSource" unique_id=1679619617]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0.65, -13.9)
+size = Vector3(12.5, 1.3, 0.2)
+material = ExtResource("3_tech_panel")
+
+[node name="HallTrimS1" type="CSGBox3D" parent="CSGSource" unique_id=1244885198]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.75, 0.65, 15.7)
+size = Vector3(12.5, 1.3, 0.2)
+material = ExtResource("3_tech_panel")
+
+[node name="HallTrimS2" type="CSGBox3D" parent="CSGSource" unique_id=1678847174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 0.65, 15.7)
+size = Vector3(8.5, 1.3, 0.2)
+material = ExtResource("3_tech_panel")
+
+[node name="HallBandW" type="CSGBox3D" parent="CSGSource" unique_id=771279248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.925, 7.9, 0.9)
+size = Vector3(0.15, 0.6, 29.8)
+material = ExtResource("6_hazard_strip")
+
+[node name="HallBandE" type="CSGBox3D" parent="CSGSource" unique_id=463003245]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.925, 7.9, 0.9)
+size = Vector3(0.15, 0.6, 29.8)
+material = ExtResource("6_hazard_strip")
+
+[node name="HallBandN" type="CSGBox3D" parent="CSGSource" unique_id=1836336784]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.9, -13.925)
+size = Vector3(28, 0.6, 0.15)
+material = ExtResource("6_hazard_strip")
+
+[node name="HallBandS" type="CSGBox3D" parent="CSGSource" unique_id=750911868]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.9, 15.725)
+size = Vector3(28, 0.6, 0.15)
+material = ExtResource("6_hazard_strip")
+
+[node name="Pump0" type="CSGCylinder3D" parent="CSGSource" unique_id=883555350]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.5, -6)
+radius = 1.4
+height = 7.0
+sides = 16
+material = ExtResource("10_rust_metal")
+
+[node name="PumpCap0" type="CSGCylinder3D" parent="CSGSource" unique_id=1706891832]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.25, -6)
+radius = 1.65
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpBase0" type="CSGCylinder3D" parent="CSGSource" unique_id=1996069414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.25, -6)
+radius = 1.7
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpPipe0" type="CSGCylinder3D" parent="CSGSource" unique_id=76225605]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 8.85, -6)
+radius = 0.45
+height = 2.7
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="Pump1" type="CSGCylinder3D" parent="CSGSource" unique_id=96327547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, -6)
+radius = 1.4
+height = 7.0
+sides = 16
+material = ExtResource("10_rust_metal")
+
+[node name="PumpCap1" type="CSGCylinder3D" parent="CSGSource" unique_id=252379625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.25, -6)
+radius = 1.65
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpBase1" type="CSGCylinder3D" parent="CSGSource" unique_id=298890998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.25, -6)
+radius = 1.7
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpPipe1" type="CSGCylinder3D" parent="CSGSource" unique_id=1168354221]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8.85, -6)
+radius = 0.45
+height = 2.7
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="Pump2" type="CSGCylinder3D" parent="CSGSource" unique_id=944864950]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.5, 6)
+radius = 1.4
+height = 7.0
+sides = 16
+material = ExtResource("10_rust_metal")
+
+[node name="PumpCap2" type="CSGCylinder3D" parent="CSGSource" unique_id=686000757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.25, 6)
+radius = 1.65
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpBase2" type="CSGCylinder3D" parent="CSGSource" unique_id=1294503006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.25, 6)
+radius = 1.7
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpPipe2" type="CSGCylinder3D" parent="CSGSource" unique_id=833641072]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 8.85, 6)
+radius = 0.45
+height = 2.7
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="Pump3" type="CSGCylinder3D" parent="CSGSource" unique_id=2140085051]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, 6)
+radius = 1.4
+height = 7.0
+sides = 16
+material = ExtResource("10_rust_metal")
+
+[node name="PumpCap3" type="CSGCylinder3D" parent="CSGSource" unique_id=490039459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.25, 6)
+radius = 1.65
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpBase3" type="CSGCylinder3D" parent="CSGSource" unique_id=214321047]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.25, 6)
+radius = 1.7
+height = 0.5
+sides = 16
+material = ExtResource("3_tech_panel")
+
+[node name="PumpPipe3" type="CSGCylinder3D" parent="CSGSource" unique_id=88690741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8.85, 6)
+radius = 0.45
+height = 2.7
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="PipeNorth" type="CSGCylinder3D" parent="CSGSource" unique_id=217538060]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 5.5, -6)
+radius = 0.35
+height = 14.0
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="PipeSouth" type="CSGCylinder3D" parent="CSGSource" unique_id=1073897929]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 5.5, 6)
+radius = 0.35
+height = 14.0
+sides = 12
+material = ExtResource("10_rust_metal")
+
+[node name="Platform" type="CSGBox3D" parent="CSGSource" unique_id=1396698820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(8, 1, 6)
+material = ExtResource("9_diamond_plat")
+
+[node name="PlatformEdgeN" type="CSGBox3D" parent="CSGSource" unique_id=1723156302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -3.1)
+size = Vector3(8, 1, 0.2)
+material = ExtResource("6_hazard_strip")
+
+[node name="PlatformRamp" type="CSGPolygon3D" parent="CSGSource" unique_id=1523866623]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2, 0, 3)
+polygon = PackedVector2Array(0, 1, 4, 0, 4, -0.4, 0, -0.4)
+depth = 4.0
+material = ExtResource("9_diamond_plat")
+
+[node name="Step0" type="CSGBox3D" parent="CSGSource" unique_id=2119329062]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.2, 13.6)
+size = Vector3(4, 0.4, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step1" type="CSGBox3D" parent="CSGSource" unique_id=188110105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.4, 12.8)
+size = Vector3(4, 0.8, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step2" type="CSGBox3D" parent="CSGSource" unique_id=1291504520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.6, 12)
+size = Vector3(4, 1.2, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step3" type="CSGBox3D" parent="CSGSource" unique_id=1126026569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.8, 11.2)
+size = Vector3(4, 1.6, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step4" type="CSGBox3D" parent="CSGSource" unique_id=840968092]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, 10.4)
+size = Vector3(4, 2, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step5" type="CSGBox3D" parent="CSGSource" unique_id=1052437311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.2, 9.6)
+size = Vector3(4, 2.4, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step6" type="CSGBox3D" parent="CSGSource" unique_id=880320074]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.4, 8.8)
+size = Vector3(4, 2.8, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step7" type="CSGBox3D" parent="CSGSource" unique_id=68619450]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.6, 8)
+size = Vector3(4, 3.2, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step8" type="CSGBox3D" parent="CSGSource" unique_id=735440623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.8, 7.2)
+size = Vector3(4, 3.6, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Step9" type="CSGBox3D" parent="CSGSource" unique_id=94389096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 6.4)
+size = Vector3(4, 4, 0.8)
+material = ExtResource("9_diamond_plat")
+
+[node name="Catwalk" type="CSGBox3D" parent="CSGSource" unique_id=77844155]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 3.85, -4)
+size = Vector3(4, 0.3, 20)
+material = ExtResource("9_diamond_plat")
+
+[node name="CatwalkRail" type="CSGBox3D" parent="CSGSource" unique_id=197847044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.95, 4.5, -4)
+size = Vector3(0.2, 1, 20)
+material = ExtResource("6_hazard_strip")
+
+[node name="CatwalkPost0" type="CSGBox3D" parent="CSGSource" unique_id=1803219603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, -12)
+size = Vector3(0.4, 3.7, 0.4)
+material = ExtResource("10_rust_metal")
+
+[node name="CatwalkPost1" type="CSGBox3D" parent="CSGSource" unique_id=1015697751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, -6)
+size = Vector3(0.4, 3.7, 0.4)
+material = ExtResource("10_rust_metal")
+
+[node name="CatwalkPost2" type="CSGBox3D" parent="CSGSource" unique_id=1985078561]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, 0)
+size = Vector3(0.4, 3.7, 0.4)
+material = ExtResource("10_rust_metal")
+
+[node name="DoorNorth_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1138544414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, -14.2)
+operation = 2
+size = Vector3(3, 3.5, 0.6)
+material = ExtResource("3_tech_panel")
+
+[node name="DoorNorth_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1140973297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -14.2)
+size = Vector3(3, 0.35, 0.6)
+material = ExtResource("9_diamond_plat")
+
+[node name="ArchWest_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1512825849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, 1.6, 2)
+operation = 2
+size = Vector3(0.6, 3.8, 4)
+material = ExtResource("3_tech_panel")
+
+[node name="ArchWest_Floor" type="CSGBox3D" parent="CSGSource" unique_id=2057001475]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, -0.175, 2)
+size = Vector3(0.6, 0.35, 4)
+material = ExtResource("2_concrete")
+
+[node name="Storage_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1266705082]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 2.5, 2)
+operation = 2
+size = Vector3(11.6, 5.6, 16)
+material = ExtResource("8_brick_wall")
+
+[node name="Storage_Floor" type="CSGBox3D" parent="CSGSource" unique_id=170863411]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, -0.175, 2)
+size = Vector3(11.6, 0.35, 16)
+material = ExtResource("2_concrete")
+
+[node name="Storage_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=841856108]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 5.175, 2)
+size = Vector3(11.6, 0.35, 16)
+material = ExtResource("5_ceiling_tile")
+
+[node name="CrateStepA" type="CSGBox3D" parent="CSGSource" unique_id=1187679412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 0.5, 1.5)
+material = ExtResource("7_crate")
+
+[node name="CrateStepB" type="CSGBox3D" parent="CSGSource" unique_id=1421058945]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 1, 1)
+size = Vector3(2, 2, 2)
+material = ExtResource("11_crate_large")
+
+[node name="CrateC" type="CSGBox3D" parent="CSGSource" unique_id=669037887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 1, -4)
+size = Vector3(2, 2, 2)
+material = ExtResource("11_crate_large")
+
+[node name="CrateD" type="CSGBox3D" parent="CSGSource" unique_id=708447467]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.5, -4)
+material = ExtResource("7_crate")
+
+[node name="CrateE" type="CSGBox3D" parent="CSGSource" unique_id=957109366]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 1, 8)
+size = Vector3(2, 2, 2)
+material = ExtResource("11_crate_large")
+
+[node name="CrateF" type="CSGBox3D" parent="CSGSource" unique_id=74515238]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 0.5, 8.5)
+material = ExtResource("7_crate")
+
+[node name="CrateG" type="CSGBox3D" parent="CSGSource" unique_id=1361980348]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 0.5, 6.5)
+material = ExtResource("7_crate")
+
+[node name="Secret_Carve" type="CSGBox3D" parent="CSGSource" unique_id=336218569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 3.1, 1.5)
+operation = 2
+size = Vector3(3.6, 2.8, 3)
+material = ExtResource("12_stone_blocks")
+
+[node name="Secret_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1920378466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 1.825, 1.5)
+size = Vector3(3.6, 0.35, 3)
+material = ExtResource("12_stone_blocks")
+
+[node name="Secret_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1394048030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 4.375, 1.5)
+size = Vector3(3.6, 0.35, 3)
+material = ExtResource("12_stone_blocks")
+
+[node name="CorridorB_Carve" type="CSGBox3D" parent="CSGSource" unique_id=50323187]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -20.205)
+operation = 2
+size = Vector3(4, 4.6, 11.61)
+material = ExtResource("8_brick_wall")
+
+[node name="CorridorB_Floor" type="CSGBox3D" parent="CSGSource" unique_id=171054808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -20.205)
+size = Vector3(4, 0.35, 11.61)
+material = ExtResource("9_diamond_plat")
+
+[node name="CorridorB_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=206966079]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.175, -20.205)
+size = Vector3(4, 0.35, 11.61)
+material = ExtResource("5_ceiling_tile")
+
+[node name="CorrBRibW0" type="CSGBox3D" parent="CSGSource" unique_id=1798336591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, -18)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrBRibE0" type="CSGBox3D" parent="CSGSource" unique_id=688769947]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, -18)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrBRibW1" type="CSGBox3D" parent="CSGSource" unique_id=1947747053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, -22.5)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="CorrBRibE1" type="CSGBox3D" parent="CSGSource" unique_id=1163406348]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, -22.5)
+size = Vector3(0.4, 4, 0.6)
+material = ExtResource("10_rust_metal")
+
+[node name="Exit_Carve" type="CSGBox3D" parent="CSGSource" unique_id=692544580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -32)
+operation = 2
+size = Vector3(14, 6.6, 12)
+material = ExtResource("12_stone_blocks")
+
+[node name="Exit_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1057859991]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -32)
+size = Vector3(14, 0.35, 12)
+material = ExtResource("4_floor_tiles")
+
+[node name="Exit_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=27257895]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.175, -32)
+size = Vector3(14, 0.35, 12)
+material = ExtResource("5_ceiling_tile")
+
+[node name="ExitPillar0" type="CSGBox3D" parent="CSGSource" unique_id=791531540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3, -36.5)
+size = Vector3(1.2, 6, 1.2)
+material = ExtResource("3_tech_panel")
+
+[node name="ExitPillar1" type="CSGBox3D" parent="CSGSource" unique_id=442597224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3, -36.5)
+size = Vector3(1.2, 6, 1.2)
+material = ExtResource("3_tech_panel")
+
+[node name="ExitPillar2" type="CSGBox3D" parent="CSGSource" unique_id=750015286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3, -27.5)
+size = Vector3(1.2, 6, 1.2)
+material = ExtResource("3_tech_panel")
+
+[node name="ExitPillar3" type="CSGBox3D" parent="CSGSource" unique_id=875216864]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3, -27.5)
+size = Vector3(1.2, 6, 1.2)
+material = ExtResource("3_tech_panel")
+
+[node name="ExitDais" type="CSGBox3D" parent="CSGSource" unique_id=1101533369]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -33)
+size = Vector3(5, 0.3, 5)
+material = ExtResource("6_hazard_strip")
+
+[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=2111791368]
+navigation_mesh = ExtResource("13_n3cx3")
+
+[node name="Geometry" type="StaticBody3D" parent="Navigation" unique_id=405555412]
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Geometry" unique_id=389801387]
+mesh = ExtResource("14_xt7qh")
+
+[node name="Collision" type="CollisionShape3D" parent="Navigation/Geometry" unique_id=1182746048]
+shape = ExtResource("15_6xlfo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2069426867]
+environment = SubResource("Environment_14")
+
+[node name="LightmapGI" type="LightmapGI" parent="." unique_id=328566542]
+directional = true
+interior = true
+denoiser_strength = 0.12
+environment_mode = 0
+
+[node name="FillLights" type="Node3D" parent="." unique_id=1784522240]
+
+[node name="Fill0" type="OmniLight3D" parent="FillLights" unique_id=1821240374]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 8.5, 2)
+light_color = Color(0.309804, 0.490196, 1, 1)
+light_energy = 0.9
+light_indirect_energy = 1.2
+light_size = 1.5
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 16.0
+omni_attenuation = 0.8
+
+[node name="Fill1" type="OmniLight3D" parent="FillLights" unique_id=1696377861]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 8.5, 2)
+light_color = Color(0.309804, 0.490196, 1, 1)
+light_energy = 0.9
+light_indirect_energy = 1.2
+light_size = 1.5
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 16.0
+omni_attenuation = 0.8
+
+[node name="Fill2" type="OmniLight3D" parent="FillLights" unique_id=1460248289]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4, 2)
+light_color = Color(1, 0.603922, 0.290196, 1)
+light_energy = 0.6
+light_indirect_energy = 1.2
+light_size = 1.5
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 10.0
+omni_attenuation = 0.8
+
+[node name="Fill3" type="OmniLight3D" parent="FillLights" unique_id=855834054]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -32)
+light_color = Color(0.313725, 1, 0.564706, 1)
+light_energy = 0.5
+light_indirect_energy = 1.2
+light_size = 1.5
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 9.0
+omni_attenuation = 0.8
+
+[node name="Lights" type="Node3D" parent="." unique_id=88167595]
+
+[node name="CeilingLight0" parent="Lights" unique_id=2009207587 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.43, 33)
+
+[node name="CeilingLight1" parent="Lights" unique_id=660496170 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.43, 39.5)
+
+[node name="CeilingLight2" parent="Lights" unique_id=927423060 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, -7, 9.93, -10)
+
+[node name="CeilingLight3" parent="Lights" unique_id=1198151122 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 7, 9.93, -10)
+
+[node name="CeilingLight4" parent="Lights" unique_id=1121238134 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, -7, 9.93, 10)
+
+[node name="CeilingLight5" parent="Lights" unique_id=899703698 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 7, 9.93, 10)
+
+[node name="CeilingLight6" parent="Lights" unique_id=1786513593 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 0, 9.93, 0)
+
+[node name="CeilingLight7" parent="Lights" unique_id=1603426613 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.93, -2)
+
+[node name="CeilingLight8" parent="Lights" unique_id=2078348527 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.93, 6)
+
+[node name="CeilingLight9" parent="Lights" unique_id=1939053058 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 5.93, -32)
+
+[node name="CeilingLight10" parent="Lights" unique_id=535979919 instance=ExtResource("15_ceiling_ligh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 5.93, -32)
+
+[node name="WallLamp0" parent="Lights" unique_id=1125218498 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.95, 3, 23)
+
+[node name="WallLamp1" parent="Lights" unique_id=1545981729 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.95, 3, 23)
+
+[node name="WallLamp2" parent="Lights" unique_id=1241314195 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13.95, 4, -8)
+
+[node name="WallLamp3" parent="Lights" unique_id=887587511 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13.95, 4, 10)
+
+[node name="WallLamp4" parent="Lights" unique_id=1591564290 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13.95, 6.2, -10)
+
+[node name="WallLamp5" parent="Lights" unique_id=1010238875 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13.95, 6.2, -2)
+
+[node name="WallLamp6" parent="Lights" unique_id=927943204 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.95, 3, -20)
+
+[node name="WallLamp7" parent="Lights" unique_id=547290723 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.95, 3, -20)
+
+[node name="WallLamp8" parent="Lights" unique_id=1028835890 instance=ExtResource("16_wall_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 3.9, 2.95)
+
+[node name="LightProbes" type="Node3D" parent="." unique_id=1497960743]
+
+[node name="Probe0" type="LightmapProbe" parent="LightProbes" unique_id=440871874]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 36)
+
+[node name="Probe1" type="LightmapProbe" parent="LightProbes" unique_id=1388065023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 23)
+
+[node name="Probe2" type="LightmapProbe" parent="LightProbes" unique_id=327678015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 16)
+
+[node name="Probe3" type="LightmapProbe" parent="LightProbes" unique_id=1965953087]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, 10)
+
+[node name="Probe4" type="LightmapProbe" parent="LightProbes" unique_id=1832065492]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 10)
+
+[node name="Probe5" type="LightmapProbe" parent="LightProbes" unique_id=406764505]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="Probe6" type="LightmapProbe" parent="LightProbes" unique_id=1433372909]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, -10)
+
+[node name="Probe7" type="LightmapProbe" parent="LightProbes" unique_id=1542552308]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, -10)
+
+[node name="Probe8" type="LightmapProbe" parent="LightProbes" unique_id=1263559791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+
+[node name="Probe9" type="LightmapProbe" parent="LightProbes" unique_id=416432397]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 5.5, -4)
+
+[node name="Probe10" type="LightmapProbe" parent="LightProbes" unique_id=1614707004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 5.5, -12)
+
+[node name="Probe11" type="LightmapProbe" parent="LightProbes" unique_id=861459495]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2.5, 10)
+
+[node name="Probe12" type="LightmapProbe" parent="LightProbes" unique_id=374224097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1.5, 2)
+
+[node name="Probe13" type="LightmapProbe" parent="LightProbes" unique_id=845477230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 3.5, -2)
+
+[node name="Probe14" type="LightmapProbe" parent="LightProbes" unique_id=1515623221]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 3.2, 1.5)
+
+[node name="Probe15" type="LightmapProbe" parent="LightProbes" unique_id=162523348]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -20)
+
+[node name="Probe16" type="LightmapProbe" parent="LightProbes" unique_id=21464975]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -32)
+
+[node name="Probe17" type="LightmapProbe" parent="LightProbes" unique_id=502246574]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -32)
+
+[node name="Probe18" type="LightmapProbe" parent="LightProbes" unique_id=1859125375]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -32)
+
+[node name="ReflectionProbes" type="Node3D" parent="." unique_id=123462277]
+
+[node name="RefStart" type="ReflectionProbe" parent="ReflectionProbes" unique_id=706676020]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 36)
+max_distance = 18.0
+size = Vector3(12, 4.5, 12)
+origin_offset = Vector3(0, 0.55, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RefCorridorA" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1357804070]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 23.15)
+max_distance = 20.55
+size = Vector3(4, 4, 13.7)
+origin_offset = Vector3(0, 0.3, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RefHall" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1844432741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0.9)
+max_distance = 44.7
+size = Vector3(28, 10, 29.8)
+origin_offset = Vector3(0, 3.3, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RefStorage" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1453528036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 1.7, 2)
+max_distance = 24.0
+size = Vector3(11.6, 5, 16)
+origin_offset = Vector3(0, 0.8, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RefCorridorB" type="ReflectionProbe" parent="ReflectionProbes" unique_id=2121256529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, -20.2)
+max_distance = 17.4
+size = Vector3(4, 4, 11.6)
+origin_offset = Vector3(0, 0.3, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RefExit" type="ReflectionProbe" parent="ReflectionProbes" unique_id=765871902]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, -32)
+max_distance = 21.0
+size = Vector3(14, 6, 12)
+origin_offset = Vector3(0, 1.3, 0)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="Entities" type="Node3D" parent="." unique_id=2002428687]
+
+[node name="PlayerStart1" parent="Entities" unique_id=1042546842 instance=ExtResource("17_player_start")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 38)
+
+[node name="Doorway1" parent="Entities" unique_id=1256020907 instance=ExtResource("18_doorway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.05)
+
+[node name="Doorway2" parent="Entities" unique_id=1621360654 instance=ExtResource("18_doorway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14.2)
+
+[node name="Archway400X4001" parent="Entities" unique_id=304427200 instance=ExtResource("19_archway_400x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+
+[node name="Archway400X4002" parent="Entities" unique_id=1441123371 instance=ExtResource("19_archway_400x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
+
+[node name="Archway400X3501" parent="Entities" unique_id=30905310 instance=ExtResource("20_archway_400x")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -14.2, 0, 2)
+
+[node name="Grunt1" parent="Entities" unique_id=1858115624 instance=ExtResource("21_grunt")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 19.5)
+
+[node name="Grunt2" parent="Entities" unique_id=663417026 instance=ExtResource("21_grunt")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 11)
+
+[node name="Grunt3" parent="Entities" unique_id=436116539 instance=ExtResource("21_grunt")]
+transform = Transform3D(-0.9396926, 0, 0.3420202, 0, 1, 0, -0.3420202, 0, -0.9396926, 8, 0, -2)
+
+[node name="Grunt4" parent="Entities" unique_id=573829369 instance=ExtResource("21_grunt")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 2, 1, -1.5)
+
+[node name="Grunt5" parent="Entities" unique_id=1325257046 instance=ExtResource("21_grunt")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 12, 4, -9)
+
+[node name="Drone1" parent="Entities" unique_id=17429260 instance=ExtResource("22_drone")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 4.5, -8)
+
+[node name="Drone2" parent="Entities" unique_id=811262732 instance=ExtResource("22_drone")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 5.5, 9)
+
+[node name="Brute1" parent="Entities" unique_id=1066161675 instance=ExtResource("23_brute")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, -11)
+Ambush = true
+
+[node name="Grunt6" parent="Entities" unique_id=163571444 instance=ExtResource("21_grunt")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -20, 0, -2)
+
+[node name="Grunt7" parent="Entities" unique_id=1668051124 instance=ExtResource("21_grunt")]
+transform = Transform3D(-0.50000006, 0, -0.8660254, 0, 1, 0, 0.8660254, 0, -0.50000006, -22, 0, 5)
+
+[node name="Drone3" parent="Entities" unique_id=1439862675 instance=ExtResource("22_drone")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -18, 3.5, 2)
+
+[node name="Brute2" parent="Entities" unique_id=1790734693 instance=ExtResource("23_brute")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3, 0, -31)
+
+[node name="Grunt8" parent="Entities" unique_id=1793888373 instance=ExtResource("21_grunt")]
+transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 4, 0, -35)
+
+[node name="Shells1" parent="Entities" unique_id=274246039 instance=ExtResource("24_shells")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 34)
+
+[node name="Armor1" parent="Entities" unique_id=189395669 instance=ExtResource("25_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 34)
+
+[node name="Health1" parent="Entities" unique_id=945477556 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1, 31.5)
+
+[node name="Health2" parent="Entities" unique_id=1413427960 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24)
+
+[node name="Chaingun1" parent="Entities" unique_id=1309074038 instance=ExtResource("27_weapon_chain")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.5)
+
+[node name="Bullets1" parent="Entities" unique_id=431176374 instance=ExtResource("28_bullets")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -11)
+
+[node name="Health3" parent="Entities" unique_id=826105334 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 13)
+
+[node name="Health4" parent="Entities" unique_id=294077230 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 13)
+
+[node name="Shells2" parent="Entities" unique_id=710022797 instance=ExtResource("24_shells")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -12)
+
+[node name="RocketLauncher1" parent="Entities" unique_id=1781888040 instance=ExtResource("29_weapon_rocke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 4, -12)
+
+[node name="Rockets1" parent="Entities" unique_id=476685682 instance=ExtResource("30_rockets")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 4, -10)
+
+[node name="Bullets2" parent="Entities" unique_id=1025312164 instance=ExtResource("28_bullets")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 8)
+
+[node name="Shells3" parent="Entities" unique_id=260442739 instance=ExtResource("24_shells")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0, -4)
+
+[node name="Health5" parent="Entities" unique_id=9860632 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -4)
+
+[node name="Megahealth1" parent="Entities" unique_id=340584856 instance=ExtResource("31_megahealth")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 2, 1.5)
+
+[node name="Health6" parent="Entities" unique_id=323265598 instance=ExtResource("26_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -28.5)
+
+[node name="Rockets2" parent="Entities" unique_id=1311965949 instance=ExtResource("30_rockets")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -28.5)
+
+[node name="Barrel1" parent="Entities" unique_id=926208589 instance=ExtResource("32_explosive_ba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 0, -4.2)
+
+[node name="Barrel2" parent="Entities" unique_id=1134335410 instance=ExtResource("32_explosive_ba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0, 4.4)
+
+[node name="Barrel3" parent="Entities" unique_id=1306136277 instance=ExtResource("32_explosive_ba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.2, 0, 3.2)
+
+[node name="Barrel4" parent="Entities" unique_id=887698243 instance=ExtResource("32_explosive_ba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0.5)
+
+[node name="Barrel5" parent="Entities" unique_id=1243555054 instance=ExtResource("32_explosive_ba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.2, 0, 1.2)
+
+[node name="Exit1" parent="Entities" unique_id=946652674 instance=ExtResource("33_exit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -33)
+
+[node name="Triggers" type="Node3D" parent="." unique_id=1427087935]
+
+[node name="SecretAlcove" type="Area3D" parent="Triggers" unique_id=939088926]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.8, 3, 1.5)
+script = ExtResource("34_Trigger")
+Kind = 3
+
+[node name="Shape" type="CollisionShape3D" parent="Triggers/SecretAlcove" unique_id=104702664]
+shape = SubResource("BoxShape3D_35")
+
+[node name="HintStart" type="Area3D" parent="Triggers" unique_id=676250723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 28)
+script = ExtResource("34_Trigger")
+Kind = 4
+Message = "Doors open when you get close."
+
+[node name="Shape" type="CollisionShape3D" parent="Triggers/HintStart" unique_id=2076164399]
+shape = SubResource("BoxShape3D_36")

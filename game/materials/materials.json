@@ -1,0 +1,71 @@
+{
+  "_comment": "Shared material manifest. tile_m = world size (metres) covered by one texture repeat. Read by the Material Maker post-process, the TrenchBroom map generator, the Blender level builder and the Godot CSG baker so texel density matches in every level.",
+  "tech_panel": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "concrete": {
+    "tile_m": 4.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "ceiling_tiles": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "floor_tiles": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "crate": {
+    "tile_m": 1.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "hazard_stripes": {
+    "tile_m": 1.0,
+    "normal_scale": 0.8,
+    "source": "custom"
+  },
+  "light_panel": {
+    "tile_m": 1.0,
+    "normal_scale": 1.0,
+    "emission_energy": 6.0,
+    "source": "custom"
+  },
+  "rust_metal": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "custom"
+  },
+  "brick_wall": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "Material Maker example: improved_brick"
+  },
+  "stone_blocks": {
+    "tile_m": 3.0,
+    "normal_scale": 1.0,
+    "source": "Material Maker example: stone_wall"
+  },
+  "diamond_plate": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "Material Maker example: metal_pattern"
+  },
+  "lava": {
+    "tile_m": 4.0,
+    "normal_scale": 0.6,
+    "emission_energy": 3.0,
+    "source": "Material Maker example: lava"
+  },
+  "crate_large": {
+    "tile_m": 2.0,
+    "normal_scale": 1.0,
+    "source": "alias of crate (2 m crates)",
+    "alias": "crate"
+  }
+}

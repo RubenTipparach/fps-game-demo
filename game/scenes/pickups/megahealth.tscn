@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Pickup.cs" id="1_Pickup"]
+[ext_resource type="Material" path="res://materials/props/megahealth.tres" id="4_megahealth"]
+[ext_resource type="Material" path="res://materials/props/gunmetal_light.tres" id="6_gunmetal_lig"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.7
+
+[sub_resource type="SphereMesh" id="SphereMesh_3"]
+radius = 0.24
+height = 0.48
+radial_segments = 16
+rings = 8
+
+[sub_resource type="TorusMesh" id="TorusMesh_5"]
+inner_radius = 0.27
+outer_radius = 0.31
+rings = 24
+ring_segments = 6
+
+[node name="Megahealth" type="Area3D"]
+collision_layer = 8
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_Pickup")
+Kind = 1
+Amount = 100
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+shape = SubResource("SphereShape3D_2")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0.0, 0.4, 0.0)
+
+[node name="Orb" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("SphereMesh_3")
+material_override = ExtResource("4_megahealth")
+position = Vector3(0.0, 0.1, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Ring" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("TorusMesh_5")
+material_override = ExtResource("6_gunmetal_lig")
+position = Vector3(0.0, 0.1, 0.0)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_func_godot_f"]
+[ext_resource type="PackedScene" path="res://scenes/props/explosive_barrel.tscn" id="2_explosive_ba"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+classname = "misc_explobox"
+description = "Explosive barrel."
+meta_properties = Dictionary[String, Variant]({
+"size": AABB(-12, -12, 0, 12, 12, 38),
+"color": Color(1.0, 0.8, 0.2, 1.0)
+})
+scene_file = ExtResource("2_explosive_ba")
+apply_rotation_on_map_build = true
