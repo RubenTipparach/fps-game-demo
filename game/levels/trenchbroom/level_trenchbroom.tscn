@@ -2205,10 +2205,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7000122, 7)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("10_pxt3h")
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "classname": "trigger_hurt",
 "dmg": 45
-})
+}
 
 [node name="entity_7_brush_0_collision_shape" type="CollisionShape3D" parent="Navigation/Map/entity_7_trigger_hurt" unique_id=425434936]
 shape = SubResource("ConvexPolygonShape3D_atijp")
@@ -2218,10 +2218,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2.5, 17.999996)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("10_pxt3h")
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "classname": "trigger_hurt",
 "dmg": 60
-})
+}
 
 [node name="entity_8_brush_0_collision_shape" type="CollisionShape3D" parent="Navigation/Map/entity_8_trigger_hurt" unique_id=619763264]
 shape = SubResource("ConvexPolygonShape3D_4dsip")
@@ -2231,11 +2231,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.200001, 0.70000005, -0.999
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("10_pxt3h")
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "angle": "180",
 "classname": "trigger_push",
 "speed": 480
-})
+}
 
 [node name="entity_9_brush_0_collision_shape" type="CollisionShape3D" parent="Navigation/Map/entity_9_trigger_push" unique_id=1980375238]
 shape = SubResource("ConvexPolygonShape3D_pwt3c")
@@ -2245,9 +2245,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.7, 1.4, 18)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("10_pxt3h")
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "classname": "trigger_secret"
-})
+}
 
 [node name="entity_10_brush_0_collision_shape" type="CollisionShape3D" parent="Navigation/Map/entity_10_trigger_secret" unique_id=1798836575]
 shape = SubResource("ConvexPolygonShape3D_kyqf1")
@@ -2257,10 +2257,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 30.5)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("10_pxt3h")
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "classname": "trigger_message",
 "message": "The lava is hot. Use the jump pad to reach the gallery."
-})
+}
 
 [node name="entity_11_brush_0_collision_shape" type="CollisionShape3D" parent="Navigation/Map/entity_11_trigger_message" unique_id=430450822]
 shape = SubResource("ConvexPolygonShape3D_cltnr")
@@ -2400,291 +2400,291 @@ script = ExtResource("14_1jtsn")
 
 [node name="entity_40_monster_grunt" parent="Navigation/Map" unique_id=1527961872 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 27.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_grunt",
 "origin": "880 0 0"
-})
+}
 
 [node name="entity_41_monster_grunt" parent="Navigation/Map" unique_id=2142587050 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 0, 18)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_grunt",
 "origin": "576 -192 0"
-})
+}
 
 [node name="entity_42_monster_grunt" parent="Navigation/Map" unique_id=1645869506 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-0.9396927, 0, 0.34202006, 0, 1, 0, -0.34202006, 0, -0.9396927, 6, 0, 16)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "340",
 "classname": "monster_grunt",
 "origin": "512 192 0"
-})
+}
 
 [node name="entity_43_monster_grunt" parent="Navigation/Map" unique_id=583750999 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 1)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_grunt",
 "origin": "32 0 0"
-})
+}
 
 [node name="entity_44_monster_grunt" parent="Navigation/Map" unique_id=1902194922 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 4, -5.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_grunt",
 "origin": "-176 -192 128"
-})
+}
 
 [node name="entity_45_monster_grunt" parent="Navigation/Map" unique_id=800038757 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 9, 4, -5.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "20",
 "classname": "monster_grunt",
 "origin": "-176 288 128"
-})
+}
 
 [node name="entity_46_monster_drone" parent="Navigation/Map" unique_id=1631825209 instance=ExtResource("16_1jq8n")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4, 3.5, 7)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_drone",
 "origin": "224 -128 112"
-})
+}
 
 [node name="entity_47_monster_drone" parent="Navigation/Map" unique_id=490142819 instance=ExtResource("16_1jq8n")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 4.5, 12)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_drone",
 "origin": "384 192 144"
-})
+}
 
 [node name="entity_48_monster_brute" parent="Navigation/Map" unique_id=1159994846 instance=ExtResource("17_2v71q")]
 transform = Transform3D(-0.86602545, 0, 0.49999988, 0, 1, 0, -0.49999988, 0, -0.86602545, -12, 0, 0.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "330",
 "classname": "monster_brute",
 "origin": "16 -384 0"
-})
+}
 
 [node name="entity_49_monster_grunt" parent="Navigation/Map" unique_id=1517492223 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -22, 0, 13)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "90",
 "classname": "monster_grunt",
 "origin": "416 -704 0"
-})
+}
 
 [node name="entity_50_monster_grunt" parent="Navigation/Map" unique_id=1313251578 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-0.4999999, 0, -0.86602545, 0, 1, 0, 0.86602545, 0, -0.4999999, -26, 0, 22)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "60",
 "classname": "monster_grunt",
 "origin": "704 -832 0"
-})
+}
 
 [node name="entity_51_monster_brute" parent="Navigation/Map" unique_id=1727978959 instance=ExtResource("17_2v71q")]
 transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -19, 0, 20.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "90",
 "classname": "monster_brute",
 "origin": "656 -608 0"
-})
+}
 
 [node name="entity_52_monster_drone" parent="Navigation/Map" unique_id=1416825669 instance=ExtResource("16_1jq8n")]
 transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -24, 4, 24)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "90",
 "classname": "monster_drone",
 "origin": "768 -768 128"
-})
+}
 
 [node name="entity_53_monster_grunt" parent="Navigation/Map" unique_id=806031472 instance=ExtResource("15_v8qjh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 4, -17)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_grunt",
 "origin": "-544 0 128"
-})
+}
 
 [node name="entity_54_monster_brute" parent="Navigation/Map" unique_id=1996482325 instance=ExtResource("17_2v71q")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3, 4, -29)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_brute",
 "origin": "-928 -96 128"
-})
+}
 
 [node name="entity_55_monster_drone" parent="Navigation/Map" unique_id=420201564 instance=ExtResource("16_1jq8n")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3, 7, -24)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "ambush": 0,
 "angle": "0",
 "classname": "monster_drone",
 "origin": "-768 96 224"
-})
+}
 
 [node name="entity_56_item_shells" parent="Navigation/Map" unique_id=1035149185 instance=ExtResource("18_hiv3w")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3, 0, 38)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_shells",
 "origin": "1216 96 0"
-})
+}
 
 [node name="entity_57_item_armor" parent="Navigation/Map" unique_id=1607504296 instance=ExtResource("19_3y3y8")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3, 0, 38)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_armor",
 "origin": "1216 -96 0"
-})
+}
 
 [node name="entity_58_item_health" parent="Navigation/Map" unique_id=2080633857 instance=ExtResource("20_nhnsx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 32)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_health",
 "origin": "1024 0 0"
-})
+}
 
 [node name="entity_59_weapon_chaingun" parent="Navigation/Map" unique_id=68694729 instance=ExtResource("21_7h3i5")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8.5, 0, 12.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "weapon_chaingun",
 "origin": "400 -272 0"
-})
+}
 
 [node name="entity_60_item_bullets" parent="Navigation/Map" unique_id=321473599 instance=ExtResource("22_vq14a")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 12, 0, 22)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_bullets",
 "origin": "704 384 0"
-})
+}
 
 [node name="entity_61_item_health" parent="Navigation/Map" unique_id=501295713 instance=ExtResource("20_nhnsx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 0, 22)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_health",
 "origin": "704 -448 0"
-})
+}
 
 [node name="entity_62_item_shells" parent="Navigation/Map" unique_id=2088857445 instance=ExtResource("18_hiv3w")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14, 0, 12)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_shells",
 "origin": "384 448 0"
-})
+}
 
 [node name="entity_63_item_health" parent="Navigation/Map" unique_id=29670272 instance=ExtResource("20_nhnsx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_health",
 "origin": "64 0 0"
-})
+}
 
 [node name="entity_64_weapon_rocketlauncher" parent="Navigation/Map" unique_id=1623830168 instance=ExtResource("23_wv1aa")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14, 4, -5.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "weapon_rocketlauncher",
 "origin": "-176 448 128"
-})
+}
 
 [node name="entity_65_item_rockets" parent="Navigation/Map" unique_id=457380394 instance=ExtResource("24_u6vyv")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 12, 4, -5.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_rockets",
 "origin": "-176 384 128"
-})
+}
 
 [node name="entity_66_item_armor" parent="Navigation/Map" unique_id=90292022 instance=ExtResource("19_3y3y8")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 4, -5.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_armor",
 "origin": "-176 -448 128"
-})
+}
 
 [node name="entity_67_item_bullets" parent="Navigation/Map" unique_id=2108590578 instance=ExtResource("22_vq14a")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -28, 0, 14.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_bullets",
 "origin": "464 -896 0"
-})
+}
 
 [node name="entity_68_item_health" parent="Navigation/Map" unique_id=818184007 instance=ExtResource("20_nhnsx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -18, 0, 12)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_health",
 "origin": "384 -576 0"
-})
+}
 
 [node name="entity_69_item_rockets" parent="Navigation/Map" unique_id=163424810 instance=ExtResource("24_u6vyv")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -28, 2, 12)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_rockets",
 "origin": "384 -896 64"
-})
+}
 
 [node name="entity_70_item_megahealth" parent="Navigation/Map" unique_id=450347022 instance=ExtResource("25_ldw6u")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -31.8, 0, 18)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_megahealth",
 "origin": "576 -1017.6 0"
-})
+}
 
 [node name="entity_71_item_health" parent="Navigation/Map" unique_id=267613256 instance=ExtResource("20_nhnsx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 4, -12)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_health",
 "origin": "-384 0 128"
-})
+}
 
 [node name="entity_72_item_shells" parent="Navigation/Map" unique_id=128884363 instance=ExtResource("18_hiv3w")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4.5, 4, -23)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_shells",
 "origin": "-736 -144 128"
-})
+}
 
 [node name="entity_73_item_bullets" parent="Navigation/Map" unique_id=156392488 instance=ExtResource("22_vq14a")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4.5, 4, -23)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "amount": 0,
 "classname": "item_bullets",
 "origin": "-736 144 128"
-})
+}
 
 [node name="entity_74_misc_explobox" parent="Navigation/Map" unique_id=1794865597 instance=ExtResource("26_bk5ox")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 0, 13)
@@ -2703,10 +2703,10 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -17.
 
 [node name="entity_79_info_exit" parent="Navigation/Map" unique_id=1406902244 instance=ExtResource("27_ix218")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 4.3, -27.5)
-func_godot_properties = Dictionary[String, Variant]({
+func_godot_properties = {
 "classname": "info_exit",
 "origin": "-880 0 137.6"
-})
+}
 
 [node name="LavaObstacle" type="NavigationObstacle3D" parent="Navigation" unique_id=472440935]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 7)

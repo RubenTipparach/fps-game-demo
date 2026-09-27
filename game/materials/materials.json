@@ -33,7 +33,7 @@
   "light_panel": {
     "tile_m": 1.0,
     "normal_scale": 1.0,
-    "emission_energy": 6.0,
+    "emission_energy": 9.0,
     "source": "custom"
   },
   "rust_metal": {
@@ -59,8 +59,10 @@
   "lava": {
     "tile_m": 4.0,
     "normal_scale": 0.6,
-    "emission_energy": 1.8,
-    "source": "Material Maker example: lava"
+    "emission_energy": 3.0,
+    "albedo_ramp": [[0.025, 0.02, 0.018], [0.16, 0.12, 0.1]],
+    "albedo_under_emission": 0.85,
+    "source": "Material Maker example: lava (albedo remapped to a dark crust)"
   },
   "crate_large": {
     "tile_m": 2.0,
