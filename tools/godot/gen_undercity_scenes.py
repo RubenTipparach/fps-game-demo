@@ -129,12 +129,13 @@ def areas():
 
 
 def bed():
-    """Capsule 12: a use box a little larger than the capsule, so the ray meets it first."""
+    """Capsule 12: a use box a little larger than the capsule and as tall as a standing eye line
+    (2.2 m), so the ray meets it before the capsule's shell from anywhere in the corridor."""
     s = Scene("Bed", "Node3D")
     s.nodes[0][3].update(script=script(s, "Entities/Bed.cs"))
     s.node("Body", "StaticBody3D", ".", collision_layer=PICKUP, collision_mask=0)
-    s.node("CollisionShape3D", "CollisionShape3D", "Body", position=v3(0, 0.65, 0),
-           shape=s.sub_res("BoxShape3D", size=v3(2.6, 1.3, 3.8)))
+    s.node("CollisionShape3D", "CollisionShape3D", "Body", position=v3(0, 1.1, 0),
+           shape=s.sub_res("BoxShape3D", size=v3(2.6, 2.2, 3.8)))
     s.save(out("bed.tscn"))
 
 
