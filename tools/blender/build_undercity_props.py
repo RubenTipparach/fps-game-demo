@@ -209,6 +209,7 @@ def material_from_tres(name, path):
     normal = _tex(props, ext, "normal_texture")
     if normal and props.get("normal_enabled") == "true":
         nmap = nt.nodes.new("ShaderNodeNormalMap")
+        nmap.inputs["Strength"].default_value = float(props.get("normal_scale", 1.0))
         nt.links.new(image(normal, False).outputs["Color"], nmap.inputs["Color"])
         nt.links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
     if props.get("emission_enabled") == "true":

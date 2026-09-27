@@ -174,7 +174,7 @@ def sheet(ids, per_row=11, spacing=1.25, row_gap=3.0):
 
 
 def walk_strip(cid, table):
-    reset(2400, 900)
+    reset(2400, 1080)
     studio()
     ground = flat_material("ground", (0.045, 0.048, 0.056))
     line = flat_material("line", (0.25, 0.27, 0.3))
@@ -193,8 +193,8 @@ def walk_strip(cid, table):
         arm.location = (0.0, y, 0.0)
         frame = k * n / 4.0
         play(arm, clips, "walk", frame)
-        label(f"{cid} walk  t = {frame / fps:.3f} s", (0.5, y, -0.2), 0.09, text, rot=(90.0, 0.0, 90.0))
-    ortho_camera((0.0, 0.0, 0.85), 4 * spacing + 0.2, (88.0, 0.0, 90.0))
+        label(f"{cid} walk  t = {frame / fps:.3f} s of {n / fps:.3f} s", (0.5, y, -0.17), 0.08, text, rot=(90.0, 0.0, 90.0))
+    ortho_camera((0.0, 0.0, 0.82), 4 * spacing + 0.4, (88.0, 0.0, 90.0))
     render(os.path.join(SHOTS, "characters_walk.png"))
 
 

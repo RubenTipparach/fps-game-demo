@@ -1270,6 +1270,7 @@ def make_materials(table):
             bsdf.inputs["Alpha"].default_value = spec["alpha"]
             mat.surface_render_method = "BLENDED"
         mat.diffuse_color = (*lin, spec["alpha"])
+        mat.use_backface_culling = True     # every segment is a closed solid (glTF doubleSided false)
 
 
 def make_armature(cid, sk, coll):
