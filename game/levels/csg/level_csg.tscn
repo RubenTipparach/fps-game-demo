@@ -1,46 +1,54 @@
-[gd_scene format=3 uid="uid://drmlvspi7bv3u"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://cyo1lsvny5xxh" path="res://scripts/World/LevelRoot.cs" id="1_LevelRoot"]
+[ext_resource type="Script" path="res://scripts/World/LevelRoot.cs" id="1_LevelRoot"]
 [ext_resource type="Material" path="res://materials/concrete.tres" id="2_concrete"]
 [ext_resource type="Material" path="res://materials/tech_panel.tres" id="3_tech_panel"]
 [ext_resource type="Material" path="res://materials/floor_tiles.tres" id="4_floor_tiles"]
 [ext_resource type="Material" path="res://materials/ceiling_tiles.tres" id="5_ceiling_tile"]
-[ext_resource type="Material" path="res://materials/hazard_stripes.tres" id="6_hazard_strip"]
-[ext_resource type="Material" path="res://materials/crate.tres" id="7_crate"]
-[ext_resource type="Material" path="res://materials/brick_wall.tres" id="8_brick_wall"]
-[ext_resource type="Material" path="res://materials/diamond_plate.tres" id="9_diamond_plat"]
-[ext_resource type="Material" path="res://materials/rust_metal.tres" id="10_rust_metal"]
+[ext_resource type="Material" path="res://materials/crate.tres" id="6_crate"]
+[ext_resource type="Material" path="res://materials/brick_wall.tres" id="7_brick_wall"]
+[ext_resource type="Material" path="res://materials/diamond_plate.tres" id="8_diamond_plat"]
+[ext_resource type="Material" path="res://materials/rust_metal.tres" id="9_rust_metal"]
+[ext_resource type="Material" path="res://materials/hazard_stripes.tres" id="10_hazard_strip"]
 [ext_resource type="Material" path="res://materials/crate_large.tres" id="11_crate_large"]
 [ext_resource type="Material" path="res://materials/stone_blocks.tres" id="12_stone_blocks"]
-[ext_resource type="NavigationMesh" uid="uid://s6bj2lnhiw2" path="res://levels/csg/level_csg_navmesh.res" id="13_n3cx3"]
-[ext_resource type="ArrayMesh" uid="uid://r2cjbf4ipnbr" path="res://levels/csg/level_csg_geometry.res" id="14_xt7qh"]
-[ext_resource type="Shape3D" uid="uid://dnxjeovabbwxs" path="res://levels/csg/level_csg_collision.res" id="15_6xlfo"]
-[ext_resource type="PackedScene" path="res://scenes/props/ceiling_light.tscn" id="15_ceiling_ligh"]
-[ext_resource type="PackedScene" path="res://scenes/props/wall_lamp.tscn" id="16_wall_lamp"]
-[ext_resource type="LightmapGIData" uid="uid://jclniq5fg5x2" path="res://levels/csg/level_csg.lmbake" id="16_xt7qh"]
-[ext_resource type="PackedScene" path="res://scenes/props/player_start.tscn" id="17_player_start"]
-[ext_resource type="PackedScene" path="res://scenes/props/doorway.tscn" id="18_doorway"]
-[ext_resource type="PackedScene" path="res://scenes/props/archway_400x400.tscn" id="19_archway_400x"]
-[ext_resource type="PackedScene" path="res://scenes/props/archway_400x350.tscn" id="20_archway_400x"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/grunt.tscn" id="21_grunt"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/drone.tscn" id="22_drone"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/brute.tscn" id="23_brute"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/shells.tscn" id="24_shells"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/armor.tscn" id="25_armor"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/health.tscn" id="26_health"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_chaingun.tscn" id="27_weapon_chain"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/bullets.tscn" id="28_bullets"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_rocket_launcher.tscn" id="29_weapon_rocke"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/rockets.tscn" id="30_rockets"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/megahealth.tscn" id="31_megahealth"]
-[ext_resource type="PackedScene" path="res://scenes/props/explosive_barrel.tscn" id="32_explosive_ba"]
-[ext_resource type="PackedScene" path="res://scenes/props/exit.tscn" id="33_exit"]
-[ext_resource type="Script" uid="uid://delu8pv1fial1" path="res://scripts/World/Trigger.cs" id="34_Trigger"]
+[ext_resource type="Material" path="res://materials/sky_night.tres" id="13_sky_night"]
+[ext_resource type="PackedScene" path="res://scenes/props/ceiling_light.tscn" id="16_ceiling_ligh"]
+[ext_resource type="PackedScene" path="res://scenes/props/wall_lamp.tscn" id="17_wall_lamp"]
+[ext_resource type="PackedScene" path="res://scenes/props/player_start.tscn" id="18_player_start"]
+[ext_resource type="PackedScene" path="res://scenes/props/doorway.tscn" id="19_doorway"]
+[ext_resource type="PackedScene" path="res://scenes/props/archway_400x400.tscn" id="20_archway_400x"]
+[ext_resource type="PackedScene" path="res://scenes/props/archway_400x350.tscn" id="21_archway_400x"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/grunt.tscn" id="22_grunt"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/drone.tscn" id="23_drone"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brute.tscn" id="24_brute"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/shells.tscn" id="25_shells"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/armor.tscn" id="26_armor"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/health.tscn" id="27_health"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_chaingun.tscn" id="28_weapon_chain"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/bullets.tscn" id="29_bullets"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/weapon_rocket_launcher.tscn" id="30_weapon_rocke"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/rockets.tscn" id="31_rockets"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/megahealth.tscn" id="32_megahealth"]
+[ext_resource type="PackedScene" path="res://scenes/props/explosive_barrel.tscn" id="33_explosive_ba"]
+[ext_resource type="PackedScene" path="res://scenes/props/exit.tscn" id="34_exit"]
+[ext_resource type="Script" path="res://scripts/World/Trigger.cs" id="35_Trigger"]
 
-[sub_resource type="Environment" id="Environment_14"]
+[sub_resource type="NavigationMesh" id="NavigationMesh_14"]
+agent_height = 1.8
+agent_radius = 0.4
+agent_max_climb = 0.5
+agent_max_slope = 46.0
+cell_size = 0.2
+cell_height = 0.1
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+
+[sub_resource type="Environment" id="Environment_15"]
 background_mode = 1
-background_color = Color(0.039216, 0.043137, 0.054902, 1)
+background_color = Color(0.039216, 0.043137, 0.054902, 1.0)
 ambient_light_source = 1
+reflected_light_source = 0
 tonemap_mode = 4
 tonemap_exposure = 1.15
 ssao_enabled = true
@@ -51,954 +59,2457 @@ glow_enabled = true
 glow_intensity = 0.55
 glow_bloom = 0.04
 glow_hdr_threshold = 1.1
+glow_blend_mode = 1
 fog_enabled = true
-fog_light_color = Color(0.164706, 0.14902, 0.133333, 1)
+fog_light_color = Color(0.164706, 0.14902, 0.133333, 1.0)
 fog_density = 0.004
 fog_sky_affect = 0.0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_35"]
-size = Vector3(3.2, 2, 2.8)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_36"]
-size = Vector3(4, 3, 2)
+size = Vector3(3.2, 2.0, 2.8)
 
-[node name="LevelCSG" type="Node3D" unique_id=75411153]
+[sub_resource type="BoxShape3D" id="BoxShape3D_37"]
+size = Vector3(4.0, 3.0, 2.0)
+
+[node name="LevelCSG" type="Node3D"]
 script = ExtResource("1_LevelRoot")
 LevelTitle = "E1M1: Pump Station"
 
-[node name="CSGSource" type="CSGCombiner3D" parent="." unique_id=1709778397 groups=["csg_source", "editor_only"]]
+[node name="CSGSource" type="CSGCombiner3D" parent="." groups=["csg_source", "editor_only"]]
 visible = false
+use_collision = false
 
-[node name="Rock" type="CSGBox3D" parent="CSGSource" unique_id=1784702779]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.25, 3)
-size = Vector3(54, 13.5, 86)
+[node name="Rock" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-7.0, 5.25, 3.0)
+size = Vector3(54.0, 13.5, 86.0)
+operation = 0
 material = ExtResource("2_concrete")
 
-[node name="Start_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1206130470]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 36)
+[node name="Start_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 2.25, 36.0)
+size = Vector3(12.0, 5.1, 12.0)
 operation = 2
-size = Vector3(12, 5.1, 12)
 material = ExtResource("3_tech_panel")
 
-[node name="Start_Floor" type="CSGBox3D" parent="CSGSource" unique_id=873463411]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 36)
-size = Vector3(12, 0.35, 12)
+[node name="Start_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, 36.0)
+size = Vector3(12.0, 0.35, 12.0)
+operation = 0
 material = ExtResource("4_floor_tiles")
 
-[node name="Start_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1632872578]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.675, 36)
-size = Vector3(12, 0.35, 12)
+[node name="Start_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 4.675, 36.0)
+size = Vector3(12.0, 0.35, 12.0)
+operation = 0
 material = ExtResource("5_ceiling_tile")
 
-[node name="StartTrimS" type="CSGBox3D" parent="CSGSource" unique_id=1111631038]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 41.8)
-size = Vector3(12, 0.6, 0.4)
-material = ExtResource("6_hazard_strip")
+[node name="StartCrateA" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.0, 0.5, 40.0)
+size = Vector3(2.0, 1.0, 2.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="StartTrimW" type="CSGBox3D" parent="CSGSource" unique_id=1175065487]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, 0.3, 36)
-size = Vector3(0.4, 0.6, 12)
-material = ExtResource("6_hazard_strip")
+[node name="StartCrateB" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.0, 1.5, 40.0)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="StartTrimE" type="CSGBox3D" parent="CSGSource" unique_id=663297620]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0.3, 36)
-size = Vector3(0.4, 0.6, 12)
-material = ExtResource("6_hazard_strip")
+[node name="StartCrateC" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(4.5, 0.5, 31.5)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="StartCrateA" type="CSGBox3D" parent="CSGSource" unique_id=1849061036]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, 40)
-size = Vector3(2, 1, 2)
-material = ExtResource("7_crate")
-
-[node name="StartCrateB" type="CSGBox3D" parent="CSGSource" unique_id=802010542]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, 40)
-material = ExtResource("7_crate")
-
-[node name="StartCrateC" type="CSGBox3D" parent="CSGSource" unique_id=645966218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.5, 31.5)
-material = ExtResource("7_crate")
-
-[node name="CorridorA_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1383852905]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 23.155)
+[node name="CorridorA_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 2.0, 23.155)
+size = Vector3(4.0, 4.6, 13.71)
 operation = 2
-size = Vector3(4, 4.6, 13.71)
-material = ExtResource("8_brick_wall")
+material = ExtResource("7_brick_wall")
 
-[node name="CorridorA_Floor" type="CSGBox3D" parent="CSGSource" unique_id=180955655]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 23.155)
-size = Vector3(4, 0.35, 13.71)
-material = ExtResource("9_diamond_plat")
+[node name="CorridorA_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, 23.155)
+size = Vector3(4.0, 0.35, 13.71)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="CorridorA_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1692093967]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.175, 23.155)
-size = Vector3(4, 0.35, 13.71)
+[node name="CorridorA_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 4.175, 23.155)
+size = Vector3(4.0, 0.35, 13.71)
+operation = 0
 material = ExtResource("5_ceiling_tile")
 
-[node name="CorrRibW0" type="CSGBox3D" parent="CSGSource" unique_id=620911682]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, 20)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrRibE0" type="CSGBox3D" parent="CSGSource" unique_id=1361129327]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, 20)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrRibW1" type="CSGBox3D" parent="CSGSource" unique_id=1530909584]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, 26)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrRibE1" type="CSGBox3D" parent="CSGSource" unique_id=282459525]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, 26)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="DoorSouth_Carve" type="CSGBox3D" parent="CSGSource" unique_id=3080497]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 16.05)
+[node name="DoorSouth_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 1.45, 16.05)
+size = Vector3(3.0, 3.5, 0.7)
 operation = 2
-size = Vector3(3, 3.5, 0.7)
 material = ExtResource("3_tech_panel")
 
-[node name="DoorSouth_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1727403217]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 16.05)
-size = Vector3(3, 0.35, 0.7)
-material = ExtResource("9_diamond_plat")
+[node name="DoorSouth_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, 16.05)
+size = Vector3(3.0, 0.35, 0.7)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Hall_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1470254067]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0.9)
+[node name="Hall_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 5.0, 0.9)
+size = Vector3(28.0, 10.6, 29.8)
 operation = 2
-size = Vector3(28, 10.6, 29.8)
 material = ExtResource("2_concrete")
 
-[node name="Hall_Floor" type="CSGBox3D" parent="CSGSource" unique_id=629617364]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 0.9)
-size = Vector3(28, 0.35, 29.8)
+[node name="Hall_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, 0.9)
+size = Vector3(28.0, 0.35, 29.8)
+operation = 0
 material = ExtResource("2_concrete")
 
-[node name="Hall_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=797894527]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.175, 0.9)
-size = Vector3(28, 0.35, 29.8)
-material = ExtResource("10_rust_metal")
+[node name="Hall_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 10.175, 0.9)
+size = Vector3(28.0, 0.35, 29.8)
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="HallTrimW1" type="CSGBox3D" parent="CSGSource" unique_id=1001725295]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.9, 0.65, -7)
-size = Vector3(0.2, 1.3, 14)
-material = ExtResource("3_tech_panel")
-
-[node name="HallTrimW2" type="CSGBox3D" parent="CSGSource" unique_id=565996170]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.9, 0.65, 9.9)
-size = Vector3(0.2, 1.3, 11.8)
-material = ExtResource("3_tech_panel")
-
-[node name="HallTrimN1" type="CSGBox3D" parent="CSGSource" unique_id=1151847207]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.75, 0.65, -13.9)
-size = Vector3(12.5, 1.3, 0.2)
-material = ExtResource("3_tech_panel")
-
-[node name="HallTrimN2" type="CSGBox3D" parent="CSGSource" unique_id=1679619617]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0.65, -13.9)
-size = Vector3(12.5, 1.3, 0.2)
-material = ExtResource("3_tech_panel")
-
-[node name="HallTrimS1" type="CSGBox3D" parent="CSGSource" unique_id=1244885198]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.75, 0.65, 15.7)
-size = Vector3(12.5, 1.3, 0.2)
-material = ExtResource("3_tech_panel")
-
-[node name="HallTrimS2" type="CSGBox3D" parent="CSGSource" unique_id=1678847174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 0.65, 15.7)
-size = Vector3(8.5, 1.3, 0.2)
-material = ExtResource("3_tech_panel")
-
-[node name="HallBandW" type="CSGBox3D" parent="CSGSource" unique_id=771279248]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.925, 7.9, 0.9)
-size = Vector3(0.15, 0.6, 29.8)
-material = ExtResource("6_hazard_strip")
-
-[node name="HallBandE" type="CSGBox3D" parent="CSGSource" unique_id=463003245]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.925, 7.9, 0.9)
-size = Vector3(0.15, 0.6, 29.8)
-material = ExtResource("6_hazard_strip")
-
-[node name="HallBandN" type="CSGBox3D" parent="CSGSource" unique_id=1836336784]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.9, -13.925)
-size = Vector3(28, 0.6, 0.15)
-material = ExtResource("6_hazard_strip")
-
-[node name="HallBandS" type="CSGBox3D" parent="CSGSource" unique_id=750911868]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.9, 15.725)
-size = Vector3(28, 0.6, 0.15)
-material = ExtResource("6_hazard_strip")
-
-[node name="Pump0" type="CSGCylinder3D" parent="CSGSource" unique_id=883555350]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.5, -6)
+[node name="Pump0" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 3.5, -6.0)
 radius = 1.4
 height = 7.0
 sides = 16
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="PumpCap0" type="CSGCylinder3D" parent="CSGSource" unique_id=1706891832]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.25, -6)
+[node name="PumpCap0" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 7.25, -6.0)
 radius = 1.65
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpBase0" type="CSGCylinder3D" parent="CSGSource" unique_id=1996069414]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.25, -6)
+[node name="PumpBase0" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 0.25, -6.0)
 radius = 1.7
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpPipe0" type="CSGCylinder3D" parent="CSGSource" unique_id=76225605]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 8.85, -6)
+[node name="PumpPipe0" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 8.85, -6.0)
 radius = 0.45
 height = 2.7
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="Pump1" type="CSGCylinder3D" parent="CSGSource" unique_id=96327547]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, -6)
+[node name="Pump1" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 3.5, -6.0)
 radius = 1.4
 height = 7.0
 sides = 16
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="PumpCap1" type="CSGCylinder3D" parent="CSGSource" unique_id=252379625]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.25, -6)
+[node name="PumpCap1" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 7.25, -6.0)
 radius = 1.65
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpBase1" type="CSGCylinder3D" parent="CSGSource" unique_id=298890998]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.25, -6)
+[node name="PumpBase1" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 0.25, -6.0)
 radius = 1.7
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpPipe1" type="CSGCylinder3D" parent="CSGSource" unique_id=1168354221]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8.85, -6)
+[node name="PumpPipe1" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 8.85, -6.0)
 radius = 0.45
 height = 2.7
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="Pump2" type="CSGCylinder3D" parent="CSGSource" unique_id=944864950]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.5, 6)
+[node name="Pump2" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 3.5, 6.0)
 radius = 1.4
 height = 7.0
 sides = 16
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="PumpCap2" type="CSGCylinder3D" parent="CSGSource" unique_id=686000757]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 7.25, 6)
+[node name="PumpCap2" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 7.25, 6.0)
 radius = 1.65
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpBase2" type="CSGCylinder3D" parent="CSGSource" unique_id=1294503006]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.25, 6)
+[node name="PumpBase2" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 0.25, 6.0)
 radius = 1.7
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpPipe2" type="CSGCylinder3D" parent="CSGSource" unique_id=833641072]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 8.85, 6)
+[node name="PumpPipe2" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(-7.0, 8.85, 6.0)
 radius = 0.45
 height = 2.7
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="Pump3" type="CSGCylinder3D" parent="CSGSource" unique_id=2140085051]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, 6)
+[node name="Pump3" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 3.5, 6.0)
 radius = 1.4
 height = 7.0
 sides = 16
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="PumpCap3" type="CSGCylinder3D" parent="CSGSource" unique_id=490039459]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7.25, 6)
+[node name="PumpCap3" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 7.25, 6.0)
 radius = 1.65
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpBase3" type="CSGCylinder3D" parent="CSGSource" unique_id=214321047]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.25, 6)
+[node name="PumpBase3" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 0.25, 6.0)
 radius = 1.7
 height = 0.5
 sides = 16
+smooth_faces = true
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="PumpPipe3" type="CSGCylinder3D" parent="CSGSource" unique_id=88690741]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8.85, 6)
+[node name="PumpPipe3" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(7.0, 8.85, 6.0)
 radius = 0.45
 height = 2.7
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="PipeNorth" type="CSGCylinder3D" parent="CSGSource" unique_id=217538060]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 5.5, -6)
+[node name="PipeNorth" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(0.0, 5.5, -6.0)
 radius = 0.35
 height = 14.0
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
+rotation_degrees = Vector3(0.0, 0.0, 90.0)
 
-[node name="PipeSouth" type="CSGCylinder3D" parent="CSGSource" unique_id=1073897929]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 5.5, 6)
+[node name="PipeSouth" type="CSGCylinder3D" parent="CSGSource"]
+position = Vector3(0.0, 5.5, 6.0)
 radius = 0.35
 height = 14.0
 sides = 12
-material = ExtResource("10_rust_metal")
+smooth_faces = true
+operation = 0
+material = ExtResource("9_rust_metal")
+rotation_degrees = Vector3(0.0, 0.0, 90.0)
 
-[node name="Platform" type="CSGBox3D" parent="CSGSource" unique_id=1396698820]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-size = Vector3(8, 1, 6)
-material = ExtResource("9_diamond_plat")
+[node name="Platform" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 0.5, 0.0)
+size = Vector3(8.0, 1.0, 6.0)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="PlatformEdgeN" type="CSGBox3D" parent="CSGSource" unique_id=1723156302]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -3.1)
-size = Vector3(8, 1, 0.2)
-material = ExtResource("6_hazard_strip")
+[node name="PlatformEdgeN" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 0.5, -3.1)
+size = Vector3(8.0, 1.0, 0.2)
+operation = 0
+material = ExtResource("10_hazard_strip")
 
-[node name="PlatformRamp" type="CSGPolygon3D" parent="CSGSource" unique_id=1523866623]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2, 0, 3)
-polygon = PackedVector2Array(0, 1, 4, 0, 4, -0.4, 0, -0.4)
+[node name="PlatformRamp" type="CSGPolygon3D" parent="CSGSource"]
+position = Vector3(-2.0, 0.0, 3.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
+polygon = PackedVector2Array(0.0, 1.0, 4.0, 0.0, 4.0, -0.4, 0.0, -0.4)
 depth = 4.0
-material = ExtResource("9_diamond_plat")
+mode = 0
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step0" type="CSGBox3D" parent="CSGSource" unique_id=2119329062]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.2, 13.6)
-size = Vector3(4, 0.4, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 0.2, 13.6)
+size = Vector3(4.0, 0.4, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step1" type="CSGBox3D" parent="CSGSource" unique_id=188110105]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.4, 12.8)
-size = Vector3(4, 0.8, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 0.4, 12.8)
+size = Vector3(4.0, 0.8, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step2" type="CSGBox3D" parent="CSGSource" unique_id=1291504520]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.6, 12)
-size = Vector3(4, 1.2, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 0.6, 12.0)
+size = Vector3(4.0, 1.2, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step3" type="CSGBox3D" parent="CSGSource" unique_id=1126026569]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.8, 11.2)
-size = Vector3(4, 1.6, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 0.8, 11.2)
+size = Vector3(4.0, 1.6, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step4" type="CSGBox3D" parent="CSGSource" unique_id=840968092]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, 10.4)
-size = Vector3(4, 2, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step4" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 1.0, 10.4)
+size = Vector3(4.0, 2.0, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step5" type="CSGBox3D" parent="CSGSource" unique_id=1052437311]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.2, 9.6)
-size = Vector3(4, 2.4, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step5" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 1.2, 9.6)
+size = Vector3(4.0, 2.4, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step6" type="CSGBox3D" parent="CSGSource" unique_id=880320074]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.4, 8.8)
-size = Vector3(4, 2.8, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step6" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 1.4, 8.8)
+size = Vector3(4.0, 2.8, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step7" type="CSGBox3D" parent="CSGSource" unique_id=68619450]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.6, 8)
-size = Vector3(4, 3.2, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step7" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 1.6, 8.0)
+size = Vector3(4.0, 3.2, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step8" type="CSGBox3D" parent="CSGSource" unique_id=735440623]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.8, 7.2)
-size = Vector3(4, 3.6, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step8" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 1.8, 7.2)
+size = Vector3(4.0, 3.6, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Step9" type="CSGBox3D" parent="CSGSource" unique_id=94389096]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 6.4)
-size = Vector3(4, 4, 0.8)
-material = ExtResource("9_diamond_plat")
+[node name="Step9" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 2.0, 6.4)
+size = Vector3(4.0, 4.0, 0.8)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="Catwalk" type="CSGBox3D" parent="CSGSource" unique_id=77844155]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 3.85, -4)
-size = Vector3(4, 0.3, 20)
-material = ExtResource("9_diamond_plat")
+[node name="Catwalk" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(12.0, 3.85, -4.0)
+size = Vector3(4.0, 0.3, 20.0)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="CatwalkRail" type="CSGBox3D" parent="CSGSource" unique_id=197847044]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.95, 4.5, -4)
-size = Vector3(0.2, 1, 20)
-material = ExtResource("6_hazard_strip")
+[node name="CatwalkRail" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(9.95, 4.5, -4.0)
+size = Vector3(0.2, 1.0, 20.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
 
-[node name="CatwalkPost0" type="CSGBox3D" parent="CSGSource" unique_id=1803219603]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, -12)
+[node name="CatwalkPost0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(10.3, 1.85, -12.0)
 size = Vector3(0.4, 3.7, 0.4)
-material = ExtResource("10_rust_metal")
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="CatwalkPost1" type="CSGBox3D" parent="CSGSource" unique_id=1015697751]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, -6)
+[node name="CatwalkPost1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(10.3, 1.85, -6.0)
 size = Vector3(0.4, 3.7, 0.4)
-material = ExtResource("10_rust_metal")
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="CatwalkPost2" type="CSGBox3D" parent="CSGSource" unique_id=1985078561]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3, 1.85, 0)
+[node name="CatwalkPost2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(10.3, 1.85, 0.0)
 size = Vector3(0.4, 3.7, 0.4)
-material = ExtResource("10_rust_metal")
+operation = 0
+material = ExtResource("9_rust_metal")
 
-[node name="DoorNorth_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1138544414]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, -14.2)
+[node name="DoorNorth_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 1.45, -14.2)
+size = Vector3(3.0, 3.5, 0.6)
 operation = 2
-size = Vector3(3, 3.5, 0.6)
 material = ExtResource("3_tech_panel")
 
-[node name="DoorNorth_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1140973297]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -14.2)
-size = Vector3(3, 0.35, 0.6)
-material = ExtResource("9_diamond_plat")
+[node name="DoorNorth_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, -14.2)
+size = Vector3(3.0, 0.35, 0.6)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="ArchWest_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1512825849]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, 1.6, 2)
+[node name="ArchWest_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-14.2, 1.6, 2.0)
+size = Vector3(0.6, 3.8, 4.0)
 operation = 2
-size = Vector3(0.6, 3.8, 4)
 material = ExtResource("3_tech_panel")
 
-[node name="ArchWest_Floor" type="CSGBox3D" parent="CSGSource" unique_id=2057001475]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, -0.175, 2)
-size = Vector3(0.6, 0.35, 4)
+[node name="ArchWest_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-14.2, -0.175, 2.0)
+size = Vector3(0.6, 0.35, 4.0)
+operation = 0
 material = ExtResource("2_concrete")
 
-[node name="Storage_Carve" type="CSGBox3D" parent="CSGSource" unique_id=1266705082]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 2.5, 2)
+[node name="Storage_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-20.2, 2.5, 2.0)
+size = Vector3(11.6, 5.6, 16.0)
 operation = 2
-size = Vector3(11.6, 5.6, 16)
-material = ExtResource("8_brick_wall")
+material = ExtResource("7_brick_wall")
 
-[node name="Storage_Floor" type="CSGBox3D" parent="CSGSource" unique_id=170863411]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, -0.175, 2)
-size = Vector3(11.6, 0.35, 16)
+[node name="Storage_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-20.2, -0.175, 2.0)
+size = Vector3(11.6, 0.35, 16.0)
+operation = 0
 material = ExtResource("2_concrete")
 
-[node name="Storage_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=841856108]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 5.175, 2)
-size = Vector3(11.6, 0.35, 16)
+[node name="Storage_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-20.2, 5.175, 2.0)
+size = Vector3(11.6, 0.35, 16.0)
+operation = 0
 material = ExtResource("5_ceiling_tile")
 
-[node name="CrateStepA" type="CSGBox3D" parent="CSGSource" unique_id=1187679412]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 0.5, 1.5)
-material = ExtResource("7_crate")
+[node name="CrateStepA" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-23.5, 0.5, 1.5)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="CrateStepB" type="CSGBox3D" parent="CSGSource" unique_id=1421058945]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 1, 1)
-size = Vector3(2, 2, 2)
+[node name="CrateStepB" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-25.0, 1.0, 1.0)
+size = Vector3(2.0, 2.0, 2.0)
+operation = 0
 material = ExtResource("11_crate_large")
 
-[node name="CrateC" type="CSGBox3D" parent="CSGSource" unique_id=669037887]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 1, -4)
-size = Vector3(2, 2, 2)
+[node name="CrateC" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-18.0, 1.0, -4.0)
+size = Vector3(2.0, 2.0, 2.0)
+operation = 0
 material = ExtResource("11_crate_large")
 
-[node name="CrateD" type="CSGBox3D" parent="CSGSource" unique_id=708447467]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.5, -4)
-material = ExtResource("7_crate")
+[node name="CrateD" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-18.0, 2.5, -4.0)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="CrateE" type="CSGBox3D" parent="CSGSource" unique_id=957109366]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 1, 8)
-size = Vector3(2, 2, 2)
+[node name="CrateE" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-22.0, 1.0, 8.0)
+size = Vector3(2.0, 2.0, 2.0)
+operation = 0
 material = ExtResource("11_crate_large")
 
-[node name="CrateF" type="CSGBox3D" parent="CSGSource" unique_id=74515238]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 0.5, 8.5)
-material = ExtResource("7_crate")
+[node name="CrateF" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-20.5, 0.5, 8.5)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="CrateG" type="CSGBox3D" parent="CSGSource" unique_id=1361980348]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 0.5, 6.5)
-material = ExtResource("7_crate")
+[node name="CrateG" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-15.5, 0.5, 6.5)
+size = Vector3(1.0, 1.0, 1.0)
+operation = 0
+material = ExtResource("6_crate")
 
-[node name="Secret_Carve" type="CSGBox3D" parent="CSGSource" unique_id=336218569]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 3.1, 1.5)
+[node name="Secret_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-27.7, 3.1, 1.5)
+size = Vector3(3.6, 2.8, 3.0)
 operation = 2
-size = Vector3(3.6, 2.8, 3)
 material = ExtResource("12_stone_blocks")
 
-[node name="Secret_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1920378466]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 1.825, 1.5)
-size = Vector3(3.6, 0.35, 3)
+[node name="Secret_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-27.7, 1.825, 1.5)
+size = Vector3(3.6, 0.35, 3.0)
+operation = 0
 material = ExtResource("12_stone_blocks")
 
-[node name="Secret_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=1394048030]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 4.375, 1.5)
-size = Vector3(3.6, 0.35, 3)
+[node name="Secret_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-27.7, 4.375, 1.5)
+size = Vector3(3.6, 0.35, 3.0)
+operation = 0
 material = ExtResource("12_stone_blocks")
 
-[node name="CorridorB_Carve" type="CSGBox3D" parent="CSGSource" unique_id=50323187]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -20.205)
+[node name="CorridorB_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 2.0, -20.205)
+size = Vector3(4.0, 4.6, 11.61)
 operation = 2
-size = Vector3(4, 4.6, 11.61)
-material = ExtResource("8_brick_wall")
+material = ExtResource("7_brick_wall")
 
-[node name="CorridorB_Floor" type="CSGBox3D" parent="CSGSource" unique_id=171054808]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -20.205)
-size = Vector3(4, 0.35, 11.61)
-material = ExtResource("9_diamond_plat")
+[node name="CorridorB_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, -20.205)
+size = Vector3(4.0, 0.35, 11.61)
+operation = 0
+material = ExtResource("8_diamond_plat")
 
-[node name="CorridorB_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=206966079]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.175, -20.205)
-size = Vector3(4, 0.35, 11.61)
+[node name="CorridorB_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 4.175, -20.205)
+size = Vector3(4.0, 0.35, 11.61)
+operation = 0
 material = ExtResource("5_ceiling_tile")
 
-[node name="CorrBRibW0" type="CSGBox3D" parent="CSGSource" unique_id=1798336591]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, -18)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrBRibE0" type="CSGBox3D" parent="CSGSource" unique_id=688769947]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, -18)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrBRibW1" type="CSGBox3D" parent="CSGSource" unique_id=1947747053]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 2, -22.5)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="CorrBRibE1" type="CSGBox3D" parent="CSGSource" unique_id=1163406348]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2, -22.5)
-size = Vector3(0.4, 4, 0.6)
-material = ExtResource("10_rust_metal")
-
-[node name="Exit_Carve" type="CSGBox3D" parent="CSGSource" unique_id=692544580]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -32)
+[node name="Exit_Carve" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 3.0, -32.0)
+size = Vector3(14.0, 6.6, 12.0)
 operation = 2
-size = Vector3(14, 6.6, 12)
 material = ExtResource("12_stone_blocks")
 
-[node name="Exit_Floor" type="CSGBox3D" parent="CSGSource" unique_id=1057859991]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -32)
-size = Vector3(14, 0.35, 12)
+[node name="Exit_Floor" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, -0.175, -32.0)
+size = Vector3(14.0, 0.35, 12.0)
+operation = 0
 material = ExtResource("4_floor_tiles")
 
-[node name="Exit_Ceiling" type="CSGBox3D" parent="CSGSource" unique_id=27257895]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.175, -32)
-size = Vector3(14, 0.35, 12)
+[node name="Exit_Ceiling" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 6.175, -32.0)
+size = Vector3(14.0, 0.35, 12.0)
+operation = 0
 material = ExtResource("5_ceiling_tile")
 
-[node name="ExitPillar0" type="CSGBox3D" parent="CSGSource" unique_id=791531540]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3, -36.5)
-size = Vector3(1.2, 6, 1.2)
+[node name="ExitPillar0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 3.0, -36.5)
+size = Vector3(1.2, 6.0, 1.2)
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="ExitPillar1" type="CSGBox3D" parent="CSGSource" unique_id=442597224]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3, -36.5)
-size = Vector3(1.2, 6, 1.2)
+[node name="ExitPillarBase0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 0.3, -36.5)
+size = Vector3(1.6, 0.6, 1.6)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarCap0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 5.775, -36.5)
+size = Vector3(1.56, 0.45, 1.56)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarRing0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 0.675, -36.5)
+size = Vector3(1.32, 0.15, 1.32)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="ExitPillar1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 3.0, -36.5)
+size = Vector3(1.2, 6.0, 1.2)
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="ExitPillar2" type="CSGBox3D" parent="CSGSource" unique_id=750015286]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3, -27.5)
-size = Vector3(1.2, 6, 1.2)
+[node name="ExitPillarBase1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 0.3, -36.5)
+size = Vector3(1.6, 0.6, 1.6)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarCap1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 5.775, -36.5)
+size = Vector3(1.56, 0.45, 1.56)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarRing1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 0.675, -36.5)
+size = Vector3(1.32, 0.15, 1.32)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="ExitPillar2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 3.0, -27.5)
+size = Vector3(1.2, 6.0, 1.2)
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="ExitPillar3" type="CSGBox3D" parent="CSGSource" unique_id=875216864]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3, -27.5)
-size = Vector3(1.2, 6, 1.2)
+[node name="ExitPillarBase2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 0.3, -27.5)
+size = Vector3(1.6, 0.6, 1.6)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarCap2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 5.775, -27.5)
+size = Vector3(1.56, 0.45, 1.56)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="ExitPillarRing2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-5.5, 0.675, -27.5)
+size = Vector3(1.32, 0.15, 1.32)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="ExitPillar3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 3.0, -27.5)
+size = Vector3(1.2, 6.0, 1.2)
+operation = 0
 material = ExtResource("3_tech_panel")
 
-[node name="ExitDais" type="CSGBox3D" parent="CSGSource" unique_id=1101533369]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -33)
-size = Vector3(5, 0.3, 5)
-material = ExtResource("6_hazard_strip")
+[node name="ExitPillarBase3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 0.3, -27.5)
+size = Vector3(1.6, 0.6, 1.6)
+operation = 0
+material = ExtResource("12_stone_blocks")
 
-[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=2111791368]
-navigation_mesh = ExtResource("13_n3cx3")
+[node name="ExitPillarCap3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 5.775, -27.5)
+size = Vector3(1.56, 0.45, 1.56)
+operation = 0
+material = ExtResource("12_stone_blocks")
 
-[node name="Geometry" type="StaticBody3D" parent="Navigation" unique_id=405555412]
+[node name="ExitPillarRing3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(5.5, 0.675, -27.5)
+size = Vector3(1.32, 0.15, 1.32)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="ExitDais" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 0.15, -33.0)
+size = Vector3(5.0, 0.3, 5.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="SkylightShaft" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 10.8, 0.0)
+size = Vector3(6.0, 1.8, 6.0)
+operation = 2
+material = ExtResource("9_rust_metal")
+
+[node name="SkylightSky" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 11.675, 0.0)
+size = Vector3(6.02, 0.15, 6.02)
+operation = 0
+material = ExtResource("13_sky_night")
+
+[node name="SkylightFrame0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 9.875, -3.2)
+size = Vector3(6.8, 0.25, 0.4)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="SkylightFrame1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(0.0, 9.875, 3.2)
+size = Vector3(6.8, 0.25, 0.4)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="SkylightFrame2" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-3.2, 9.875, 0.0)
+size = Vector3(0.4, 0.25, 6.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="SkylightFrame3" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(3.2, 9.875, 0.0)
+size = Vector3(0.4, 0.25, 6.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="SkylightBar0" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(-1.0, 9.9, 0.0)
+size = Vector3(0.16, 0.2, 6.0)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="SkylightBar1" type="CSGBox3D" parent="CSGSource"]
+position = Vector3(1.0, 9.9, 0.0)
+size = Vector3(0.16, 0.2, 6.0)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trims" type="CSGCombiner3D" parent="CSGSource"]
+
+[node name="Trim0" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-4.075, 0.175, 30.05)
+size = Vector3(3.85, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim1" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(4.075, 0.175, 30.05)
+size = Vector3(3.85, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim2" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 4.35, 30.09)
+size = Vector3(12.0, 0.3, 0.18)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim3" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-4.075, 1.21, 30.03)
+size = Vector3(3.85, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim4" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(4.075, 1.21, 30.03)
+size = Vector3(3.85, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim5" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 0.175, 41.95)
+size = Vector3(12.0, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim6" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 4.35, 41.91)
+size = Vector3(12.0, 0.3, 0.18)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim7" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 1.21, 41.97)
+size = Vector3(12.0, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim8" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-2.0, 0.25, 41.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim9" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-2.0, 2.26, 41.92)
+size = Vector3(0.6, 3.52, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim10" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-2.0, 4.11, 41.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim11" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(2.0, 0.25, 41.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim12" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(2.0, 2.26, 41.92)
+size = Vector3(0.6, 3.52, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim13" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(2.0, 4.11, 41.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim14" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.95, 0.175, 36.0)
+size = Vector3(0.1, 0.35, 12.0)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim15" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.91, 4.35, 36.0)
+size = Vector3(0.18, 0.3, 12.0)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim16" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.97, 1.21, 36.0)
+size = Vector3(0.06, 0.12, 12.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim17" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.88, 0.25, 34.0)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim18" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.92, 2.26, 34.0)
+size = Vector3(0.16, 3.52, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim19" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.88, 4.11, 34.0)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim20" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.88, 0.25, 38.0)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim21" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.92, 2.26, 38.0)
+size = Vector3(0.16, 3.52, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim22" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-5.88, 4.11, 38.0)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim23" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.95, 0.175, 36.0)
+size = Vector3(0.1, 0.35, 12.0)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim24" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.91, 4.35, 36.0)
+size = Vector3(0.18, 0.3, 12.0)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim25" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.97, 1.21, 36.0)
+size = Vector3(0.06, 0.12, 12.0)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim26" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.88, 0.25, 34.0)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim27" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.92, 2.26, 34.0)
+size = Vector3(0.16, 3.52, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim28" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.88, 4.11, 34.0)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim29" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.88, 0.25, 38.0)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim30" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.92, 2.26, 38.0)
+size = Vector3(0.16, 3.52, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim31" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(5.88, 4.11, 38.0)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim32" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 4.268, 34.0)
+size = Vector3(12.0, 0.464, 0.348)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim33" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 4.268, 38.0)
+size = Vector3(12.0, 0.464, 0.348)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim34" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.825, 0.15, 16.34)
+size = Vector3(0.35, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim35" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.825, 0.15, 16.34)
+size = Vector3(0.35, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim36" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.875, 16.37)
+size = Vector3(4.0, 0.25, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim37" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.96, 0.15, 23.075)
+size = Vector3(0.08, 0.3, 13.55)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim38" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 3.875, 23.075)
+size = Vector3(0.14, 0.25, 13.55)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim39" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 0.225, 20.87)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim40" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 2.025, 20.87)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim41" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 3.675, 20.87)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim42" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 0.225, 25.44)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim43" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 2.025, 25.44)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim44" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 3.675, 25.44)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim45" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.96, 0.15, 23.075)
+size = Vector3(0.08, 0.3, 13.55)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim46" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 3.875, 23.075)
+size = Vector3(0.14, 0.25, 13.55)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim47" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 0.225, 20.87)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim48" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 2.025, 20.87)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim49" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 3.675, 20.87)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim50" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 0.225, 25.44)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim51" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 2.025, 25.44)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim52" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 3.675, 25.44)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim53" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.85, 20.87)
+size = Vector3(4.0, 0.3, 0.225)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim54" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.85, 25.44)
+size = Vector3(4.0, 0.3, 0.225)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim55" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-7.825, 0.175, -13.95)
+size = Vector3(12.35, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim56" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(7.825, 0.175, -13.95)
+size = Vector3(12.35, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim57" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.85, -13.91)
+size = Vector3(28.0, 0.3, 0.18)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim58" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-7.825, 1.21, -13.97)
+size = Vector3(12.35, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim59" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(7.825, 1.21, -13.97)
+size = Vector3(12.35, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim60" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 0.25, -13.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim61" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 5.01, -13.92)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim62" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 9.61, -13.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim63" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 0.25, -13.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim64" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 5.01, -13.92)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim65" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 9.61, -13.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim66" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 0.25, -13.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim67" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 5.01, -13.92)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim68" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 9.61, -13.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim69" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 0.25, -13.88)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim70" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 5.01, -13.92)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim71" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 9.61, -13.88)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim72" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-7.825, 0.175, 15.75)
+size = Vector3(12.35, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim73" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(7.825, 0.175, 15.75)
+size = Vector3(12.35, 0.35, 0.1)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim74" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.85, 15.71)
+size = Vector3(28.0, 0.3, 0.18)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim75" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-7.825, 1.21, 15.77)
+size = Vector3(12.35, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim76" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(7.825, 1.21, 15.77)
+size = Vector3(12.35, 0.12, 0.06)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim77" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 0.25, 15.68)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim78" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 5.01, 15.72)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim79" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-10.0, 9.61, 15.68)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim80" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 0.25, 15.68)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim81" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 5.01, 15.72)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim82" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.0, 9.61, 15.68)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim83" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 0.25, 15.68)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim84" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 5.01, 15.72)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim85" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.0, 9.61, 15.68)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim86" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 0.25, 15.68)
+size = Vector3(0.76, 0.5, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim87" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 5.01, 15.72)
+size = Vector3(0.6, 9.02, 0.16)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim88" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(10.0, 9.61, 15.68)
+size = Vector3(0.76, 0.18, 0.24)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim89" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.95, 0.175, -7.075)
+size = Vector3(0.1, 0.35, 13.85)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim90" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.95, 0.175, 9.975)
+size = Vector3(0.1, 0.35, 11.65)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim91" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.91, 9.85, 0.9)
+size = Vector3(0.18, 0.3, 29.8)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim92" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.97, 1.21, -7.075)
+size = Vector3(0.06, 0.12, 13.85)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim93" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.97, 1.21, 9.975)
+size = Vector3(0.06, 0.12, 11.65)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim94" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 0.25, -9.742857)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim95" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.92, 5.01, -9.742857)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim96" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 9.61, -9.742857)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim97" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 0.25, -5.485714)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim98" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.92, 5.01, -5.485714)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim99" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 9.61, -5.485714)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim100" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 0.25, -1.228571)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim101" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.92, 5.01, -1.228571)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim102" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 9.61, -1.228571)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim103" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 0.25, 7.285714)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim104" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.92, 5.01, 7.285714)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim105" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 9.61, 7.285714)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim106" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 0.25, 11.542857)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim107" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.92, 5.01, 11.542857)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim108" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-13.88, 9.61, 11.542857)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim109" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.95, 0.175, 0.9)
+size = Vector3(0.1, 0.35, 29.8)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim110" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.91, 9.85, 0.9)
+size = Vector3(0.18, 0.3, 29.8)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim111" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.97, 1.21, 0.9)
+size = Vector3(0.06, 0.12, 29.8)
+operation = 0
+material = ExtResource("10_hazard_strip")
+
+[node name="Trim112" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 0.25, -5.485714)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim113" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.92, 5.01, -5.485714)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim114" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 9.61, -5.485714)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim115" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 0.25, 3.028571)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim116" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.92, 5.01, 3.028571)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim117" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 9.61, 3.028571)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim118" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 0.25, 7.285714)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim119" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.92, 5.01, 7.285714)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim120" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 9.61, 7.285714)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim121" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 0.25, 11.542857)
+size = Vector3(0.24, 0.5, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim122" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.92, 5.01, 11.542857)
+size = Vector3(0.16, 9.02, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim123" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(13.88, 9.61, 11.542857)
+size = Vector3(0.24, 0.18, 0.76)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim124" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, -9.742857)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim125" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, -5.485714)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim126" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, -1.228571)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim127" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, 3.028571)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim128" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, 7.285714)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim129" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 9.6, 11.542857)
+size = Vector3(28.0, 0.8, 0.6)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim130" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 0.15, -5.96)
+size = Vector3(11.6, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim131" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 4.875, -5.93)
+size = Vector3(11.6, 0.25, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim132" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 0.225, -5.9)
+size = Vector3(0.66, 0.45, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim133" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 2.525, -5.93)
+size = Vector3(0.5, 4.15, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim134" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 4.675, -5.9)
+size = Vector3(0.66, 0.15, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim135" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 0.225, -5.9)
+size = Vector3(0.66, 0.45, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim136" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 2.525, -5.93)
+size = Vector3(0.5, 4.15, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim137" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 4.675, -5.9)
+size = Vector3(0.66, 0.15, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim138" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 0.15, 9.96)
+size = Vector3(11.6, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim139" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 4.875, 9.93)
+size = Vector3(11.6, 0.25, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim140" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 0.225, 9.9)
+size = Vector3(0.66, 0.45, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim141" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 2.525, 9.93)
+size = Vector3(0.5, 4.15, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim142" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-22.133333, 4.675, 9.9)
+size = Vector3(0.66, 0.15, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim143" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 0.225, 9.9)
+size = Vector3(0.66, 0.45, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim144" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 2.525, 9.93)
+size = Vector3(0.5, 4.15, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim145" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-18.266667, 4.675, 9.9)
+size = Vector3(0.66, 0.15, 0.2)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim146" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.96, 0.15, 2.0)
+size = Vector3(0.08, 0.3, 16.0)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim147" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.93, 4.875, 2.0)
+size = Vector3(0.14, 0.25, 16.0)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim148" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.9, 0.225, -2.0)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim149" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.93, 2.525, -2.0)
+size = Vector3(0.14, 4.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim150" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.9, 4.675, -2.0)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim151" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.9, 0.225, 6.0)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim152" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.93, 2.525, 6.0)
+size = Vector3(0.14, 4.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim153" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-25.9, 4.675, 6.0)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim154" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.44, 0.15, -3.075)
+size = Vector3(0.08, 0.3, 5.85)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim155" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.44, 0.15, 7.075)
+size = Vector3(0.08, 0.3, 5.85)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim156" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.47, 4.875, 2.0)
+size = Vector3(0.14, 0.25, 16.0)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim157" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.5, 0.225, -2.0)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim158" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.47, 2.525, -2.0)
+size = Vector3(0.14, 4.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim159" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.5, 4.675, -2.0)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim160" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.5, 0.225, 6.0)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim161" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.47, 2.525, 6.0)
+size = Vector3(0.14, 4.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim162" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-14.5, 4.675, 6.0)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim163" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 4.7724, -2.0)
+size = Vector3(11.6, 0.4552, 0.3414)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim164" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 4.7724, 2.0)
+size = Vector3(11.6, 0.4552, 0.3414)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim165" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-20.2, 4.7724, 6.0)
+size = Vector3(11.6, 0.4552, 0.3414)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim166" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.825, 0.15, -14.44)
+size = Vector3(0.35, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim167" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.825, 0.15, -14.44)
+size = Vector3(0.35, 0.3, 0.08)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim168" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.875, -14.47)
+size = Vector3(4.0, 0.25, 0.14)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim169" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.96, 0.15, -20.125)
+size = Vector3(0.08, 0.3, 11.45)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim170" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 3.875, -20.125)
+size = Vector3(0.14, 0.25, 11.45)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim171" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 0.225, -22.14)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim172" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 2.025, -22.14)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim173" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 3.675, -22.14)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim174" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 0.225, -18.27)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim175" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.93, 2.025, -18.27)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim176" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-1.9, 3.675, -18.27)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim177" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.96, 0.15, -20.125)
+size = Vector3(0.08, 0.3, 11.45)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim178" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 3.875, -20.125)
+size = Vector3(0.14, 0.25, 11.45)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim179" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 0.225, -22.14)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim180" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 2.025, -22.14)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim181" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 3.675, -22.14)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim182" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 0.225, -18.27)
+size = Vector3(0.2, 0.45, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim183" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.93, 2.025, -18.27)
+size = Vector3(0.14, 3.15, 0.5)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim184" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(1.9, 3.675, -18.27)
+size = Vector3(0.2, 0.15, 0.66)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim185" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.85, -22.14)
+size = Vector3(4.0, 0.3, 0.225)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim186" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.85, -18.27)
+size = Vector3(4.0, 0.3, 0.225)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Trim187" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 0.225, -37.93)
+size = Vector3(14.0, 0.45, 0.14)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim188" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 5.825, -37.89)
+size = Vector3(14.0, 0.35, 0.22)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim189" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 0.3, -37.84)
+size = Vector3(0.96, 0.6, 0.32)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim190" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 3.015, -37.89)
+size = Vector3(0.8, 4.83, 0.22)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim191" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 5.54, -37.84)
+size = Vector3(0.96, 0.22, 0.32)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim192" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-4.575, 0.225, -26.07)
+size = Vector3(4.85, 0.45, 0.14)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim193" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(4.575, 0.225, -26.07)
+size = Vector3(4.85, 0.45, 0.14)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim194" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 5.825, -26.11)
+size = Vector3(14.0, 0.35, 0.22)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim195" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.93, 0.225, -32.0)
+size = Vector3(0.14, 0.45, 12.0)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim196" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.89, 5.825, -32.0)
+size = Vector3(0.22, 0.35, 12.0)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim197" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.84, 0.3, -32.0)
+size = Vector3(0.32, 0.6, 0.96)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim198" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.89, 3.015, -32.0)
+size = Vector3(0.22, 4.83, 0.8)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim199" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(-6.84, 5.54, -32.0)
+size = Vector3(0.32, 0.22, 0.96)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim200" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.93, 0.225, -32.0)
+size = Vector3(0.14, 0.45, 12.0)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim201" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.89, 5.825, -32.0)
+size = Vector3(0.22, 0.35, 12.0)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim202" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.84, 0.3, -32.0)
+size = Vector3(0.32, 0.6, 0.96)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim203" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.89, 3.015, -32.0)
+size = Vector3(0.22, 4.83, 0.8)
+operation = 0
+material = ExtResource("12_stone_blocks")
+
+[node name="Trim204" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(6.84, 5.54, -32.0)
+size = Vector3(0.32, 0.22, 0.96)
+operation = 0
+material = ExtResource("3_tech_panel")
+
+[node name="Trim205" type="CSGBox3D" parent="CSGSource/Trims"]
+position = Vector3(0.0, 5.768, -32.0)
+size = Vector3(0.348, 0.464, 12.0)
+operation = 0
+material = ExtResource("9_rust_metal")
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_14")
+
+[node name="Geometry" type="StaticBody3D" parent="Navigation"]
+collision_layer = 1
 collision_mask = 0
 
-[node name="Mesh" type="MeshInstance3D" parent="Navigation/Geometry" unique_id=389801387]
-mesh = ExtResource("14_xt7qh")
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Geometry"]
+gi_mode = 1
 
-[node name="Collision" type="CollisionShape3D" parent="Navigation/Geometry" unique_id=1182746048]
-shape = ExtResource("15_6xlfo")
+[node name="Collision" type="CollisionShape3D" parent="Navigation/Geometry"]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2069426867]
-environment = SubResource("Environment_14")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_15")
 
-[node name="LightmapGI" type="LightmapGI" parent="." unique_id=328566542]
+[node name="LightmapGI" type="LightmapGI" parent="."]
+quality = 1
+bounces = 3
 directional = true
 interior = true
+use_denoiser = true
 denoiser_strength = 0.12
+texel_scale = 1.0
+generate_probes_subdiv = 2
 environment_mode = 0
-light_data = ExtResource("16_xt7qh")
 
-[node name="FillLights" type="Node3D" parent="." unique_id=1784522240]
+[node name="FillLights" type="Node3D" parent="."]
 
-[node name="Fill0" type="OmniLight3D" parent="FillLights" unique_id=1821240374]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 8.5, 2)
-light_color = Color(0.309804, 0.490196, 1, 1)
+[node name="Fill0" type="OmniLight3D" parent="FillLights"]
+position = Vector3(-9.0, 8.5, 2.0)
+light_color = Color(0.309804, 0.490196, 1.0, 1.0)
 light_energy = 0.9
 light_indirect_energy = 1.2
+omni_range = 16
+omni_attenuation = 0.8
 light_size = 1.5
 light_bake_mode = 1
 shadow_enabled = true
-omni_range = 16.0
-omni_attenuation = 0.8
 
-[node name="Fill1" type="OmniLight3D" parent="FillLights" unique_id=1696377861]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 8.5, 2)
-light_color = Color(0.309804, 0.490196, 1, 1)
+[node name="Fill1" type="OmniLight3D" parent="FillLights"]
+position = Vector3(9.0, 8.5, 2.0)
+light_color = Color(0.309804, 0.490196, 1.0, 1.0)
 light_energy = 0.9
 light_indirect_energy = 1.2
+omni_range = 16
+omni_attenuation = 0.8
 light_size = 1.5
 light_bake_mode = 1
 shadow_enabled = true
-omni_range = 16.0
-omni_attenuation = 0.8
 
-[node name="Fill2" type="OmniLight3D" parent="FillLights" unique_id=1460248289]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4, 2)
-light_color = Color(1, 0.603922, 0.290196, 1)
+[node name="Fill2" type="OmniLight3D" parent="FillLights"]
+position = Vector3(-20.0, 4.0, 2.0)
+light_color = Color(1.0, 0.603922, 0.290196, 1.0)
 light_energy = 0.6
 light_indirect_energy = 1.2
+omni_range = 10
+omni_attenuation = 0.8
 light_size = 1.5
 light_bake_mode = 1
 shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 0.8
 
-[node name="Fill3" type="OmniLight3D" parent="FillLights" unique_id=855834054]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -32)
-light_color = Color(0.313725, 1, 0.564706, 1)
+[node name="Fill3" type="OmniLight3D" parent="FillLights"]
+position = Vector3(0.0, 5.0, -32.0)
+light_color = Color(0.313725, 1.0, 0.564706, 1.0)
 light_energy = 0.5
 light_indirect_energy = 1.2
+omni_range = 9
+omni_attenuation = 0.8
 light_size = 1.5
 light_bake_mode = 1
 shadow_enabled = true
-omni_range = 9.0
-omni_attenuation = 0.8
 
-[node name="Lights" type="Node3D" parent="." unique_id=88167595]
+[node name="Lights" type="Node3D" parent="."]
 
-[node name="CeilingLight0" parent="Lights" unique_id=2009207587 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.43, 33)
+[node name="CeilingLight0" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(0.0, 4.43, 33.0)
 
-[node name="CeilingLight1" parent="Lights" unique_id=660496170 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.43, 39.5)
+[node name="CeilingLight1" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(0.0, 4.43, 39.5)
 
-[node name="CeilingLight2" parent="Lights" unique_id=927423060 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, -7, 9.93, -10)
+[node name="CeilingLight2" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(-7.0, 9.93, -7.6)
+scale = Vector3(1.6, 1.0, 1.6)
 
-[node name="CeilingLight3" parent="Lights" unique_id=1198151122 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 7, 9.93, -10)
+[node name="CeilingLight3" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(7.0, 9.93, -7.6)
+scale = Vector3(1.6, 1.0, 1.6)
 
-[node name="CeilingLight4" parent="Lights" unique_id=1121238134 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, -7, 9.93, 10)
+[node name="CeilingLight4" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(-7.0, 9.93, 9.4)
+scale = Vector3(1.6, 1.0, 1.6)
 
-[node name="CeilingLight5" parent="Lights" unique_id=899703698 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 7, 9.93, 10)
+[node name="CeilingLight5" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(7.0, 9.93, 9.4)
+scale = Vector3(1.6, 1.0, 1.6)
 
-[node name="CeilingLight6" parent="Lights" unique_id=1786513593 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1.6, 0, 0, 0, 1, 0, 0, 0, 1.6, 0, 9.93, 0)
+[node name="CeilingLight6" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(-20.0, 4.93, -4.0)
 
-[node name="CeilingLight7" parent="Lights" unique_id=1603426613 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.93, -2)
+[node name="CeilingLight7" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(-20.0, 4.93, 4.0)
 
-[node name="CeilingLight8" parent="Lights" unique_id=2078348527 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.93, 6)
+[node name="CeilingLight8" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(-3.5, 5.93, -32.0)
 
-[node name="CeilingLight9" parent="Lights" unique_id=1939053058 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 5.93, -32)
+[node name="CeilingLight9" parent="Lights" instance=ExtResource("16_ceiling_ligh")]
+position = Vector3(3.5, 5.93, -32.0)
 
-[node name="CeilingLight10" parent="Lights" unique_id=535979919 instance=ExtResource("15_ceiling_ligh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 5.93, -32)
+[node name="WallLamp0" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(-1.95, 3.0, 23.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="WallLamp0" parent="Lights" unique_id=1125218498 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.95, 3, 23)
+[node name="WallLamp1" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(1.95, 3.0, 23.0)
+rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
-[node name="WallLamp1" parent="Lights" unique_id=1545981729 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.95, 3, 23)
+[node name="WallLamp2" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(-13.95, 4.0, -8.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="WallLamp2" parent="Lights" unique_id=1241314195 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13.95, 4, -8)
+[node name="WallLamp3" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(-13.95, 4.0, 10.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="WallLamp3" parent="Lights" unique_id=887587511 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13.95, 4, 10)
+[node name="WallLamp4" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(13.95, 6.2, -10.0)
+rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
-[node name="WallLamp4" parent="Lights" unique_id=1591564290 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13.95, 6.2, -10)
+[node name="WallLamp5" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(13.95, 6.2, -2.0)
+rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
-[node name="WallLamp5" parent="Lights" unique_id=1010238875 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13.95, 6.2, -2)
+[node name="WallLamp6" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(-1.95, 3.0, -20.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="WallLamp6" parent="Lights" unique_id=927943204 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.95, 3, -20)
+[node name="WallLamp7" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(1.95, 3.0, -20.0)
+rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
-[node name="WallLamp7" parent="Lights" unique_id=547290723 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.95, 3, -20)
+[node name="WallLamp8" parent="Lights" instance=ExtResource("17_wall_lamp")]
+position = Vector3(-27.7, 3.9, 2.95)
+rotation_degrees = Vector3(0.0, 0.0, 0.0)
 
-[node name="WallLamp8" parent="Lights" unique_id=1028835890 instance=ExtResource("16_wall_lamp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.7, 3.9, 2.95)
+[node name="SkylightSpot" type="SpotLight3D" parent="Lights"]
+position = Vector3(0.0, 11.45, 0.0)
+rotation_degrees = Vector3(-75.2, 36.9, 0.0)
+light_color = Color(0.615686, 0.705882, 1.0, 1.0)
+light_energy = 9.0
+light_indirect_energy = 1.0
+light_size = 0.3
+spot_range = 16.0
+spot_angle = 32.0
+spot_attenuation = 0.6
+light_bake_mode = 1
+shadow_enabled = true
 
-[node name="LightProbes" type="Node3D" parent="." unique_id=1497960743]
+[node name="ZoneAmbient" type="Node3D" parent="."]
 
-[node name="Probe0" type="LightmapProbe" parent="LightProbes" unique_id=440871874]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 36)
+[node name="Zone0" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 2.7, 36.0)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 10.973156
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe1" type="LightmapProbe" parent="LightProbes" unique_id=1388065023]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 23)
+[node name="Zone1" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 2.4, 19.7275)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 5.554806
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe2" type="LightmapProbe" parent="LightProbes" unique_id=327678015]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 16)
+[node name="Zone2" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 2.4, 26.5825)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 5.554806
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe3" type="LightmapProbe" parent="LightProbes" unique_id=1965953087]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, 10)
+[node name="Zone3" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 6.0, 0.9)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 26.309753
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe4" type="LightmapProbe" parent="LightProbes" unique_id=1832065492]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 10)
+[node name="Zone4" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(-20.2, 3.0, 2.0)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 12.740806
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe5" type="LightmapProbe" parent="LightProbes" unique_id=406764505]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+[node name="Zone5" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 2.4, -23.1075)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 5.065895
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe6" type="LightmapProbe" parent="LightProbes" unique_id=1433372909]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, -10)
+[node name="Zone6" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 2.4, -17.3025)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 5.065895
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe7" type="LightmapProbe" parent="LightProbes" unique_id=1542552308]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, -10)
+[node name="Zone7" type="OmniLight3D" parent="ZoneAmbient"]
+position = Vector3(0.0, 3.6, -32.0)
+light_color = Color(0.231373, 0.352941, 0.658824, 1.0)
+light_energy = 0.45
+light_indirect_energy = 0.5
+light_specular = 0.0
+light_size = 2.0
+omni_range = 12.1192
+omni_attenuation = 0.0
+light_bake_mode = 1
+shadow_enabled = false
 
-[node name="Probe8" type="LightmapProbe" parent="LightProbes" unique_id=1263559791]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+[node name="LightProbes" type="Node3D" parent="."]
 
-[node name="Probe9" type="LightmapProbe" parent="LightProbes" unique_id=416432397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 5.5, -4)
+[node name="Probe0" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 1.5, 36.0)
 
-[node name="Probe10" type="LightmapProbe" parent="LightProbes" unique_id=1614707004]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 5.5, -12)
+[node name="Probe1" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 1.5, 23.0)
 
-[node name="Probe11" type="LightmapProbe" parent="LightProbes" unique_id=861459495]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2.5, 10)
+[node name="Probe2" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 1.5, 16.0)
 
-[node name="Probe12" type="LightmapProbe" parent="LightProbes" unique_id=374224097]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1.5, 2)
+[node name="Probe3" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-8.0, 1.5, 10.0)
 
-[node name="Probe13" type="LightmapProbe" parent="LightProbes" unique_id=845477230]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 3.5, -2)
+[node name="Probe4" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(8.0, 1.5, 10.0)
 
-[node name="Probe14" type="LightmapProbe" parent="LightProbes" unique_id=1515623221]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 3.2, 1.5)
+[node name="Probe5" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 2.5, 0.0)
 
-[node name="Probe15" type="LightmapProbe" parent="LightProbes" unique_id=162523348]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -20)
+[node name="Probe6" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-8.0, 1.5, -10.0)
 
-[node name="Probe16" type="LightmapProbe" parent="LightProbes" unique_id=21464975]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -32)
+[node name="Probe7" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(8.0, 1.5, -10.0)
 
-[node name="Probe17" type="LightmapProbe" parent="LightProbes" unique_id=502246574]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -32)
+[node name="Probe8" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 5.0, 0.0)
 
-[node name="Probe18" type="LightmapProbe" parent="LightProbes" unique_id=1859125375]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -32)
+[node name="Probe9" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(12.0, 5.5, -4.0)
 
-[node name="ReflectionProbes" type="Node3D" parent="." unique_id=123462277]
+[node name="Probe10" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(12.0, 5.5, -12.0)
 
-[node name="RefStart" type="ReflectionProbe" parent="ReflectionProbes" unique_id=706676020]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 36)
+[node name="Probe11" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(12.0, 2.5, 10.0)
+
+[node name="Probe12" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-20.0, 1.5, 2.0)
+
+[node name="Probe13" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-20.0, 3.5, -2.0)
+
+[node name="Probe14" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-27.5, 3.2, 1.5)
+
+[node name="Probe15" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 1.5, -20.0)
+
+[node name="Probe16" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(0.0, 1.5, -32.0)
+
+[node name="Probe17" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(-4.0, 3.0, -32.0)
+
+[node name="Probe18" type="LightmapProbe" parent="LightProbes"]
+position = Vector3(4.0, 3.0, -32.0)
+
+[node name="ReflectionProbes" type="Node3D" parent="."]
+
+[node name="RefStart" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(0.0, 1.7, 36.0)
+size = Vector3(12.0, 4.5, 12.0)
+origin_offset = Vector3(0.0, 0.55, 0.0)
+box_projection = true
+interior = true
+update_mode = 0
+ambient_mode = 0
 max_distance = 18.0
-size = Vector3(12, 4.5, 12)
-origin_offset = Vector3(0, 0.55, 0)
+intensity = 1.0
+
+[node name="RefCorridorA" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(0.0, 1.7, 23.15)
+size = Vector3(4.0, 4.0, 13.7)
+origin_offset = Vector3(0.0, 0.3, 0.0)
 box_projection = true
 interior = true
+update_mode = 0
 ambient_mode = 0
-
-[node name="RefCorridorA" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1357804070]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 23.15)
 max_distance = 20.55
-size = Vector3(4, 4, 13.7)
-origin_offset = Vector3(0, 0.3, 0)
+intensity = 1.0
+
+[node name="RefHall" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(0.0, 1.7, 0.9)
+size = Vector3(28.0, 10.0, 29.8)
+origin_offset = Vector3(0.0, 3.3, 0.0)
 box_projection = true
 interior = true
+update_mode = 0
 ambient_mode = 0
-
-[node name="RefHall" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1844432741]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0.9)
 max_distance = 44.7
-size = Vector3(28, 10, 29.8)
-origin_offset = Vector3(0, 3.3, 0)
+intensity = 1.0
+
+[node name="RefStorage" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(-20.2, 1.7, 2.0)
+size = Vector3(11.6, 5.0, 16.0)
+origin_offset = Vector3(0.0, 0.8, 0.0)
 box_projection = true
 interior = true
+update_mode = 0
 ambient_mode = 0
-
-[node name="RefStorage" type="ReflectionProbe" parent="ReflectionProbes" unique_id=1453528036]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.2, 1.7, 2)
 max_distance = 24.0
-size = Vector3(11.6, 5, 16)
-origin_offset = Vector3(0, 0.8, 0)
+intensity = 1.0
+
+[node name="RefCorridorB" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(0.0, 1.7, -20.2)
+size = Vector3(4.0, 4.0, 11.6)
+origin_offset = Vector3(0.0, 0.3, 0.0)
 box_projection = true
 interior = true
+update_mode = 0
 ambient_mode = 0
-
-[node name="RefCorridorB" type="ReflectionProbe" parent="ReflectionProbes" unique_id=2121256529]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, -20.2)
 max_distance = 17.4
-size = Vector3(4, 4, 11.6)
-origin_offset = Vector3(0, 0.3, 0)
+intensity = 1.0
+
+[node name="RefExit" type="ReflectionProbe" parent="ReflectionProbes"]
+position = Vector3(0.0, 1.7, -32.0)
+size = Vector3(14.0, 6.0, 12.0)
+origin_offset = Vector3(0.0, 1.3, 0.0)
 box_projection = true
 interior = true
+update_mode = 0
 ambient_mode = 0
-
-[node name="RefExit" type="ReflectionProbe" parent="ReflectionProbes" unique_id=765871902]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, -32)
 max_distance = 21.0
-size = Vector3(14, 6, 12)
-origin_offset = Vector3(0, 1.3, 0)
-box_projection = true
-interior = true
-ambient_mode = 0
+intensity = 1.0
 
-[node name="Entities" type="Node3D" parent="." unique_id=2002428687]
+[node name="Entities" type="Node3D" parent="."]
 
-[node name="PlayerStart1" parent="Entities" unique_id=1042546842 instance=ExtResource("17_player_start")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 38)
+[node name="PlayerStart1" parent="Entities" instance=ExtResource("18_player_start")]
+position = Vector3(0.0, 0.0, 38.0)
 
-[node name="Doorway1" parent="Entities" unique_id=1256020907 instance=ExtResource("18_doorway")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.05)
+[node name="Doorway1" parent="Entities" instance=ExtResource("19_doorway")]
+position = Vector3(0.0, 0.0, 16.05)
 
-[node name="Doorway2" parent="Entities" unique_id=1621360654 instance=ExtResource("18_doorway")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14.2)
+[node name="Doorway2" parent="Entities" instance=ExtResource("19_doorway")]
+position = Vector3(0.0, 0.0, -14.2)
 
-[node name="Archway400X4001" parent="Entities" unique_id=304427200 instance=ExtResource("19_archway_400x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+[node name="Archway400X4001" parent="Entities" instance=ExtResource("20_archway_400x")]
+position = Vector3(0.0, 0.0, 30.0)
 
-[node name="Archway400X4002" parent="Entities" unique_id=1441123371 instance=ExtResource("19_archway_400x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
+[node name="Archway400X4002" parent="Entities" instance=ExtResource("20_archway_400x")]
+position = Vector3(0.0, 0.0, -26.0)
 
-[node name="Archway400X3501" parent="Entities" unique_id=30905310 instance=ExtResource("20_archway_400x")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -14.2, 0, 2)
+[node name="Archway400X3501" parent="Entities" instance=ExtResource("21_archway_400x")]
+position = Vector3(-14.2, 0.0, 2.0)
+rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
-[node name="Grunt1" parent="Entities" unique_id=1858115624 instance=ExtResource("21_grunt")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 19.5)
+[node name="Grunt1" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(0.0, 0.0, 19.5)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Grunt2" parent="Entities" unique_id=663417026 instance=ExtResource("21_grunt")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 11)
+[node name="Grunt2" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(-8.0, 0.0, 11.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Grunt3" parent="Entities" unique_id=436116539 instance=ExtResource("21_grunt")]
-transform = Transform3D(-0.9396926, 0, 0.3420202, 0, 1, 0, -0.3420202, 0, -0.9396926, 8, 0, -2)
+[node name="Grunt3" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(8.0, 0.0, -2.0)
+rotation_degrees = Vector3(0.0, 160.0, 0.0)
 
-[node name="Grunt4" parent="Entities" unique_id=573829369 instance=ExtResource("21_grunt")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 2, 1, -1.5)
+[node name="Grunt4" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(2.0, 1.0, -1.5)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Grunt5" parent="Entities" unique_id=1325257046 instance=ExtResource("21_grunt")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 12, 4, -9)
+[node name="Grunt5" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(12.0, 4.0, -9.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Drone1" parent="Entities" unique_id=17429260 instance=ExtResource("22_drone")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 4.5, -8)
+[node name="Drone1" parent="Entities" instance=ExtResource("23_drone")]
+position = Vector3(-6.0, 4.5, -8.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Drone2" parent="Entities" unique_id=811262732 instance=ExtResource("22_drone")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 5.5, 9)
+[node name="Drone2" parent="Entities" instance=ExtResource("23_drone")]
+position = Vector3(6.0, 5.5, 9.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Brute1" parent="Entities" unique_id=1066161675 instance=ExtResource("23_brute")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, -11)
+[node name="Brute1" parent="Entities" instance=ExtResource("24_brute")]
+position = Vector3(0.0, 0.0, -11.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 Ambush = true
 
-[node name="Grunt6" parent="Entities" unique_id=163571444 instance=ExtResource("21_grunt")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -20, 0, -2)
+[node name="Grunt6" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(-20.0, 0.0, -2.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="Grunt7" parent="Entities" unique_id=1668051124 instance=ExtResource("21_grunt")]
-transform = Transform3D(-0.50000006, 0, -0.8660254, 0, 1, 0, 0.8660254, 0, -0.50000006, -22, 0, 5)
+[node name="Grunt7" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(-22.0, 0.0, 5.0)
+rotation_degrees = Vector3(0.0, -120.0, 0.0)
 
-[node name="Drone3" parent="Entities" unique_id=1439862675 instance=ExtResource("22_drone")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -18, 3.5, 2)
+[node name="Drone3" parent="Entities" instance=ExtResource("23_drone")]
+position = Vector3(-18.0, 3.5, 2.0)
+rotation_degrees = Vector3(0.0, -90.0, 0.0)
 
-[node name="Brute2" parent="Entities" unique_id=1790734693 instance=ExtResource("23_brute")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3, 0, -31)
+[node name="Brute2" parent="Entities" instance=ExtResource("24_brute")]
+position = Vector3(-3.0, 0.0, -31.0)
+rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
-[node name="Grunt8" parent="Entities" unique_id=1793888373 instance=ExtResource("21_grunt")]
-transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 4, 0, -35)
+[node name="Grunt8" parent="Entities" instance=ExtResource("22_grunt")]
+position = Vector3(4.0, 0.0, -35.0)
+rotation_degrees = Vector3(0.0, 200.0, 0.0)
 
-[node name="Shells1" parent="Entities" unique_id=274246039 instance=ExtResource("24_shells")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 34)
+[node name="Shells1" parent="Entities" instance=ExtResource("25_shells")]
+position = Vector3(3.0, 0.0, 34.0)
 
-[node name="Armor1" parent="Entities" unique_id=189395669 instance=ExtResource("25_armor")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 34)
+[node name="Armor1" parent="Entities" instance=ExtResource("26_armor")]
+position = Vector3(-3.0, 0.0, 34.0)
 
-[node name="Health1" parent="Entities" unique_id=945477556 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1, 31.5)
+[node name="Health1" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(4.5, 1.0, 31.5)
 
-[node name="Health2" parent="Entities" unique_id=1413427960 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24)
+[node name="Health2" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(0.0, 0.0, 24.0)
 
-[node name="Chaingun1" parent="Entities" unique_id=1309074038 instance=ExtResource("27_weapon_chain")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.5)
+[node name="Chaingun1" parent="Entities" instance=ExtResource("28_weapon_chain")]
+position = Vector3(0.0, 1.0, 0.5)
 
-[node name="Bullets1" parent="Entities" unique_id=431176374 instance=ExtResource("28_bullets")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -11)
+[node name="Bullets1" parent="Entities" instance=ExtResource("29_bullets")]
+position = Vector3(-11.0, 0.0, -11.0)
 
-[node name="Health3" parent="Entities" unique_id=826105334 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 13)
+[node name="Health3" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(11.0, 0.0, 13.0)
 
-[node name="Health4" parent="Entities" unique_id=294077230 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 13)
+[node name="Health4" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(-12.0, 0.0, 13.0)
 
-[node name="Shells2" parent="Entities" unique_id=710022797 instance=ExtResource("24_shells")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -12)
+[node name="Shells2" parent="Entities" instance=ExtResource("25_shells")]
+position = Vector3(-6.0, 0.0, -12.0)
 
-[node name="RocketLauncher1" parent="Entities" unique_id=1781888040 instance=ExtResource("29_weapon_rocke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 4, -12)
+[node name="RocketLauncher1" parent="Entities" instance=ExtResource("30_weapon_rocke")]
+position = Vector3(12.0, 4.0, -12.0)
 
-[node name="Rockets1" parent="Entities" unique_id=476685682 instance=ExtResource("30_rockets")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 4, -10)
+[node name="Rockets1" parent="Entities" instance=ExtResource("31_rockets")]
+position = Vector3(12.0, 4.0, -10.0)
 
-[node name="Bullets2" parent="Entities" unique_id=1025312164 instance=ExtResource("28_bullets")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 8)
+[node name="Bullets2" parent="Entities" instance=ExtResource("29_bullets")]
+position = Vector3(-16.0, 0.0, 8.0)
 
-[node name="Shells3" parent="Entities" unique_id=260442739 instance=ExtResource("24_shells")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0, -4)
+[node name="Shells3" parent="Entities" instance=ExtResource("25_shells")]
+position = Vector3(-24.5, 0.0, -4.0)
 
-[node name="Health5" parent="Entities" unique_id=9860632 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -4)
+[node name="Health5" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(-16.0, 0.0, -4.0)
 
-[node name="Megahealth1" parent="Entities" unique_id=340584856 instance=ExtResource("31_megahealth")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 2, 1.5)
+[node name="Megahealth1" parent="Entities" instance=ExtResource("32_megahealth")]
+position = Vector3(-28.0, 2.0, 1.5)
 
-[node name="Health6" parent="Entities" unique_id=323265598 instance=ExtResource("26_health")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -28.5)
+[node name="Health6" parent="Entities" instance=ExtResource("27_health")]
+position = Vector3(5.0, 0.0, -28.5)
 
-[node name="Rockets2" parent="Entities" unique_id=1311965949 instance=ExtResource("30_rockets")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -28.5)
+[node name="Rockets2" parent="Entities" instance=ExtResource("31_rockets")]
+position = Vector3(-5.0, 0.0, -28.5)
 
-[node name="Barrel1" parent="Entities" unique_id=926208589 instance=ExtResource("32_explosive_ba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 0, -4.2)
+[node name="Barrel1" parent="Entities" instance=ExtResource("33_explosive_ba")]
+position = Vector3(-4.8, 0.0, -4.2)
 
-[node name="Barrel2" parent="Entities" unique_id=1134335410 instance=ExtResource("32_explosive_ba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0, 4.4)
+[node name="Barrel2" parent="Entities" instance=ExtResource("33_explosive_ba")]
+position = Vector3(-4.2, 0.0, 4.4)
 
-[node name="Barrel3" parent="Entities" unique_id=1306136277 instance=ExtResource("32_explosive_ba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.2, 0, 3.2)
+[node name="Barrel3" parent="Entities" instance=ExtResource("33_explosive_ba")]
+position = Vector3(9.2, 0.0, 3.2)
 
-[node name="Barrel4" parent="Entities" unique_id=887698243 instance=ExtResource("32_explosive_ba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0.5)
+[node name="Barrel4" parent="Entities" instance=ExtResource("33_explosive_ba")]
+position = Vector3(-20.0, 0.0, 0.5)
 
-[node name="Barrel5" parent="Entities" unique_id=1243555054 instance=ExtResource("32_explosive_ba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.2, 0, 1.2)
+[node name="Barrel5" parent="Entities" instance=ExtResource("33_explosive_ba")]
+position = Vector3(-19.2, 0.0, 1.2)
 
-[node name="Exit1" parent="Entities" unique_id=946652674 instance=ExtResource("33_exit")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -33)
+[node name="Exit1" parent="Entities" instance=ExtResource("34_exit")]
+position = Vector3(0.0, 0.3, -33.0)
 
-[node name="Triggers" type="Node3D" parent="." unique_id=1427087935]
+[node name="Triggers" type="Node3D" parent="."]
 
-[node name="SecretAlcove" type="Area3D" parent="Triggers" unique_id=939088926]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.8, 3, 1.5)
-script = ExtResource("34_Trigger")
+[node name="SecretAlcove" type="Area3D" parent="Triggers"]
+position = Vector3(-27.8, 3.0, 1.5)
+script = ExtResource("35_Trigger")
 Kind = 3
 
-[node name="Shape" type="CollisionShape3D" parent="Triggers/SecretAlcove" unique_id=104702664]
-shape = SubResource("BoxShape3D_35")
+[node name="Shape" type="CollisionShape3D" parent="Triggers/SecretAlcove"]
+shape = SubResource("BoxShape3D_36")
 
-[node name="HintStart" type="Area3D" parent="Triggers" unique_id=676250723]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 28)
-script = ExtResource("34_Trigger")
+[node name="HintStart" type="Area3D" parent="Triggers"]
+position = Vector3(0.0, 1.5, 28.0)
+script = ExtResource("35_Trigger")
 Kind = 4
 Message = "Doors open when you get close."
 
-[node name="Shape" type="CollisionShape3D" parent="Triggers/HintStart" unique_id=2076164399]
-shape = SubResource("BoxShape3D_36")
+[node name="Shape" type="CollisionShape3D" parent="Triggers/HintStart"]
+shape = SubResource("BoxShape3D_37")
