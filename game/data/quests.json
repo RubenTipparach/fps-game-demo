@@ -2,7 +2,7 @@
 // from Silk's dialog, because they depend on the outcome.
 {
   "quests": [
-    {"id": "t0_arrival", "title": "Low Harbor", "giver": "nguyen", "level": "hub",
+    {"id": "t0_arrival", "title": "Low Harbor", "giver": "silk", "level": "hub",
      "summary": "New in the Sump. Silk, the fixer, works out of the Rusty Anchor's back room. Tank won't let just anyone through.",
      "objectives": [
        {"id": "meet_silk", "text": "Find Silk in the Rusty Anchor's back room.", "xp": 100},

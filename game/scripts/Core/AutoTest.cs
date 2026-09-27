@@ -203,6 +203,13 @@ public partial class AutoTest : Node
                          $"fwd {-n.GlobalBasis.Z} det {n.GlobalBasis.Determinant():0.00} parent {n.GetParent().Name} " +
                          $"parent_det {(n.GetParent() as Node3D)?.GlobalBasis.Determinant():0.00} model_fwd {(model != null ? model.GlobalBasis.Z : Vector3.Zero)} " +
                          $"to_player {(p.GlobalPosition - n.GlobalPosition).Normalized()}");
+                if (model?.FindChildren("*", "Skeleton3D", true, false).FirstOrDefault() is Skeleton3D sk)
+                    foreach (var bone in new[] { "root", "pelvis", "chest", "head" })
+                    {
+                        int i = sk.FindBone(bone);
+                        if (i >= 0)
+                            GD.Print($"[AutoTest]   {bone}: global fwd {(sk.GlobalTransform * sk.GetBoneGlobalPose(i)).Basis.Z}");
+                    }
             }
         }
         if (step.TryGetValue("talk", out var npcId))
