@@ -1,0 +1,160 @@
+@BaseClass size(-8.0 -8.0 -8.0, 8.0 8.0 8.0) color(204 204 204) = Phong
+[
+	_phong(choices) : "Phong shading" : 0 = 
+	[
+		0 : "Disabled"
+		1 : "Smooth shading"
+	]
+	_phong_angle(float) : "Phong smoothing angle" : "89.0"
+]
+
+@BaseClass size(-8.0 -8.0 -8.0, 8.0 8.0 8.0) color(204 204 204) = VertexMergeDistance
+[
+	_vertex_merge_distance(float) : "Adjustable value to snap vertices to on map build. This can reduce instances of seams between polygons." : "0.03125"
+]
+
+@BaseClass size(-8.0 -8.0 -8.0, 8.0 8.0 8.0) color(204 204 204) = CullInteriorFaces
+[
+	_cull_interior_faces(choices) : "If true, cull interior faces with matching vertices or faces that are flush within a larger face. Note: This has a performance impact that scales with how many brushes are in the brush entity." : 0 = 
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+]
+
+@SolidClass color(204 204 204) base(VertexMergeDistance, CullInteriorFaces) = worldspawn : "Default static world geometry. Builds a StaticBody3D with a single MeshInstance3D and a single convex CollisionShape3D shape." []
+
+@SolidClass color(204 204 204) base(Phong, VertexMergeDistance, CullInteriorFaces) = func_geo : "Static collidable geometry. Builds a StaticBody3D with a MeshInstance3D, a single concave CollisionShape3D, and an OccluderInstance3D." []
+
+@SolidClass color(204 204 204) base(Phong, VertexMergeDistance, CullInteriorFaces) = func_detail : "Static collidable geometry. Builds a StaticBody3D with a MeshInstance3D and a single concave CollisionShape3D. Does not occlude other VisualInstance3D nodes." []
+
+@SolidClass color(204 204 204) base(Phong, VertexMergeDistance, CullInteriorFaces) = func_detail_illusionary : "Static geometry with no collision. Builds a Node3D with a MeshInstance3D. Does not occlude other VisualInstance3D nodes." []
+
+@SolidClass color(204 204 204) base(Phong, VertexMergeDistance, CullInteriorFaces) = func_illusionary : "Static geometry with no collision. Builds a Node3D with a MeshInstance3D and an Occluder3D to aid in render culling of other VisualInstance3D nodes." []
+
+@PointClass size(-16.0 -16.0 0.0, 16.0 16.0 56.0) color(51 230 77) = info_player_start : "Player spawn point." []
+
+@PointClass size(-14.0 -14.0 0.0, 14.0 14.0 60.0) color(230 51 38) = monster_grunt : "Grunt: robot rifleman, 3-round bursts." 
+[
+	ambush(choices) : "" = 
+	[
+		0 : "No"
+		1 : "Yes (ignore noise until it sees you)"
+	]
+]
+
+@PointClass size(-22.0 -22.0 0.0, 22.0 22.0 80.0) color(230 51 38) = monster_brute : "Brute: heavy melee charger." 
+[
+	ambush(choices) : "" = 
+	[
+		0 : "No"
+		1 : "Yes (ignore noise until it sees you)"
+	]
+]
+
+@PointClass size(-16.0 -16.0 -16.0, 16.0 16.0 16.0) color(230 51 38) = monster_drone : "Drone: hovering plasma turret. Place it in the air." 
+[
+	ambush(choices) : "" = 
+	[
+		0 : "No"
+		1 : "Yes (ignore noise until it sees you)"
+	]
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_health : "Medkit (+25 health)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_megahealth : "Megahealth (+100, overheal to 200)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_armor : "Green armor (+50)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_armor_heavy : "Red armor (+100)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_shells : "Box of shotgun shells." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_bullets : "Box of bullets." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = item_rockets : "Rockets." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = weapon_chaingun : "Chaingun (slot 2)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 24.0) color(51 128 255) = weapon_rocketlauncher : "Rocket launcher (slot 3)." 
+[
+	amount(integer) : "Override the amount given (0 = default)." : 0
+]
+
+@PointClass size(-12.0 -12.0 0.0, 12.0 12.0 38.0) color(255 204 51) = misc_explobox : "Explosive barrel." []
+
+@PointClass size(-80.0 -24.0 0.0, 80.0 24.0 136.0) color(102 204 255) = misc_doorway : "Split sliding door in a tech frame (fits a 96x102 unit opening). Face along 'angle'." []
+
+@PointClass size(-88.0 -24.0 0.0, 88.0 24.0 144.0) color(102 204 255) = misc_archway_4x35 : "Framed archway for a 128x112 unit opening." []
+
+@PointClass size(-88.0 -24.0 0.0, 88.0 24.0 160.0) color(102 204 255) = misc_archway_4x4 : "Framed archway for a 128x128 unit opening." []
+
+@PointClass size(-32.0 -32.0 0.0, 32.0 32.0 16.0) color(51 230 77) = info_exit : "Level exit pad." []
+
+@PointClass size(-20.0 -8.0 -4.0, 20.0 8.0 2.0) color(255 204 51) = light_fixture : "Ceiling light fixture: emissive panel + baked omni light. Origin = ceiling." []
+
+@PointClass size(-6.0 -6.0 -6.0, 6.0 6.0 6.0) color(255 204 51) = light_wall : "Caged wall lamp (baked). Faces along 'angle'." []
+
+@PointClass size(-8.0 -8.0 -8.0, 8.0 8.0 8.0) color(255 204 51) = light : "Quake-style point light, baked into lightmaps." 
+[
+	light(integer) : "Brightness (Quake scale, 300 = normal)." : 300
+	_color(color255) : "Light colour." : "255 219 179"
+	range(float) : "Radius in metres (0 = derived from brightness)." : "0.0"
+	shadows(choices) : "Cast baked shadows." = 
+	[
+		1 : "Yes"
+		0 : "No"
+	]
+]
+
+@SolidClass color(102 204 255) = func_door : "Sliding door. 'angle' sets the direction it opens (-1 = up, -2 = down)." 
+[
+	angle(integer) : "Open direction (Quake yaw, -1 up, -2 down)." : -1
+	speed(integer) : "Units per second." : 110
+	wait(float) : "Seconds before closing." : "2.5"
+	lip(integer) : "Units left visible when open." : 4
+]
+
+@SolidClass color(230 153 51) = trigger_exit : "Ends the level when the player enters." []
+
+@SolidClass color(230 153 51) = trigger_hurt : "Damages anything inside (lava, crushers)." 
+[
+	dmg(integer) : "Damage per second." : 40
+]
+
+@SolidClass color(230 153 51) = trigger_push : "Jump pad: launches the player upward." 
+[
+	speed(integer) : "Launch speed (units/s)." : 352
+]
+
+@SolidClass color(230 153 51) = trigger_secret : "Counts a secret area when entered." []
+
+@SolidClass color(230 153 51) = trigger_message : "Shows 'message' once." 
+[
+	message(string) : "Text to show." : ""
+]
