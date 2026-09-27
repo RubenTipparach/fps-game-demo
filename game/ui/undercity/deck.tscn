@@ -1,0 +1,886 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/Deck.cs" id="2_deck"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/InventoryPage.cs" id="3_inventory"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/SkillsPage.cs" id="4_skills"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/JournalPage.cs" id="5_journal"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/ItemDetailView.cs" id="6_detail"]
+[ext_resource type="PackedScene" path="res://ui/undercity/pack_cell.tscn" id="7_cell"]
+[ext_resource type="PackedScene" path="res://ui/undercity/pack_item.tscn" id="8_item"]
+[ext_resource type="PackedScene" path="res://ui/undercity/belt_slot.tscn" id="9_belt"]
+[ext_resource type="PackedScene" path="res://ui/undercity/skill_card.tscn" id="10_card"]
+[ext_resource type="PackedScene" path="res://ui/undercity/quest_row.tscn" id="11_quest"]
+[ext_resource type="PackedScene" path="res://ui/undercity/objective_row.tscn" id="12_objective"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_tabs"]
+
+[node name="Deck" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_deck")
+
+[node name="Scrim" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Scrim"
+
+[node name="Frame" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(1280, 640)
+custom_maximum_size = Vector2(1280, 640)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -320.0
+offset_right = 640.0
+offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DeckFrame"
+
+[node name="Screen" type="PanelContainer" parent="Frame"]
+layout_mode = 2
+theme_type_variation = &"DeckScreen"
+
+[node name="Body" type="VBoxContainer" parent="Frame/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TabsBar" type="PanelContainer" parent="Frame/Screen/Body"]
+layout_mode = 2
+theme_type_variation = &"TabsBar"
+
+[node name="TabsRow" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TabInventory" type="Button" parent="Frame/Screen/Body/TabsBar/TabsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+focus_mode = 0
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "INVENTORY"
+
+[node name="TabSkills" type="Button" parent="Frame/Screen/Body/TabsBar/TabsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+focus_mode = 0
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "SKILLS"
+
+[node name="TabJournal" type="Button" parent="Frame/Screen/Body/TabsBar/TabsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+focus_mode = 0
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "JOURNAL"
+
+[node name="Spacer" type="Control" parent="Frame/Screen/Body/TabsBar/TabsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Header" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar/TabsRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="CreditsGroup" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar/TabsRow/Header"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CreditsKey" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/CreditsGroup"]
+layout_mode = 2
+theme_type_variation = &"TabHdr"
+text = "CREDITS"
+
+[node name="Credits" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/CreditsGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"MonoAccent"
+text = "0"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LevelGroup" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar/TabsRow/Header"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LevelKey" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/LevelGroup"]
+layout_mode = 2
+theme_type_variation = &"TabHdr"
+text = "LVL"
+
+[node name="Level" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/LevelGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+theme_type_variation = &"MonoAccent"
+text = "0"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="XpGroup" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar/TabsRow/Header"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="XpKey" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/XpGroup"]
+layout_mode = 2
+theme_type_variation = &"TabHdr"
+text = "XP"
+
+[node name="Xp" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/XpGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+theme_type_variation = &"MonoAccent"
+text = "0"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="PointsGroup" type="HBoxContainer" parent="Frame/Screen/Body/TabsBar/TabsRow/Header"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PointsKey" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/PointsGroup"]
+layout_mode = 2
+theme_type_variation = &"TabHdr"
+text = "POINTS"
+
+[node name="Points" type="Label" parent="Frame/Screen/Body/TabsBar/TabsRow/Header/PointsGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+theme_type_variation = &"MonoAccent"
+text = "0"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Pages" type="Control" parent="Frame/Screen/Body"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Inventory" type="VBoxContainer" parent="Frame/Screen/Body/Pages"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+script = ExtResource("3_inventory")
+CellScene = ExtResource("7_cell")
+ItemScene = ExtResource("8_item")
+CellPx = 48
+
+[node name="Top" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="PackGrid" type="Panel" parent="Frame/Screen/Body/Pages/Inventory/Top"]
+custom_minimum_size = Vector2(482, 290)
+custom_maximum_size = Vector2(482, 290)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"PackGrid"
+
+[node name="Cells" type="GridContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/PackGrid"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 481.0
+offset_bottom = 289.0
+mouse_filter = 2
+theme_type_variation = &"PackCells"
+columns = 10
+
+[node name="Items" type="Control" parent="Frame/Screen/Body/Pages/Inventory/Top/PackGrid"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Gear" type="PanelContainer" parent="Frame/Screen/Body/Pages/Inventory/Top"]
+custom_minimum_size = Vector2(270, 466)
+custom_maximum_size = Vector2(270, 466)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+
+[node name="GearBody" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EquipTitle" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+layout_mode = 2
+theme_type_variation = &"CapsDim"
+text = "EQUIPMENT"
+
+[node name="SlotHead" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(246, 30)
+custom_maximum_size = Vector2(246, 30)
+clip_contents = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_type_variation = &"EquipSlot"
+
+[node name="Row" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotHead"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Key" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotHead/Row"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "HEAD"
+vertical_alignment = 1
+
+[node name="Worn" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotHead/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MonoAccent"
+text = "-"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SlotFace" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(246, 30)
+custom_maximum_size = Vector2(246, 30)
+clip_contents = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_type_variation = &"EquipSlot"
+
+[node name="Row" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotFace"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Key" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotFace/Row"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "FACE"
+vertical_alignment = 1
+
+[node name="Worn" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotFace/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MonoAccent"
+text = "-"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SlotBody" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(246, 30)
+custom_maximum_size = Vector2(246, 30)
+clip_contents = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_type_variation = &"EquipSlot"
+
+[node name="Row" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBody"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Key" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBody/Row"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "BODY"
+vertical_alignment = 1
+
+[node name="Worn" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBody/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MonoAccent"
+text = "-"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SlotArmor" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(246, 30)
+custom_maximum_size = Vector2(246, 30)
+clip_contents = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_type_variation = &"EquipSlot"
+
+[node name="Row" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotArmor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Key" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotArmor/Row"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "ARMOR"
+vertical_alignment = 1
+
+[node name="Worn" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotArmor/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MonoAccent"
+text = "-"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SlotBoots" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(246, 30)
+custom_maximum_size = Vector2(246, 30)
+clip_contents = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_type_variation = &"EquipSlot"
+
+[node name="Row" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBoots"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Key" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBoots/Row"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "BOOTS"
+vertical_alignment = 1
+
+[node name="Worn" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody/SlotBoots/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MonoAccent"
+text = "-"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Rule" type="Panel" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Rule"
+
+[node name="DisguiseTitle" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+layout_mode = 2
+theme_type_variation = &"CapsDim"
+text = "DISGUISE"
+
+[node name="DisguiseMain" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoBright"
+text = "NOT DISGUISED"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="DisguiseSub" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Gear/GearBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Detail" type="PanelContainer" parent="Frame/Screen/Body/Pages/Inventory/Top"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(432, 466)
+custom_maximum_size = Vector2(432, 466)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+script = ExtResource("6_detail")
+
+[node name="DetailEmpty" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"DimLabel"
+text = "Nothing selected."
+
+[node name="DetailBody" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Head" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="IconBox" type="Panel" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Head"]
+custom_minimum_size = Vector2(72, 72)
+custom_maximum_size = Vector2(72, 72)
+clip_contents = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"IconBox"
+
+[node name="DetailIcon" type="TextureRect" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Head/IconBox"]
+unique_name_in_owner = true
+texture_filter = 4
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Titles" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 2
+
+[node name="DetailName" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Head/Titles"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+text = "Item"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="DetailCategory" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Head/Titles"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenCaps"
+text = "Category"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Stats" type="GridContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody"]
+layout_mode = 2
+theme_type_variation = &"Stats"
+columns = 2
+
+[node name="CountKey" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "Count"
+
+[node name="CountValue" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenMono"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ValueKey" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "Value"
+
+[node name="ValueValue" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenMono"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="WornKey" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "Worn"
+
+[node name="WornValue" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenMono"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="EffectKey" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "Effect"
+
+[node name="EffectValue" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenMono"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="StolenKey" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenMonoDim"
+text = "Stolen"
+
+[node name="StolenValue" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenMono"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="DetailDesc" type="Label" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+theme_type_variation = &"ScreenText"
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Spacer" type="Control" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Actions" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody"]
+layout_mode = 2
+
+[node name="Use" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 34)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "Use"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Equip" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 34)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "Equip"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Drop" type="Button" parent="Frame/Screen/Body/Pages/Inventory/Top/Detail/DetailBody/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 34)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "Drop"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="DeckBelt" type="HBoxContainer" parent="Frame/Screen/Body/Pages/Inventory"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1214, 58)
+custom_maximum_size = Vector2(1214, 58)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Slot0" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot1" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot2" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot3" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot4" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot5" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot6" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot7" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot8" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Slot9" parent="Frame/Screen/Body/Pages/Inventory/DeckBelt" instance=ExtResource("9_belt")]
+custom_minimum_size = Vector2(116, 58)
+custom_maximum_size = Vector2(116, 58)
+layout_mode = 2
+theme_type_variation = &"BeltSlot"
+Style = "BeltSlot"
+
+[node name="Skills" type="HBoxContainer" parent="Frame/Screen/Body/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+script = ExtResource("4_skills")
+CardScene = ExtResource("10_card")
+
+[node name="Journal" type="HBoxContainer" parent="Frame/Screen/Body/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+script = ExtResource("5_journal")
+QuestRowScene = ExtResource("11_quest")
+ObjectiveRowScene = ExtResource("12_objective")
+
+[node name="ListBox" type="PanelContainer" parent="Frame/Screen/Body/Pages/Journal"]
+custom_minimum_size = Vector2(380, 536)
+custom_maximum_size = Vector2(380, 536)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+
+[node name="ListScroll" type="ScrollContainer" parent="Frame/Screen/Body/Pages/Journal/ListBox"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ActiveTitle" type="Label" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CapsDim"
+text = "ACTIVE"
+
+[node name="ActiveRows" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="FinishedTitle" type="Label" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CapsDim"
+text = "FINISHED"
+
+[node name="FinishedRows" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="JournalEmpty" type="Label" parent="Frame/Screen/Body/Pages/Journal/ListBox/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "No quests."
+
+[node name="QuestBox" type="PanelContainer" parent="Frame/Screen/Body/Pages/Journal"]
+custom_minimum_size = Vector2(820, 536)
+custom_maximum_size = Vector2(820, 536)
+propagate_maximum_size = true
+clip_contents = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+
+[node name="QuestBody" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Journal/QuestBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="QuestTitle" type="Label" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+text = "Quest"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="QuestState" type="Label" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenCaps"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="QuestSummary" type="Label" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_type_variation = &"ScreenText"
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Rule" type="Panel" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Rule"
+
+[node name="ObjectivesTitle" type="Label" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+layout_mode = 2
+theme_type_variation = &"CapsDim"
+text = "OBJECTIVES"
+
+[node name="ObjectiveScroll" type="ScrollContainer" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ObjectiveRows" type="VBoxContainer" parent="Frame/Screen/Body/Pages/Journal/QuestBox/QuestBody/ObjectiveScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2

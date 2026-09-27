@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/UiCapture.cs" id="2_capture"]
+[ext_resource type="PackedScene" path="res://ui/undercity/screens.tscn" id="3_screens"]
+
+[node name="UiCapture" type="Node"]
+script = ExtResource("2_capture")
+ScreensScene = ExtResource("3_screens")
+OutDir = "../docs/screenshots/undercity_ui"
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_theme")

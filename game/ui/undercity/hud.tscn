@@ -1,0 +1,622 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/UndercityHud.cs" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/CompassStrip.cs" id="3_strip"]
+[ext_resource type="PackedScene" path="res://ui/undercity/feed_line.tscn" id="4_feed"]
+[ext_resource type="PackedScene" path="res://ui/undercity/belt_slot.tscn" id="5_belt"]
+
+[node name="Hud" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_hud")
+FeedLineScene = ExtResource("4_feed")
+FeedMax = 6
+BarkS = 4.0
+AlertS = 6.0
+
+[node name="Frame" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Compass" type="Control" parent="Frame"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(720, 42)
+custom_maximum_size = Vector2(720, 42)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 26.0
+offset_right = 360.0
+offset_bottom = 68.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Back" type="Panel" parent="Frame/Compass"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"CompassPanel"
+
+[node name="Strip" type="Control" parent="Frame/Compass"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -600.0
+offset_right = 3240.0
+offset_bottom = 42.0
+mouse_filter = 2
+script = ExtResource("3_strip")
+PixelsPerDegree = 5.33333
+TickDeg = 9.0
+StartDeg = -180.0
+SpanDeg = 720.0
+
+[node name="S0" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = -30.0
+offset_top = 1.0
+offset_right = 30.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SW1" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 1.0
+offset_right = 270.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "SW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="W2" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 1.0
+offset_right = 510.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "W"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NW3" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 690.0
+offset_top = 1.0
+offset_right = 750.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "NW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="N4" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 930.0
+offset_top = 1.0
+offset_right = 990.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "N"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NE5" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 1170.0
+offset_top = 1.0
+offset_right = 1230.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "NE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="E6" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 1410.0
+offset_top = 1.0
+offset_right = 1470.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SE7" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 1650.0
+offset_top = 1.0
+offset_right = 1710.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "SE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="S8" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 1890.0
+offset_top = 1.0
+offset_right = 1950.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SW9" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 2130.0
+offset_top = 1.0
+offset_right = 2190.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "SW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="W10" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 2370.0
+offset_top = 1.0
+offset_right = 2430.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "W"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NW11" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 2610.0
+offset_top = 1.0
+offset_right = 2670.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "NW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="N12" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 2850.0
+offset_top = 1.0
+offset_right = 2910.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "N"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NE13" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 3090.0
+offset_top = 1.0
+offset_right = 3150.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "NE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="E14" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 3330.0
+offset_top = 1.0
+offset_right = 3390.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SE15" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 3570.0
+offset_top = 1.0
+offset_right = 3630.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMinor"
+text = "SE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="S16" type="Label" parent="Frame/Compass/Strip"]
+layout_mode = 0
+offset_left = 3810.0
+offset_top = 1.0
+offset_right = 3870.0
+offset_bottom = 27.0
+theme_type_variation = &"CompassMajor"
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Needle" type="Panel" parent="Frame/Compass"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -1.0
+offset_top = 26.0
+offset_right = 1.0
+offset_bottom = 42.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"CompassNeedle"
+
+[node name="Alert" type="Label" parent="Frame"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -450.0
+offset_top = 76.0
+offset_right = 450.0
+offset_bottom = 104.0
+grow_horizontal = 2
+theme_type_variation = &"AlertLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Objective" type="VBoxContainer" parent="Frame"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(640, 72)
+custom_maximum_size = Vector2(640, 72)
+propagate_maximum_size = true
+layout_mode = 1
+offset_left = 48.0
+offset_top = 72.0
+offset_right = 688.0
+offset_bottom = 144.0
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="QuestTitle" type="Label" parent="Frame/Objective"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudTitle"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ObjectiveText" type="Label" parent="Frame/Objective"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudText"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Crosshair" type="Control" parent="Frame"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dot" type="Panel" parent="Frame/Crosshair"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="Up" type="Panel" parent="Frame/Crosshair"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = -30.0
+offset_right = 1.0
+offset_bottom = -16.0
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="Down" type="Panel" parent="Frame/Crosshair"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 16.0
+offset_right = 1.0
+offset_bottom = 30.0
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="Left" type="Panel" parent="Frame/Crosshair"]
+layout_mode = 0
+offset_left = -30.0
+offset_top = -1.0
+offset_right = -16.0
+offset_bottom = 1.0
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="Right" type="Panel" parent="Frame/Crosshair"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = -1.0
+offset_right = 30.0
+offset_bottom = 1.0
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="Prompt" type="Label" parent="Frame"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = 44.0
+offset_right = 450.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"PromptLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Hold" type="ProgressBar" parent="Frame"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = 80.0
+offset_right = 110.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"HoldBar"
+max_value = 1.0
+step = 0.0
+show_percentage = false
+
+[node name="Bark" type="Label" parent="Frame"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -600.0
+offset_top = -178.0
+offset_right = 600.0
+offset_bottom = -142.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_type_variation = &"BarkLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Vitals" type="PanelContainer" parent="Frame"]
+clip_contents = true
+custom_minimum_size = Vector2(432, 150)
+custom_maximum_size = Vector2(432, 150)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = -198.0
+offset_right = 480.0
+offset_bottom = -48.0
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Rows" type="VBoxContainer" parent="Frame/Vitals"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="HealthRow" type="HBoxContainer" parent="Frame/Vitals/Rows"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Health" type="Label" parent="Frame/Vitals/Rows/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 0)
+layout_mode = 2
+theme_type_variation = &"HudBig"
+text = "100"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HealthMax" type="Label" parent="Frame/Vitals/Rows/HealthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_type_variation = &"HudMono"
+text = "/ 100"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HealthBar" type="ProgressBar" parent="Frame/Vitals/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HealthBar"
+max_value = 100.0
+step = 0.0
+value = 100.0
+show_percentage = false
+
+[node name="Chip" type="PanelContainer" parent="Frame/Vitals/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"ChipOk"
+
+[node name="ChipRows" type="VBoxContainer" parent="Frame/Vitals/Rows/Chip"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="ChipMain" type="Label" parent="Frame/Vitals/Rows/Chip/ChipRows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ChipText"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ChipSub" type="Label" parent="Frame/Vitals/Rows/Chip/ChipRows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ChipSub"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Belt" type="HBoxContainer" parent="Frame"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(763, 70)
+custom_maximum_size = Vector2(763, 70)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -382.0
+offset_top = -118.0
+offset_right = 381.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Slot0" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot1" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot2" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot3" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot4" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot5" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot6" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot7" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot8" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="Slot9" parent="Frame/Belt" instance=ExtResource("5_belt")]
+layout_mode = 2
+
+[node name="WeaponPanel" type="PanelContainer" parent="Frame"]
+clip_contents = true
+custom_minimum_size = Vector2(372, 52)
+custom_maximum_size = Vector2(372, 52)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -100.0
+offset_right = -48.0
+offset_bottom = -48.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Weapon" type="Label" parent="Frame/WeaponPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HudCaps"
+text = "HOLSTERED"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Feed" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(440, 176)
+custom_maximum_size = Vector2(440, 176)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -488.0
+offset_top = -580.0
+offset_right = -48.0
+offset_bottom = -404.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 2

@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/props/led_lens_emission.png" id="1"]
+
+[resource]
+resource_name = "led_red"
+texture_filter = 5
+albedo_color = Color(0.35, 0.03, 0.02, 1.0)
+metallic = 0.0
+roughness = 0.3
+emission_enabled = true
+emission = Color(1, 0.12, 0.06, 1.0)
+emission_operator = 1
+emission_energy_multiplier = 5.0
+emission_texture = ExtResource("1")

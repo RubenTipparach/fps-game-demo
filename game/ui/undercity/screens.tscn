@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/Screens.cs" id="1_screens"]
+[ext_resource type="PackedScene" path="res://ui/undercity/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" path="res://ui/undercity/deck.tscn" id="3_deck"]
+[ext_resource type="PackedScene" path="res://ui/undercity/dialog_screen.tscn" id="4_dialog"]
+[ext_resource type="PackedScene" path="res://ui/undercity/terminal_screen.tscn" id="5_terminal"]
+
+[node name="Screens" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_screens")
+
+[node name="Hud" parent="." instance=ExtResource("2_hud")]
+unique_name_in_owner = true
+
+[node name="Deck" parent="." instance=ExtResource("3_deck")]
+unique_name_in_owner = true
+
+[node name="Dialog" parent="." instance=ExtResource("4_dialog")]
+unique_name_in_owner = true
+
+[node name="Terminal" parent="." instance=ExtResource("5_terminal")]
+unique_name_in_owner = true

@@ -1,0 +1,320 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://ct0fwt3yesosn"
+path="res://.godot/imported/offering_box.glb-005573f1b9f88e32753d46f50ab8705e.scn"
+
+[deps]
+
+source_file="res://models/undercity/props/offering_box.glb"
+dest_files=["res://.godot/imported/offering_box.glb-005573f1b9f88e32753d46f50ab8705e.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=false
+meshes/create_shadow_meshes=true
+meshes/light_baking=2
+meshes/lightmap_texel_size=0.05
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=false
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path="res://addons/brushfire_tools/prop_import.gd"
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"ammo_olive": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/ammo_olive.tres"
+},
+"armor_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/armor_green.tres"
+},
+"armor_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/armor_red.tres"
+},
+"asphalt": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/asphalt.tres"
+},
+"awning": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/awning.tres"
+},
+"barrel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/barrel.tres"
+},
+"bottle_amber": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/bottle_amber.tres"
+},
+"box_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/box_blue.tres"
+},
+"box_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/box_green.tres"
+},
+"brass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/props/brass.tres",
+"use_external/path": "res://materials/props/brass.tres"
+},
+"brick_wall": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/brick_wall.tres"
+},
+"canvas": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/canvas.tres"
+},
+"cardboard": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/cardboard.tres"
+},
+"ceiling_tiles": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/ceiling_tiles.tres"
+},
+"concrete": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/concrete.tres"
+},
+"corona_cool": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/fx/corona_cool.tres"
+},
+"corona_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/fx/corona_cyan.tres"
+},
+"corona_pink": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/fx/corona_pink.tres"
+},
+"corona_warm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/fx/corona_warm.tres"
+},
+"crate": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/crate.tres"
+},
+"crate_large": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/crate_large.tres"
+},
+"crate_stencil": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/crate_stencil.tres"
+},
+"diamond_plate": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/diamond_plate.tres"
+},
+"door_metal": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/door_metal.tres"
+},
+"exit_glow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/exit_glow.tres"
+},
+"floor_tiles": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/floor_tiles.tres"
+},
+"glass": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/glass.tres"
+},
+"gun_wood": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/gun_wood.tres"
+},
+"gunmetal": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/gunmetal.tres"
+},
+"gunmetal_light": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/gunmetal_light.tres"
+},
+"hazard_stripes": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/hazard_stripes.tres"
+},
+"hazard_triplanar": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/hazard_triplanar.tres"
+},
+"lacquer_black": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/props/lacquer_black.tres",
+"use_external/path": "res://materials/props/lacquer_black.tres"
+},
+"lacquer_red": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/props/lacquer_red.tres",
+"use_external/path": "res://materials/props/lacquer_red.tres"
+},
+"lamp_cage": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/lamp_cage.tres"
+},
+"lamp_glow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/lamp_glow.tres"
+},
+"lava": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/lava.tres"
+},
+"led_amber": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_amber.tres"
+},
+"led_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_red.tres"
+},
+"light_fixture": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/light_fixture.tres"
+},
+"light_panel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/light_panel.tres"
+},
+"megahealth": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/megahealth.tres"
+},
+"mersec_label": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/mersec_label.tres"
+},
+"neon_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/neon_cyan.tres"
+},
+"neon_pink": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/neon_pink.tres"
+},
+"paint_grimy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_grimy.tres"
+},
+"paint_navy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_navy.tres"
+},
+"paint_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_red.tres"
+},
+"paint_safe": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_safe.tres"
+},
+"paving_wet": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/paving_wet.tres"
+},
+"red_cross": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/red_cross.tres"
+},
+"rubber": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/props/rubber.tres",
+"use_external/path": "res://materials/props/rubber.tres"
+},
+"rust_metal": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/rust_metal.tres"
+},
+"shell_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/shell_red.tres"
+},
+"sky_moon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_moon.tres"
+},
+"sky_night": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_night.tres"
+},
+"sky_storm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_storm.tres"
+},
+"status_light": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/status_light.tres"
+},
+"stone_blocks": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/stone_blocks.tres"
+},
+"stripe_yellow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/stripe_yellow.tres"
+},
+"tech_panel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/tech_panel.tres"
+},
+"terminal_screen": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/terminal_screen.tres"
+},
+"water": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/water.tres"
+},
+"white_plastic": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/white_plastic.tres"
+},
+"window_dark": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_dark.tres"
+},
+"window_lit_cool": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_lit_cool.tres"
+},
+"window_lit_warm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_lit_warm.tres"
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=1

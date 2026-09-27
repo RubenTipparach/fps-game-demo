@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/FeedLine.cs" id="2_script"]
+
+[node name="FeedLine" type="Label"]
+custom_minimum_size = Vector2(440, 26)
+custom_maximum_size = Vector2(440, 26)
+offset_right = 440.0
+offset_bottom = 26.0
+theme = ExtResource("1_theme")
+theme_type_variation = &"FeedLabel"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+script = ExtResource("2_script")
+LifeS = 6.0
+FadeS = 0.8

@@ -1,0 +1,107 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/DialogScreen.cs" id="2_dialog"]
+[ext_resource type="PackedScene" path="res://ui/undercity/choice_row.tscn" id="3_choice"]
+
+[node name="Dialog" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_dialog")
+ChoiceRowScene = ExtResource("3_choice")
+
+[node name="Band" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -390.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"DialogPanel"
+
+[node name="Talk" type="VBoxContainer" parent="."]
+clip_contents = true
+custom_minimum_size = Vector2(1400, 350)
+custom_maximum_size = Vector2(1400, 350)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -700.0
+offset_top = -370.0
+offset_right = 700.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Who" type="HBoxContainer" parent="Talk"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Name" type="Label" parent="Talk/Who"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"WhoName"
+text = "Name"
+uppercase = true
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Role" type="Label" parent="Talk/Who"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"WhoRole"
+text = "Role"
+uppercase = true
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Cover" type="Label" parent="Talk/Who"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_type_variation = &"WhoCover"
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Line" type="Label" parent="Talk"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_type_variation = &"DialogLine"
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Choices" type="ScrollContainer" parent="Talk"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+horizontal_scroll_mode = 0
+
+[node name="ChoiceRows" type="VBoxContainer" parent="Talk/Choices"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4

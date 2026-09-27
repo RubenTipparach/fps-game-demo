@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/ObjectiveRowView.cs" id="2_script"]
+
+[node name="ObjectiveRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(770, 30)
+custom_maximum_size = Vector2(770, 30)
+propagate_maximum_size = true
+clip_contents = true
+offset_right = 770.0
+offset_bottom = 30.0
+mouse_filter = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="Tick" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_type_variation = &"MonoAccent"
+text = "[ ]"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Text" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ScreenText"
+text = "Objective"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Optional" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"ScreenCaps"
+text = "OPTIONAL"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3

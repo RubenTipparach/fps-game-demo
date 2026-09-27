@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/QuestRowView.cs" id="2_script"]
+
+[node name="QuestRow" type="Button"]
+custom_minimum_size = Vector2(340, 36)
+custom_maximum_size = Vector2(340, 36)
+clip_contents = true
+offset_right = 340.0
+offset_bottom = 36.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_theme")
+theme_type_variation = &"ListRow"
+text = "Quest"
+text_overrun_behavior = 3
+clip_text = true
+alignment = 0
+script = ExtResource("2_script")

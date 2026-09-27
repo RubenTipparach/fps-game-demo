@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+
+[node name="TerminalAction" type="Button"]
+custom_minimum_size = Vector2(240, 38)
+custom_maximum_size = Vector2(240, 38)
+clip_contents = true
+offset_right = 240.0
+offset_bottom = 38.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_theme")
+text = "Action"
+text_overrun_behavior = 3
+clip_text = true

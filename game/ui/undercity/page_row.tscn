@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/PageRowView.cs" id="2_script"]
+
+[node name="PageRow" type="Button"]
+custom_minimum_size = Vector2(320, 58)
+custom_maximum_size = Vector2(320, 58)
+clip_contents = true
+offset_right = 320.0
+offset_bottom = 58.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_theme")
+theme_type_variation = &"ListRow"
+script = ExtResource("2_script")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = -10.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="From" type="Label" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenCaps"
+text = "From"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Subject" type="Label" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenText"
+text = "Subject"
+clip_text = true
+text_overrun_behavior = 3
