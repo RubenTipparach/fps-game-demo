@@ -10,6 +10,11 @@ outsmart has a weakness the player can learn and a tool that exploits it:
 
 Combat has to be possible and costly, and non-lethal has to be a full path.
 
+The owner, 2026-09-27 (survey G2, G3): the Drains come next, with the combat they need. Also:
+"any npc can be shot, if they can defend themselves they will". So nobody is scenery. Every
+civilian, vendor and contact can be hurt. The armed ones fight back, and the rest flee, cower or
+surrender.
+
 ## What Changes
 
 - **Damage types.** Ballistic, blunt, shock, explosive, EMP, gas and tranq, with per-archetype
@@ -25,6 +30,12 @@ Combat has to be possible and costly, and non-lethal has to be a full path.
   loadout, a behaviour quirk and at least two counters that aren't "shoot it more".
 - **Seven player weapons and four grenade types** with data-defined damage, rate, magazine,
   spread, recoil and noise.
+- **Everyone can be shot.**
+  - Every NPC has health and hit zones: civilians, vendors, quest givers.
+  - Each NPC has a defence in `data/npcs.json`: `fight` (they carry a weapon), `flee`, `cower` or
+    `surrender`.
+  - Hurting or killing someone is a crime seen by whoever watches. It can also end quests: a dead
+    quest giver fails their quests, and a dead vendor closes their shop.
 
 ## Capabilities
 
@@ -39,4 +50,10 @@ None.
 
 - `Undercity.Core/Combat`, `data/weapons.json`, `data/enemies.json`.
 - Brushfire's weapon and enemy code stays for the reference maps. Undercity NPCs use the core
-  through `npc.tscn` and humanoid models from `tools/blender/build_characters.py`.
+  through `npc.tscn`.
+- Their bodies come from `openspec/changes/npc-characters`:
+  - generated characters, rigged to Godot's humanoid profile;
+  - a shared animation library;
+  - ragdolls for deaths and knockouts.
+
+  That change supersedes the segmented rigs of decision C1 (owner, 2026-09-27).

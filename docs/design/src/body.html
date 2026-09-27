@@ -42,7 +42,8 @@
   <a href="#perception"><b>F9</b>Stealth, disguise</a>
   <a href="#combat"><b>F10</b>Enemies</a>
   <a href="#hud"><b>F11</b>HUD</a>
-  <a href="#architecture"><b>F12</b>Architecture</a>
+  <a href="#menus"><b>F12</b>Title, pause</a>
+  <a href="#architecture"><b>F13</b>Architecture</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -668,8 +669,127 @@
 </section>
 
 <!-- ========================================================= F12 -->
+<section id="menus">
+  <div class="sh"><span class="key">F12</span><h2>Title and pause</h2><span class="spec">openspec/changes/title-and-pause</span></div>
+  <p class="intro">Owner G1: mock up both. The title screen names five things and says nothing else. The pause menu is the wrist-deck again, with saves beside where you are, and options are one row per setting: a label and a control. No keyboard hints, per CLAUDE.md 8.</p>
+  <div class="controls"><span class="chip mock">Mockups · awaiting approval (D5, D6, D7)</span></div>
+  <h3>D5 · Title</h3>
+  <div class="hud" role="img" aria-label="Title screen mockup">
+    <svg viewBox="0 0 1600 900">
+      <defs><radialGradient id="mglow" cx=".75" cy=".55" r=".6"><stop offset="0" stop-color="#ff4fa3" stop-opacity=".16"/><stop offset=".5" stop-color="#35e0ff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+      <g><rect width="1600" height="900" fill="#070b10"/>
+        <rect width="1600" height="900" fill="url(#mglow)"/>
+        <path d="M0 250 H1600 V330 H0 Z" fill="#0b1118"/>
+        <g fill="#0c131b">
+          <path d="M0 900 V470 H70 V420 H150 V500 H210 V380 H300 V440 H360 V520 H430 V400 H520 V470 H600 V900 Z"/>
+          <path d="M1000 900 V430 H1080 V380 H1170 V470 H1240 V360 H1330 V450 H1400 V400 H1490 V480 H1600 V900 Z"/>
+        </g>
+        <path d="M-20 560 L1620 470 L1620 505 L-20 595 Z" fill="#101a24"/>
+        <g fill="#101a24"><rect x="260" y="560" width="26" height="340"/><rect x="760" y="530" width="26" height="370"/><rect x="1260" y="505" width="26" height="395"/></g>
+        <g fill="#f2b33d" opacity=".55"><rect x="90" y="450" width="8" height="12"/><rect x="118" y="470" width="8" height="12"/><rect x="232" y="410" width="8" height="12"/><rect x="452" y="430" width="8" height="12"/><rect x="1108" y="410" width="8" height="12"/><rect x="1292" y="390" width="8" height="12"/><rect x="1430" y="430" width="8" height="12"/></g>
+        <g fill="#35e0ff" opacity=".5"><rect x="170" y="520" width="8" height="12"/><rect x="480" y="500" width="8" height="12"/><rect x="1210" y="500" width="8" height="12"/><rect x="1520" y="510" width="8" height="12"/></g>
+        <rect x="318" y="408" width="10" height="70" fill="#ff4fa3"/><rect x="1352" y="396" width="10" height="64" fill="#35e0ff"/>
+        <g stroke="#6f86a0" stroke-width="1.4" opacity=".35"><path d="M120 120 l-6 26 M340 80 l-6 26 M560 170 l-6 26 M820 60 l-6 26 M1040 150 l-6 26 M1260 90 l-6 26 M1480 180 l-6 26 M230 300 l-6 26 M700 260 l-6 26 M1150 280 l-6 26 M1390 330 l-6 26 M480 360 l-6 26"/></g>
+        <rect y="700" width="1600" height="200" fill="#060a0e" opacity=".9"/></g>
+      <defs><linearGradient id="mvig" x1="0" x2="1"><stop offset="0" stop-color="#05080b" stop-opacity=".96"/><stop offset=".42" stop-color="#05080b" stop-opacity=".88"/><stop offset=".62" stop-color="#05080b" stop-opacity="0"/></linearGradient></defs>
+      <rect width="1600" height="900" fill="url(#mvig)"/>
+      <g font-family="Chakra Petch, sans-serif" font-weight="700"><text x="110" y="220" font-size="112" fill="#e8eef2" letter-spacing="6">UNDERCITY</text></g>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" letter-spacing="4"><text x="116" y="262" font-size="24" fill="#8a9bab">MERIDIAN  ·  LOW HARBOR</text></g>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="34" letter-spacing="3">
+        <rect x="104" y="378" width="4" height="58" fill="#f2b33d"/><rect x="108" y="378" width="440" height="58" fill="#f2b33d" opacity=".06"/>
+        <text x="130" y="416" fill="#f2b33d">CONTINUE</text>
+        <text x="130" y="486" fill="#dfe7ee">NEW GAME</text>
+        <text x="130" y="546" fill="#dfe7ee">LOAD</text>
+        <text x="130" y="606" fill="#dfe7ee">OPTIONS</text>
+        <text x="130" y="666" fill="#dfe7ee">QUIT</text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#8fb0bd"><text x="330" y="414">auto · Low Harbor · 1 h 42 m</text></g>
+      <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#48626e"><text x="110" y="850">slice 1</text></g>
+    </svg>
+  </div>
+  <h3>D6 · Pause, with saves</h3>
+  <div class="hud" role="img" aria-label="Pause menu mockup">
+    <svg viewBox="0 0 1600 900">
+      <defs><radialGradient id="mglow2" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#35e0ff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+      <g opacity=".35"><rect width="1600" height="900" fill="#070b10"/>
+        <rect width="1600" height="900" fill="url(#mglow2)"/>
+        <path d="M0 250 H1600 V330 H0 Z" fill="#0b1118"/>
+        <g fill="#0c131b">
+          <path d="M0 900 V470 H70 V420 H150 V500 H210 V380 H300 V440 H360 V520 H430 V400 H520 V470 H600 V900 Z"/>
+          <path d="M1000 900 V430 H1080 V380 H1170 V470 H1240 V360 H1330 V450 H1400 V400 H1490 V480 H1600 V900 Z"/>
+        </g>
+        <path d="M-20 560 L1620 470 L1620 505 L-20 595 Z" fill="#101a24"/>
+        <g fill="#101a24"><rect x="260" y="560" width="26" height="340"/><rect x="760" y="530" width="26" height="370"/><rect x="1260" y="505" width="26" height="395"/></g>
+        <g fill="#f2b33d" opacity=".55"><rect x="90" y="450" width="8" height="12"/><rect x="118" y="470" width="8" height="12"/><rect x="232" y="410" width="8" height="12"/><rect x="452" y="430" width="8" height="12"/><rect x="1108" y="410" width="8" height="12"/><rect x="1292" y="390" width="8" height="12"/><rect x="1430" y="430" width="8" height="12"/></g>
+        <g fill="#35e0ff" opacity=".5"><rect x="170" y="520" width="8" height="12"/><rect x="480" y="500" width="8" height="12"/><rect x="1210" y="500" width="8" height="12"/><rect x="1520" y="510" width="8" height="12"/></g>
+        <rect x="318" y="408" width="10" height="70" fill="#ff4fa3"/><rect x="1352" y="396" width="10" height="64" fill="#35e0ff"/>
+        <g stroke="#6f86a0" stroke-width="1.4" opacity=".35"><path d="M120 120 l-6 26 M340 80 l-6 26 M560 170 l-6 26 M820 60 l-6 26 M1040 150 l-6 26 M1260 90 l-6 26 M1480 180 l-6 26 M230 300 l-6 26 M700 260 l-6 26 M1150 280 l-6 26 M1390 330 l-6 26 M480 360 l-6 26"/></g>
+        <rect y="700" width="1600" height="200" fill="#060a0e" opacity=".9"/></g>
+      <rect width="1600" height="900" fill="#05080a" opacity=".45"/>
+      <rect x="250" y="150" width="1100" height="600" rx="14" fill="#191c20" stroke="#2a3037"/>
+      <rect x="264" y="164" width="1072" height="572" rx="6" fill="#0b151b" stroke="#0b1216"/>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="30" letter-spacing="3">
+        <rect x="290" y="210" width="4" height="50" fill="#f2b33d"/><rect x="294" y="210" width="300" height="50" fill="#f2b33d" opacity=".06"/>
+        <text x="312" y="244" fill="#f2b33d">RESUME</text>
+        <text x="312" y="310" fill="#dfe7ee">SAVE</text>
+        <text x="312" y="370" fill="#dfe7ee">LOAD</text>
+        <text x="312" y="430" fill="#dfe7ee">OPTIONS</text>
+        <text x="312" y="490" fill="#dfe7ee">QUIT TO TITLE</text>
+        <text x="312" y="550" fill="#dfe7ee">QUIT GAME</text>
+      </g>
+      <path d="M630 196 V712" stroke="#22404c"/>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" letter-spacing="3"><text x="664" y="222" font-size="16" fill="#6c8a98">LOCATION</text><text x="664" y="324" font-size="16" fill="#6c8a98">OBJECTIVE</text><text x="664" y="452" font-size="16" fill="#6c8a98">SAVES</text></g>
+      <g font-family="Chakra Petch, sans-serif" font-weight="700"><text x="664" y="262" font-size="34" fill="#e8eef2">LOW HARBOR</text></g>
+      <g font-family="IBM Plex Mono, monospace" font-size="16" fill="#8fb0bd"><text x="664" y="292">Sump Market · 1 h 42 m · 612 cr</text></g>
+      <g font-family="Barlow Condensed, sans-serif"><text x="664" y="358" font-size="18" fill="#f2b33d" letter-spacing="3">RAT TRAP</text><text x="664" y="390" font-size="24" fill="#dfe7ee">Get into the Drains: the storm drain in the Pit.</text></g>
+      <g font-family="IBM Plex Mono, monospace" font-size="17">
+        <rect x="660" y="468" width="640" height="42" fill="#0d1b22" stroke="#22404c"/><text x="676" y="495" fill="#dfe7ee">quick</text><text x="800" y="495" fill="#8fb0bd">Sump Market</text><text x="1060" y="495" fill="#8fb0bd">1 h 40 m</text><text x="1284" y="495" fill="#8fb0bd" text-anchor="end">21:12</text>
+        <rect x="660" y="516" width="640" height="42" fill="#071117" stroke="#173039"/><text x="676" y="543" fill="#dfe7ee">auto</text><text x="800" y="543" fill="#8fb0bd">Golden Carp</text><text x="1060" y="543" fill="#8fb0bd">1 h 21 m</text><text x="1284" y="543" fill="#8fb0bd" text-anchor="end">20:53</text>
+        <rect x="660" y="564" width="640" height="42" fill="#071117" stroke="#173039"/><text x="676" y="591" fill="#dfe7ee">slot 1</text><text x="800" y="591" fill="#8fb0bd">Kessler's Pawn</text><text x="1060" y="591" fill="#8fb0bd">0 h 38 m</text><text x="1284" y="591" fill="#8fb0bd" text-anchor="end">20:10</text>
+      </g>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="20" letter-spacing="2"><rect x="660" y="640" width="160" height="44" fill="#071117" stroke="#35e0ff" stroke-opacity=".6"/><text x="740" y="669" text-anchor="middle" fill="#dfe7ee">SAVE HERE</text><rect x="836" y="640" width="160" height="44" fill="#071117" stroke="#35e0ff" stroke-opacity=".6"/><text x="916" y="669" text-anchor="middle" fill="#dfe7ee">OVERWRITE</text></g>
+    </svg>
+  </div>
+  <h3>D7 · Options</h3>
+  <div class="hud" role="img" aria-label="Options mockup">
+    <svg viewBox="0 0 1600 900">
+      <rect width="1600" height="900" fill="#05080a"/>
+      <rect x="250" y="120" width="1100" height="660" rx="14" fill="#191c20" stroke="#2a3037"/>
+      <rect x="264" y="134" width="1072" height="632" rx="6" fill="#0b151b" stroke="#0b1216"/>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="16" letter-spacing="3"><text x="300" y="186" fill="#f2b33d">CONTROLS</text><text x="430" y="186" fill="#6c8a98">VIDEO</text><text x="530" y="186" fill="#6c8a98">AUDIO</text></g>
+      <path d="M290 200 H1310" stroke="#22404c"/>
+      <g font-family="Barlow, sans-serif" font-size="24" fill="#dfe7ee">
+        <text x="300" y="262">Mouse sensitivity</text><text x="300" y="332">Invert look</text><text x="300" y="402">Field of view</text><text x="300" y="472">Head bob</text><text x="300" y="542">Controller sensitivity</text>
+      </g>
+      <g>
+        <rect x="760" y="250" width="420" height="6" fill="#173039"/><rect x="760" y="250" width="190" height="6" fill="#f2b33d"/><rect x="944" y="240" width="12" height="26" fill="#f2b33d"/>
+        <rect x="760" y="316" width="64" height="30" rx="15" fill="#071117" stroke="#22404c"/><circle cx="778" cy="331" r="10" fill="#48626e"/>
+        <rect x="760" y="390" width="420" height="6" fill="#173039"/><rect x="760" y="390" width="250" height="6" fill="#f2b33d"/><rect x="1004" y="380" width="12" height="26" fill="#f2b33d"/>
+        <rect x="760" y="456" width="64" height="30" rx="15" fill="#2a2412" stroke="#f2b33d"/><circle cx="806" cy="471" r="10" fill="#f2b33d"/>
+        <rect x="760" y="530" width="420" height="6" fill="#173039"/><rect x="760" y="530" width="210" height="6" fill="#f2b33d"/><rect x="964" y="520" width="12" height="26" fill="#f2b33d"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="18" fill="#8fb0bd"><text x="1200" y="262">1.00</text><text x="1200" y="402">90°</text><text x="1200" y="542">1.00</text></g>
+    </svg>
+  </div>
+  <div class="cols two">
+    <div class="sub"><h3>What each screen does</h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><b>Continue</b></td><td>loads the newest save; hidden when there is none</td></tr>
+        <tr><td><b>New game</b></td><td>a new run in capsule 12</td></tr>
+        <tr><td><b>Load</b></td><td>the save list (as in the pause menu), newest first</td></tr>
+        <tr><td><b>Save</b></td><td>not in combat or a conversation; quick, auto and named slots</td></tr>
+        <tr><td><b>Quit to title</b></td><td>asks once if the last save is older than 5 minutes</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="sub"><h3>Rules</h3>
+      <p class="note">Authored <code>.tscn</code> screens styled by the one theme, fixed-size panels, the same fonts as the deck. The game pauses under the pause menu (it doesn't under the deck). Options are Brushfire's settings, shown in Undercity's style; the settings file doesn't change.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F12 -->
 <section id="architecture">
-  <div class="sh"><span class="key">F12</span><h2>Architecture</h2><span class="spec">openspec/changes/undercity-architecture</span></div>
+  <div class="sh"><span class="key">F13</span><h2>Architecture</h2><span class="spec">openspec/changes/undercity-architecture</span></div>
   <p class="intro">Every gameplay rule lives once, in <code>Undercity.Core</code>, a C# library with no Godot reference that runs and is tested headless. The Godot game only adapts it. Tuning is JSON with units in the key names. One layout per level feeds both the design map and the Blender build.</p>
   <div class="scroll diagram" role="img" aria-label="Architecture diagram">
     <svg viewBox="0 0 1100 440">

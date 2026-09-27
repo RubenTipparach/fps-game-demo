@@ -73,3 +73,29 @@ first. He SHALL NOT do so while Suspicious.
 #### Scenario: A gunfight in the camp
 - **WHEN** a gunfight in the Rat camp alerts Twitch and he is still standing 8 s later
 - **THEN** one hostage dies and the M1 objective updates
+
+### Requirement: Everyone can be shot
+Every NPC, including civilians, vendors and quest givers, SHALL have health and hit zones, and
+SHALL take damage by the same damage rule as enemies (owner, 2026-09-27: "any npc can be shot").
+
+#### Scenario: Shooting a vendor
+- **WHEN** the runner shoots Kessler in his shop
+- **THEN** Kessler takes damage by the damage rule, and the shot is a crime to any witness
+
+### Requirement: Those who can defend themselves do
+Each NPC SHALL have a defence in `data/npcs.json`: `fight`, `flee`, `cower` or `surrender`. An NPC
+with a weapon SHALL fight when attacked; one without SHALL flee, cower or surrender as its data
+says.
+
+#### Scenario: A gun drawn on the bar
+- **WHEN** the runner shoots at Tank in the Rusty Anchor
+- **THEN** Tank fights back with his baton
+- **AND** the civilians in the bar flee or cower, each as its data says
+
+### Requirement: A dead quest giver fails their quests
+Killing an NPC SHALL fail every active or unstarted quest they give, SHALL close their vendor,
+and the journal SHALL say why.
+
+#### Scenario: Silk dies before paying
+- **WHEN** Silk is killed while M1 is active
+- **THEN** M1 fails, the journal names her death as the reason, and her dialog is gone

@@ -111,10 +111,40 @@ Each counter is taught in the world before it's needed. The level changes list w
 - the Yard's kennel manual on a terminal;
 - the scrap turret's sticker: "DON'T HACK THIS, DUTCH".
 
+### 7. Everyone can be shot (owner, 2026-09-27)
+
+"Any npc can be shot, if they can defend themselves they will."
+
+- **Health for everyone.** Named NPCs and civilians use the same damage rule (section 2) with
+  the same zones. Their health comes from `data/npcs.json`, whose default is 80.
+- **A defence per NPC.** `data/npcs.json` gains `defence` and `weapon`:
+
+| Defence | Who | On being attacked or seeing a gun drawn on them |
+|---|---|---|
+| `fight` | anyone with a `weapon`: MerSec, gang members, Tank (baton), Dace (pistol), Kessler (a Scattergun under the counter), Silk (pistol), Jax (pistol), Skiv (pipe) | draws and fights, as their archetype |
+| `flee` | most civilians, Nguyen, Mouse, Rivet, Lin | runs to the nearest exit point away from the threat; shouts an alarm bark |
+| `cower` | some civilians (a seeded half of them), Doc Vo, Mags | drops and covers where they stand; can be talked to after 10 s ("Please...") |
+| `surrender` | Petra, the Oracle, anyone at 25 % health or less whose Intimidate check fails | hands up; drops their weapon; can be talked to |
+
+- **Consequences are data, not special cases.**
+  - Killing an NPC sets `npc:<id>:dead` and `World.Npc(id) = Dead`.
+  - Their quests fail (`QuestDef.Giver`), and their vendor closes.
+  - A witness reports it as a crime (`GameState.ReportCrime`, the one crime rule), and MerSec
+    turns hostile, as for any shot fired in the hub.
+  - Hurting without killing is a crime too.
+- **Knockouts.** A knocked-out NPC is `Unconscious`. They wake after 120 s unless moved. Dragging
+  and hiding bodies is Stealth's job (perception-and-disguise, bodies).
+- **Bodies.** Deaths and knockouts hand the body to a ragdoll (npc-characters, design section 4).
+  The ragdoll settles within 3 s, then freezes, so a body costs nothing after it lands.
+
 ## Risks / Trade-offs
 
-- **Brushfire's enemies are arena monsters.** Undercity needs humanoids that act, talk and
-  sleep. `build_characters.py` makes segmented rigs per faction; the design page lists the
-  rigs.
+- **Brushfire's enemies are arena monsters.** Undercity needs humanoids that act, talk, sleep
+  and fall. Their bodies are the npc-characters change: generated humans on Godot's humanoid
+  profile, a shared animation library and ragdolls. That replaces the segmented rigs of decision
+  C1, which stay in the hub only until the new characters land.
+- **Shooting quest givers can dead-end the story.**
+  - Every mission keeps a route that doesn't need a given NPC alive, and each design lists it.
+  - The journal says which quest failed and why.
 - **Undamped noise plus hard-hitting enemies can snowball.** Wary lasts only 120 s, and the
   alarm expires, so a mistake is survivable.
