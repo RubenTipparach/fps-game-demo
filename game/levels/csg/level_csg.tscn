@@ -17,6 +17,7 @@
 [ext_resource type="Shape3D" uid="uid://dnxjeovabbwxs" path="res://levels/csg/level_csg_collision.res" id="15_6xlfo"]
 [ext_resource type="PackedScene" path="res://scenes/props/ceiling_light.tscn" id="15_ceiling_ligh"]
 [ext_resource type="PackedScene" path="res://scenes/props/wall_lamp.tscn" id="16_wall_lamp"]
+[ext_resource type="LightmapGIData" uid="uid://jclniq5fg5x2" path="res://levels/csg/level_csg.lmbake" id="16_xt7qh"]
 [ext_resource type="PackedScene" path="res://scenes/props/player_start.tscn" id="17_player_start"]
 [ext_resource type="PackedScene" path="res://scenes/props/doorway.tscn" id="18_doorway"]
 [ext_resource type="PackedScene" path="res://scenes/props/archway_400x400.tscn" id="19_archway_400x"]
@@ -629,6 +630,7 @@ directional = true
 interior = true
 denoiser_strength = 0.12
 environment_mode = 0
+light_data = ExtResource("16_xt7qh")
 
 [node name="FillLights" type="Node3D" parent="." unique_id=1784522240]
 
