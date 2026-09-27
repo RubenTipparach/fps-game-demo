@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Pickup.cs" id="1_Pickup"]
+[ext_resource type="Material" path="res://materials/props/white_plastic.tres" id="4_white_plasti"]
+[ext_resource type="Material" path="res://materials/props/red_cross.tres" id="6_red_cross"]
+[ext_resource type="Material" path="res://materials/props/rubber.tres" id="9_rubber"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(0.46, 0.24, 0.34)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+size = Vector3(0.26, 0.02, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7"]
+size = Vector3(0.08, 0.02, 0.26)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+size = Vector3(0.2, 0.04, 0.04)
+
+[node name="Health" type="Area3D"]
+collision_layer = 8
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_Pickup")
+Kind = 0
+Amount = 25
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+shape = SubResource("SphereShape3D_2")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0.0, 0.4, 0.0)
+
+[node name="Case" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_3")
+material_override = ExtResource("4_white_plasti")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="CrossA" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("6_red_cross")
+position = Vector3(0.0, 0.125, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="CrossB" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_7")
+material_override = ExtResource("6_red_cross")
+position = Vector3(0.0, 0.125, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Handle" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_8")
+material_override = ExtResource("9_rubber")
+position = Vector3(0.0, 0.15, 0.12)
+cast_shadow = 0
+gi_mode = 2

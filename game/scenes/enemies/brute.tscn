@@ -1,0 +1,241 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Enemies/Enemy.cs" id="1_Enemy"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/health.tscn" id="3_health"]
+[ext_resource type="Material" path="res://materials/enemies/joint.tres" id="5_joint"]
+[ext_resource type="Material" path="res://materials/enemies/brute_armor.tres" id="7_brute_armor"]
+[ext_resource type="Material" path="res://materials/enemies/eye_orange.tres" id="13_eye_orange"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2"]
+radius = 0.7
+height = 2.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+size = Vector3(0.3, 0.6, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+size = Vector3(0.36, 0.55, 0.38)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+size = Vector3(0.4, 0.14, 0.52)
+
+[sub_resource type="BoxMesh" id="BoxMesh_9"]
+size = Vector3(0.7, 0.26, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_10"]
+size = Vector3(1.1, 0.85, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_11"]
+size = Vector3(0.8, 0.4, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_12"]
+size = Vector3(0.5, 0.06, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_14"]
+size = Vector3(0.42, 0.34, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_15"]
+size = Vector3(0.09, 0.05, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_16"]
+size = Vector3(0.42, 0.34, 0.46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_17"]
+size = Vector3(0.24, 0.5, 0.24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_18"]
+size = Vector3(0.32, 0.55, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_19"]
+size = Vector3(0.38, 0.32, 0.38)
+
+[node name="Brute" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_Enemy")
+Kind = 1
+MaxHealth = 240.0
+MoveSpeed = 3.4
+ChargeSpeed = 9.0
+EyeHeight = 2.2
+SightRange = 40.0
+AttackRange = 2.9
+AttackCooldown = 1.1
+WindupTime = 0.42
+Damage = 26.0
+BurstCount = 1
+PainChance = 0.25
+TurnSpeed = 6.0
+DropChance = 0.6
+DropScene = ExtResource("3_health")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 1.25, 0.0)
+shape = SubResource("CapsuleShape3D_2")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.7
+target_desired_distance = 1.2
+radius = 0.7
+height = 2.5
+path_max_distance = 4.0
+
+[node name="Rig" type="Node3D" parent="."]
+
+[node name="Voice" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0.0, 2.0, 0.0)
+unit_size = 9.0
+max_distance = 70.0
+bus = "World"
+
+[node name="LegL" type="Node3D" parent="Rig"]
+position = Vector3(-0.3, 1.15, 0.0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Rig/LegL"]
+mesh = SubResource("BoxMesh_4")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -0.3, 0.0)
+gi_mode = 2
+
+[node name="Shin" type="MeshInstance3D" parent="Rig/LegL"]
+mesh = SubResource("BoxMesh_6")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, -0.8, 0.0)
+gi_mode = 2
+
+[node name="Foot" type="MeshInstance3D" parent="Rig/LegL"]
+mesh = SubResource("BoxMesh_8")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -1.08, -0.08)
+gi_mode = 2
+
+[node name="LegR" type="Node3D" parent="Rig"]
+position = Vector3(0.3, 1.15, 0.0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Rig/LegR"]
+mesh = SubResource("BoxMesh_4")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -0.3, 0.0)
+gi_mode = 2
+
+[node name="Shin" type="MeshInstance3D" parent="Rig/LegR"]
+mesh = SubResource("BoxMesh_6")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, -0.8, 0.0)
+gi_mode = 2
+
+[node name="Foot" type="MeshInstance3D" parent="Rig/LegR"]
+mesh = SubResource("BoxMesh_8")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -1.08, -0.08)
+gi_mode = 2
+
+[node name="Torso" type="Node3D" parent="Rig"]
+position = Vector3(0.0, 1.2, 0.0)
+
+[node name="Pelvis" type="MeshInstance3D" parent="Rig/Torso"]
+mesh = SubResource("BoxMesh_9")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, 0.05, 0.0)
+gi_mode = 2
+
+[node name="Chest" type="MeshInstance3D" parent="Rig/Torso"]
+mesh = SubResource("BoxMesh_10")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, 0.62, 0.0)
+gi_mode = 2
+
+[node name="Hump" type="MeshInstance3D" parent="Rig/Torso"]
+mesh = SubResource("BoxMesh_11")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, 0.95, 0.25)
+rotation_degrees = Vector3(20.0, 0.0, 0.0)
+gi_mode = 2
+
+[node name="Grille" type="MeshInstance3D" parent="Rig/Torso"]
+mesh = SubResource("BoxMesh_12")
+material_override = ExtResource("13_eye_orange")
+position = Vector3(0.0, 0.55, -0.356)
+gi_mode = 2
+
+[node name="Head" type="Node3D" parent="Rig"]
+position = Vector3(0.0, 2.2, -0.15)
+
+[node name="Skull" type="MeshInstance3D" parent="Rig/Head"]
+mesh = SubResource("BoxMesh_14")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, 0.05, 0.0)
+gi_mode = 2
+
+[node name="EyeL" type="MeshInstance3D" parent="Rig/Head"]
+mesh = SubResource("BoxMesh_15")
+material_override = ExtResource("13_eye_orange")
+position = Vector3(-0.1, 0.07, -0.205)
+gi_mode = 2
+
+[node name="EyeR" type="MeshInstance3D" parent="Rig/Head"]
+mesh = SubResource("BoxMesh_15")
+material_override = ExtResource("13_eye_orange")
+position = Vector3(0.1, 0.07, -0.205)
+gi_mode = 2
+
+[node name="EyeLight" type="OmniLight3D" parent="Rig/Head"]
+position = Vector3(0.0, 0.05, -0.45)
+light_color = Color(1.0, 0.541176, 0.12549, 1.0)
+light_energy = 0.7
+omni_range = 3.0
+light_bake_mode = 0
+
+[node name="ArmL" type="Node3D" parent="Rig"]
+position = Vector3(-0.75, 2.0, 0.0)
+
+[node name="Shoulder" type="MeshInstance3D" parent="Rig/ArmL"]
+mesh = SubResource("BoxMesh_16")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, 0.02, 0.0)
+gi_mode = 2
+
+[node name="Upper" type="MeshInstance3D" parent="Rig/ArmL"]
+mesh = SubResource("BoxMesh_17")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -0.4, 0.0)
+gi_mode = 2
+
+[node name="Fore" type="MeshInstance3D" parent="Rig/ArmL"]
+mesh = SubResource("BoxMesh_18")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, -0.88, 0.0)
+gi_mode = 2
+
+[node name="Fist" type="MeshInstance3D" parent="Rig/ArmL"]
+mesh = SubResource("BoxMesh_19")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -1.28, 0.0)
+gi_mode = 2
+
+[node name="ArmR" type="Node3D" parent="Rig"]
+position = Vector3(0.75, 2.0, 0.0)
+
+[node name="Shoulder" type="MeshInstance3D" parent="Rig/ArmR"]
+mesh = SubResource("BoxMesh_16")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, 0.02, 0.0)
+gi_mode = 2
+
+[node name="Upper" type="MeshInstance3D" parent="Rig/ArmR"]
+mesh = SubResource("BoxMesh_17")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -0.4, 0.0)
+gi_mode = 2
+
+[node name="Fore" type="MeshInstance3D" parent="Rig/ArmR"]
+mesh = SubResource("BoxMesh_18")
+material_override = ExtResource("7_brute_armor")
+position = Vector3(0.0, -0.88, 0.0)
+gi_mode = 2
+
+[node name="Fist" type="MeshInstance3D" parent="Rig/ArmR"]
+mesh = SubResource("BoxMesh_19")
+material_override = ExtResource("5_joint")
+position = Vector3(0.0, -1.28, 0.0)
+gi_mode = 2

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_func_godot_f"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/health.tscn" id="2_health"]
+
+[resource]
+script = ExtResource("1_func_godot_f")
+classname = "item_health"
+description = "Medkit (+25 health)."
+class_properties = Dictionary[String, Variant]({
+"amount": 0
+})
+class_property_descriptions = Dictionary[String, Variant]({
+"amount": "Override the amount given (0 = default)."
+})
+meta_properties = Dictionary[String, Variant]({
+"size": AABB(-12, -12, 0, 12, 12, 24),
+"color": Color(0.2, 0.5, 1.0, 1.0)
+})
+scene_file = ExtResource("2_health")
+apply_rotation_on_map_build = true

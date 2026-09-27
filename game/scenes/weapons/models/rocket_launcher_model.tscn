@@ -1,0 +1,114 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/props/gunmetal.tres" id="2_gunmetal"]
+[ext_resource type="Material" path="res://materials/props/hazard_triplanar.tres" id="4_hazard_tripl"]
+[ext_resource type="Material" path="res://materials/props/gunmetal_light.tres" id="6_gunmetal_lig"]
+[ext_resource type="Material" path="res://materials/props/rubber.tres" id="9_rubber"]
+[ext_resource type="Material" path="res://materials/enemies/eye_red.tres" id="12_eye_red"]
+[ext_resource type="Material" path="res://materials/fx/muzzle_flash.tres" id="14_muzzle_flash"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+top_radius = 0.065
+bottom_radius = 0.065
+height = 0.82
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+top_radius = 0.068
+bottom_radius = 0.068
+height = 0.12
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+top_radius = 0.075
+bottom_radius = 0.075
+height = 0.06
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7"]
+top_radius = 0.072
+bottom_radius = 0.072
+height = 0.05
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+size = Vector3(0.045, 0.12, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_10"]
+size = Vector3(0.03, 0.05, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_11"]
+size = Vector3(0.02, 0.02, 0.005)
+
+[sub_resource type="QuadMesh" id="QuadMesh_13"]
+size = Vector2(0.5, 0.5)
+
+[node name="RocketLauncherModel" type="Node3D"]
+
+[node name="Tube" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_1")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.01, -0.18)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Band" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_3")
+material_override = ExtResource("4_hazard_tripl")
+position = Vector3(0.0, 0.01, -0.38)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="MuzzleRing" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_5")
+material_override = ExtResource("6_gunmetal_lig")
+position = Vector3(0.0, 0.01, -0.58)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="RearRing" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_7")
+material_override = ExtResource("6_gunmetal_lig")
+position = Vector3(0.0, 0.01, 0.22)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Grip" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_8")
+material_override = ExtResource("9_rubber")
+position = Vector3(0.0, -0.1, 0.02)
+rotation_degrees = Vector3(18.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Sight" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_10")
+material_override = ExtResource("6_gunmetal_lig")
+position = Vector3(-0.07, 0.08, -0.1)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="SightGlass" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_11")
+material_override = ExtResource("12_eye_red")
+position = Vector3(-0.07, 0.09, -0.152)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Muzzle" type="Marker3D" parent="."]
+position = Vector3(0.0, 0.01, -0.62)
+
+[node name="Flash" type="MeshInstance3D" parent="Muzzle"]
+mesh = SubResource("QuadMesh_13")
+material_override = ExtResource("14_muzzle_flash")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2

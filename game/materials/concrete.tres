@@ -1,0 +1,18 @@
+[gd_resource type="ORMMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/concrete.png" id="1"]
+[ext_resource type="Texture2D" path="res://textures/concrete_orm.png" id="2"]
+[ext_resource type="Texture2D" path="res://textures/concrete_normal.png" id="3"]
+
+[resource]
+resource_name = "concrete"
+texture_filter = 5
+albedo_texture = ExtResource("1")
+roughness = 1.0
+metallic = 1.0
+metallic_specular = 0.5
+orm_texture = ExtResource("2")
+ao_light_affect = 0.2
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource("3")

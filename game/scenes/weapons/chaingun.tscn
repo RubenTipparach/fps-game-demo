@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Player/ChaingunWeapon.cs" id="1_ChaingunWeap"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/models/chaingun_model.tscn" id="2_chaingun_mod"]
+
+[node name="Chaingun" type="Node3D"]
+script = ExtResource("1_ChaingunWeap")
+DisplayName = "Chaingun"
+Slot = 2
+Owned = false
+Ammo = 1
+AmmoPerShot = 1
+FireInterval = 0.075
+Damage = 9.0
+Pellets = 1
+SpreadDegrees = 1.0
+Range = 250.0
+ViewKick = 0.45
+KickPush = Vector3(0.0, 0.005, 0.045)
+KickPitch = 1.8
+FireSound = "chaingun_fire"
+FireVolumeDb = -4.0
+NoiseRadius = 40.0
+Tracers = true
+
+[node name="Model" parent="." instance=ExtResource("2_chaingun_mod")]
+position = Vector3(0.22, -0.27, -0.4)

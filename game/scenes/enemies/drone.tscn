@@ -1,0 +1,131 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Enemies/Enemy.cs" id="1_Enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/plasma_ball.tscn" id="3_plasma_ball"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/shells_small.tscn" id="4_shells_small"]
+[ext_resource type="Material" path="res://materials/enemies/drone_shell.tres" id="6_drone_shell"]
+[ext_resource type="Material" path="res://materials/enemies/joint.tres" id="8_joint"]
+[ext_resource type="Material" path="res://materials/enemies/eye_cyan.tres" id="10_eye_cyan"]
+[ext_resource type="Material" path="res://materials/props/gunmetal.tres" id="13_gunmetal"]
+[ext_resource type="AudioStream" path="res://audio/sfx/drone_hum.wav" id="14_drone_hum"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.55
+
+[sub_resource type="SphereMesh" id="SphereMesh_5"]
+radius = 0.42
+height = 0.84
+radial_segments = 16
+rings = 8
+
+[sub_resource type="TorusMesh" id="TorusMesh_7"]
+inner_radius = 0.4
+outer_radius = 0.52
+rings = 24
+ring_segments = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_9"]
+radius = 0.14
+height = 0.28
+radial_segments = 16
+rings = 8
+
+[sub_resource type="BoxMesh" id="BoxMesh_11"]
+size = Vector3(0.4, 0.05, 0.3)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_12"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.16
+radial_segments = 10
+rings = 1
+
+[node name="Drone" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_Enemy")
+Kind = 2
+MaxHealth = 45.0
+MoveSpeed = 5.0
+EyeHeight = 0.0
+SightRange = 45.0
+AttackRange = 24.0
+PreferredRange = 9.0
+AttackCooldown = 2.0
+WindupTime = 0.6
+Damage = 14.0
+BurstCount = 1
+Inaccuracy = 1.5
+PainChance = 0.5
+HoverHeight = 2.8
+DropChance = 0.35
+FieldOfView = 200.0
+ProjectileScene = ExtResource("3_plasma_ball")
+DropScene = ExtResource("4_shells_small")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_2")
+
+[node name="Rig" type="Node3D" parent="."]
+
+[node name="Voice" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0.0, 0.0, 0.0)
+unit_size = 9.0
+max_distance = 70.0
+bus = "World"
+
+[node name="Body" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("SphereMesh_5")
+material_override = ExtResource("6_drone_shell")
+position = Vector3(0.0, 0.0, 0.0)
+gi_mode = 2
+
+[node name="Ring" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("TorusMesh_7")
+material_override = ExtResource("8_joint")
+position = Vector3(0.0, 0.0, 0.0)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+gi_mode = 2
+
+[node name="Eye" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("SphereMesh_9")
+material_override = ExtResource("10_eye_cyan")
+position = Vector3(0.0, 0.0, -0.36)
+gi_mode = 2
+
+[node name="FinL" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("BoxMesh_11")
+material_override = ExtResource("6_drone_shell")
+position = Vector3(-0.55, 0.0, 0.05)
+gi_mode = 2
+
+[node name="FinR" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("BoxMesh_11")
+material_override = ExtResource("6_drone_shell")
+position = Vector3(0.55, 0.0, 0.05)
+gi_mode = 2
+
+[node name="Emitter" type="MeshInstance3D" parent="Rig"]
+mesh = SubResource("CylinderMesh_12")
+material_override = ExtResource("13_gunmetal")
+position = Vector3(0.0, -0.28, -0.25)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+gi_mode = 2
+
+[node name="Muzzle" type="Marker3D" parent="Rig"]
+position = Vector3(0.0, -0.28, -0.4)
+
+[node name="EyeLight" type="OmniLight3D" parent="Rig"]
+position = Vector3(0.0, 0.0, -0.6)
+light_color = Color(0.25098, 0.909804, 1.0, 1.0)
+light_energy = 0.9
+omni_range = 3.5
+light_bake_mode = 0
+
+[node name="Hum" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("14_drone_hum")
+autoplay = true
+unit_size = 5.0
+max_distance = 40.0
+bus = "World"
+volume_db = -6.0

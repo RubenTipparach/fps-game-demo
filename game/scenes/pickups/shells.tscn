@@ -1,0 +1,104 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Pickup.cs" id="1_Pickup"]
+[ext_resource type="Material" path="res://materials/props/gunmetal_light.tres" id="4_gunmetal_lig"]
+[ext_resource type="Material" path="res://materials/props/shell_red.tres" id="6_shell_red"]
+[ext_resource type="Material" path="res://materials/props/brass.tres" id="8_brass"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(0.34, 0.12, 0.24)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.14
+radial_segments = 10
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7"]
+top_radius = 0.031
+bottom_radius = 0.031
+height = 0.03
+radial_segments = 10
+rings = 1
+
+[node name="Shells" type="Area3D"]
+collision_layer = 8
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_Pickup")
+Kind = 4
+Amount = 12
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+shape = SubResource("SphereShape3D_2")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0.0, 0.4, 0.0)
+
+[node name="Box" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_3")
+material_override = ExtResource("4_gunmetal_lig")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Shell0" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_5")
+material_override = ExtResource("6_shell_red")
+position = Vector3(-0.11, 0.12, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Cap0" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_7")
+material_override = ExtResource("8_brass")
+position = Vector3(-0.11, 0.07, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Shell1" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_5")
+material_override = ExtResource("6_shell_red")
+position = Vector3(-0.035, 0.12, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Cap1" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_7")
+material_override = ExtResource("8_brass")
+position = Vector3(-0.035, 0.07, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Shell2" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_5")
+material_override = ExtResource("6_shell_red")
+position = Vector3(0.04, 0.12, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Cap2" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_7")
+material_override = ExtResource("8_brass")
+position = Vector3(0.04, 0.07, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Shell3" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_5")
+material_override = ExtResource("6_shell_red")
+position = Vector3(0.115, 0.12, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Cap3" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CylinderMesh_7")
+material_override = ExtResource("8_brass")
+position = Vector3(0.115, 0.07, 0.0)
+cast_shadow = 0
+gi_mode = 2

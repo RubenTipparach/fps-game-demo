@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Player/RocketLauncherWeapon.cs" id="1_RocketLaunch"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/rocket.tscn" id="2_rocket"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/models/rocket_launcher_model.tscn" id="3_rocket_launc"]
+
+[node name="RocketLauncher" type="Node3D"]
+script = ExtResource("1_RocketLaunch")
+DisplayName = "Rocket Launcher"
+Slot = 3
+Owned = false
+Ammo = 2
+AmmoPerShot = 1
+FireInterval = 0.8
+Damage = 0.0
+ViewKick = 2.4
+KickPush = Vector3(0.0, 0.03, 0.2)
+KickPitch = 7.0
+FireSound = "rocket_fire"
+NoiseRadius = 45.0
+ProjectileScene = ExtResource("2_rocket")
+
+[node name="Model" parent="." instance=ExtResource("3_rocket_launc")]
+position = Vector3(0.22, -0.2, -0.3)

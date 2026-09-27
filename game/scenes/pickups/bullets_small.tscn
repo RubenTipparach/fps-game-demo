@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/World/Pickup.cs" id="1_Pickup"]
+[ext_resource type="Material" path="res://materials/props/ammo_olive.tres" id="4_ammo_olive"]
+[ext_resource type="Material" path="res://materials/props/gunmetal.tres" id="6_gunmetal"]
+[ext_resource type="Material" path="res://materials/props/stripe_yellow.tres" id="8_stripe_yello"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(0.4, 0.26, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+size = Vector3(0.42, 0.04, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7"]
+size = Vector3(0.3, 0.05, 0.01)
+
+[node name="BulletsSmall" type="Area3D"]
+collision_layer = 8
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_Pickup")
+Kind = 5
+Amount = 25
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.5, 0.0)
+shape = SubResource("SphereShape3D_2")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0.0, 0.4, 0.0)
+
+[node name="Can" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_3")
+material_override = ExtResource("4_ammo_olive")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Lid" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_5")
+material_override = ExtResource("6_gunmetal")
+position = Vector3(0.0, 0.15, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Stripe" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_7")
+material_override = ExtResource("8_stripe_yello")
+position = Vector3(0.0, 0.02, -0.105)
+cast_shadow = 0
+gi_mode = 2

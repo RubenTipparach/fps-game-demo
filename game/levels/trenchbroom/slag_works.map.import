@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://mpo4uwxs504t"
+path="res://.godot/imported/slag_works.map-d71ca36cfbe48f2411c6e69798357683.tres"
+
+[deps]
+
+source_file="res://levels/trenchbroom/slag_works.map"
+dest_files=["res://.godot/imported/slag_works.map-d71ca36cfbe48f2411c6e69798357683.tres"]
+
+[params]
+

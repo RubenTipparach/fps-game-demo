@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/sky_surface.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://textures/sky/storm_back.png" id="2"]
+[ext_resource type="Texture2D" path="res://textures/sky/storm_clouds.png" id="3"]
+
+[resource]
+resource_name = "sky_storm"
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/back_layer = ExtResource("2")
+shader_parameter/cloud_layer = ExtResource("3")
+shader_parameter/layer_scale = 0.4
+shader_parameter/back_speed = Vector2(0.006, 0.003)
+shader_parameter/cloud_speed = Vector2(0.035, 0.015)
+shader_parameter/energy = 2.6
+shader_parameter/moon_size = 0.0
+shader_parameter/glow_color = Color(0.5, 0.14, 0.03, 1)

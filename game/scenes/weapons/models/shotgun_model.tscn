@@ -1,0 +1,163 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/props/gunmetal.tres" id="2_gunmetal"]
+[ext_resource type="Material" path="res://materials/props/gunmetal_light.tres" id="5_gunmetal_lig"]
+[ext_resource type="Material" path="res://materials/props/brass.tres" id="8_brass"]
+[ext_resource type="Material" path="res://materials/props/gun_wood.tres" id="10_gun_wood"]
+[ext_resource type="Material" path="res://materials/fx/muzzle_flash.tres" id="16_muzzle_flash"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(0.07, 0.09, 0.28)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+top_radius = 0.019
+bottom_radius = 0.019
+height = 0.62
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+top_radius = 0.015
+bottom_radius = 0.015
+height = 0.52
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+size = Vector3(0.012, 0.01, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7"]
+size = Vector3(0.008, 0.014, 0.01)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_9"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.18
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_11"]
+top_radius = 0.031
+bottom_radius = 0.031
+height = 0.008
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_12"]
+size = Vector3(0.055, 0.1, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_13"]
+size = Vector3(0.048, 0.11, 0.07)
+
+[sub_resource type="BoxMesh" id="BoxMesh_14"]
+size = Vector3(0.01, 0.04, 0.03)
+
+[sub_resource type="QuadMesh" id="QuadMesh_15"]
+size = Vector2(0.42, 0.42)
+
+[node name="ShotgunModel" type="Node3D"]
+
+[node name="Receiver" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_1")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Barrel" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_3")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.026, -0.44)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Magazine" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_4")
+material_override = ExtResource("5_gunmetal_lig")
+position = Vector3(0.0, -0.02, -0.39)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Rib" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_6")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.05, -0.43)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Sight" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_7")
+material_override = ExtResource("8_brass")
+position = Vector3(0.0, 0.058, -0.72)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Pump" type="Node3D" parent="."]
+position = Vector3(0.0, -0.02, -0.34)
+
+[node name="Forend" type="MeshInstance3D" parent="Pump"]
+mesh = SubResource("CylinderMesh_9")
+material_override = ExtResource("10_gun_wood")
+position = Vector3(0.0, 0.0, 0.0)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Groove0" type="MeshInstance3D" parent="Pump"]
+mesh = SubResource("CylinderMesh_11")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.0, -0.05)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Groove1" type="MeshInstance3D" parent="Pump"]
+mesh = SubResource("CylinderMesh_11")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.0, 0.0)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Groove2" type="MeshInstance3D" parent="Pump"]
+mesh = SubResource("CylinderMesh_11")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, 0.0, 0.05)
+rotation_degrees = Vector3(90.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Stock" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_12")
+material_override = ExtResource("10_gun_wood")
+position = Vector3(0.0, -0.04, 0.28)
+rotation_degrees = Vector3(-8.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Grip" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_13")
+material_override = ExtResource("10_gun_wood")
+position = Vector3(0.0, -0.085, 0.1)
+rotation_degrees = Vector3(22.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Trigger" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_14")
+material_override = ExtResource("2_gunmetal")
+position = Vector3(0.0, -0.065, 0.02)
+cast_shadow = 0
+gi_mode = 2
+
+[node name="Muzzle" type="Marker3D" parent="."]
+position = Vector3(0.0, 0.026, -0.77)
+
+[node name="Flash" type="MeshInstance3D" parent="Muzzle"]
+mesh = SubResource("QuadMesh_15")
+material_override = ExtResource("16_muzzle_flash")
+position = Vector3(0.0, 0.0, 0.0)
+cast_shadow = 0
+gi_mode = 2
