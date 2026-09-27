@@ -1,0 +1,769 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gmetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d5e3ea"/><stop offset="1" stop-color="#8ea3ae"/></linearGradient>
+  </defs>
+  <symbol id="i-baton" viewBox="0 0 48 144"><rect x="19" y="14" width="10" height="88" rx="3" fill="url(#gmetal)"/><rect x="17" y="100" width="14" height="36" rx="4" fill="#3a4a55"/><rect x="16" y="98" width="16" height="5" fill="#1d262d"/><rect x="18" y="6" width="4" height="10" fill="#35e0ff"/><rect x="26" y="6" width="4" height="10" fill="#35e0ff"/></symbol>
+  <symbol id="i-knife" viewBox="0 0 48 96"><path d="M24 8 L32 56 H16 Z" fill="url(#gmetal)"/><rect x="14" y="56" width="20" height="5" fill="#1d262d"/><rect x="18" y="61" width="12" height="28" rx="3" fill="#3a4a55"/></symbol>
+  <symbol id="i-pistol" viewBox="0 0 96 96"><path d="M12 30 H84 V45 H12 Z" fill="url(#gmetal)"/><path d="M20 45 H62 L57 54 H49 L45 84 H25 L30 54 H20 Z" fill="#3a4a55"/><path d="M38 54 Q38 64 48 64" stroke="#8ea3ae" stroke-width="3" fill="none"/><rect x="70" y="33" width="10" height="4" fill="#1d262d"/></symbol>
+  <symbol id="i-dart" viewBox="0 0 96 96"><path d="M12 32 H76 V46 H12 Z" fill="#8fd6a0"/><path d="M20 46 H58 L54 55 H46 L42 84 H24 L28 55 H20 Z" fill="#3a4a55"/><rect x="76" y="36" width="12" height="6" fill="#35e0ff"/></symbol>
+  <symbol id="i-smg" viewBox="0 0 144 96"><rect x="20" y="30" width="96" height="18" fill="url(#gmetal)"/><rect x="116" y="35" width="20" height="7" fill="#8ea3ae"/><rect x="66" y="48" width="12" height="32" fill="#3a4a55"/><path d="M36 48 H52 L48 76 H34 Z" fill="#3a4a55"/><path d="M20 34 L4 40 V52 L20 46 Z" fill="#3a4a55"/></symbol>
+  <symbol id="i-shotgun" viewBox="0 0 192 96"><rect x="44" y="34" width="140" height="8" fill="url(#gmetal)"/><rect x="44" y="42" width="120" height="6" fill="#8ea3ae"/><rect x="112" y="46" width="42" height="10" rx="2" fill="#5a4630"/><path d="M8 38 H48 V52 L40 58 H14 L8 52 Z" fill="#5a4630"/><path d="M52 48 H66 L62 72 H50 Z" fill="#3a4a55"/></symbol>
+  <symbol id="i-ammo" viewBox="0 0 48 48"><rect x="8" y="20" width="32" height="20" fill="#6b5a3a"/><rect x="8" y="20" width="32" height="5" fill="#8a7650"/><g fill="#d9b35a"><rect x="12" y="10" width="5" height="12" rx="2"/><rect x="21" y="10" width="5" height="12" rx="2"/><rect x="30" y="10" width="5" height="12" rx="2"/></g></symbol>
+  <symbol id="i-darts" viewBox="0 0 48 48"><rect x="8" y="22" width="32" height="18" fill="#2f5a45"/><g fill="#35e0ff"><rect x="13" y="8" width="3" height="16"/><rect x="22" y="8" width="3" height="16"/><rect x="31" y="8" width="3" height="16"/></g></symbol>
+  <symbol id="i-lockpick" viewBox="0 0 48 48"><path d="M10 38 L34 10" stroke="#cfdde4" stroke-width="3"/><path d="M16 40 L38 16 L40 20" stroke="#8ea3ae" stroke-width="3" fill="none"/><rect x="6" y="34" width="10" height="8" rx="2" fill="#3a4a55" transform="rotate(-45 11 38)"/></symbol>
+  <symbol id="i-multitool" viewBox="0 0 48 48"><rect x="10" y="8" width="28" height="32" rx="3" fill="#3a4a55"/><rect x="14" y="12" width="20" height="10" fill="#35e0ff" opacity=".8"/><rect x="18" y="40" width="4" height="6" fill="#cfdde4"/><rect x="26" y="40" width="4" height="6" fill="#cfdde4"/><circle cx="24" cy="31" r="4" fill="#8ea3ae"/></symbol>
+  <symbol id="i-medkit" viewBox="0 0 48 48"><rect x="6" y="12" width="36" height="28" rx="3" fill="#e6ecef"/><rect x="18" y="7" width="12" height="6" fill="#8ea3ae"/><rect x="21" y="17" width="6" height="18" fill="#e0453a"/><rect x="15" y="23" width="18" height="6" fill="#e0453a"/></symbol>
+  <symbol id="i-stim" viewBox="0 0 48 48"><rect x="10" y="20" width="26" height="8" fill="#cfdde4"/><rect x="14" y="21" width="16" height="6" fill="#5fd38a"/><path d="M36 24 H44" stroke="#cfdde4" stroke-width="2"/><rect x="4" y="18" width="6" height="12" fill="#3a4a55"/></symbol>
+  <symbol id="i-noodles" viewBox="0 0 48 48"><path d="M10 16 H38 L34 42 H14 Z" fill="#e6ecef"/><rect x="9" y="12" width="30" height="5" fill="#ff4fa3"/><path d="M18 26 H30" stroke="#e0453a" stroke-width="3"/></symbol>
+  <symbol id="i-whisky" viewBox="0 0 48 96"><rect x="20" y="8" width="8" height="18" fill="#6b5a3a"/><path d="M14 30 Q14 26 20 26 H28 Q34 26 34 30 V86 H14 Z" fill="#8a5a20"/><rect x="14" y="48" width="20" height="18" fill="#e6d7a8"/></symbol>
+  <symbol id="i-frag" viewBox="0 0 48 48"><circle cx="24" cy="28" r="14" fill="#4a5a3a"/><rect x="20" y="8" width="8" height="8" fill="#8ea3ae"/><path d="M28 12 L38 18" stroke="#8ea3ae" stroke-width="3"/></symbol>
+  <symbol id="i-emp" viewBox="0 0 48 48"><rect x="14" y="10" width="20" height="32" rx="4" fill="#23404c"/><rect x="14" y="18" width="20" height="4" fill="#35e0ff"/><rect x="14" y="30" width="20" height="4" fill="#35e0ff"/><rect x="20" y="4" width="8" height="7" fill="#8ea3ae"/></symbol>
+  <symbol id="i-gas" viewBox="0 0 48 48"><rect x="14" y="10" width="20" height="32" rx="4" fill="#5a5a2a"/><rect x="14" y="20" width="20" height="8" fill="#d8d86a"/><rect x="20" y="4" width="8" height="7" fill="#8ea3ae"/></symbol>
+  <symbol id="i-noise" viewBox="0 0 48 48"><circle cx="24" cy="26" r="11" fill="#3a4a55"/><path d="M36 16 Q42 26 36 36 M40 12 Q48 26 40 40" stroke="#ff9e2e" stroke-width="2.5" fill="none"/></symbol>
+  <symbol id="i-jacket" viewBox="0 0 96 96"><path d="M30 12 L48 20 L66 12 L86 26 L80 50 L70 46 L70 88 H26 L26 46 L16 50 L10 26 Z" fill="#4a5560"/><path d="M48 20 V88" stroke="#2a3036" stroke-width="3"/></symbol>
+  <symbol id="i-ratjacket" viewBox="0 0 96 96"><path d="M34 6 Q48 0 62 6 L66 16 L86 26 L80 52 L70 48 L70 88 H26 L26 48 L16 52 L10 26 L30 16 Z" fill="#5a5238"/><path d="M26 60 H70 M30 72 H66" stroke="#3c3624" stroke-width="3"/><rect x="36" y="34" width="10" height="10" fill="#7a7048"/><rect x="54" y="52" width="9" height="12" fill="#6b5f3a"/></symbol>
+  <symbol id="i-goggles" viewBox="0 0 96 48"><rect x="8" y="20" width="80" height="6" fill="#3a3a30"/><circle cx="32" cy="24" r="12" fill="#2a3a30"/><circle cx="64" cy="24" r="12" fill="#2a3a30"/><circle cx="32" cy="24" r="8" fill="#5fd38a" opacity=".75"/><circle cx="64" cy="24" r="8" fill="#5fd38a" opacity=".75"/></symbol>
+  <symbol id="i-respirator" viewBox="0 0 96 48"><path d="M28 10 H68 Q76 24 64 40 H32 Q20 24 28 10 Z" fill="#4a4a40"/><circle cx="22" cy="30" r="10" fill="#6b6b58"/><circle cx="74" cy="30" r="10" fill="#6b6b58"/><circle cx="22" cy="30" r="4" fill="#2a2a22"/><circle cx="74" cy="30" r="4" fill="#2a2a22"/></symbol>
+  <symbol id="i-shard" viewBox="0 0 48 48"><path d="M16 6 H32 L36 12 V42 H12 V12 Z" fill="#23404c"/><rect x="16" y="14" width="16" height="3" fill="#35e0ff"/><rect x="16" y="20" width="10" height="3" fill="#35e0ff"/></symbol>
+  <symbol id="i-key" viewBox="0 0 48 48"><circle cx="16" cy="24" r="9" fill="none" stroke="#d9b35a" stroke-width="4"/><path d="M25 24 H42 M36 24 V32 M41 24 V30" stroke="#d9b35a" stroke-width="4"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 48 48"><rect x="12" y="12" width="24" height="24" fill="#3a2a4a"/><rect x="18" y="18" width="12" height="12" fill="#b78cff"/><path d="M16 8V12M24 8V12M32 8V12M16 36V40M24 36V40M32 36V40M8 16H12M8 24H12M8 32H12M36 16H40M36 24H40M36 32H40" stroke="#8ea3ae" stroke-width="2"/></symbol>
+</svg>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <a href="#slice"><b>F1</b>The slice</a>
+  <a href="#hub"><b>F2</b>Low Harbor</a>
+  <a href="#drains"><b>F3</b>The Drains</a>
+  <a href="#yard"><b>F4</b>The Yard</a>
+  <a href="#character"><b>F5</b>Skills</a>
+  <a href="#inventory"><b>F6</b>Inventory</a>
+  <a href="#world"><b>F7</b>Locks, devices</a>
+  <a href="#dialog"><b>F8</b>Dialog</a>
+  <a href="#perception"><b>F9</b>Stealth, disguise</a>
+  <a href="#combat"><b>F10</b>Enemies</a>
+  <a href="#hud"><b>F11</b>HUD</a>
+  <a href="#architecture"><b>F12</b>Architecture</a>
+  <a href="#questions"><b>?</b>Open questions</a>
+</nav>
+
+<main>
+<header class="mast" id="top">
+  <div class="neon" aria-hidden="true"><i>NOODLES</i><i>OPEN 24H</i></div>
+  <div class="kicker">Design dossier  ·  first playable slice  ·  2026-09-27</div>
+  <h1>Undercity<span>Immersive sim  ·  Meridian, Low Harbor</span></h1>
+  <p class="lede">A first-person immersive sim in the drowned bottom of a megacity. You are a runner who takes contracts from a fixer in the Sump Market, then gets into places the hard way, the quiet way or the talkative way. This page presents the design: three level maps, seven systems and the screens. The requirements live in <code>openspec/changes/</code>; each section names the change it presents.</p>
+  <div class="facts">
+    <div><b class="num">3</b><small>levels</small></div>
+    <div><b class="num">2 + 4</b><small>missions + side quests</small></div>
+    <div><b class="num">7 x 5</b><small>skills x ranks</small></div>
+    <div><b class="num">46</b><small>items</small></div>
+    <div><b class="num">13</b><small>archetypes</small></div>
+    <div><b class="num">13</b><small>named hub NPCs</small></div>
+    <div><b class="num">78</b><small>map POIs</small></div>
+  </div>
+  <div class="status-row">
+    <span class="chip proposed">Proposed: 10 OpenSpec changes</span>
+    <span class="chip built">Built: map renderer, 3 layouts</span>
+    <span class="chip enforced">Enforced: level geometry spec</span>
+    <span class="chip mock">Mockups awaiting approval: 4 screens</span>
+  </div>
+</header>
+
+<!-- ========================================================= F1 -->
+<section id="slice">
+  <div class="sh"><span class="key">F1</span><h2>The slice</h2><span class="spec">openspec/changes/undercity-architecture</span></div>
+  <p class="intro">The first slice is one hub and two missions. Everything in it serves one loop: take a contract in Low Harbor, choose how to get in, live with what happened. The build you choose (skills, gear, disguises) decides which doors you see.</p>
+  <div class="cols sidebar">
+    <div class="loop" role="img" aria-label="The loop: hub, build, mission, outcome, back to the hub">
+      <svg viewBox="0 0 720 300">
+        <defs><marker id="la" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f2b33d"/></marker></defs>
+        <rect x="0" y="0" width="720" height="300" fill="#0f161d"/>
+        <g font-family="Barlow Condensed, sans-serif" font-weight="600">
+          <rect x="24" y="110" width="170" height="84" fill="#131c25" stroke="#f2b33d"/>
+          <text x="109" y="140" fill="#f2b33d" font-size="18" text-anchor="middle" letter-spacing="2">LOW HARBOR</text>
+          <text x="109" y="162" fill="#b9c6d1" font-size="13" text-anchor="middle">contracts · trade · heal</text>
+          <text x="109" y="180" fill="#b9c6d1" font-size="13" text-anchor="middle">talk · rumours · stash</text>
+          <rect x="274" y="20" width="172" height="74" fill="#131c25" stroke="#2c3c49"/>
+          <text x="360" y="48" fill="#d9e2e9" font-size="17" text-anchor="middle" letter-spacing="2">BUILD</text>
+          <text x="360" y="70" fill="#b9c6d1" font-size="13" text-anchor="middle">skills · gear · disguises</text>
+          <rect x="526" y="110" width="170" height="84" fill="#131c25" stroke="#2c3c49"/>
+          <text x="611" y="138" fill="#d9e2e9" font-size="17" text-anchor="middle" letter-spacing="2">MISSION</text>
+          <text x="570" y="162" fill="#ff5b4f" font-size="13" text-anchor="middle">force</text>
+          <text x="611" y="162" fill="#b78cff" font-size="13" text-anchor="middle">stealth</text>
+          <text x="652" y="162" fill="#4aa8ff" font-size="13" text-anchor="middle">social</text>
+          <text x="611" y="180" fill="#ff9e2e" font-size="13" text-anchor="middle">+ tech (hack, pick)</text>
+          <rect x="274" y="210" width="172" height="74" fill="#131c25" stroke="#2c3c49"/>
+          <text x="360" y="238" fill="#d9e2e9" font-size="17" text-anchor="middle" letter-spacing="2">OUTCOME</text>
+          <text x="360" y="260" fill="#b9c6d1" font-size="13" text-anchor="middle">XP · credits · reputation</text>
+        </g>
+        <g stroke="#f2b33d" stroke-width="2" fill="none" marker-end="url(#la)">
+          <path d="M150 108 Q190 58 268 56"/><path d="M452 56 Q540 58 580 106"/><path d="M580 198 Q540 246 452 248"/><path d="M268 248 Q190 246 150 198"/>
+        </g>
+      </svg>
+    </div>
+    <div class="sub">
+      <h3>Status <small>what is real today</small></h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><span class="chip built">Built</span></td><td><code>tools/levels/render_map.py</code> and the three layout modules that draw these maps. The Blender builds will read the same modules.</td></tr>
+        <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals. Every generator refuses a level that fails it.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Every system on this page. Nothing below is implemented. The first spike was parked in <code>docs/spikes/rpg-core</code>.</td></tr>
+        <tr><td><span class="chip mock">Mockup</span></td><td>The character screen, the dialog screen and the HUD wait for approval before any UI is built.</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <div class="sub">
+    <h3>Pillars <small>after 80.lv, "Five Pillars of Immersive Sims" (Samoylenko, 2018)</small></h3>
+    <div class="pillars">
+      <div class="pillar"><h4>Choices</h4><p>Force, stealth and social routes to every objective, and seven skills that open more. No skill gate is ever the only way.</p><small>CLAUDE.md 7.1</small></div>
+      <div class="pillar"><h4>Tools</h4><p>Tools that answer enemies: gas for the Kings, EMP for dogs and exo-arms, noise makers for noses, darts for heavies.</p><small>combat-and-enemies</small></div>
+      <div class="pillar"><h4>Systems</h4><p>Light, sound, disguise, alarms and reputation feed each other. A shot in the camp can cost a hostage in the pump station.</p><small>perception-and-disguise</small></div>
+      <div class="pillar"><h4>Focused design</h4><p>A small, dense hub where every block has an address and every NPC talks, lit by neon and sodium at night.</p><small>sump-market-hub</small></div>
+      <div class="pillar"><h4>Message</h4><p>Police for hire, a city that lets gangs fix what it neglects, and a ledger that says who profits.</p><small>the ledger, S2</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F2 -->
+<section id="hub">
+  <div class="sh"><span class="key">F2</span><h2>Low Harbor · the Sump</h2><span class="spec">openspec/changes/sump-market-hub</span></div>
+  <p class="intro">The hub: 240 x 170 m under the Meridian Skyway, in six districts. Drag to pan, use the buttons or a pinch to zoom, and hover a legend row to find it on the map. Click any marker for its note. The map is generated from <code>tools/levels/layouts/hub.py</code>, the same data the Blender build will read.</p>
+  <div class="mapview" data-map="hub">
+    <div class="maptools"></div>
+    <div class="mapframe"><!--MAP:hub--></div>
+    <div class="mapinfo">Click a marker or a legend row.</div>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>Districts</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>District</th><th>Character</th><th>Holds</th></tr></thead>
+        <tbody>
+          <tr><td><b>Spire Foundations</b></td><td>the tower's footing wall, 400 m of tower above</td><td>Low Harbor Station (19), sealed</td></tr>
+          <tr><td><b>Lantern Row</b></td><td>the neon strip</td><td>Golden Carp (5), Rusty Anchor (1), Kessler's (2), Doc Vo's (3)</td></tr>
+          <tr><td><b>Tin Stacks</b></td><td>shanty stacks, 3 m alleys, fire escapes</td><td>Mouse (12), roof run (23), the Pit and the storm drain (17)</td></tr>
+          <tr><td><b>Sump Market</b></td><td>stalls between the Skyway's pillars</td><td>Nguyen (4), Oracle (7), service lift (20), Fish Hall (6)</td></tr>
+          <tr><td><b>Kiln</b></td><td>workshops, freight yard, shrine</td><td>Kings' Garage (15), shrine (16), freight tunnel (22), checkpoint (18)</td></tr>
+          <tr><td><b>Drydock</b></td><td>across the Cut</td><td>Petra (10), depot lockers (28), Precinct 9 (29)</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="sub">
+      <h3>Ways out <small>each mission exit has an alternative</small></h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>To</th><th>Main way</th><th>Alternatives</th></tr></thead>
+        <tbody>
+          <tr><td><b>The Drains</b></td><td>storm drain in the Pit (17): gate code from Nguyen, or <span class="tag o">Lockpicking 1</span></td><td>canal outfall grate (21), <span class="tag o">Lockpicking 1</span>, into the sluice room</td></tr>
+          <tr><td><b>The Yard</b></td><td>MerSec checkpoint (18): gang pass, 150 cr, <span class="tag b">Persuasion 3</span>, or blackmail (S3)</td><td>freight tunnel (22), <span class="tag o">Hacking 1</span>; the jersey blocks behind the checkpoint camera, <span class="tag g">no skill</span></td></tr>
+        </tbody></table></div>
+      <h3>Hub rules</h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><b>Weapons</b></td><td>One warning from MerSec. A second draw within 60 s, or any shot, and they fight; backup in 60 s.</td></tr>
+        <tr><td><b>Crime</b></td><td>Theft or picking in view is reported: MerSec turns Suspicious, residents -5.</td></tr>
+        <tr><td><b>Safehouse</b></td><td>Golden Carp capsule 12: sleep to save, 10 x 10 stash.</td></tr>
+        <tr><td><b>Restock</b></td><td>Vendors restock after each completed mission.</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <div class="sub">
+    <h3>Everyone in the hub talks <small>13 named NPCs; civilians have seeded small talk and a rumour</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th class="n">#</th><th>NPC</th><th>Where</th><th>Role</th><th>Checks and hooks</th></tr></thead>
+      <tbody>
+        <tr><td class="n">8</td><td><b>Silk</b></td><td>Anchor back room</td><td>fixer: gives M1, M2; pays</td><td><span class="tag b">Persuasion 3</span> +25 % fee</td></tr>
+        <tr><td class="n">9</td><td><b>Tank</b></td><td>Anchor, back-room door</td><td>bouncer</td><td><span class="tag b">Persuasion 2</span>, 50 cr, or the back door <span class="tag o">Lockpicking 1</span></td></tr>
+        <tr><td class="n">1</td><td><b>Mags</b></td><td>Anchor bar</td><td>bartender; drinks, rumours</td><td>S4 Last Call</td></tr>
+        <tr><td class="n">2</td><td><b>Kessler</b></td><td>Kessler's Pawn</td><td>weapons, ammo, gear; buys loot</td><td>Haggler prices; office safe <span class="tag o">Lockpicking 3</span> (a crime)</td></tr>
+        <tr><td class="n">3</td><td><b>Doc Vo</b></td><td>clinic</td><td>heals at 5 cr a point; medkits, stims</td><td>pharmacy <span class="tag o">Lockpicking 1</span> or <span class="tag o">Hacking 1</span></td></tr>
+        <tr><td class="n">4</td><td><b>Nguyen</b></td><td>noodle bar</td><td>noodles, gossip</td><td>the storm drain code, if you eat</td></tr>
+        <tr><td class="n">13</td><td><b>Rivet</b></td><td>Fish Hall</td><td>scavenger</td><td>Rat jacket 60 cr, <span class="tag b">Persuasion 1</span> 40 cr</td></tr>
+        <tr><td class="n">12</td><td><b>Mouse</b></td><td>Tin Stacks den</td><td>street kid</td><td>S3 Mouse's Debt; shows the roof run and the Drains vent</td></tr>
+        <tr><td class="n">10</td><td><b>Petra</b></td><td>Sanitation depot</td><td>her brother is a hostage</td><td>service key and overalls; S2 after M1</td></tr>
+        <tr><td class="n">11</td><td><b>Officer Dace</b></td><td>checkpoint</td><td>MerSec sergeant, I 3</td><td>150 cr, <span class="tag b">Persuasion 3</span>, pass, or blackmail</td></tr>
+        <tr><td class="n">14</td><td><b>Skiv</b></td><td>the Pit</td><td>Drain Rats scout</td><td>parley: <span class="tag b">Persuasion 2</span> or 100 cr; "Rats all breathe through masks"</td></tr>
+        <tr><td class="n">15</td><td><b>Jax</b></td><td>Kings' Garage</td><td>Scrap Kings recruiter</td><td><span class="tag p">Deception 2</span> gang pass; S1 Kingmaker</td></tr>
+        <tr><td class="n">16</td><td><b>Sister Lin</b></td><td>Tsang Shrine</td><td>shrine keeper</td><td>Silver Lighter 250 cr (+1 Persuasion)</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- ========================================================= F3 -->
+<section id="drains">
+  <div class="sh"><span class="key">F3</span><h2>The Drains · M1 Rat Trap</h2><span class="spec">openspec/changes/the-drains</span></div>
+  <p class="intro">Drain Rats territory under the Sump, on three levels. Two sanitation workers, Tomas and Anil, are caged in the pump station. Twitch guards them, and if he is Alerted he shoots one 8 seconds later. Four no-kill ways through are drawn on the map.</p>
+  <div class="mapview" data-map="drains">
+    <div class="maptools"></div>
+    <div class="mapframe"><!--MAP:drains--></div>
+    <div class="mapinfo">Click a marker or a legend row.</div>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>Routes</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Route</th><th>Path</th><th>Needs</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag r">Force</span></td><td>collector, Junction checkpoint, camp, pump station</td><td>Take Twitch first</td></tr>
+          <tr><td><span class="tag b">Disguise</span></td><td>Rat jacket (Rivet) + stash respirator and goggles; talk past the checkpoint (I 2); talk to Twitch or Mother Rat</td><td>Deception 1 and an outfit</td></tr>
+          <tr><td><span class="tag b">Parley</span></td><td>Skiv arranges it; walk in unarmed; Mother Rat talks</td><td>100 cr or Persuasion 2</td></tr>
+          <tr><td><span class="tag p">Bypass</span></td><td>overflow pipe or sluice room, 35 s swim (or drain it, Hacking 1), up in the cistern pool</td><td>nothing</td></tr>
+          <tr><td><span class="tag p">Vent</span></td><td>break room vent over the collector, 3 m drop behind the cage</td><td>nothing (revealed by Mouse or the terminal)</td></tr>
+        </tbody></table></div>
+      <h3>Talking down Mother Rat <small>needs Cover 5 in disguise, or the parley</small></h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><span class="tag p">Deception 3</span></td><td>"The city paid. Check your account." (only if she hasn't read the terminal)</td></tr>
+        <tr><td><span class="tag b">Persuasion 3</span></td><td>"MerSec is coming down those stairs in ten minutes."</td></tr>
+        <tr><td><span class="tag y">500 cr</span></td><td>Pay the ransom.</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="sub">
+      <h3>Objectives</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Objective</th><th class="n">XP</th></tr></thead>
+        <tbody>
+          <tr><td>Get into the Drains</td><td class="n">100</td></tr>
+          <tr><td>Find the hostages</td><td class="n">150</td></tr>
+          <tr><td>Free the hostages</td><td class="n">400</td></tr>
+          <tr><td>Get them out</td><td class="n">300</td></tr>
+          <tr><td>Bonus: Mother Rat's safe (400 cr, ransom emails, 2 EMP)</td><td class="n">150</td></tr>
+          <tr><td>Deal with Mother Rat: talked 300, knocked out 200, paid 100, left 0, killed 0</td><td class="n">0-300</td></tr>
+          <tr><td>Ghost / Merciful / Smooth Operator</td><td class="n">500 / 300 / 200</td></tr>
+        </tbody></table></div>
+      <h3>Outcomes</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Outcome</th><th class="n">Silk pays</th><th>Hub</th></tr></thead>
+        <tbody>
+          <tr><td>Both out</td><td class="n">800 cr</td><td>Petra grateful, S2 opens; Sanitation +30</td></tr>
+          <tr><td>One dies</td><td class="n">400 cr</td><td>Petra grieving, no S2; Sanitation +5</td></tr>
+          <tr><td>Both die</td><td class="n">0 cr</td><td>Petra hostile; Sanitation -20</td></tr>
+          <tr><td>Mother Rat killed</td><td class="n">-</td><td>Rats -40, residents +10; Skiv hostile</td></tr>
+          <tr><td>Mother Rat talked down</td><td class="n">-</td><td>Rats +10, neutral in the hub for good</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F4 -->
+<section id="yard">
+  <div class="sh"><span class="key">F4</span><h2>Scrap King's Yard · M2 Chop Job</h2><span class="spec">openspec/changes/scrap-kings-yard</span></div>
+  <p class="intro">The Scrap Kings' walled junkyard at night. Steal the prototype nav core from Crusher's office safe. Searchlights sweep, and two robot dogs hunt by scent, so no disguise fools them. Kill the generator and the lights, the gate and its turret go dark.</p>
+  <div class="mapview" data-map="yard">
+    <div class="maptools"></div>
+    <div class="mapframe"><!--MAP:yard--></div>
+    <div class="mapinfo">Click a marker or a legend row.</div>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>The safe opens four ways</h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><span class="tag o">Lockpicking 3</span></td><td>hold 6 s (3 s with Safecracker)</td></tr>
+        <tr><td><span class="tag o">Hacking 3</span> or Dutch</td><td>the combination from Crusher's terminal, or from Dutch for 300 cr or <span class="tag b">Persuasion 3</span></td></tr>
+        <tr><td><span class="tag p">Cover 6 + Deception 4</span></td><td>Crusher opens it himself for a "buyer" (full Kings outfit at Deception 2)</td></tr>
+        <tr><td>S1: expose Jax</td><td>Crusher opens it as thanks</td></tr>
+      </tbody></table></div>
+      <h3>Objectives</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Objective</th><th class="n">XP</th></tr></thead>
+        <tbody>
+          <tr><td>Get into the Yard</td><td class="n">150</td></tr>
+          <tr><td>Find the nav core</td><td class="n">100</td></tr>
+          <tr><td>Steal the nav core (Silk: 1,200 cr)</td><td class="n">600</td></tr>
+          <tr><td>Get out</td><td class="n">250</td></tr>
+          <tr><td>S1 Kingmaker</td><td class="n">400</td></tr>
+          <tr><td>S2 The Ledger</td><td class="n">300</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="sub">
+      <h3>S1 Kingmaker <small>Jax wants Crusher dead</small></h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Choice</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><b>Kill Crusher</b> (the quiet way: paint thinner in his whisky)</td><td>Jax runs the Kings, Kings +10, Jax pays 500 cr; the safe still has to be opened</td></tr>
+          <tr><td><b>Expose Jax</b> (<span class="tag b">Persuasion 4</span>, or Jax's messages from Dutch)</td><td>Crusher opens the safe; Jax turns up in the canal; Kings +30</td></tr>
+          <tr><td><b>Leave them</b></td><td>S1 fails quietly</td></tr>
+        </tbody></table></div>
+      <h3>Dogs and disguises</h3>
+      <p class="note">A Kings outfit gets you past every human in the Yard, but the dogs smell you at 8 m through walls. Keep them docked (kennel, Hacking 2), EMP them for 20 s, lure them with a noise maker, or stay up high: dogs can't climb. Dutch warns you: "The dogs don't care what you're wearing."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F5 -->
+<section id="character">
+  <div class="sh"><span class="key">F5</span><h2>Skills, perks, XP</h2><span class="spec">openspec/changes/character-progression</span></div>
+  <p class="intro">Seven skills, five ranks each. Every rank is a perk, and every rank adds 1 to that skill's checks. Checks never roll: a check passes when rank + at most +1 from gear meets the DC. Ranks 1 and 2 cost 1 point and ranks 3 to 5 cost 2, so everything costs 56 points and level 20 gives 42. Try a build below.</p>
+  <div class="planner">
+    <div class="sub">
+      <div class="ptop">
+        <label for="lvl">Level <input id="lvl" type="range" min="1" max="20" value="5"> <span class="num" id="lvlv">5</span></label>
+        <label for="chips">Neural chips <input id="chips" type="range" min="0" max="3" value="1"> <span class="num" id="chipsv">1</span></label>
+        <span>Points left <span class="pts num" id="left">0</span></span>
+        <button class="maptools-btn" id="resetb" type="button" style="font:600 12px var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--text);background:#1a2530;border:1px solid var(--line2);border-radius:2px;padding:5px 9px;cursor:pointer">Reset build</button>
+      </div>
+      <div class="trees" id="trees"></div>
+      <div class="msg" id="pmsg" aria-live="polite"></div>
+    </div>
+    <aside class="pside" aria-label="Build summary">
+      <h3>This build</h3>
+      <div id="bsum"></div>
+    </aside>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>XP to reach each level <small>xp_to_next = 500 x level</small></h3>
+      <div class="chart" id="xpchart"></div>
+      <p class="note">The slice (hub, M1, M2 and the four side quests) pays about 6,000 to 8,000 XP: the band above. That ends at level 5 or 6, with 12 to 14 points.</p>
+    </div>
+    <div class="sub">
+      <h3>XP awards</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Source</th><th class="n">XP</th></tr></thead>
+        <tbody>
+          <tr><td>Main objective</td><td class="n">400-1,000</td></tr>
+          <tr><td>Side objective</td><td class="n">150-400</td></tr>
+          <tr><td>Dialog check passed (once per choice)</td><td class="n">25 x DC</td></tr>
+          <tr><td>Lock picked or device hacked (once per device)</td><td class="n">20 x tier</td></tr>
+          <tr><td>Non-lethal takedown or KO</td><td class="n">40</td></tr>
+          <tr><td>Kill</td><td class="n">20</td></tr>
+          <tr><td>Secret area</td><td class="n">50</td></tr>
+          <tr><td>Clue that opens a route</td><td class="n">25</td></tr>
+          <tr><td>Ghost / Merciful / Smooth Operator</td><td class="n">500 / 300 / 200</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F6 -->
+<section id="inventory">
+  <div class="sh"><span class="key">F6</span><h2>Inventory and equipment</h2><span class="spec">openspec/changes/inventory-and-equipment</span></div>
+  <p class="intro">A 10 x 6 grid where items take their footprint, five equipment slots, and a ten-slot belt on 1 to 0. The screen is the runner's wrist-deck, after the owner's references: Deus Ex's tabs, grid and stat panel, Human Revolution's header and stack counts, and Peripeteia's hardware frame and body doll. Click an item.</p>
+  <div class="controls">
+    <span>Show</span>
+    <div class="seg" id="presets"><button type="button" data-p="start" class="on">New game</button><button type="button" data-p="drains">In the Drains, disguised</button></div>
+    <span class="chip mock">Mockup · awaiting approval</span>
+  </div>
+  <div class="deck">
+    <div class="tape" aria-hidden="true"></div>
+    <div class="screen">
+      <div class="tabs">
+        <span class="on"><b>F1</b>Inventory</span><span><b>F2</b>Skills</span><span><b>F3</b>Journal</span><span><b>F4</b>Map</span><span><b>F5</b>Notes</span><span><b>F6</b>Conversations</span>
+        <div class="hdr"><span>CREDITS <em id="dcred">150</em></span><span>LVL <em id="dlvl">1</em></span><span>XP <em id="dxp">0 / 500</em></span></div>
+      </div>
+      <div class="inv">
+        <div class="grid" id="grid" role="listbox" aria-label="Pack"></div>
+        <div class="doll">
+          <svg viewBox="0 0 200 250" aria-label="Body doll with health per part">
+            <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#9fd0e0">
+              <circle cx="100" cy="36" r="17" fill="#2a5a46" stroke="#5fd38a"/>
+              <rect x="76" y="58" width="48" height="66" rx="8" fill="#5a5a2a" stroke="#d8c76a"/>
+              <rect x="52" y="60" width="18" height="62" rx="7" fill="#2a5a46" stroke="#5fd38a"/>
+              <rect x="130" y="60" width="18" height="62" rx="7" fill="#2a5a46" stroke="#5fd38a"/>
+              <rect x="78" y="128" width="20" height="88" rx="7" fill="#2a5a46" stroke="#5fd38a"/>
+              <rect x="102" y="128" width="20" height="88" rx="7" fill="#3f5a2a" stroke="#a7d35f"/>
+              <text x="100" y="40" text-anchor="middle" fill="#dfeef5">100</text>
+              <text x="100" y="95" text-anchor="middle" fill="#fff4c0">64</text>
+              <text x="61" y="136" text-anchor="middle">100</text><text x="139" y="136" text-anchor="middle">90</text>
+              <text x="88" y="232" text-anchor="middle">100</text><text x="112" y="232" text-anchor="middle">86</text>
+            </g>
+          </svg>
+          <div class="dis" id="slots"></div>
+          <div class="dis" id="disg"></div>
+        </div>
+        <div class="detail" id="detail" aria-live="polite"></div>
+      </div>
+      <div class="belt" id="belt"></div>
+    </div>
+  </div>
+  <div class="sub">
+    <h3>The catalogue <small>46 items in data/items.json</small></h3>
+    <div class="controls"><div class="seg" id="catf"></div></div>
+    <div class="scroll"><table class="tbl" id="cat">
+      <thead><tr><th>Item</th><th>Category</th><th class="n">Size</th><th class="n">Stack</th><th class="n">Value</th><th>Effect</th></tr></thead>
+      <tbody></tbody></table></div>
+    <p class="note">Buy price = value x vendor multiplier x (0.85 with Haggler) x reputation (1.1 Disliked, 0.9 Liked). Sell price = value x 0.4 (x1.15 with Haggler). Stolen items sell only at the Fish Hall, at 0.3 x value.</p>
+  </div>
+</section>
+
+<!-- ========================================================= F7 -->
+<section id="world">
+  <div class="sh"><span class="key">F7</span><h2>Locks and devices</h2><span class="spec">openspec/changes/world-interaction</span></div>
+  <p class="intro">One use key. The object answers with a prompt and a hold time from the same rule that decides the outcome, so the prompt can't lie. A lock tries its key, then a known code, then a lockpick, then a multitool. A tool is used up only when the lock opens.</p>
+  <div class="cols two">
+    <div class="calc" id="lockcalc">
+      <h3>Lock prompt <small>the same rule as the game</small></h3>
+      <div class="controls">
+        <label for="lk-kind">Kind <select id="lk-kind"><option value="door">door</option><option value="safe">safe</option></select></label>
+        <label for="lk-tier">Tier <select id="lk-tier"><option>1</option><option selected>2</option><option>3</option></select></label>
+        <label for="lk-key"><input id="lk-key" type="checkbox"> has the key</label>
+        <label for="lk-code"><input id="lk-code" type="checkbox"> knows the code</label>
+      </div>
+      <div class="controls">
+        <label for="lk-lp">Lockpicking <select id="lk-lp"><option>0</option><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        <label for="lk-hk">Hacking <select id="lk-hk"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        <label for="lk-picks">Lockpicks <input id="lk-picks" type="number" min="0" max="20" value="2" style="width:56px"></label>
+        <label for="lk-tools">Multitools <input id="lk-tools" type="number" min="0" max="20" value="1" style="width:56px"></label>
+      </div>
+      <div class="out" id="lk-out"></div>
+    </div>
+    <div class="sub">
+      <h3>Devices</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Device</th><th class="n">Tier</th><th>Hacked</th><th>Without hacking</th></tr></thead>
+        <tbody>
+          <tr><td><b>Camera</b></td><td class="n">1</td><td>loop 60 s, disable</td><td>EMP 60 s, shoot it, avoid the cone</td></tr>
+          <tr><td><b>Alarm panel</b></td><td class="n">1</td><td>disable</td><td>cut the wire (multitool), stop the runner</td></tr>
+          <tr><td><b>Turret</b></td><td class="n">2</td><td>disable; turn it at Hacking 3</td><td>EMP 30 s, flank its 120 deg arc, power off</td></tr>
+          <tr><td><b>Dog kennel</b></td><td class="n">2</td><td>keep the dogs docked</td><td>EMP, noise makers, climb</td></tr>
+          <tr><td><b>Generator</b></td><td class="n">1</td><td>power off: lights, gate, turret</td><td>a frag grenade (loud)</td></tr>
+          <tr><td><b>Sluice</b></td><td class="n">1</td><td>drain the bypass</td><td>swim it (35 s)</td></tr>
+          <tr><td><b>Terminal</b></td><td class="n">0-3</td><td>email, logs, actions</td><td>a password from a note or dialog</td></tr>
+        </tbody></table></div>
+      <p class="note">Codes and passwords are flags. Once you learn one anywhere, every lock that takes it offers "Enter code", and the Notes tab lists it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F8 -->
+<section id="dialog">
+  <div class="sh"><span class="key">F8</span><h2>Dialog and factions</h2><span class="spec">openspec/changes/dialog-and-social</span></div>
+  <p class="intro">Every hub NPC talks. Hostiles talk too, if your disguise holds at talking range or a parley is in force. Choices show what they need: story requirements you don't know about stay hidden, and build requirements show greyed so you learn what a build would open. Change the build and watch Twitch's choices.</p>
+  <div class="controls">
+    <label for="dg-dec">Deception <select id="dg-dec"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+    <label for="dg-per">Persuasion <select id="dg-per"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+    <label for="dg-cr">Credits <select id="dg-cr"><option value="150" selected>150</option><option value="250">250</option></select></label>
+    <label for="dg-q">Outfit <select id="dg-q"><option value="2">Rat jacket (Q 2)</option><option value="3" selected>jacket + respirator (Q 3)</option><option value="4">full outfit (Q 4)</option></select></label>
+    <label for="dg-log"><input id="dg-log" type="checkbox"> read the incident log</label>
+    <span class="chip mock">Mockup · awaiting approval</span>
+  </div>
+  <div class="talk">
+    <div class="scene" aria-hidden="true">
+      <svg viewBox="0 0 1050 450" preserveAspectRatio="xMidYMid slice">
+        <defs><radialGradient id="lamp" cx=".7" cy=".2" r=".6"><stop offset="0" stop-color="#8fff9a" stop-opacity=".22"/><stop offset="1" stop-color="#8fff9a" stop-opacity="0"/></radialGradient></defs>
+        <rect width="1050" height="450" fill="url(#lamp)"/>
+        <g stroke="#13251a" stroke-width="2">
+          <path d="M0 120 H1050 M0 170 H1050 M0 220 H1050 M0 270 H1050 M0 320 H1050"/>
+          <path d="M60 120V170M180 120V170M300 120V170M120 170V220M240 170V220M360 170V220M60 220V270M180 220V270M300 220V270"/>
+        </g>
+        <path d="M600 450 C600 360 620 300 700 280 C700 250 690 200 700 170 C715 120 800 118 815 170 C825 205 815 250 815 280 C895 300 915 360 915 450 Z" fill="#050806"/>
+        <path d="M712 206 H804 L798 240 Q758 262 718 240 Z" fill="#26261e"/>
+        <circle cx="720" cy="232" r="13" fill="#3a3a2e"/><circle cx="796" cy="232" r="13" fill="#3a3a2e"/>
+        <circle cx="736" cy="196" r="9" fill="#5fd38a" opacity=".85"/><circle cx="780" cy="196" r="9" fill="#5fd38a" opacity=".85"/>
+        <path d="M640 330 L870 420" stroke="#2a2a22" stroke-width="16"/>
+        <rect x="770" y="360" width="120" height="20" fill="#1a1a14" transform="rotate(20 830 370)"/>
+        <circle cx="560" cy="70" r="5" fill="#8fff9a"/><circle cx="560" cy="70" r="26" fill="#8fff9a" opacity=".12"/>
+      </svg>
+      <div class="bars t"></div><div class="bars b"></div>
+    </div>
+    <div class="ui">
+      <div class="who"><b>Twitch</b><span>Drain Rats · I 3</span><em id="dg-cover">COVER 5 vs I 3</em></div>
+      <p class="line">"Mother said nobody comes down here. So what are you?"</p>
+      <ol class="choices" id="dg-choices"></ol>
+    </div>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>Conditions <small>all must hold</small></h3>
+      <div class="scroll"><table class="tbl"><tbody>
+        <tr><td><code>flag</code> <code>not_flag</code></td><td>story flag</td><td><span class="tag">hides</span></td></tr>
+        <tr><td><code>item</code> <code>no_item</code></td><td>carrying an item</td><td><span class="tag">hides</span></td></tr>
+        <tr><td><code>quest</code> <code>objective</code></td><td>quest and objective state</td><td><span class="tag">hides</span></td></tr>
+        <tr><td><code>npc</code> + status</td><td>alive, unconscious, dead, hostile</td><td><span class="tag">hides</span></td></tr>
+        <tr><td><code>disguise</code> <code>parley</code></td><td>accepted disguise, truce</td><td><span class="tag">hides</span></td></tr>
+        <tr><td><code>skill</code> + min</td><td>check value</td><td><span class="tag y">shows greyed</span></td></tr>
+        <tr><td><code>credits</code></td><td>at least N</td><td><span class="tag y">shows greyed</span></td></tr>
+        <tr><td><code>rep</code> + min/max</td><td>faction reputation</td><td><span class="tag y">shows greyed</span></td></tr>
+      </tbody></table></div>
+      <h3>Effects</h3>
+      <p class="note"><code>flag</code> <code>give</code> <code>take</code> <code>credits</code> <code>xp</code> <code>rep</code> <code>start_quest</code> <code>objective</code> <code>reveal</code> <code>complete_quest</code> <code>fail_quest</code> <code>trade</code> <code>heal</code> <code>open</code> <code>npc</code> (hostile, calm, follow, flee, surrender, move_to, stand_down) <code>parley</code> <code>say</code>. Each is a small class registered by name, so a new effect never edits the runner.</p>
+    </div>
+    <div class="sub">
+      <h3>Factions</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Faction</th><th class="n">Start</th><th>Territory</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td><b>Sump residents</b></td><td class="n">+10</td><td>hub</td><td>rumours, tip-offs</td></tr>
+          <tr><td><b>Drain Rats</b></td><td class="n">-20</td><td>the Drains</td><td>respirators: gas-immune</td></tr>
+          <tr><td><b>Scrap Kings</b></td><td class="n">-10</td><td>the Yard</td><td>robot dogs, cyber-arms</td></tr>
+          <tr><td><b>MerSec</b></td><td class="n">0</td><td>checkpoint, station, Precinct 9</td><td>corrupt, bribable</td></tr>
+          <tr><td><b>City Sanitation</b></td><td class="n">+5</td><td>depot, maintenance</td><td>overalls open maintenance</td></tr>
+        </tbody></table></div>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Reputation</th><th>Stance</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td class="n">&lt;= -50</td><td><span class="tag r">Hated</span></td><td>hostile everywhere, the hub too</td></tr>
+          <tr><td class="n">-49 to -10</td><td><span class="tag o">Disliked</span></td><td>prices x1.1; some doors shut</td></tr>
+          <tr><td class="n">-9 to 24</td><td><span class="tag">Neutral</span></td><td>normal</td></tr>
+          <tr><td class="n">25 to 59</td><td><span class="tag g">Liked</span></td><td>prices x0.9; extra dialog</td></tr>
+          <tr><td class="n">&gt;= 60</td><td><span class="tag b">Trusted</span></td><td>doors open; alarm warnings</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F9 -->
+<section id="perception">
+  <div class="sh"><span class="key">F9</span><h2>Stealth and disguise</h2><span class="spec">openspec/changes/perception-and-disguise</span></div>
+  <p class="intro">Thief's light and sound, Human Revolution's readouts and Hitman's disguises, with intelligence as the enforcer. The owner's rule is exact: inside an observer's scrutiny range, or whenever you talk, a disguise holds only if Cover = Deception + outfit quality is at least their intelligence.</p>
+  <div class="cols two">
+    <div class="calc">
+      <h3>Disguise verdict</h3>
+      <div class="controls">
+        <label for="d-fac">Outfit <select id="d-fac"><option value="rats">Drain Rats</option><option value="kings">Scrap Kings</option><option value="none">street clothes</option></select></label>
+        <label for="d-head"><input id="d-head" type="checkbox" checked> HEAD</label>
+        <label for="d-face"><input id="d-face" type="checkbox"> FACE</label>
+        <label for="d-dec">Deception <select id="d-dec"><option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      </div>
+      <div class="controls">
+        <label for="d-obs">Observer <select id="d-obs"></select></label>
+        <label for="d-dist">Distance <input id="d-dist" type="range" min="1" max="30" value="12"> <span class="num" id="d-distv">12 m</span></label>
+      </div>
+      <div class="controls">
+        <label for="d-talk"><input id="d-talk" type="checkbox"> talking</label>
+        <label for="d-arm">Armour <select id="d-arm"><option value="none">none</option><option value="match">faction's own</option><option value="kevlar">kevlar vest</option></select></label>
+        <label for="d-wpn">Weapon <select id="d-wpn"><option value="0">holstered</option><option value="1">drawn 1 s</option><option value="3">drawn 3 s</option></select></label>
+        <label for="d-move">Moving <select id="d-move"><option value="walk">walking</option><option value="sneak">crouched or sprinting</option></select></label>
+        <label for="d-zone"><input id="d-zone" type="checkbox"> restricted zone</label>
+      </div>
+      <div class="out" id="d-out"></div>
+    </div>
+    <div class="calc">
+      <h3>Detection meter</h3>
+      <div class="controls">
+        <label for="v-obs">Observer <select id="v-obs"></select></label>
+        <label for="v-cone">Cone <select id="v-cone"><option value="1">near (full rate)</option><option value="0.4">far (0.4)</option></select></label>
+      </div>
+      <div class="controls">
+        <label for="v-light">Light <input id="v-light" type="range" min="0" max="100" value="35"> <span class="num" id="v-lightv">0.35</span></label>
+        <label for="v-dist">Distance <input id="v-dist" type="range" min="1" max="30" value="10"> <span class="num" id="v-distv">10 m</span></label>
+      </div>
+      <div class="controls">
+        <label for="v-stance">Stance <select id="v-stance"><option value="1">standing</option><option value="0.6" selected>crouched</option><option value="0.45">crouched, Low Profile</option></select></label>
+        <label for="v-move">Motion <select id="v-move"><option value="0.6">still</option><option value="1" selected>walking</option><option value="1.5">sprinting</option></select></label>
+        <label for="v-shadow"><input id="v-shadow" type="checkbox"> Shadow (Stealth 3)</label>
+      </div>
+      <div class="out" id="v-out"></div>
+      <div class="meter" id="v-meter"><div class="fill" id="v-fill"></div></div>
+      <div class="scale"><span>0 s</span><span>5 s</span><span>10 s</span></div>
+      <p class="note">D rises at V x 1.2 x (1 - d / range) x cone per second, where V = light x stance x motion. It falls at 0.25 per second out of sight. Suspicious at 0.3, Alerted at 1.</p>
+    </div>
+  </div>
+  <div class="cols two">
+    <div class="sub">
+      <h3>Who can be fooled</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th class="n">I</th><th>Examples</th><th class="n">Scrutiny</th><th>Cheapest pass</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td>Rat scavengers, lookouts, civilians</td><td class="n">4 m</td><td>any outfit</td></tr>
+          <tr><td class="n">2</td><td>Rat gunners, Kings mechanics, Bruiser, MerSec</td><td class="n">6 m</td><td>any outfit</td></tr>
+          <tr><td class="n">3</td><td>Twitch, Hatchet, the foreman, Dace</td><td class="n">8 m</td><td>outfit at Deception 1</td></tr>
+          <tr><td class="n">4</td><td>Mother Rat, MerSec officers</td><td class="n">10 m</td><td>outfit + 1 piece at Deception 1</td></tr>
+          <tr><td class="n">5</td><td>Crusher</td><td class="n">12 m</td><td>full outfit at Deception 1</td></tr>
+          <tr><td class="n">-</td><td>Robot dogs, cameras, turrets</td><td class="n">-</td><td>never: hack, EMP, avoid</td></tr>
+        </tbody></table></div>
+      <h3>Awareness</h3>
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>State</th><th>Enters</th><th>Leaves</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Unaware</span></td><td>start</td><td>D 0.3 or a noise</td></tr>
+          <tr><td><span class="tag o">Suspicious ?</span></td><td>D 0.3 to 1; a quiet noise</td><td>D 1, or 12 s pass (Wary)</td></tr>
+          <tr><td><span class="tag r">Alerted !</span></td><td>D 1; gunfire; a body; the alarm</td><td>3 s out of sight (Searching)</td></tr>
+          <tr><td><span class="tag p">Searching</span></td><td>lost you</td><td>30 s (15 s with Vanish), then Wary</td></tr>
+          <tr><td><span class="tag y">Wary</span></td><td>after Suspicious or Searching</td><td>120 s; D fills 25 % faster meanwhile</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="sub">
+      <h3>Noise radii <small>metres, to scale</small></h3>
+      <div class="hbars" id="noise"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F10 -->
+<section id="combat">
+  <div class="sh"><span class="key">F10</span><h2>Enemies you outsmart</h2><span class="spec">openspec/changes/combat-and-enemies</span></div>
+  <p class="intro">Combat is short, dangerous and optional. Health doesn't regenerate. Every archetype lists at least two counters that aren't "shoot it more", and each counter is hinted in the world before you need it.</p>
+  <div class="arch" id="arch"></div>
+  <div class="sub">
+    <h3>Player weapons</h3>
+    <div class="scroll"><table class="tbl" id="wpn">
+      <thead><tr><th>Weapon</th><th class="n">Damage</th><th>Type</th><th class="n">Rate</th><th class="n">Mag</th><th class="n">Noise</th><th>Note</th></tr></thead>
+      <tbody></tbody></table></div>
+    <p class="note">Hit zones: head x2 (x3 with Headhunter), torso x1, limbs x0.7. Stun fills a pool equal to health, and a full pool is a knock-out. Takedowns work from behind on Unaware or Suspicious targets: a knock-out takes 1.5 s and 6 m of noise, a kill 0.8 s and 4 m.</p>
+  </div>
+</section>
+
+<!-- ========================================================= F11 -->
+<section id="hud">
+  <div class="sh"><span class="key">F11</span><h2>HUD</h2><span class="spec">perception-and-disguise · inventory-and-equipment</span></div>
+  <p class="intro">Minimal and diegetic where it can be. There's a compass strip with marker bearings (Peripeteia), and detection arcs around the crosshair that fill toward whoever is noticing you (Human Revolution). The disguise chip reads from the same rule as the AI. The mockup shows the pump station, disguised, while Twitch looks twice.</p>
+  <div class="hud" role="img" aria-label="HUD mockup">
+    <svg viewBox="0 0 1600 900">
+      <defs>
+        <linearGradient id="hwall" x1="0" x2="1"><stop offset="0" stop-color="#0d1712"/><stop offset=".5" stop-color="#16261c"/><stop offset="1" stop-color="#0a120e"/></linearGradient>
+        <radialGradient id="hglow" cx=".62" cy=".3" r=".5"><stop offset="0" stop-color="#a8ff9a" stop-opacity=".18"/><stop offset="1" stop-color="#a8ff9a" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1600" height="900" fill="url(#hwall)"/>
+      <path d="M0 0 L620 330 L980 330 L1600 0 Z" fill="#0a110d"/>
+      <path d="M0 900 L620 560 L980 560 L1600 900 Z" fill="#0c1511"/>
+      <path d="M560 900 L740 560 L860 560 L1040 900 Z" fill="#0b2a30"/>
+      <g stroke="#1a2d22" stroke-width="2">
+        <path d="M620 330 V560 M980 330 V560 M0 0 L620 330 M1600 0 L980 330 M0 900 L620 560 M1600 900 L980 560"/>
+        <path d="M150 80 V820 M300 160 V740 M430 230 V670 M1450 80 V820 M1300 160 V740 M1170 230 V670"/>
+      </g>
+      <rect width="1600" height="900" fill="url(#hglow)"/>
+      <circle cx="700" cy="420" r="36" fill="none" stroke="#2c3c49" stroke-width="10"/><circle cx="820" cy="420" r="36" fill="none" stroke="#2c3c49" stroke-width="10"/>
+      <path d="M1040 600 C1040 520 1060 470 1100 460 C1096 430 1100 400 1120 392 C1150 384 1168 410 1160 440 C1160 452 1158 460 1156 466 C1196 480 1206 530 1206 600 Z" fill="#050806"/>
+      <circle cx="1134" cy="412" r="4" fill="#5fd38a"/><circle cx="1146" cy="412" r="4" fill="#5fd38a"/>
+      <g font-family="Chakra Petch, sans-serif" font-weight="700"><rect x="1117" y="332" width="34" height="34" rx="4" fill="#ff9e2e"/><text x="1134" y="358" text-anchor="middle" font-size="26" fill="#1a1206">?</text></g>
+      <g fill="none" stroke-linecap="round">
+        <circle cx="800" cy="450" r="3" fill="#dfe7ee"/>
+        <path d="M800 420 V434 M800 466 V480 M770 450 H784 M816 450 H830" stroke="#dfe7ee" stroke-width="2"/>
+        <path d="M858 426 A64 64 0 0 1 862 470" stroke="#ff9e2e" stroke-width="7"/>
+        <path d="M858 426 A64 64 0 0 1 864 452" stroke="#fff3c0" stroke-width="7" opacity=".0"/>
+        <path d="M742 474 A64 64 0 0 1 738 440" stroke="#dfe7ee" stroke-width="5" opacity=".55"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#9fb3c4">
+        <rect x="500" y="22" width="600" height="34" fill="#05080a" opacity=".7"/>
+        <path d="M520 44 V52 M560 44 V50 M600 44 V52 M640 44 V50 M680 44 V52 M720 44 V50 M760 44 V52 M800 40 V56 M840 44 V52 M880 44 V50 M920 44 V52 M960 44 V50 M1000 44 V52 M1040 44 V50 M1080 44 V52" stroke="#6b7f92" stroke-width="2"/>
+        <text x="600" y="40" text-anchor="middle">NE</text><text x="800" y="36" text-anchor="middle" fill="#dfe7ee" font-weight="600">E</text><text x="1000" y="40" text-anchor="middle">SE</text>
+        <rect x="861" y="26" width="14" height="14" fill="#f2b33d" transform="rotate(45 868 33)"/>
+        <circle cx="712" cy="34" r="6" fill="#5fd38a"/>
+      </g>
+      <g font-family="Barlow Condensed, sans-serif">
+        <text x="48" y="80" font-size="15" letter-spacing="3" fill="#f2b33d" font-weight="600">M1 RAT TRAP</text>
+        <text x="48" y="106" font-size="22" fill="#dfe7ee">Free the hostages</text>
+        <text x="48" y="130" font-size="17" fill="#8a9bab">Get the pump room key, or pick the cage (Lockpicking 2)</text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace">
+        <rect x="40" y="720" width="360" height="140" fill="#05080a" opacity=".72" stroke="#1f2c37"/>
+        <circle cx="86" cy="760" r="12" fill="#2a5a46" stroke="#5fd38a"/><rect x="72" y="776" width="28" height="40" rx="6" fill="#5a5a2a" stroke="#d8c76a"/><rect x="74" y="818" width="10" height="34" rx="4" fill="#2a5a46" stroke="#5fd38a"/><rect x="88" y="818" width="10" height="34" rx="4" fill="#3f5a2a" stroke="#a7d35f"/>
+        <text x="124" y="768" font-size="30" font-weight="600" fill="#dfe7ee">112</text><text x="196" y="768" font-size="15" fill="#6b7f92">/ 140</text>
+        <rect x="124" y="780" width="250" height="8" fill="#1a2530"/><rect x="124" y="780" width="200" height="8" fill="#5fd38a"/>
+        <rect x="124" y="804" width="250" height="44" fill="#0c1a12" stroke="#5fd38a"/>
+        <text x="136" y="824" font-size="14" fill="#5fd38a" font-weight="600">DRAIN RATS  Q 3  COVER 4</text>
+        <text x="136" y="842" font-size="13"><tspan fill="#5fd38a">vs I 3 · Twitch · 7 m</tspan><tspan fill="#ff9e2e">  crouched: ?</tspan></text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#6b7f92">
+        <g transform="translate(490 800)">
+          <rect x="0" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="5" y="14">1</text><use href="#i-baton" x="17" y="4" width="24" height="50"/>
+          <rect x="64" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#f2b33d"/><text x="69" y="14" fill="#f2b33d">2</text><use href="#i-pistol" x="70" y="6" width="46" height="46"/>
+          <rect x="128" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="133" y="14">3</text><use href="#i-dart" x="134" y="6" width="46" height="46"/>
+          <rect x="192" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="197" y="14">4</text><use href="#i-medkit" x="200" y="10" width="42" height="42"/>
+          <rect x="256" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="261" y="14">5</text><use href="#i-emp" x="264" y="10" width="42" height="42"/>
+          <rect x="320" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="325" y="14">6</text><use href="#i-lockpick" x="328" y="10" width="42" height="42"/>
+          <rect x="384" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="389" y="14">7</text><use href="#i-multitool" x="392" y="10" width="42" height="42"/>
+          <rect x="448" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="453" y="14">8</text>
+          <rect x="512" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="517" y="14">9</text>
+          <rect x="576" y="0" width="58" height="58" fill="#05080a" opacity=".75" stroke="#1f2c37"/><text x="581" y="14">0</text>
+        </g>
+      </g>
+      <g font-family="IBM Plex Mono, monospace">
+        <rect x="1250" y="760" width="310" height="100" fill="#05080a" opacity=".72" stroke="#1f2c37"/>
+        <text x="1530" y="812" text-anchor="end" font-size="38" font-weight="600" fill="#dfe7ee">12 <tspan font-size="20" fill="#6b7f92">/ 36</tspan></text>
+        <text x="1530" y="842" text-anchor="end" font-size="14" fill="#8a9bab" letter-spacing="2">KESTREL 10MM · HOLSTERED</text>
+      </g>
+      <g font-family="Barlow Condensed, sans-serif" font-size="15" fill="#8a9bab" letter-spacing="1">
+        <text x="1250" y="80">Twitch: "Oi. Where'd Mother say you were posted?"</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ========================================================= F12 -->
+<section id="architecture">
+  <div class="sh"><span class="key">F12</span><h2>Architecture</h2><span class="spec">openspec/changes/undercity-architecture</span></div>
+  <p class="intro">Every gameplay rule lives once, in <code>Undercity.Core</code>, a C# library with no Godot reference that runs and is tested headless. The Godot game only adapts it. Tuning is JSON with units in the key names. One layout per level feeds both the design map and the Blender build.</p>
+  <div class="scroll diagram" role="img" aria-label="Architecture diagram">
+    <svg viewBox="0 0 1100 440">
+      <defs><marker id="aa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a9bab"/></marker></defs>
+      <rect width="1100" height="440" fill="#0f161d"/>
+      <g font-family="Barlow Condensed, sans-serif" font-weight="600">
+        <rect x="20" y="20" width="400" height="260" fill="#131c25" stroke="#f2b33d"/>
+        <text x="36" y="48" fill="#f2b33d" font-size="18" letter-spacing="2">UNDERCITY.CORE</text>
+        <text x="36" y="68" fill="#8a9bab" font-size="13">net8.0 · no Godot reference · dotnet test</text>
+        <g font-size="14" fill="#d9e2e9">
+          <rect x="36" y="84" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="95" y="104" text-anchor="middle">Character</text>
+          <rect x="164" y="84" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="223" y="104" text-anchor="middle">Items, Pack</text>
+          <rect x="292" y="84" width="112" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="348" y="104" text-anchor="middle">Dialog</text>
+          <rect x="36" y="122" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="95" y="142" text-anchor="middle">Perception</text>
+          <rect x="164" y="122" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="223" y="142" text-anchor="middle">Disguise</text>
+          <rect x="292" y="122" width="112" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="348" y="142" text-anchor="middle">Locks, Devices</text>
+          <rect x="36" y="160" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="95" y="180" text-anchor="middle">Combat</text>
+          <rect x="164" y="160" width="118" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="223" y="180" text-anchor="middle">Quests, Factions</text>
+          <rect x="292" y="160" width="112" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="348" y="180" text-anchor="middle">Save, StableId</text>
+        </g>
+        <text x="36" y="216" fill="#b9c6d1" font-size="13">GameState: one serializable graph · IRandomSource seeded</text>
+        <text x="36" y="236" fill="#b9c6d1" font-size="13">previews call the resolving rule (price, prompt, verdict)</text>
+        <rect x="36" y="250" width="368" height="22" fill="#0a0f14" stroke="#5fd38a"/>
+        <text x="220" y="266" text-anchor="middle" fill="#5fd38a" font-size="13">Undercity.Core.Tests · xUnit · DataValidationTests</text>
+
+        <rect x="680" y="20" width="400" height="260" fill="#131c25" stroke="#2c3c49"/>
+        <text x="696" y="48" fill="#d9e2e9" font-size="18" letter-spacing="2">GODOT GAME</text>
+        <text x="696" y="68" fill="#8a9bab" font-size="13">thin adapters · IWired by the level loader</text>
+        <g font-size="14" fill="#d9e2e9">
+          <rect x="696" y="84" width="176" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="784" y="104" text-anchor="middle">Game autoload (root)</text>
+          <rect x="884" y="84" width="180" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="974" y="104" text-anchor="middle">Level loader</text>
+          <rect x="696" y="122" width="368" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="880" y="142" text-anchor="middle">Scene kit: npc · door · container · terminal · camera · turret · exit</text>
+          <rect x="696" y="160" width="368" height="30" fill="#0a0f14" stroke="#ff4fa3"/><text x="880" y="180" text-anchor="middle">UI scenes (after mockup approval): deck · dialog · HUD · trade</text>
+        </g>
+        <text x="696" y="216" fill="#b9c6d1" font-size="13">Brushfire reference maps keep their own code</text>
+        <text x="696" y="236" fill="#b9c6d1" font-size="13">(documented exception, not extended)</text>
+
+        <rect x="20" y="330" width="330" height="90" fill="#131c25" stroke="#2c3c49"/>
+        <text x="36" y="356" fill="#d9e2e9" font-size="17" letter-spacing="2">GAME/DATA</text>
+        <text x="36" y="378" fill="#b9c6d1" font-size="13">skills · progression · items · weapons · perception</text>
+        <text x="36" y="398" fill="#b9c6d1" font-size="13">enemies · factions · locks · quests · dialog/*.json</text>
+        <text x="36" y="414" fill="#8a9bab" font-size="12">schemas in data/schema · units in key names</text>
+
+        <rect x="380" y="330" width="700" height="90" fill="#131c25" stroke="#35e0ff"/>
+        <text x="396" y="356" fill="#35e0ff" font-size="17" letter-spacing="2">ONE LAYOUT PER LEVEL</text>
+        <g font-size="14" fill="#d9e2e9">
+          <rect x="396" y="370" width="200" height="34" fill="#0a0f14" stroke="#2c3c49"/><text x="496" y="392" text-anchor="middle">tools/levels/layouts/&lt;id&gt;.py</text>
+          <rect x="640" y="364" width="190" height="22" fill="#0a0f14" stroke="#5fd38a"/><text x="735" y="380" text-anchor="middle" font-size="13">render_map.py → design map</text>
+          <rect x="640" y="392" width="190" height="22" fill="#0a0f14" stroke="#2c3c49"/><text x="735" y="408" text-anchor="middle" font-size="13">build_undercity.py → .glb</text>
+          <rect x="870" y="378" width="194" height="30" fill="#0a0f14" stroke="#2c3c49"/><text x="967" y="398" text-anchor="middle" font-size="13">level .tscn + data/levels/&lt;id&gt;.json</text>
+        </g>
+      </g>
+      <g stroke="#8a9bab" stroke-width="1.6" fill="none" marker-end="url(#aa)">
+        <path d="M676 120 H430"/><path d="M185 326 V290"/><path d="M596 380 H634"/><path d="M596 394 Q616 403 634 403"/><path d="M830 403 H864"/><path d="M880 326 V290"/>
+      </g>
+      <text x="552" y="112" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="12" text-anchor="middle">calls</text>
+      <text x="552" y="136" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="12" text-anchor="middle">never the reverse</text>
+    </svg>
+  </div>
+  <div class="sub">
+    <h3>The OpenSpec changes</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Change</th><th>Covers</th><th>Requirements</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>undercity-architecture</code></td><td>core library, wiring, data, ids, saves, layout pipeline</td><td class="n">8</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>character-progression</code></td><td>skills, perks, checks, XP, levels</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>inventory-and-equipment</code></td><td>grid, stacks, slots, belt, credits, trade, catalogue</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>world-interaction</code></td><td>use, locks, devices, terminals, containers, travel, persistence</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>dialog-and-social</code></td><td>trees, checks, hostile talk, parley, factions</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>combat-and-enemies</code></td><td>damage, non-lethal, takedowns, archetypes</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
+        <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
+        <tr><td><code>scrap-kings-yard</code></td><td>the Yard, M2, S1, S2</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
+        <tr><td><code>specs/level-geometry</code></td><td>no z-fighting, frame reveals</td><td class="n">2</td><td><span class="chip enforced">Enforced</span></td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- ========================================================= questions -->
+<section id="questions">
+  <div class="sh"><span class="key">?</span><h2>Open questions</h2><span class="spec">for the owner</span></div>
+  <p class="intro">Decisions only you can make. Each has a recommendation. Answer in chat by number, and the answers go into the changes they shape.</p>
+  <div class="qs">
+    <div class="q"><h4>1. Freed hostages: follow you out, or escape on their own?</h4><div class="opts"><span class="tag">follow, with a wait order</span><span class="tag">escape by your entry route</span></div><p class="rec"><b>Recommend</b>They escape by your entry route. Escorts are the least loved thing in the genre, and the Twitch rule already carries the tension.</p></div>
+    <div class="q"><h4>2. Health regeneration?</h4><div class="opts"><span class="tag">none</span><span class="tag">regen to 30 %</span></div><p class="rec"><b>Recommend</b>None, as in Deus Ex. It keeps combat a cost, and medkits and Doc Vo worth having.</p></div>
+    <div class="q"><h4>3. Hacking and lockpicking: held timers or minigames?</h4><div class="opts"><span class="tag">held timers</span><span class="tag">minigames</span></div><p class="rec"><b>Recommend</b>Held timers for the slice. A minigame can wrap the same rule later without changing outcomes.</p></div>
+    <div class="q"><h4>4. Saving: anywhere, or at safehouses?</h4><div class="opts"><span class="tag">autosave on travel + quicksave</span><span class="tag">safehouse only</span></div><p class="rec"><b>Recommend</b>Autosave on every level transition plus quicksave anywhere. Checks are deterministic, so there's nothing to save-scum.</p></div>
+    <div class="q"><h4>5. Augmentations in the slice?</h4><div class="opts"><span class="tag">after the slice</span><span class="tag">two starter augs</span></div><p class="rec"><b>Recommend</b>After the slice. The HUD reserves the energy bar's place.</p></div>
+    <div class="q"><h4>6. Character art direction?</h4><div class="opts"><span class="tag">UT99-era low-poly, segmented rigs</span><span class="tag">higher-poly skinned</span></div><p class="rec"><b>Recommend</b>UT99-era low-poly with segmented rigs, built by script like the props, to match the levels and keep the pipeline in Blender.</p></div>
+    <div class="q"><h4>7. The hub's bake: one bake, or per district?</h4><div class="opts"><span class="tag">measure one district first</span><span class="tag">one bake</span></div><p class="rec"><b>Recommend</b>Bake one district first and measure. Split into per-district lightmaps if the whole hub would pass 30 minutes.</p></div>
+    <div class="q"><h4>8. These mockups: approve, or change?</h4><div class="opts"><span class="tag">character screen</span><span class="tag">dialog screen</span><span class="tag">HUD</span><span class="tag">maps as the level standard</span></div><p class="rec"><b>Recommend</b>Approve or mark up each separately. No UI is built before its mockup is approved.</p></div>
+  </div>
+</section>
+
+<footer class="foot">Source: <code>docs/design/src/</code>, built by <code>tools/design/build_page.py</code>. Maps generated by <code>tools/levels/render_map.py</code> from <code>tools/levels/layouts/</code>. Requirements in <code>openspec/changes/</code>. References in <code>docs/immersive_sim_reference.md</code>.</footer>
+</main>
+</div>
