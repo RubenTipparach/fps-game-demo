@@ -7,8 +7,10 @@ Writes:
   game/models/doorway/door_leaves.glb               split sliding door leaves (LeafL, LeafR)
   game/models/doorway/arch_<w>x<h>.glb              framed archways for open passages
 
-Door frames fit a 3.0 x 3.2 m opening and are 1.0 m deep plus pilasters, so they cover the
-wall thickness of any of the three levels. Everything gets bevelled (chamfered) edges, world-
+Sizes come from detailing.FRAMES: each frame is placed in a level opening of its "fits" size but
+has a smaller clear opening, so its reveals stand proud of the walls and ceiling and never share
+a plane with them (no z-fighting). Frames are 1.0 m deep plus pilasters, so they cover the wall
+thickness of any of the three levels. Everything gets bevelled (chamfered) edges, world-
 aligned UVs at the shared texel density and the game's material names, which the Godot import
 settings map onto res://materials/*.tres.
 """
@@ -21,7 +23,10 @@ import bpy
 from mathutils import Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from blendkit import GAME, HERE, B, box_bm, collection, cylinder_bm, material, project_uvs  # noqa: E402
+from blendkit import GAME, HERE, ROOT, B, box_bm, collection, cylinder_bm, material, project_uvs  # noqa: E402
+
+sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
+from detailing import FRAMES  # noqa: E402  (shared frame sizes; the levels' z-fighting check uses them too)
 
 OUT = os.path.join(GAME, "models", "doorway")
 
@@ -110,7 +115,8 @@ def export(objs, path):
 # ----------------------------------------------------------------------------- door frame
 
 def door_frame(coll):
-    W, H, D = 1.5, 3.2, 0.5          # half width of the opening, height, half depth of the frame
+    f = FRAMES["doorway"]
+    W, H, D = f["clear"][0] / 2, f["clear"][1], f["depth"]   # half clear width, clear height, half depth
     k = Kit("Frame", coll)
     for s in (-1, 1):
         x0, x1 = sorted((s * W, s * (W + 0.65)))
@@ -121,13 +127,17 @@ def door_frame(coll):
         k.box((min(xi, s * W), 0.25, 0.13), (max(xi, s * W), H - 0.1, 0.36), "hazard_stripes", bevel=0.0)
         k.box((min(xi, s * W) - 0.001, 0, -0.11), (max(xi, s * W) + 0.001, H, 0.11), "rubber", bevel=0.0)
         for f in (-1, 1):
-            z0, z1 = sorted((f * D, f * (D + 0.14)))
-            # pilaster on each face: plinth, shaft, capital (classic Unreal mouldings)
+            def Z(a, b):
+                return sorted((f * a, f * b))
+            # pilaster on each face: plinth, shaft, capital (classic Unreal mouldings). The shaft
+            # stops 2 cm behind the lintel's face so the two never share a plane (z-fighting).
             px0, px1 = sorted((s * (W + 0.05), s * (W + 0.85)))
-            k.box((px0, 0, z0), (px1, 0.35, z1 + f * 0.06 if f > 0 else z1), "rust_metal", bevel=0.04)
+            z0, z1 = Z(D, D + 0.2)
+            k.box((px0, 0, z0), (px1, 0.35, z1), "rust_metal", bevel=0.04)
+            z0, z1 = Z(D, D + 0.12)
             k.box((px0 + 0.08, 0.35, z0), (px1 - 0.08, H + 0.05, z1), "tech_panel", bevel=0.04)
-            k.box((px0 - 0.03, H + 0.05, z0), (px1 + 0.03, H + 0.3, z1 + f * 0.04 if f > 0 else z1 - 0.04), "rust_metal",
-                  bevel=0.04)
+            z0, z1 = Z(D, D + 0.18)
+            k.box((px0 - 0.03, H + 0.05, z0), (px1 + 0.03, H + 0.3, z1), "rust_metal", bevel=0.04)
             # hydraulic piston on the pilaster
             px = s * (W + 0.45)
             pz = f * (D + 0.24)
@@ -178,36 +188,43 @@ def door_leaves(coll):
 
         def X(a, b):
             return sorted((s * a, s * b))
-        x0, x1 = X(0.0, 1.5)
+        # the slab and rib start 2 cm in from the meeting edge, behind the hazard strip, so their
+        # end faces don't share its plane (visible z-fighting while the door is open)
+        x0, x1 = X(0.02, 1.5)
         k.box((x0, 0.02, -0.08), (x1, 3.2, 0.08), "tech_panel", bevel=0.025)
         for f in (-1, 1):
             z0, z1 = sorted((f * 0.08, f * 0.115))
             for y0, y1 in ((0.3, 1.35), (1.8, 2.95)):
                 px0, px1 = X(0.25, 1.3)
                 k.box((px0, y0, z0), (px1, y1, z1), "tech_panel", bevel=0.02)
-            rx0, rx1 = X(0.0, 1.5)
+            rx0, rx1 = X(0.02, 1.5)
             k.box((rx0, 1.45, -0.125), (rx1, 1.7, 0.125), "rust_metal", bevel=0.02)
             vx0, vx1 = X(0.5, 1.0)
             k.box((vx0, 2.25, -0.13), (vx1, 2.4, 0.13), "rubber", bevel=0.01)
         hx0, hx1 = X(0.0, 0.14)
-        k.box((hx0, 0.02, -0.1), (hx1, 3.2, 0.1), "hazard_stripes", bevel=0.01)
+        k.box((hx0, 0.03, -0.1), (hx1, 3.19, 0.1), "hazard_stripes", bevel=0.01)
         out.append(k.finish(name))
     export(out, os.path.join(OUT, "door_leaves.glb"))
 
 
-def archway(coll, w, h, depth=0.5):
+def archway(coll, kind):
     """Framed opening (no door): pilasters, capitals, a lintel with keystone and cornice."""
+    frame = FRAMES[kind]
+    w, h = frame["clear"]
+    depth = frame["depth"]
     W = w / 2
     k = Kit("Arch", coll)
     for s in (-1, 1):
-        x0, x1 = sorted((s * W, s * (W + 0.5)))
+        # jamb from the (inset) clear opening back into the wall behind the level opening
+        x0, x1 = sorted((s * W, s * (frame["fits"][0] / 2 + 0.5)))
         k.box((x0, 0, -depth), (x1, h, depth), "stone_blocks", bevel=0.05)
         for f in (-1, 1):
             z0, z1 = sorted((f * depth, f * (depth + 0.16)))
             px0, px1 = sorted((s * (W - 0.05), s * (W + 0.7)))
             k.box((px0, 0, z0), (px1, 0.4, z1), "tech_panel", bevel=0.04)
             k.box((px0 + 0.1, 0.4, z0), (px1 - 0.1, h - 0.25, z1), "stone_blocks", bevel=0.05)
-            k.box((px0 - 0.04, h - 0.25, z0), (px1 + 0.04, h, z1 + (0.05 if f > 0 else -0.05)), "tech_panel", bevel=0.04)
+            zc0, zc1 = sorted((f * depth, f * (depth + 0.21)))
+            k.box((px0 - 0.04, h - 0.25, zc0), (px1 + 0.04, h, zc1), "tech_panel", bevel=0.04)
             # chamfer brace under the lintel
             gx = s * W
             zz0, zz1 = sorted((f * depth, f * (depth - 0.3)))
@@ -229,8 +246,7 @@ def archway(coll, w, h, depth=0.5):
         x0, x1 = sorted((s * W, s * (W + 0.7)))
         c.box((x0, 0, -(depth + 0.16)), (x1, h, depth + 0.16), "stone_blocks", bevel=0.0)
     col = c.finish("ArchCollision-colonly")
-    tag = f"{int(round(w * 100))}x{int(round(h * 100))}"
-    export([arch, col], os.path.join(OUT, f"arch_{tag}.glb"))
+    export([arch, col], os.path.join(OUT, f"arch_{kind.split('_')[1]}.glb"))
 
 
 def extra_materials():
@@ -251,8 +267,8 @@ def main():
     extra_materials()
     door_frame(collection("DoorFrame"))
     door_leaves(collection("DoorLeaves"))
-    for w, h in ((4.0, 3.5), (4.0, 4.0)):
-        archway(collection(f"Arch_{w}x{h}"), w, h)
+    for kind in ("archway_400x350", "archway_400x400"):
+        archway(collection(kind.title().replace("_", "")), kind)
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(HERE, "props.blend"), relative_remap=True, compress=True)
     print("[props] saved props.blend")
 

@@ -284,13 +284,13 @@ def air_volumes():
     return [
         A((-5, 0, 36), (5, 4, 46), "concrete", "stone_blocks", "ceiling_tiles"),          # start
         A((-2, 0, 24.5), (2, 4, 36), "diamond_plate", "brick_wall", "ceiling_tiles"),      # corridor
-        A((-1.5, 0, 24), (1.5, 3.2, 24.5), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 1
+        A((-1.6, 0, 24), (1.6, 3.3, 24.5), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 1
         A((-16, 0, -8), (16, 12, 24), "concrete", "stone_blocks", "rust_metal"),           # foundry hall
         A((-16, -0.9, 4), (16, 0, 10), "lava", "stone_blocks", "stone_blocks", trims=False),            # lava channel
         A((-16.4, 0, 16), (-16, 3.5, 20), "concrete", "tech_panel", "tech_panel", trims=False),         # west arch
         A((-30, 0, 10), (-16.4, 6, 26), "floor_tiles", "brick_wall", "ceiling_tiles"),     # crucible
         A((-33, 0, 17), (-30, 3, 19), "stone_blocks", "stone_blocks", "stone_blocks", trims=False),     # secret niche
-        A((-1.5, 4, -8.4), (1.5, 7.2, -8), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 2
+        A((-1.6, 4, -8.4), (1.6, 7.3, -8), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 2
         A((-2, 4, -20), (2, 8, -8.4), "diamond_plate", "brick_wall", "ceiling_tiles"),     # exit corridor
         A((-6, 4, -32), (6, 10, -20), "floor_tiles", "tech_panel", "ceiling_tiles"),       # exit room
         # smoke vent in the foundry roof, capped by a Quake-style sky face (UT99 checklist 6)
@@ -307,32 +307,46 @@ WALL_LIGHTS = [((-1.95, 3.0, 30), -90), ((1.95, 3.0, 30), 90), ((-2.67, 7.5, -7.
                ((-15.95, 4.0, 18), -90), ((-31.5, 2.4, 18.95), 0)]
 
 
+# Framed openings (Blender door frames / archways); the air volumes they sit in are the frame's
+# "fits" size from detailing.FRAMES, so the frames' reveals stand proud of the walls.
+FRAME_PROPS = [("doorway", (0, 0, 24.25), 0), ("doorway", (0, 4, -8.2), 0),
+               ("archway_400x400", (0, 0, 36), 0), ("archway_400x400", (0, 4, -20), 0),
+               ("archway_400x350", (-16.2, 0, 18), 90)]
+
+
 def build():
     airs = air_volumes()
     world = shell_brushes(airs)
     # UT99-style trims (baseboards, cornices, bands, pilasters with plinths and capitals, roof
     # girders) as detail brushes; see docs/ut99_reference.md.
     rooms = [a.room() for a in airs]
+    for i, r in enumerate(rooms):
+        r.name = f"air{i}"
     keep_out = [detailing.keep_out(p, (0.8, 0.3, 0.45)) for p in CEILING_LIGHTS]
     keep_out += [detailing.keep_out(p, (0.3, 0.35, 0.3)) for p, _ in WALL_LIGHTS]
+    details = []  # axis-aligned detail brushes, for the z-fighting check at the end
     for lo, hi, tex in detailing.all_trims(rooms, avoid=keep_out):
         world.append(box_brush(lo, hi, tex))
+        details.append((lo, hi, f"trim{len(details)}:{tex}"))
 
     def box(lo, hi, tex, bottom="skip"):
         t = {k: tex for k in DIRS}
         t["-y"] = bottom
         world.append(box_brush(lo, hi, t))
+        details.append((lo, hi, f"box{len(details)}:{tex}"))
 
     # gallery block along the north wall of the hall, ramp up from the west
     world.append(box_brush((-16, 0, -8), (16, 4, -3),
                            {"+y": "diamond_plate", "+z": "tech_panel", "-y": "skip", "-z": "skip", "-x": "skip", "+x": "skip"}))
+    details.append(((-16, 0, -8), (16, 4, -3), "gallery"))
     box((-13, 4, -3.3), (11.5, 4.9, -3), "hazard_stripes", "hazard_stripes")      # gallery parapet (gaps at ramp + jump pad)
     world.append(ramp_brush(-16, -13, 3, -3, 0, 4, "diamond_plate", "stone_blocks"))
     # jump pad base on the east side
     box((12, 0, -2.2), (14.4, 0.2, 0.2), "hazard_stripes")
     # bridges over the lava
     for x0, x1 in ((-10, -7), (5, 8)):
-        box((x0, -0.3, 3.8), (x1, 0, 10.2), "diamond_plate", "rust_metal")
+        # the deck spans exactly the channel: a deck overlapping the floor in the floor's plane z-fights
+        box((x0, -0.3, 4), (x1, 0, 10), "diamond_plate", "rust_metal")
         box((x0, 0, 3.8), (x0 + 0.25, 0.6, 10.2), "rust_metal")
         box((x1 - 0.25, 0, 3.8), (x1, 0.6, 10.2), "rust_metal")
     # channel curbs
@@ -390,11 +404,9 @@ def build():
     # doors
     # Split doors in framed doorways (Blender-made kit), framed archways for open passages.
     # Classic brush doors still work: make a brush, tie it to func_door (see the FGD).
-    ent("misc_doorway", (0, 0, 24.25), 0)
-    ent("misc_doorway", (0, 4, -8.2), 0)
-    ent("misc_archway_4x4", (0, 0, 36), 0)
-    ent("misc_archway_4x4", (0, 4, -20), 0)
-    ent("misc_archway_4x35", (-16.2, 0, 18), 90)
+    for kind, p, yaw in FRAME_PROPS:
+        ent({"doorway": "misc_doorway", "archway_400x400": "misc_archway_4x4",
+             "archway_400x350": "misc_archway_4x35"}[kind], p, yaw)
     # lava damage, jump pad, secret, messages
     brush_ent("trigger_hurt", [box_brush((-16, -0.9, 4), (16, -0.5, 10), "trigger")], dmg=45)
     brush_ent("trigger_hurt", [box_brush((-25.6, 2.2, 15.4), (-20.4, 2.8, 20.6), "trigger")], dmg=60)
@@ -439,6 +451,9 @@ def build():
     for p in ((-14, 0, 13), (-13.2, 0, 12.3), (13.5, 0, 16), (-18, 0, 17.5), (-17.4, 0, 18.4)):
         ent("misc_explobox", p)
     ent("info_exit", (0, 4.3, -27.5))
+    frames = [(lo, hi, f"{k}@{p}#{i}") for k, p, yaw in FRAME_PROPS
+              for i, (lo, hi) in enumerate(detailing.frame_solids(k, p, yaw))]
+    detailing.assert_no_zfighting("Slag Works", rooms, details, frames)
     return world, ents
 
 

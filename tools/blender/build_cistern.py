@@ -62,6 +62,7 @@ class Level:
         self.preview = collection("Preview")
         self.n = {}
         self.rooms = []
+        self.boxes = []   # axis-aligned detail blocks, for the z-fighting check
 
     def _name(self, prefix):
         self.n[prefix] = self.n.get(prefix, 0) + 1
@@ -88,7 +89,9 @@ class Level:
     # additive detail -------------------------------------------------------
     def block(self, lo, hi, mat, skip=("bottom",), name=None):
         bm = box_bm(lo, hi, {"side": 0, "bottom": 0, "top": 0}, skip)
-        return mesh_object(name or self._name("Block"), bm, self.detail, [mat])
+        ob = mesh_object(name or self._name("Block"), bm, self.detail, [mat])
+        self.boxes.append((tuple(lo), tuple(hi), f"{ob.name}:{mat}"))
+        return ob
 
     def column(self, x, z, y0, y1, radius, mat, cap_mat=None, name=None):
         bm = cylinder_bm((x, (y0 + y1) / 2, z), radius, y1 - y0, "y", 0, 0, segments=16, caps=False)
@@ -130,7 +133,8 @@ class Level:
             lo, hi = P(u0, y_floor, min(w0, w1)), P(u1, y_spring, max(w0, w1))
             ob = self.block(tuple(min(a, b) for a, b in zip(lo, hi)), tuple(max(a, b) for a, b in zip(lo, hi)), "stone_blocks")
             ob.modifiers.new("Bevel", "BEVEL").width = 0.035
-            lo, hi = P(u0 - 0.06, y_floor, min(w0, w1) - 0.06), P(u1 + 0.06, y_floor + 0.45, max(w0, w1) + 0.06)
+            # 0.55 m: clear of every baseboard height (0.30/0.35/0.45) so the tops never share a plane
+            lo, hi = P(u0 - 0.06, y_floor, min(w0, w1) - 0.06), P(u1 + 0.06, y_floor + 0.55, max(w0, w1) + 0.06)
             ob = self.block(tuple(min(a, b) for a, b in zip(lo, hi)), tuple(max(a, b) for a, b in zip(lo, hi)), "tech_panel")
             ob.modifiers.new("Bevel", "BEVEL").width = 0.03
 
@@ -169,7 +173,7 @@ def build():
     # --- tunnel to the cistern (arched)
     L.room("TunnelS", (-2, 0, 28.4), (2, 3, 40.1), "brick_wall", "diamond_plate", "brick_wall")
     L.vault("TunnelSVault", (0, 3, 34.26), 2.0, 11.66, "z", "brick_wall", "brick_wall")
-    L.room("DoorS", (-1.5, 0, 27.9), (1.5, 3.2, 28.5), "tech_panel", "diamond_plate", "tech_panel", trims=False)
+    L.room("DoorS", (-1.6, 0, 27.9), (1.6, 3.3, 28.5), "tech_panel", "diamond_plate", "tech_panel", trims=False)
 
     # --- the great cistern: walkway level + sunken pit, groin-vaulted ceiling
     L.room("Cistern", (-18, 0, -10), (18, 7, 28), "stone_blocks", "concrete", "brick_wall")
@@ -196,7 +200,7 @@ def build():
     L.vault("ArchETop", (18.2, 5.2, 10), 2.0, 0.8, "x", "stone_blocks", "stone_blocks")
 
     # --- north tunnel and exit chamber
-    L.room("DoorN", (-1.5, 0, -10.5), (1.5, 3.2, -9.9), "tech_panel", "diamond_plate", "tech_panel", trims=False)
+    L.room("DoorN", (-1.6, 0, -10.5), (1.6, 3.3, -9.9), "tech_panel", "diamond_plate", "tech_panel", trims=False)
     L.room("TunnelN", (-2, 0, -22.1), (2, 3, -10.4), "brick_wall", "diamond_plate", "brick_wall")
     L.vault("TunnelNVault", (0, 3, -16.25), 2.0, 11.66, "z", "brick_wall", "brick_wall")
     L.room("ExitChamber", (-6, 0, -34), (6, 6.2, -22), "stone_blocks", "floor_tiles", "brick_wall")
@@ -215,8 +219,8 @@ def build():
         for z in (-3, 5, 13, 21):
             y0 = -3 if (-11 < x < 11 and -2 < z < 20) else 0
             L.column(x, z, y0, 7.2, 0.55, "stone_blocks", "tech_panel")
-    # pit stairs (south), 8 x 0.375 m
-    for k in range(8):
+    # pit stairs (south), 8 risers of 0.375 m (the 8th tread is the pit floor itself)
+    for k in range(7):
         top = -0.375 * (k + 1)
         z1 = 20 - 0.5 * k
         L.block((-2, -3, z1 - 0.5), (2, top, z1), "diamond_plate")
@@ -233,7 +237,7 @@ def build():
         z1 = 16 - 0.8 * k
         L.block((14.5, 0, z1 - 0.8), (18, top, z1), "diamond_plate")
     L.block((14.5, 0, 8), (18, 2, 12), "diamond_plate")
-    L.block((14.5, 2, 7.75), (18, 3.0, 8), "hazard_stripes", skip=())
+    L.block((14.5, 2, 7.75), (17.6, 3.0, 8), "hazard_stripes", skip=())   # rail stops short of the arch jamb
     # pipes along the cistern walls
     L.pipe((-17.6, 5.5, 9), 0.35, 38, "z", "rust_metal")
     L.pipe((17.6, 5.5, 9), 0.35, 38, "z", "rust_metal")
@@ -267,8 +271,14 @@ def build():
     write_rooms(L.rooms)
     E = L.ent
     E("player_start", (0, 0.05, 47), 0)
-    E("doorway", (0, 0, 28.2), 0)
-    E("doorway", (0, 0, -10.2), 0)
+    frames = [("doorway", (0, 0, 28.2), 0), ("doorway", (0, 0, -10.2), 0)]
+    for kind, p, yaw in frames:
+        E(kind, p, yaw)
+    # No z-fighting: detail blocks, the carved walls and the door frames must never share a plane
+    # while overlapping (see CLAUDE.md). The arch rings and columns aren't boxes and aren't checked.
+    detailing.assert_no_zfighting("The Cistern", L.rooms, L.boxes,
+                                  [(lo, hi, f"{k}@{p}#{i}") for k, p, yaw in frames
+                                   for i, (lo, hi) in enumerate(detailing.frame_solids(k, p, yaw))])
     # lights (static, baked)
     E("ceiling_light", (0, 10.1, 45))
     for z in (32, 37):

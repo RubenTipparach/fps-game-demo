@@ -115,12 +115,27 @@ def room_trims(room, airs, avoid=()):
     st = STYLES[room.style]
     y0, y1 = room.y
     out = []
-    for wall in walls(room):
-        along, fixed_axis, fixed, inward, (t0, t1) = wall
-        ops = openings_on_wall(room, wall, airs)
+    all_walls = walls(room)
+    all_ops = [openings_on_wall(room, w, airs) for w in all_walls]
 
-        def emit(yb0, yb1, depth, mat, segs):
+    def corner_trimmed(wall_index, pos, yb0, yb1):
+        """Does wall `wall_index` carry a trim (in the band yb0..yb1) at `pos` along it?"""
+        return not any(_overlaps(yb0, yb1, oy0, oy1) and c0 <= pos <= c1 for (c0, c1), (oy0, oy1) in all_ops[wall_index])
+
+    for wi, wall in enumerate(all_walls):
+        along, fixed_axis, fixed, inward, (t0, t1) = wall
+        ops = all_ops[wi]
+
+        def emit(yb0, yb1, depth, mat, segs, corners=True):
             for s0, s1 in segs:
+                # No z-fighting at inside corners: the x-running walls own the corner, so trims
+                # on the z-running walls stop where those trims' faces begin (otherwise their
+                # top/front faces would overlap in the same plane).
+                if corners and along == "z":
+                    if s0 <= t0 + 1e-6 and corner_trimmed(0, fixed, yb0, yb1):
+                        s0 = t0 + depth
+                    if s1 >= t1 - 1e-6 and corner_trimmed(1, fixed, yb0, yb1):
+                        s1 = t1 - depth
                 if s1 - s0 < 0.25:
                     continue
                 a = _coord(along, fixed_axis, s0, fixed, yb0)
@@ -155,9 +170,9 @@ def room_trims(room, airs, avoid=()):
                 continue
             top = y1 - (ch if y1 - y0 > 3.0 else 0.0)
             plinth = bh + 0.15
-            emit(y0, y0 + plinth, pd + cap_d, cap_m, [(t - pw / 2 - 0.08, t + pw / 2 + 0.08)])
-            emit(y0 + plinth, top - cap_h, pd, pm, [(t - pw / 2, t + pw / 2)])
-            emit(top - cap_h, top, pd + cap_d, cap_m, [(t - pw / 2 - 0.08, t + pw / 2 + 0.08)])
+            emit(y0, y0 + plinth, pd + cap_d, cap_m, [(t - pw / 2 - 0.08, t + pw / 2 + 0.08)], False)
+            emit(y0 + plinth, top - cap_h, pd, pm, [(t - pw / 2, t + pw / 2)], False)
+            emit(top - cap_h, top, pd + cap_d, cap_m, [(t - pw / 2 - 0.08, t + pw / 2 + 0.08)], False)
     out += ceiling_beams(room, airs, avoid)
     return out
 
@@ -181,9 +196,14 @@ def ceiling_beams(room, airs, avoid=()):
     span_x = x1 - x0 <= z1 - z0          # beams run along x, spaced along z
     span = (x1 - x0) if span_x else (z1 - z0)
     long_wall = walls(room)[2] if span_x else walls(room)[0]
+    st = STYLES[room.style]
     depth = min(0.8, max(0.3, 0.2 + span * 0.022))
-    width = depth * 0.75
-    mat = STYLES[room.style]["beam"][0]
+    # never flush with the cornice or capital undersides (coplanar faces z-fight)
+    for bad in (st["cornice"][0], st["cornice"][0] + st["cap"][0]):
+        if abs(depth - bad) < 0.03:
+            depth = bad + 0.06
+    width = st["pilaster"][0] * 0.75   # narrower than the pilaster it bears on: no shared side planes
+    mat = st["beam"][0]
     if mat == room.ceiling:  # trims must contrast with what they sit on
         mat = "tech_panel"
     out = []
@@ -205,3 +225,159 @@ def all_trims(rooms, airs=None, avoid=()):
     for r in rooms:
         boxes += room_trims(r, airs, avoid)
     return boxes
+
+
+# ----------------------------------------------------------------------------- frame props
+
+# Frame props built by tools/blender/build_props.py. `fits` is the level opening (width, height)
+# the prop is placed in; `clear` is the prop's own clear opening. Clear is always smaller than
+# fits (REVEAL per side and at the top), so the prop's reveals stand proud of the walls and
+# ceiling around them instead of sharing their planes (which z-fights).
+REVEAL = 0.1
+FRAMES = {
+    "doorway": dict(fits=(3.2, 3.3), clear=(3.0, 3.2), depth=0.5),
+    "archway_400x400": dict(fits=(4.0, 4.0), clear=(3.8, 3.9), depth=0.5),
+    "archway_400x350": dict(fits=(4.0, 3.5), clear=(3.8, 3.4), depth=0.5),
+}
+
+
+def frame_solids(kind, pos, yaw=0.0):
+    """Approximate boxes of a frame prop in level space (for the z-fighting check)."""
+    f = FRAMES[kind]
+    W, H = f["clear"][0] / 2, f["clear"][1]
+    D = f["depth"]
+    boxes = []
+    for sx in (-1, 1):
+        def X(a, b):
+            return (min(sx * a, sx * b), max(sx * a, sx * b))
+        if kind == "doorway":
+            boxes.append((X(W, W + 0.65), (0, H + 0.1), (-D, D)))
+            for sz in (-1, 1):
+                def Z(a, b):
+                    return (min(sz * a, sz * b), max(sz * a, sz * b))
+                boxes += [(X(W + 0.05, W + 0.85), (0, 0.35), Z(D, D + 0.2)),
+                          (X(W + 0.13, W + 0.77), (0.35, H + 0.05), Z(D, D + 0.12)),
+                          (X(W + 0.02, W + 0.88), (H + 0.05, H + 0.3), Z(D, D + 0.18))]
+        else:
+            boxes.append((X(W, f["fits"][0] / 2 + 0.5), (0, H), (-D, D)))
+            for sz in (-1, 1):
+                def Z(a, b):
+                    return (min(sz * a, sz * b), max(sz * a, sz * b))
+                boxes += [(X(W - 0.05, W + 0.7), (0, 0.4), Z(D, D + 0.16)),
+                          (X(W + 0.05, W + 0.6), (0.4, H - 0.25), Z(D, D + 0.16)),
+                          (X(W - 0.09, W + 0.74), (H - 0.25, H), Z(D, D + 0.21))]
+    if kind == "doorway":
+        boxes += [((-(W + 0.95), W + 0.95), (H, H + 1.0), (-(D + 0.14), D + 0.14)),
+                  ((-(W + 1.0), W + 1.0), (H + 0.9, H + 1.08), (-(D + 0.2), D + 0.2))]
+    else:
+        boxes += [((-(W + 0.75), W + 0.75), (H, H + 0.8), (-(D + 0.16), D + 0.16)),
+                  ((-(W + 0.85), W + 0.85), (H + 0.7, H + 0.9), (-(D + 0.26), D + 0.26))]
+    turned = round(yaw / 90.0) % 2 == 1
+    out = []
+    for bx, by, bz in boxes:
+        if turned:
+            bx, bz = bz, bx
+        out.append(((pos[0] + bx[0], pos[1] + by[0], pos[2] + bz[0]), (pos[0] + bx[1], pos[1] + by[1], pos[2] + bz[1])))
+    return out
+
+
+# ----------------------------------------------------------------------------- z-fighting check
+
+PLANE_TOL = 0.005   # faces closer than 5 mm to each other's plane count as coplanar
+
+
+def _rect_overlap(r, q, eps=1e-4):
+    return all(min(r[i][1], q[i][1]) - max(r[i][0], q[i][0]) > eps for i in range(2))
+
+
+def _rect_sub(r, q):
+    if not _rect_overlap(r, q, 0.0):
+        return [r]
+    (u0, u1), (v0, v1) = r
+    (a0, a1), (b0, b1) = q
+    out = []
+    if a0 > u0:
+        out.append(((u0, a0), (v0, v1)))
+    if a1 < u1:
+        out.append(((a1, u1), (v0, v1)))
+    cu = (max(u0, a0), min(u1, a1))
+    if b0 > v0:
+        out.append((cu, (v0, b0)))
+    if b1 < v1:
+        out.append((cu, (b1, v1)))
+    return out
+
+
+def _box_faces(lo, hi, label, inward=False):
+    faces = []
+    for a in range(3):
+        u, v = [i for i in range(3) if i != a]
+        rect = ((lo[u], hi[u]), (lo[v], hi[v]))
+        faces.append((a, lo[a], 1 if inward else -1, rect, label))
+        faces.append((a, hi[a], -1 if inward else 1, rect, label))
+    return faces
+
+
+def _air_faces(airs):
+    """Exposed inner faces of the air volumes (openings into other volumes cut out)."""
+    boxes = [((a.x[0], a.y[0], a.z[0]), (a.x[1], a.y[1], a.z[1]), a.name) for a in airs]
+    out = []
+    for i, (lo, hi, name) in enumerate(boxes):
+        for a, c, n, rect, label in _box_faces(lo, hi, f"air {name}", inward=True):
+            u, v = [k for k in range(3) if k != a]
+            rects = [rect]
+            for j, (blo, bhi, _) in enumerate(boxes):
+                if j == i:
+                    continue
+                outside = blo[a] < c - 1e-3 if n > 0 else bhi[a] > c + 1e-3
+                if outside and blo[a] <= c + 1e-3 and bhi[a] >= c - 1e-3:
+                    q = ((blo[u], bhi[u]), (blo[v], bhi[v]))
+                    rects = [piece for r in rects for piece in _rect_sub(r, q)]
+            out += [(a, c, n, r, label) for r in rects if (r[0][1] - r[0][0]) > 1e-3 and (r[1][1] - r[1][0]) > 1e-3]
+    return out
+
+
+def zfight_report(airs, details=(), props=(), merged=False):
+    """Find pairs of faces that share a plane, face the same way and overlap: they z-fight.
+
+    airs:    Room-like air volumes (their exposed inner faces are the walls, floors, ceilings)
+    details: (lo, hi, label) solid boxes that stay separate surfaces (trims, detail brushes)
+    props:   (lo, hi, label) solid boxes of separately rendered props (frame_solids())
+    merged:  the details are CSG-unioned with the walls (Godot CSG), so detail-vs-detail and
+             detail-vs-wall overlaps are resolved by the boolean and only props are checked.
+    Returns a list of human-readable conflicts (empty = clean)."""
+    walls_ = _air_faces(airs)
+    hidden = {(f[0], round(f[1], 3), -f[2]) for f in walls_}   # detail faces pressed against a wall
+
+    def solid_faces(boxes):
+        fs = []
+        for lo, hi, label in boxes:
+            fs += [f for f in _box_faces(lo, hi, label) if (f[0], round(f[1], 3), f[2]) not in hidden]
+        return fs
+
+    det, prp = solid_faces(details), solid_faces(props)
+    groups = [(prp, walls_), (prp, det), (prp, prp)]
+    if not merged:
+        groups += [(det, walls_), (det, det)]
+    conflicts = set()
+    for A, B in groups:
+        for i, fa in enumerate(A):
+            for j, fb in enumerate(B):
+                if A is B and j <= i:
+                    continue
+                if fa[4] == fb[4] or fa[0] != fb[0] or fa[2] != fb[2] or abs(fa[1] - fb[1]) > PLANE_TOL:
+                    continue
+                if _rect_overlap(fa[3], fb[3], 1e-3):
+                    axis = "xyz"[fa[0]]
+                    conflicts.add(f"{fa[4]} / {fb[4]}: coplanar {'+' if fa[2] > 0 else '-'}{axis} faces at "
+                                  f"{axis}={fa[1]:.3f}")
+    return sorted(conflicts)
+
+
+def assert_no_zfighting(level, airs, details=(), props=(), merged=False):
+    conflicts = zfight_report(airs, details, props, merged)
+    if conflicts:
+        raise SystemExit(f"[{level}] z-fighting: {len(conflicts)} coplanar overlapping face pairs\n  "
+                         + "\n  ".join(conflicts[:40]))
+    print(f"[{level}] z-fighting check: clean ({len(airs)} air volumes, {len(details)} detail boxes, "
+          f"{len(props)} prop boxes)")

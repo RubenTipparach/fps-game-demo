@@ -105,7 +105,7 @@ box(csg, (4, 5), (0, 1), (31, 32), "crate", name="StartCrateC")
 
 # --- corridor A (start -> pump hall)
 room(csg, "CorridorA", (-2, 2), (16.3, 30.01), 4.0, "brick_wall", "diamond_plate", "ceiling_tiles")
-opening(csg, "DoorSouth", (-1.5, 1.5), (0, 3.2), (15.7, 16.4))
+opening(csg, "DoorSouth", (-1.6, 1.6), (0, 3.3), (15.7, 16.4))
 
 # --- pump hall
 room(csg, "Hall", (-14, 14), (-14, 15.8), 10.0, "concrete", "concrete", "rust_metal")
@@ -136,7 +136,7 @@ for i, z in enumerate((-12, -6, 0)):
     box(csg, (10.1, 10.5), (0, 3.7), (z - 0.2, z + 0.2), "rust_metal", name=f"CatwalkPost{i}")
 
 # openings out of the hall
-opening(csg, "DoorNorth", (-1.5, 1.5), (0, 3.2), (-14.5, -13.9))
+opening(csg, "DoorNorth", (-1.6, 1.6), (0, 3.3), (-14.5, -13.9))
 opening(csg, "ArchWest", (-14.5, -13.9), (0, 3.5), (0, 4), "tech_panel", "concrete")
 
 # --- storage room (west)
@@ -190,8 +190,20 @@ KEEP_OUT += [detailing.keep_out((x, y, z), (0.3, 0.35, 0.3)) for x, y, z, _ in W
 # --- UT99-style trims generated from the room list: baseboards, cornices, bands, pilasters with
 # plinths and capitals, and ceiling girders lined up with the pilasters (docs/ut99_reference.md)
 trim_group = s.node("Trims", "CSGCombiner3D", csg)
-for i, (lo, hi, m) in enumerate(detailing.all_trims(ROOMS, avoid=KEEP_OUT)):
+TRIMS = detailing.all_trims(ROOMS, avoid=KEEP_OUT)
+for i, (lo, hi, m) in enumerate(TRIMS):
     box(trim_group, (lo[0], hi[0]), (lo[1], hi[1]), (lo[2], hi[2]), m, name=f"Trim{i}")
+
+# Framed openings: Blender-made door frames and archways (see detailing.FRAMES for the sizes;
+# each carved opening is the frame's "fits" size so the frame's reveals stand proud of it).
+FRAME_PROPS = [("doorway", (0, 0, 16.05), 0), ("doorway", (0, 0, -14.2), 0),
+               ("archway_400x400", (0, 0, 30.0), 0), ("archway_400x400", (0, 0, -26.0), 0),
+               ("archway_400x350", (-14.2, 0, 2.0), 90)]
+# No z-fighting: CSG unions resolve brush overlaps, but the props are separate meshes.
+detailing.assert_no_zfighting(
+    "Pump Station", ROOMS, [(lo, hi, f"trim{i}:{m}") for i, (lo, hi, m) in enumerate(TRIMS)],
+    [(lo, hi, f"{k}@{p}#{i}") for k, p, yaw in FRAME_PROPS for i, (lo, hi) in enumerate(detailing.frame_solids(k, p, yaw))],
+    merged=True)
 
 # ----------------------------------------------------------------------------- compiled geometry
 
@@ -242,11 +254,7 @@ lc.add_reflection_probes(s, [
 lc.add_entities(s, [
     ("player_start", (0, 0, 38), 0),
     # Q2/Unreal-style split doors in Blender-made frames, and framed archways
-    ("doorway", (0, 0, 16.05), 0),
-    ("doorway", (0, 0, -14.2), 0),
-    ("archway_400x400", (0, 0, 30.0), 0),
-    ("archway_400x400", (0, 0, -26.0), 0),
-    ("archway_400x350", (-14.2, 0, 2.0), 90),
+    *FRAME_PROPS,
     # enemies
     ("grunt", (0, 0, 19.5), 180),
     ("grunt", (-8, 0, 11), 180), ("grunt", (8, 0, -2), 160), ("grunt", (2, 1, -1.5), 180),

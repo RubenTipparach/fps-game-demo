@@ -155,6 +155,17 @@ Modelled in Blender with bevelled edges, in `tools/blender/props.blend` and `gam
 `scenes/props/doorway.tscn` puts it together: a static lightmapped frame, two probe-lit door
 leaves, baked downlights and UT99-style glow coronas.
 
+Frame sizes live in `detailing.FRAMES`. Each frame goes in a level opening of its `fits` size, and
+its own clear opening is 0.1 m smaller, so its reveals stand proud of the walls and ceiling.
+
+### No z-fighting
+
+Every level generator runs `detailing.assert_no_zfighting()` and refuses to write a level that
+fails it. The check finds pairs of faces that share a plane, face the same way and overlap.
+It compares the room shells, trims and detail brushes, and the frame props against all of them
+and against each other. Trim corners, girder sizes, plinth heights, bridge decks and door
+openings are all laid out so the check passes. See `CLAUDE.md` for the rules.
+
 ## Art direction: Quake 2 / Unreal 1 era
 
 [`docs/ut99_reference.md`](docs/ut99_reference.md) is the reference set: about 95 of the most-cited
