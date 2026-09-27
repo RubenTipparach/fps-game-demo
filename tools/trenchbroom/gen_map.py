@@ -22,12 +22,16 @@ import itertools
 import json
 import math
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 GAME = os.path.join(ROOT, "game")
 SCALE = 32.0
 TEX_PX = 1024.0
+
+sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
+import detailing  # noqa: E402
 
 TILES = {k: v.get("tile_m", 2.0) for k, v in json.load(open(os.path.join(GAME, "materials", "materials.json"))).items()
          if isinstance(v, dict)}
@@ -181,10 +185,18 @@ def ramp_brush(x0, x1, z_low, z_high, y0, y_top, top_tex, side_tex):
 
 # ----------------------------------------------------------------------------- room shell generator
 
+STYLE = {"tech_panel": "tech", "concrete": "tech", "rust_metal": "tech", "brick_wall": "brick", "stone_blocks": "stone"}
+
+
 class Air:
-    def __init__(self, lo, hi, floor, wall, ceiling):
+    def __init__(self, lo, hi, floor, wall, ceiling, trims=True):
         self.lo, self.hi = lo, hi
         self.tex = {"floor": floor, "wall": wall, "ceiling": ceiling}
+        self.trims = trims
+
+    def room(self):
+        return detailing.Room("air", (self.lo[0], self.hi[0]), (self.lo[1], self.hi[1]), (self.lo[2], self.hi[2]),
+                              STYLE.get(self.tex["wall"], "tech"), self.trims)
 
 
 def shell_brushes(airs, pad=1.0):
@@ -271,17 +283,21 @@ def build():
     airs = [
         A((-5, 0, 36), (5, 4, 46), "concrete", "stone_blocks", "ceiling_tiles"),          # start
         A((-2, 0, 24.5), (2, 4, 36), "diamond_plate", "brick_wall", "ceiling_tiles"),      # corridor
-        A((-1.5, 0, 24), (1.5, 3.2, 24.5), "diamond_plate", "tech_panel", "tech_panel"),   # door 1
+        A((-1.5, 0, 24), (1.5, 3.2, 24.5), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 1
         A((-16, 0, -8), (16, 12, 24), "concrete", "stone_blocks", "rust_metal"),           # foundry hall
-        A((-16, -0.9, 4), (16, 0, 10), "lava", "stone_blocks", "stone_blocks"),            # lava channel
-        A((-16.4, 0, 16), (-16, 3.5, 20), "concrete", "tech_panel", "tech_panel"),         # west arch
+        A((-16, -0.9, 4), (16, 0, 10), "lava", "stone_blocks", "stone_blocks", trims=False),            # lava channel
+        A((-16.4, 0, 16), (-16, 3.5, 20), "concrete", "tech_panel", "tech_panel", trims=False),         # west arch
         A((-30, 0, 10), (-16.4, 6, 26), "floor_tiles", "brick_wall", "ceiling_tiles"),     # crucible
-        A((-33, 0, 17), (-30, 3, 19), "stone_blocks", "stone_blocks", "stone_blocks"),     # secret niche
-        A((-1.5, 4, -8.4), (1.5, 7.2, -8), "diamond_plate", "tech_panel", "tech_panel"),   # door 2
+        A((-33, 0, 17), (-30, 3, 19), "stone_blocks", "stone_blocks", "stone_blocks", trims=False),     # secret niche
+        A((-1.5, 4, -8.4), (1.5, 7.2, -8), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 2
         A((-2, 4, -20), (2, 8, -8.4), "diamond_plate", "brick_wall", "ceiling_tiles"),     # exit corridor
         A((-6, 4, -32), (6, 10, -20), "floor_tiles", "tech_panel", "ceiling_tiles"),       # exit room
     ]
     world = shell_brushes(airs)
+    # UT99-style trims (baseboards, cornices, bands, pilasters) as detail brushes.
+    rooms = [a.room() for a in airs]
+    for lo, hi, tex in detailing.all_trims(rooms):
+        world.append(box_brush(lo, hi, tex))
 
     def box(lo, hi, tex, bottom="skip"):
         t = {k: tex for k in DIRS}

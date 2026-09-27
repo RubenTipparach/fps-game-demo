@@ -17,6 +17,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import detailing  # noqa: E402
 import level_common as lc  # noqa: E402
 from tscn import Raw, Scene, v2, v3  # noqa: E402
 
@@ -71,14 +72,20 @@ def ramp(parent, x, z, y_low, y_high, m, axis="z", name=None):
     raise ValueError(axis)
 
 
-def room(parent, name, x, z, h, walls, floor, ceiling, y0=0.0):
+ROOMS = []  # air volumes, used for automatic UT99-style trims
+STYLE = {"tech_panel": "tech", "concrete": "tech", "rust_metal": "tech", "brick_wall": "brick", "stone_blocks": "stone"}
+
+
+def room(parent, name, x, z, h, walls, floor, ceiling, y0=0.0, trims=True):
     """Carve a room (walls take the carve's material) then add floor/ceiling slabs."""
+    ROOMS.append(detailing.Room(name, x, (y0, y0 + h), z, STYLE.get(walls, "tech"), trims))
     box(parent, x, (y0 - 0.3, y0 + h + 0.3), z, walls, SUBTRACT, name=f"{name}_Carve")
     box(parent, x, (y0 - 0.35, y0), z, floor, name=f"{name}_Floor")
     box(parent, x, (y0 + h, y0 + h + 0.35), z, ceiling, name=f"{name}_Ceiling")
 
 
 def opening(parent, name, x, y, z, m="tech_panel", floor="diamond_plate"):
+    ROOMS.append(detailing.Room(name, x, y, z, trims=False))
     box(parent, x, (y[0] - 0.3, y[1]), z, m, SUBTRACT, name=f"{name}_Carve")
     box(parent, x, (y[0] - 0.35, y[0]), z, floor, name=f"{name}_Floor")
 
@@ -92,33 +99,17 @@ box(csg, (-34, 20), (-1.5, 12), (-40, 46), "concrete", name="Rock")
 
 # --- start room
 room(csg, "Start", (-6, 6), (30, 42), 4.5, "tech_panel", "floor_tiles", "ceiling_tiles")
-box(csg, (-6, 6), (0, 0.6), (41.6, 42), "hazard_stripes", name="StartTrimS")
-box(csg, (-6, -5.6), (0, 0.6), (30, 42), "hazard_stripes", name="StartTrimW")
-box(csg, (5.6, 6), (0, 0.6), (30, 42), "hazard_stripes", name="StartTrimE")
 box(csg, (-6, -4), (0, 1), (39, 41), "crate", name="StartCrateA")
 box(csg, (-5.5, -4.5), (1, 2), (39.5, 40.5), "crate", name="StartCrateB")
 box(csg, (4, 5), (0, 1), (31, 32), "crate", name="StartCrateC")
 
 # --- corridor A (start -> pump hall)
 room(csg, "CorridorA", (-2, 2), (16.3, 30.01), 4.0, "brick_wall", "diamond_plate", "ceiling_tiles")
-for i, z in enumerate((20.0, 26.0)):
-    box(csg, (-2, -1.6), (0, 4), (z - 0.3, z + 0.3), "rust_metal", name=f"CorrRibW{i}")
-    box(csg, (1.6, 2), (0, 4), (z - 0.3, z + 0.3), "rust_metal", name=f"CorrRibE{i}")
 opening(csg, "DoorSouth", (-1.5, 1.5), (0, 3.2), (15.7, 16.4))
 
 # --- pump hall
 room(csg, "Hall", (-14, 14), (-14, 15.8), 10.0, "concrete", "concrete", "rust_metal")
-# wainscot trim (split around openings)
-box(csg, (-14, -13.8), (0, 1.3), (-14, 0), "tech_panel", name="HallTrimW1")
-box(csg, (-14, -13.8), (0, 1.3), (4, 15.8), "tech_panel", name="HallTrimW2")
-box(csg, (-14, -1.5), (0, 1.3), (-14, -13.8), "tech_panel", name="HallTrimN1")
-box(csg, (1.5, 14), (0, 1.3), (-14, -13.8), "tech_panel", name="HallTrimN2")
-box(csg, (-14, -1.5), (0, 1.3), (15.6, 15.8), "tech_panel", name="HallTrimS1")
-box(csg, (1.5, 10), (0, 1.3), (15.6, 15.8), "tech_panel", name="HallTrimS2")
-# upper wall band
-for nm, xr, zr in (("BandW", (-14, -13.85), (-14, 15.8)), ("BandE", (13.85, 14), (-14, 15.8)),
-                   ("BandN", (-14, 14), (-14, -13.85)), ("BandS", (-14, 14), (15.65, 15.8))):
-    box(csg, xr, (7.6, 8.2), zr, "hazard_stripes", name=f"Hall{nm}")
+# (baseboards, cornices, bands and pilasters are generated from the room list, see below)
 # pumps
 for i, (x, z) in enumerate(((-7, -6), (7, -6), (-7, 6), (7, 6))):
     cyl(csg, x, z, 0, 7.0, 1.4, "rust_metal", name=f"Pump{i}")
@@ -158,19 +149,21 @@ box(csg, (-23, -21), (0, 2), (7, 9), "crate_large", name="CrateE")
 box(csg, (-21, -20), (0, 1), (8, 9), "crate", name="CrateF")
 box(csg, (-16, -15), (0, 1), (6, 7), "crate", name="CrateG")
 # secret alcove, above the crates
-room(csg, "Secret", (-29.5, -25.9), (0, 3), 2.2, "stone_blocks", "stone_blocks", "stone_blocks", y0=2.0)
+room(csg, "Secret", (-29.5, -25.9), (0, 3), 2.2, "stone_blocks", "stone_blocks", "stone_blocks", y0=2.0, trims=False)
 
 # --- corridor B (hall -> exit)
 room(csg, "CorridorB", (-2, 2), (-26.01, -14.4), 4.0, "brick_wall", "diamond_plate", "ceiling_tiles")
-for i, z in enumerate((-18.0, -22.5)):
-    box(csg, (-2, -1.6), (0, 4), (z - 0.3, z + 0.3), "rust_metal", name=f"CorrBRibW{i}")
-    box(csg, (1.6, 2), (0, 4), (z - 0.3, z + 0.3), "rust_metal", name=f"CorrBRibE{i}")
 
 # --- exit chamber
 room(csg, "Exit", (-7, 7), (-38, -26), 6.0, "stone_blocks", "floor_tiles", "ceiling_tiles")
 for i, (x, z) in enumerate(((-5.5, -36.5), (5.5, -36.5), (-5.5, -27.5), (5.5, -27.5))):
     box(csg, (x - 0.6, x + 0.6), (0, 6), (z - 0.6, z + 0.6), "tech_panel", name=f"ExitPillar{i}")
 box(csg, (-2.5, 2.5), (0, 0.3), (-35.5, -30.5), "hazard_stripes", name="ExitDais")
+
+# --- UT99-style trims generated from the room list: baseboards, cornices, bands, pilasters
+trim_group = s.node("Trims", "CSGCombiner3D", csg)
+for i, (lo, hi, m) in enumerate(detailing.all_trims(ROOMS)):
+    box(trim_group, (lo[0], hi[0]), (lo[1], hi[1]), (lo[2], hi[2]), m, name=f"Trim{i}")
 
 # ----------------------------------------------------------------------------- compiled geometry
 

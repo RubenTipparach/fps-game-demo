@@ -32,8 +32,13 @@ import bpy
 from mathutils import Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from blendkit import (GAME, HERE, B, add_world_uv, box_bm, collection, cylinder_bm, export_level,  # noqa: E402
-                      material, mesh_object)
+from blendkit import (GAME, HERE, ROOT, B, add_world_uv, box_bm, collection, cylinder_bm,  # noqa: E402
+                      export_level, material, mesh_object)
+
+sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
+import detailing  # noqa: E402
+
+STYLE = {"tech_panel": "tech", "concrete": "tech", "rust_metal": "tech", "brick_wall": "brick", "stone_blocks": "stone"}
 
 BLEND = os.path.join(HERE, "cistern.blend")
 GLB = os.path.join(GAME, "levels", "blender", "cistern.glb")
@@ -56,13 +61,16 @@ class Level:
         self.entities = collection("Entities")
         self.preview = collection("Preview")
         self.n = {}
+        self.rooms = []
 
     def _name(self, prefix):
         self.n[prefix] = self.n.get(prefix, 0) + 1
         return f"{prefix}_{self.n[prefix]:02d}"
 
     # carved spaces --------------------------------------------------------
-    def room(self, name, lo, hi, wall, floor, ceiling):
+    def room(self, name, lo, hi, wall, floor, ceiling, trims=True):
+        self.rooms.append(detailing.Room(name, (lo[0], hi[0]), (lo[1], hi[1]), (lo[2], hi[2]), STYLE.get(wall, "tech"),
+                                         trims))
         bm = box_bm(lo, hi, {"side": 0, "bottom": 1, "top": 2})
         ob = mesh_object(name, bm, self.carve, [wall, floor, ceiling])
         ob.display_type = "WIRE"
@@ -160,31 +168,31 @@ def build():
     # --- tunnel to the cistern (arched)
     L.room("TunnelS", (-2, 0, 28.4), (2, 3, 40.1), "brick_wall", "diamond_plate", "brick_wall")
     L.vault("TunnelSVault", (0, 3, 34.26), 2.0, 11.66, "z", "brick_wall", "brick_wall")
-    L.room("DoorS", (-1.5, 0, 27.9), (1.5, 3.2, 28.5), "tech_panel", "diamond_plate", "tech_panel")
+    L.room("DoorS", (-1.5, 0, 27.9), (1.5, 3.2, 28.5), "tech_panel", "diamond_plate", "tech_panel", trims=False)
 
     # --- the great cistern: walkway level + sunken pit, groin-vaulted ceiling
     L.room("Cistern", (-18, 0, -10), (18, 7, 28), "stone_blocks", "concrete", "brick_wall")
-    L.room("Pit", (-11, -3, -2), (11, 0.01, 20), "stone_blocks", "concrete", "concrete")
+    L.room("Pit", (-11, -3, -2), (11, 0.01, 20), "stone_blocks", "concrete", "concrete", trims=False)
     for i, x in enumerate((-8, 0, 8)):
         L.vault(f"VaultNS{i}", (x, 7, 9), 4.0, 37.98, "z", "brick_wall", "brick_wall")
     for i, z in enumerate((1, 9, 17)):
         L.vault(f"VaultEW{i}", (0, 7, z), 4.0, 35.98, "x", "brick_wall", "brick_wall")
     # secret crawlspace (crouch!) off the pit's east wall, and the room behind it
-    L.room("Crawl", (10.9, -3, 8), (15.1, -1.8, 10), "stone_blocks", "stone_blocks", "stone_blocks")
-    L.room("SecretRoom", (15, -3, 7), (17.5, -0.9, 11), "stone_blocks", "stone_blocks", "stone_blocks")
+    L.room("Crawl", (10.9, -3, 8), (15.1, -1.8, 10), "stone_blocks", "stone_blocks", "stone_blocks", trims=False)
+    L.room("SecretRoom", (15, -3, 7), (17.5, -0.9, 11), "stone_blocks", "stone_blocks", "stone_blocks", trims=False)
 
     # --- west pump room through an arched doorway
     L.room("PumpRoom", (-32, 0, 0), (-18.4, 6, 14), "brick_wall", "floor_tiles", "ceiling_tiles")
-    L.room("ArchW", (-18.6, 0, 5), (-17.8, 3.2, 9), "stone_blocks", "concrete", "stone_blocks")
+    L.room("ArchW", (-18.6, 0, 5), (-17.8, 3.2, 9), "stone_blocks", "concrete", "stone_blocks", trims=False)
     L.vault("ArchWTop", (-18.2, 3.2, 7), 2.0, 0.8, "x", "stone_blocks", "stone_blocks")
 
     # --- east overflow gallery, raised 2 m, reached by stairs + landing
     L.room("Overflow", (18.4, 2, -8), (30, 8, 20), "tech_panel", "diamond_plate", "ceiling_tiles")
-    L.room("ArchE", (17.8, 2, 8), (18.6, 5.2, 12), "stone_blocks", "diamond_plate", "stone_blocks")
+    L.room("ArchE", (17.8, 2, 8), (18.6, 5.2, 12), "stone_blocks", "diamond_plate", "stone_blocks", trims=False)
     L.vault("ArchETop", (18.2, 5.2, 10), 2.0, 0.8, "x", "stone_blocks", "stone_blocks")
 
     # --- north tunnel and exit chamber
-    L.room("DoorN", (-1.5, 0, -10.5), (1.5, 3.2, -9.9), "tech_panel", "diamond_plate", "tech_panel")
+    L.room("DoorN", (-1.5, 0, -10.5), (1.5, 3.2, -9.9), "tech_panel", "diamond_plate", "tech_panel", trims=False)
     L.room("TunnelN", (-2, 0, -22.1), (2, 3, -10.4), "brick_wall", "diamond_plate", "brick_wall")
     L.vault("TunnelNVault", (0, 3, -16.25), 2.0, 11.66, "z", "brick_wall", "brick_wall")
     L.room("ExitChamber", (-6, 0, -34), (6, 6.2, -22), "stone_blocks", "floor_tiles", "brick_wall")
@@ -239,6 +247,10 @@ def build():
     L.block((21, 2, -5), (23, 4, -3), "crate_large")
     # exit chamber dais
     L.block((-2.5, 0, -31), (2.5, 0.3, -26), "hazard_stripes")
+    # UT99-style trims generated from the room list (openings, arches and tunnels are skipped)
+    for lo, hi, mat in detailing.all_trims(L.rooms):
+        ob = L.block(lo, hi, mat, skip=())
+        ob.modifiers.new("Bevel", "BEVEL").width = 0.02
     # stone arch rings around the round tunnel mouths and side arches (Unreal 1 style)
     L.arch_ring(0, 3.0, 2.0, "x", 40.0, +1)            # entry -> south tunnel
     L.arch_ring(0, 3.0, 2.0, "x", -22.0, -1)           # north tunnel -> exit chamber
