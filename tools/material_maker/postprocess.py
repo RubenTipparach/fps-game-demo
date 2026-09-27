@@ -10,7 +10,13 @@ style .tres, so this step:
   * writes .import presets (VRAM compression, mipmaps, BC5 normal maps),
   * writes materials/<name>.tres as ORMMaterial3D with PBR settings from materials.json.
 
-Usage: postprocess.py <raw_export_dir> <godot_project_dir>
+Usage: postprocess.py <raw_export_dir> <godot_project_dir> [material ...]
+
+materials.json may also set "albedo_ramp": [[dark r,g,b], [light r,g,b]] to remap the albedo's
+luminance onto a colour ramp, and "albedo_under_emission": k to darken the albedo where the
+material glows. The lava uses both: Material Maker's example lava graph outputs a light-grey
+cloud as albedo, which any light washes out to white, where lava needs a near-black crust with
+only the emissive cracks glowing.
 """
 import json
 import os
@@ -109,8 +115,12 @@ def write_material(mat_dir, name, spec, has_emission):
               f"normal_scale = {spec.get('normal_scale', 1.0)}",
               'normal_texture = ExtResource("3")']
     if has_emission:
+        # Multiply: emission = colour * texture * energy. Godot's default operator is Add,
+        # (colour + texture) * energy, which with a white colour makes every texel glow - lava
+        # rendered solid white and light-panel grilles glowed.
         lines += ["emission_enabled = true",
                   "emission = Color(1, 1, 1, 1)",
+                  "emission_operator = 1",
                   f"emission_energy_multiplier = {spec.get('emission_energy', 1.0)}",
                   'emission_texture = ExtResource("4")']
     with open(os.path.join(mat_dir, name + ".tres"), "w") as f:
@@ -123,14 +133,26 @@ def main():
     tex_dir = os.path.join(game, "textures")
     mat_dir = os.path.join(game, "materials")
     os.makedirs(tex_dir, exist_ok=True)
+    only = set(sys.argv[3:])
     for name, spec in manifest.items():
-        if name.startswith("_") or "alias" in spec:
+        if name.startswith("_") or "alias" in spec or (only and name not in only):
             continue
         src = os.path.join(raw, name)
         if not os.path.exists(src + "_albedo.png"):
             print(f"skip {name}: no export in {raw}")
             continue
-        resize(load(src + "_albedo.png")).save(os.path.join(tex_dir, f"{name}.png"), optimize=True)
+        albedo = resize(load(src + "_albedo.png"))
+        if "albedo_ramp" in spec or "albedo_under_emission" in spec:
+            a = np.asarray(albedo, dtype=np.float32) / 255.0
+            if "albedo_ramp" in spec:
+                lum = (a @ np.array([0.2126, 0.7152, 0.0722], dtype=np.float32))[..., None]
+                dark, light = (np.array(c, dtype=np.float32) for c in spec["albedo_ramp"])
+                a = dark + (light - dark) * lum
+            if "albedo_under_emission" in spec and os.path.exists(src + "_emission.png"):
+                e = np.asarray(resize(load(src + "_emission.png")), dtype=np.float32) / 255.0
+                a *= 1.0 - spec["albedo_under_emission"] * e.max(axis=2, keepdims=True)
+            albedo = Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8), "RGB")
+        albedo.save(os.path.join(tex_dir, f"{name}.png"), optimize=True)
         write_import(tex_dir, f"{name}.png")
 
         if os.path.exists(src + "_normal.png"):

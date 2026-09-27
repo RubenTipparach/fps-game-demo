@@ -84,7 +84,8 @@ def make_materials():
         orm_texture=r.ext_res("Texture2D", "res://textures/light_panel_orm.png"),
         normal_enabled=True,
         normal_texture=r.ext_res("Texture2D", "res://textures/light_panel_normal.png"),
-        emission_enabled=True, emission=color(1, 0.96, 0.88), emission_energy_multiplier=6.0,
+        # Multiply operator: only the lit cells glow, the grille stays dark (see postprocess.py)
+        emission_enabled=True, emission=color(1, 0.96, 0.88), emission_operator=1, emission_energy_multiplier=9.0,
         emission_texture=r.ext_res("Texture2D", "res://textures/light_panel_emission.png"),
         uv1_scale=v3(0.833, 1.0, 2.5), uv1_offset=v3(0.5, 0.0, 0.5), uv1_triplanar=True, uv1_triplanar_sharpness=8.0,
         texture_filter=5,
