@@ -108,6 +108,18 @@ _subresources={
 "use_external/fallback_path": "res://materials/rust_metal.tres",
 "use_external/path": "res://materials/rust_metal.tres"
 },
+"sky_moon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_moon.tres"
+},
+"sky_night": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_night.tres"
+},
+"sky_storm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_storm.tres"
+},
 "status_light": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/status_light.tres"

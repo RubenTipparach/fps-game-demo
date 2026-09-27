@@ -16,7 +16,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 GAME = os.path.join(ROOT, "game")
 
 LEVEL_MATS = ["tech_panel", "concrete", "ceiling_tiles", "floor_tiles", "crate", "crate_large", "hazard_stripes",
-              "light_panel", "rust_metal", "brick_wall", "stone_blocks", "diamond_plate", "lava"]
+              "light_panel", "rust_metal", "brick_wall", "stone_blocks", "diamond_plate", "lava",
+              "sky_night", "sky_storm", "sky_moon"]
 PROP_MATS = ["rubber", "gunmetal", "gunmetal_light", "brass", "lamp_glow", "status_light"]
 
 

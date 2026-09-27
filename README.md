@@ -155,6 +155,18 @@ Modelled in Blender with bevelled edges, in `tools/blender/props.blend` and `gam
 `scenes/props/doorway.tscn` puts it together: a static lightmapped frame, two probe-lit door
 leaves, baked downlights and UT99-style glow coronas.
 
+## Art direction: Quake 2 / Unreal 1 era
+
+[`docs/ut99_reference.md`](docs/ut99_reference.md) is the reference set: about 95 of the most-cited
+UT99 maps (the official Epic maps plus the community classics from the ut99.org "best of" threads,
+the NaliCity hotlist and CliffyB's picks). It also has a style guide distilled from them, with a
+15-point "reads as UT99" checklist, and a table of where each rule is implemented. The main pieces:
+
+* **Automatic trims** (`tools/godot/detailing.py`), shared by all three toolchains. It generates baseboards, cornices, hazard bands, pilasters with plinths and capitals, and ceiling girders lined up with the pilasters, working around doors, arches and light fixtures.
+* **Sky surfaces**, as in Quake and Unreal. A face with a `sky_*` material becomes a window onto two scrolling cloud layers and a moon (`shaders/sky_surface.gdshader`). Each level has one: a grated skylight, a smoke vent, and an oculus.
+* **Zone ambient.** Soft blue per-room fill lights, baked, so shadows go dark blue instead of black.
+* **Panning textures**: lava scrolls and pulses (`scripts/World/SurfaceAnimator.cs`).
+
 ## Materials (Material Maker to PBR)
 
 `tools/material_maker/ptex/*.ptex` are Material Maker 1.7 graphs:
@@ -184,6 +196,8 @@ map, the Blender UV projection and the doorway kit all read it.
 * Emissive surfaces (light panels, lava, door downlights) contribute to the bake.
 * Box-projected **ReflectionProbes** update once per room so metals and wet stone reflect the baked lighting.
 * The environment uses AgX tonemapping, SSAO, subtle glow and depth fog. There are warm lamps against cool blue fills in the big halls, plus coronas on fixtures.
+* **Zone ambient** (`level_common.add_zone_ambient`): every room gets low, flat-falloff blue fill lights, UT99's per-zone ambient. They are baked with everything else, so shadows are dark blue, never black.
+* **Sky surfaces** are unshaded, so they stay bright. A baked spotlight shines in from the direction of each sky's moon.
 * **To re-bake**, select the `LightmapGI` node and press *Bake Lightmaps*, or run **Brushfire: Bake Lightmaps**.
 
 ## Rebuilding everything from scripts
@@ -193,6 +207,7 @@ python3 tools/material_maker/build_ptex.py        # Material Maker graphs
 tools/material_maker/export_materials.sh          # -> textures + materials (needs Material Maker)
 python3 tools/sfx/generate_sfx.py                 # sound effects
 python3 tools/fx/generate_fx_textures.py          # particle/decal textures
+python3 tools/fx/generate_skies.py                # tileable sky layers for the sky surfaces
 python3 tools/godot/gen_scenes.py                 # weapons, enemies, pickups, props
 blender -b -P tools/blender/build_props.py        # doorway kit
 blender -b -P tools/blender/build_cistern.py      # Blender level
@@ -207,7 +222,8 @@ BRUSHFIRE_BATCH="res://levels/csg/level_csg.tscn:csg,nav,lightmap;res://levels/t
 ```
 
 `BRUSHFIRE_AUTOTEST=script.json godot --path game` runs a scripted playtest and screenshot
-pass (`scripts/Core/AutoTest.cs`).
+pass (`scripts/Core/AutoTest.cs`). `{"debug_draw": 1}` switches to unshaded, which is handy for
+checking generated geometry before spending time on a bake.
 
 ## Layout
 
@@ -216,12 +232,14 @@ game/                     Godot project (C#)
   scripts/                Core, Player, Enemies, World, UI
   scenes/                 player, weapons, enemies, pickups, props, ui
   levels/csg|trenchbroom|blender
-  materials/ textures/    Material Maker PBR output (+ materials.json)
+  materials/ textures/    Material Maker PBR output (+ materials.json), sky layers
+  shaders/                sky surface shader
   models/doorway/         Blender doorway kit
   audio/sfx/              synthesised sounds
   addons/func_godot/      func_godot 2025.12 (MIT)
   addons/brushfire_tools/ level pipeline editor plugin, import scripts
 tools/                    generators: material_maker, blender, trenchbroom, godot, sfx, fx
+docs/                     UT99 reference set and style guide, screenshots
 ```
 
 ## Credits

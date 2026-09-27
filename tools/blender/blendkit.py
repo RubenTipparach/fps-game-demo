@@ -45,6 +45,14 @@ def material(name):
     base = os.path.basename(albedo)[:-4]
     nt = m.node_tree
     bsdf = nt.nodes.get("Principled BSDF")
+    if name.startswith("sky_"):
+        # Sky faces: Godot swaps in the sky_surface shader; in Blender just show the sky preview, unlit.
+        img = nt.nodes.new("ShaderNodeTexImage")
+        img.image = bpy.data.images.load(os.path.join(tex_dir, base + ".png"), check_existing=True)
+        nt.links.new(img.outputs["Color"], bsdf.inputs["Emission Color"])
+        bsdf.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        bsdf.inputs["Emission Strength"].default_value = 1.0
+        return m
     # Viewport preview uses the same Material Maker textures the game uses.
     img = nt.nodes.new("ShaderNodeTexImage")
     img.image = bpy.data.images.load(os.path.join(tex_dir, base + ".png"), check_existing=True)

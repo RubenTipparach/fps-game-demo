@@ -10,6 +10,7 @@ namespace Brushfire;
 ///
 /// Script: { "level": 0, "out": "/tmp/shots", "god": true, "steps": [ step, ... ] }
 /// Steps:  {"wait": frames} | {"teleport": [x,y,z], "yaw": deg, "pitch": deg} | {"shot": "name.png"}
+///         {"debug_draw": 1} (unshaded, for checking geometry before a bake)
 ///         {"hold": "action", "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// </summary>
@@ -92,6 +93,8 @@ public partial class AutoTest : Node
                 img.SavePng(file);
                 GD.Print($"[AutoTest] screenshot {file}");
             }
+            if (step.TryGetValue("debug_draw", out var dd))    // 0 normal, 1 unshaded (geometry checks before a bake)
+                GetViewport().DebugDraw = (Viewport.DebugDrawEnum)dd.AsInt32();
             if (step.TryGetValue("log", out var msg))
                 GD.Print($"[AutoTest] {msg}");
             if (step.TryGetValue("stats", out _))

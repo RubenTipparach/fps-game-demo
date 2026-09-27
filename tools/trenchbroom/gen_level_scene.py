@@ -13,6 +13,9 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
 import level_common as lc  # noqa: E402
 from tscn import Raw, Scene, v3  # noqa: E402
 
+sys.path.insert(0, HERE)
+import gen_map  # noqa: E402
+
 s = Scene("LevelTrenchBroom", "Node3D")
 lc.setup_root(s, "E1M2: Slag Works")
 nav = lc.add_navigation(s)
@@ -30,6 +33,9 @@ lc.add_environment(s, fog_color="#3a2418", fog_density=0.005)
 lc.add_lightmap(s, texel_scale=1.0)
 lc.add_fill_lights(s, [((0, 10, 18), "#4f7dff", 1.0, 18), ((0, 10, -2), "#4f7dff", 0.8, 16),
                        ((-23, 5, 18), "#ff7a3a", 0.7, 10), ((0, 9, -26), "#50ff90", 0.5, 9)])
+# UT99 zone ambient per room (dark blue shadows), and flowing, pulsing lava
+lc.add_zone_ambient(s, [tuple(zip(a.lo, a.hi)) for a in gen_map.air_volumes() if a.trims])
+lc.add_surface_animator(s, "res://materials/lava.tres", scroll=(0.025, 0.006), pulse=0.15, pulse_speed=0.35)
 lc.add_probes(s, [
     (0, 1.5, 41), (0, 1.5, 30), (0, 1.5, 22), (-8, 1.5, 17), (8, 1.5, 17), (0, 1.5, 12), (-8.5, 1.2, 7),
     (6.5, 1.2, 7), (0, 3.5, 7), (0, 1.5, 1), (-12, 1.5, 0), (13, 2.5, -1), (-8, 5.5, -5.5), (8, 5.5, -5.5),

@@ -23,7 +23,8 @@ public partial class Pickup : Area3D
             Amount = a.AsInt32();
         CollisionLayer = Layers.Pickup;
         CollisionMask = Layers.Player;
-        Monitorable = false;
+        // deferred: drops are spawned by enemies that can die inside a physics callback (lava triggers)
+        SetDeferred(Area3D.PropertyName.Monitorable, false);
         _visual = GetNodeOrNull<Node3D>(VisualPath);
         if (_visual != null)
             _base = _visual.Position;

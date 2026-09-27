@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/sky_surface.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://textures/sky/moon_back.png" id="2"]
+[ext_resource type="Texture2D" path="res://textures/sky/moon_clouds.png" id="3"]
+
+[resource]
+resource_name = "sky_moon"
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/back_layer = ExtResource("2")
+shader_parameter/cloud_layer = ExtResource("3")
+shader_parameter/layer_scale = 0.5
+shader_parameter/back_speed = Vector2(0.001, 0.0005)
+shader_parameter/cloud_speed = Vector2(0.008, 0.003)
+shader_parameter/energy = 1.2
+shader_parameter/moon_direction = Vector3(0.06, 1, 0.1)
+shader_parameter/moon_size = 0.09
+shader_parameter/moon_color = Color(1, 0.97, 0.9, 1)
+shader_parameter/moon_phase = 0.15
+shader_parameter/glow_color = Color(0.02, 0.03, 0.06, 1)

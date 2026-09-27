@@ -78,7 +78,7 @@ STYLE = {"tech_panel": "tech", "concrete": "tech", "rust_metal": "tech", "brick_
 
 def room(parent, name, x, z, h, walls, floor, ceiling, y0=0.0, trims=True):
     """Carve a room (walls take the carve's material) then add floor/ceiling slabs."""
-    ROOMS.append(detailing.Room(name, x, (y0, y0 + h), z, STYLE.get(walls, "tech"), trims))
+    ROOMS.append(detailing.Room(name, x, (y0, y0 + h), z, STYLE.get(walls, "tech"), trims, ceiling=ceiling))
     box(parent, x, (y0 - 0.3, y0 + h + 0.3), z, walls, SUBTRACT, name=f"{name}_Carve")
     box(parent, x, (y0 - 0.35, y0), z, floor, name=f"{name}_Floor")
     box(parent, x, (y0 + h, y0 + h + 0.35), z, ceiling, name=f"{name}_Ceiling")
@@ -157,12 +157,40 @@ room(csg, "CorridorB", (-2, 2), (-26.01, -14.4), 4.0, "brick_wall", "diamond_pla
 # --- exit chamber
 room(csg, "Exit", (-7, 7), (-38, -26), 6.0, "stone_blocks", "floor_tiles", "ceiling_tiles")
 for i, (x, z) in enumerate(((-5.5, -36.5), (5.5, -36.5), (-5.5, -27.5), (5.5, -27.5))):
+    # pillars always get a base and a capital (UT99 checklist item 3)
     box(csg, (x - 0.6, x + 0.6), (0, 6), (z - 0.6, z + 0.6), "tech_panel", name=f"ExitPillar{i}")
+    box(csg, (x - 0.8, x + 0.8), (0, 0.6), (z - 0.8, z + 0.8), "stone_blocks", name=f"ExitPillarBase{i}")
+    box(csg, (x - 0.78, x + 0.78), (5.55, 6), (z - 0.78, z + 0.78), "stone_blocks", name=f"ExitPillarCap{i}")
+    box(csg, (x - 0.66, x + 0.66), (0.6, 0.75), (z - 0.66, z + 0.66), "rust_metal", name=f"ExitPillarRing{i}")
 box(csg, (-2.5, 2.5), (0, 0.3), (-35.5, -30.5), "hazard_stripes", name="ExitDais")
 
-# --- UT99-style trims generated from the room list: baseboards, cornices, bands, pilasters
+# --- skylight: a shaft through the hall roof onto a Quake-style sky surface (UT99 checklist 6/15:
+# a view onto the sky that doubles as the hall's landmark; cf. DM-Distinctive's central skylight)
+box(csg, (-3, 3), (9.9, 11.7), (-3, 3), "rust_metal", SUBTRACT, name="SkylightShaft")
+box(csg, (-3.01, 3.01), (11.6, 11.75), (-3.01, 3.01), "sky_night", name="SkylightSky")
+for i, (x0, x1, z0, z1) in enumerate(((-3.4, 3.4, -3.4, -3.0), (-3.4, 3.4, 3.0, 3.4),
+                                      (-3.4, -3.0, -3.0, 3.0), (3.0, 3.4, -3.0, 3.0))):
+    box(csg, (x0, x1), (9.75, 10.0), (z0, z1), "hazard_stripes", name=f"SkylightFrame{i}")
+for i, x in enumerate((-1.0, 1.0)):     # grate bars across the girders
+    box(csg, (x - 0.08, x + 0.08), (9.8, 10.0), (-3, 3), "rust_metal", name=f"SkylightBar{i}")
+
+# light fixtures (placed in the bays between the ceiling girders)
+CEILING_LIGHTS = [(0, 4.43, 33), (0, 4.43, 39.5),                                  # start
+                  (-7, 9.93, -7.6), (7, 9.93, -7.6), (-7, 9.93, 9.4), (7, 9.93, 9.4),  # hall
+                  (-20, 4.93, -4), (-20, 4.93, 4),                                  # storage
+                  (-3.5, 5.93, -32), (3.5, 5.93, -32)]                              # exit
+WALL_LAMPS = [(-1.95, 3.0, 23, -90), (1.95, 3.0, 23, 90),         # corridor A
+              (-13.95, 4.0, -8, -90), (-13.95, 4.0, 10, -90),     # hall west
+              (13.95, 6.2, -10, 90), (13.95, 6.2, -2, 90),        # catwalk
+              (-1.95, 3.0, -20, -90), (1.95, 3.0, -20, 90),       # corridor B
+              (-27.7, 3.9, 2.95, 0)]                               # secret
+KEEP_OUT = [detailing.keep_out((x, y, z), (1.1, 0.3, 0.45) if y > 9 else (0.7, 0.3, 0.3)) for x, y, z in CEILING_LIGHTS]
+KEEP_OUT += [detailing.keep_out((x, y, z), (0.3, 0.35, 0.3)) for x, y, z, _ in WALL_LAMPS]
+
+# --- UT99-style trims generated from the room list: baseboards, cornices, bands, pilasters with
+# plinths and capitals, and ceiling girders lined up with the pilasters (docs/ut99_reference.md)
 trim_group = s.node("Trims", "CSGCombiner3D", csg)
-for i, (lo, hi, m) in enumerate(detailing.all_trims(ROOMS)):
+for i, (lo, hi, m) in enumerate(detailing.all_trims(ROOMS, avoid=KEEP_OUT)):
     box(trim_group, (lo[0], hi[0]), (lo[1], hi[1]), (lo[2], hi[2]), m, name=f"Trim{i}")
 
 # ----------------------------------------------------------------------------- compiled geometry
@@ -179,21 +207,21 @@ lc.add_lightmap(s, texel_scale=1.0)
 lc.add_fill_lights(s, [((-9, 8.5, 2), "#4f7dff", 0.9, 16), ((9, 8.5, 2), "#4f7dff", 0.9, 16),
                        ((-20, 4, 2), "#ff9a4a", 0.6, 10), ((0, 5, -32), "#50ff90", 0.5, 9)])
 s.node("Lights", "Node3D", ".")
-for i, (x, y, z) in enumerate(((0, 4.43, 33), (0, 4.43, 39.5),              # start
-                               (-7, 9.93, -10), (7, 9.93, -10), (-7, 9.93, 10), (7, 9.93, 10),  # hall
-                               (0, 9.93, 0), (-20, 4.93, -2), (-20, 4.93, 6),                  # storage
-                               (-3.5, 5.93, -32), (3.5, 5.93, -32))):                           # exit
+for i, (x, y, z) in enumerate(CEILING_LIGHTS):
     props = dict(position=v3(x, y, z))
     if y > 9:
         props["scale"] = v3(1.6, 1.0, 1.6)
     s.instance(f"CeilingLight{i}", lc.ENTITY_SCENES["ceiling_light"], "Lights", **props)
-for i, (x, y, z, yaw) in enumerate(((-1.95, 3.0, 23, -90), (1.95, 3.0, 23, 90),         # corridor A
-                                    (-13.95, 4.0, -8, -90), (-13.95, 4.0, 10, -90),     # hall west
-                                    (13.95, 6.2, -10, 90), (13.95, 6.2, -2, 90),        # catwalk
-                                    (-1.95, 3.0, -20, -90), (1.95, 3.0, -20, 90),       # corridor B
-                                    (-27.7, 3.9, 2.95, 0))):                             # secret
+for i, (x, y, z, yaw) in enumerate(WALL_LAMPS):
     s.instance(f"WallLamp{i}", lc.ENTITY_SCENES["wall_lamp"], "Lights", position=v3(x, y, z),
                rotation_degrees=v3(0, yaw, 0))
+# cold "moonlight" through the skylight grate, from the direction of the planet drawn by sky_night
+s.node("SkylightSpot", "SpotLight3D", "Lights", position=v3(0, 11.45, 0),
+       rotation_degrees=v3(-75.2, 36.9, 0), light_color=lc.hexcolor("#9db4ff"), light_energy=9.0,
+       light_indirect_energy=1.0, light_size=0.3, spot_range=16.0, spot_angle=32.0, spot_attenuation=0.6,
+       light_bake_mode=1, shadow_enabled=True)
+# UT99 zone ambient: shadows fall to dark blue, never black
+lc.add_zone_ambient(s, [(r.x, r.y, r.z) for r in ROOMS if r.trims])
 
 lc.add_probes(s, [
     (0, 1.5, 36), (0, 1.5, 23), (0, 1.5, 16), (-8, 1.5, 10), (8, 1.5, 10), (0, 2.5, 0), (-8, 1.5, -10),

@@ -69,8 +69,9 @@ class Level:
 
     # carved spaces --------------------------------------------------------
     def room(self, name, lo, hi, wall, floor, ceiling, trims=True):
+        # vaulted ceilings are already structural, so no girders (beams=False)
         self.rooms.append(detailing.Room(name, (lo[0], hi[0]), (lo[1], hi[1]), (lo[2], hi[2]), STYLE.get(wall, "tech"),
-                                         trims))
+                                         trims, beams=False))
         bm = box_bm(lo, hi, {"side": 0, "bottom": 1, "top": 2})
         ob = mesh_object(name, bm, self.carve, [wall, floor, ceiling])
         ob.display_type = "WIRE"
@@ -177,6 +178,9 @@ def build():
         L.vault(f"VaultNS{i}", (x, 7, 9), 4.0, 37.98, "z", "brick_wall", "brick_wall")
     for i, z in enumerate((1, 9, 17)):
         L.vault(f"VaultEW{i}", (0, 7, z), 4.0, 35.98, "x", "brick_wall", "brick_wall")
+    # oculus at the central crossing: a round shaft through the vault, capped by a sky face
+    # (the cutter's end caps carry the sky material; UT99 checklist 6 and 15, cf. DM-Distinctive)
+    L.vault("Oculus", (0, 11.2, 9), 1.6, 2.6, "y", "stone_blocks", "sky_moon")
     # secret crawlspace (crouch!) off the pit's east wall, and the room behind it
     L.room("Crawl", (10.9, -3, 8), (15.1, -1.8, 10), "stone_blocks", "stone_blocks", "stone_blocks", trims=False)
     L.room("SecretRoom", (15, -3, 7), (17.5, -0.9, 11), "stone_blocks", "stone_blocks", "stone_blocks", trims=False)
@@ -260,6 +264,7 @@ def build():
     L.arch_ring(10, 5.2, 2.0, "z", 18.4, +1, y_floor=2.0)   # overflow gallery side
 
     # --- entities
+    write_rooms(L.rooms)
     E = L.ent
     E("player_start", (0, 0.05, 47), 0)
     E("doorway", (0, 0, 28.2), 0)
@@ -323,6 +328,14 @@ def build():
 
 
 # ----------------------------------------------------------------------------- export
+
+def write_rooms(rooms):
+    """Room boxes for tools/godot/gen_level_blender.py (zone ambient lights)."""
+    import json
+    data = [dict(name=r.name, x=r.x, y=r.y, z=r.z, trims=r.trims) for r in rooms]
+    with open(os.path.join(HERE, "cistern_rooms.json"), "w") as f:
+        json.dump(data, f, indent=1)
+
 
 def main():
     reset()

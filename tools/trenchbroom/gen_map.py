@@ -196,7 +196,7 @@ class Air:
 
     def room(self):
         return detailing.Room("air", (self.lo[0], self.hi[0]), (self.lo[1], self.hi[1]), (self.lo[2], self.hi[2]),
-                              STYLE.get(self.tex["wall"], "tech"), self.trims)
+                              STYLE.get(self.tex["wall"], "tech"), self.trims, ceiling=self.tex["ceiling"])
 
 
 def shell_brushes(airs, pad=1.0):
@@ -278,9 +278,10 @@ def shell_brushes(airs, pad=1.0):
 
 # ----------------------------------------------------------------------------- the level
 
-def build():
+def air_volumes():
+    """The level's rooms as air volumes (also read by gen_level_scene.py for zone ambient)."""
     A = Air
-    airs = [
+    return [
         A((-5, 0, 36), (5, 4, 46), "concrete", "stone_blocks", "ceiling_tiles"),          # start
         A((-2, 0, 24.5), (2, 4, 36), "diamond_plate", "brick_wall", "ceiling_tiles"),      # corridor
         A((-1.5, 0, 24), (1.5, 3.2, 24.5), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 1
@@ -292,11 +293,29 @@ def build():
         A((-1.5, 4, -8.4), (1.5, 7.2, -8), "diamond_plate", "tech_panel", "tech_panel", trims=False),   # door 2
         A((-2, 4, -20), (2, 8, -8.4), "diamond_plate", "brick_wall", "ceiling_tiles"),     # exit corridor
         A((-6, 4, -32), (6, 10, -20), "floor_tiles", "tech_panel", "ceiling_tiles"),       # exit room
+        # smoke vent in the foundry roof, capped by a Quake-style sky face (UT99 checklist 6)
+        A((-8, 12, 3.2), (8, 14.5, 7.6), "rust_metal", "rust_metal", "sky_storm", trims=False),
     ]
+
+
+# Light fixtures (Godot metres). Ceiling lights sit in the bays between the roof girders.
+CEILING_LIGHTS = [(0, 3.95, 39), (0, 3.95, 43.5),
+                  (-8, 11.95, 16), (8, 11.95, 16), (-8, 11.95, 0), (8, 11.95, 0), (0, 11.95, 10.67),
+                  (-26, 5.95, 14), (-20, 5.95, 22), (-3, 9.95, -26), (3, 9.95, -26)]
+WALL_LIGHTS = [((-1.95, 3.0, 30), -90), ((1.95, 3.0, 30), 90), ((-2.67, 7.5, -7.95), 180), ((2.67, 7.5, -7.95), 180),
+               ((-8, 7.5, -7.95), 180), ((8, 7.5, -7.95), 180), ((-1.95, 6.8, -14), -90), ((1.95, 6.8, -14), 90),
+               ((-15.95, 4.0, 18), -90), ((-31.5, 2.4, 18.95), 0)]
+
+
+def build():
+    airs = air_volumes()
     world = shell_brushes(airs)
-    # UT99-style trims (baseboards, cornices, bands, pilasters) as detail brushes.
+    # UT99-style trims (baseboards, cornices, bands, pilasters with plinths and capitals, roof
+    # girders) as detail brushes; see docs/ut99_reference.md.
     rooms = [a.room() for a in airs]
-    for lo, hi, tex in detailing.all_trims(rooms):
+    keep_out = [detailing.keep_out(p, (0.8, 0.3, 0.45)) for p in CEILING_LIGHTS]
+    keep_out += [detailing.keep_out(p, (0.3, 0.35, 0.3)) for p, _ in WALL_LIGHTS]
+    for lo, hi, tex in detailing.all_trims(rooms, avoid=keep_out):
         world.append(box_brush(lo, hi, tex))
 
     def box(lo, hi, tex, bottom="skip"):
@@ -323,13 +342,19 @@ def build():
     box((-16, 0, 10), (-10, 0.25, 10.4), "hazard_stripes")
     box((-7, 0, 10), (5, 0.25, 10.4), "hazard_stripes")
     box((8, 0, 10), (16, 0.25, 10.4), "hazard_stripes")
-    # octagonal pillars
+    # octagonal pillars with a base and a capital
     for x, z in ((-10, 14), (10, 14), (-10, 20), (10, 20)):
         world.append(prism_brush(x, z, 1.1, 0, 12, 8, "stone_blocks", "skip", "skip", rot=math.pi / 8))
         world.append(prism_brush(x, z, 1.35, 0, 0.6, 8, "tech_panel", "tech_panel", "skip", rot=math.pi / 8))
-    # sloped buttresses on the hall's south wall
-    for x in (-13, -5, 5, 13):
-        world.append(ramp_brush(x - 0.6, x + 0.6, 21, 24, 0, 6, "stone_blocks", "stone_blocks"))
+        world.append(prism_brush(x, z, 1.25, 0.6, 0.75, 8, "rust_metal", "rust_metal", "rust_metal", rot=math.pi / 8))
+        world.append(prism_brush(x, z, 1.4, 11.3, 12, 8, "tech_panel", "skip", "tech_panel", rot=math.pi / 8))
+    # smoke vent: frame and grate bars under the sky face
+    box((-8.4, 11.75, 2.8), (8.4, 12, 3.2), "hazard_stripes", "hazard_stripes")
+    box((-8.4, 11.75, 7.6), (8.4, 12, 8.0), "hazard_stripes", "hazard_stripes")
+    box((-8.4, 11.75, 3.2), (-8, 12, 7.6), "hazard_stripes", "hazard_stripes")
+    box((8, 11.75, 3.2), (8.4, 12, 7.6), "hazard_stripes", "hazard_stripes")
+    for x in (-5.6, -2.8, 0, 2.8, 5.6):
+        box((x - 0.1, 11.8, 3.2), (x + 0.1, 12, 7.6), "rust_metal", "rust_metal")
     # crucible: the vat, crates, a raised grate walkway
     world.append(prism_brush(-23, 18, 2.6, 0, 2.2, 8, "rust_metal", "lava", "skip", rot=math.pi / 8))
     world.append(prism_brush(-23, 18, 2.9, 0, 0.5, 8, "tech_panel", "tech_panel", "skip", rot=math.pi / 8))
@@ -337,10 +362,12 @@ def build():
                       ((-19, 0, 24), (-17, 2, 26), "crate"), ((-20, 0, 25), (-19, 1, 26), "crate"),
                       ((-29.5, 0, 23), (-28.5, 1, 24), "crate")):
         box(lo, hi, t)
-    # exit room dais and pillars
+    # exit room dais and pillars (hexagonal shafts on plinths, with capitals)
     box((-2.5, 4, -30), (2.5, 4.3, -25), "hazard_stripes")
     for x, z in ((-4.8, -30.8), (4.8, -30.8), (-4.8, -21.2), (4.8, -21.2)):
         world.append(prism_brush(x, z, 0.6, 4, 10, 6, "tech_panel", "skip", "skip"))
+        world.append(prism_brush(x, z, 0.82, 4, 4.5, 6, "stone_blocks", "stone_blocks", "skip"))
+        world.append(prism_brush(x, z, 0.8, 9.5, 10, 6, "stone_blocks", "skip", "stone_blocks"))
 
     ents = []
 
@@ -381,14 +408,11 @@ def build():
                                               "+z": "skip", "-z": "skip"})])
 
     # lights
-    for p in ((0, 3.95, 39), (0, 3.95, 43.5),
-              (-8, 11.95, 18), (8, 11.95, 18), (-8, 11.95, 0), (8, 11.95, 0), (0, 11.95, 14),
-              (-26, 5.95, 14), (-20, 5.95, 22), (-3, 9.95, -26), (3, 9.95, -26)):
+    for p in CEILING_LIGHTS:
         ent("light_fixture", p)
-    for p, yaw in (((-1.95, 3.0, 30), -90), ((1.95, 3.0, 30), 90), ((0, 7.5, -7.95), 180), ((-8, 7.5, -7.95), 180),
-                   ((8, 7.5, -7.95), 180), ((-1.95, 6.8, -14), -90), ((1.95, 6.8, -14), 90),
-                   ((-15.95, 4.0, 18), -90), ((-31.5, 2.4, 18.95), 0)):
+    for p, yaw in WALL_LIGHTS:
         ent("light_wall", p, yaw)
+    ent("light", (0, 13.6, 5.4), light=160, _color="255 96 40", range=14, shadows=1)   # furnace sky glow
     for x in (-12, -4, 4, 12):
         ent("light", (x, 0.6, 7), light=200, _color="255 110 40", range=9, shadows=0)
     ent("light", (-23, 3.2, 18), light=220, _color="255 120 50", range=8, shadows=0)
