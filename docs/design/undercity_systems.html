@@ -1,0 +1,1136 @@
+<title>Undercity Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Single dark look on purpose: it mirrors the game's own UI (dark steel, molten-orange accent). */
+:root {
+  color-scheme: dark;
+  --bg: #0e1116;
+  --bg2: #12161c;
+  --panel: #161b22;
+  --panel2: #1c232c;
+  --line: #2a333e;
+  --line2: #3a4552;
+  --text: #e6e2da;
+  --dim: #9c978e;
+  --faint: #6c6a66;
+  --accent: #ff9e2e;
+  --accent-ink: #1a1006;
+  --accent-soft: rgba(255, 158, 46, .12);
+  --rats: #9dbb45;
+  --kings: #d8603f;
+  --mersec: #5b95e8;
+  --civ: #b3b1ad;
+  --sanit: #e8c64a;
+  --force: #e3533f;
+  --stealth: #3fbfae;
+  --social: #ff9e2e;
+  --tech: #7f95ff;
+  --ok: #58c27d;
+  --warn: #e8c64a;
+  --bad: #e3533f;
+  --display: "Barlow Condensed", "Arial Narrow", "Liberation Sans Narrow", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-inline: 20px;
+  padding-block: 0 80px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 48px;
+}
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; } nav.toc { display: none; } }
+
+/* ---------- contents rail */
+nav.toc {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 24px);
+  align-self: start;
+  padding-top: 40px;
+  font: 500 13px/1.4 var(--body);
+}
+nav.toc .eyebrow { margin-bottom: 12px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: toc -1; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; padding: 5px 8px; border-radius: 3px;
+  color: var(--dim); text-decoration: none; border-left: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc, decimal-leading-zero); font: 500 12px var(--mono); color: var(--faint); padding-top: 1px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--text); background: var(--panel); border-left-color: var(--accent); outline: none; }
+
+main { min-width: 0; }
+
+/* ---------- type */
+.eyebrow { font: 600 12px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h2 { font-size: clamp(30px, 4.5vw, 42px); line-height: 1.02; text-transform: uppercase; }
+h3 { font-size: 22px; line-height: 1.15; text-transform: uppercase; letter-spacing: .03em; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--dim); font-size: 17px; }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+code { background: var(--panel2); border: 1px solid var(--line); padding: 1px 5px; border-radius: 3px; }
+
+section.block { display: grid; gap: 22px; padding-top: 72px; scroll-margin-top: 24px; }
+.section-head { display: grid; gap: 10px; }
+.stack { display: grid; gap: 14px; }
+
+/* ---------- hero */
+header.hero { padding-top: 48px; display: grid; gap: 22px; }
+.title-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 20px; }
+.hero h1 {
+  font-size: clamp(64px, 12vw, 128px); line-height: .82; text-transform: uppercase;
+  letter-spacing: -.01em; color: var(--text);
+}
+.hero h1 span { color: var(--accent); }
+.tag { font: 500 13px var(--mono); color: var(--dim); border: 1px solid var(--line2); padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.hero .thesis { font: 600 clamp(22px, 3vw, 28px)/1.25 var(--display); letter-spacing: .02em; text-transform: uppercase; max-width: 34ch; }
+.hero .thesis em { font-style: normal; color: var(--accent); }
+
+/* ---------- figures */
+figure { margin: 0; display: grid; gap: 10px; }
+figcaption { font-size: 13px; color: var(--dim); max-width: 70ch; }
+.frame { background: var(--bg2); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+svg text { font-family: var(--body); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--dim); }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.legend i.dash { border-top-style: dashed; }
+.legend b.dot { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font: 600 10px var(--display); color: var(--bg); vertical-align: middle; margin-right: 6px; }
+
+/* ---------- pillars */
+.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.pillar { background: var(--panel); padding: 18px; display: grid; gap: 8px; align-content: start; }
+.pillar h3 { font-size: 19px; }
+.pillar p { font-size: 14px; color: var(--dim); }
+
+/* ---------- tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 12px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); background: var(--panel); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; }
+.pill { display: inline-block; font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; padding: 5px 8px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+
+/* ---------- skill tree */
+.tree-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.tree-controls label { font: 600 13px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 10px; }
+input[type=range] { accent-color: var(--accent); width: 160px; }
+.budget { font: 500 14px var(--mono); color: var(--dim); }
+.budget strong { color: var(--accent); font-weight: 500; font-size: 18px; }
+.btn {
+  font: 600 13px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--text);
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 3px; padding: 7px 12px; cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tree { display: grid; grid-template-columns: repeat(7, minmax(118px, 1fr)); gap: 8px; min-width: 860px; }
+.skill-col { display: grid; grid-template-rows: auto repeat(5, 1fr); gap: 6px; }
+.skill-name { font: 700 17px var(--display); text-transform: uppercase; letter-spacing: .04em; padding: 2px 2px 4px; border-bottom: 2px solid var(--line2); }
+.skill-name small { display: block; font: 500 11px var(--mono); color: var(--faint); letter-spacing: 0; text-transform: none; }
+.perk {
+  display: grid; gap: 2px; text-align: left; padding: 8px 9px; border-radius: 4px; cursor: pointer;
+  background: var(--panel); border: 1px solid var(--line); color: var(--dim); font: 500 13px/1.25 var(--body);
+  min-height: 58px; align-content: start;
+}
+.perk .r { font: 500 11px var(--mono); color: var(--faint); }
+.perk.owned { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.perk.owned .r { color: var(--accent); }
+.perk.next:not(.blocked) { border-style: dashed; border-color: var(--line2); color: var(--text); }
+.perk.blocked { opacity: .55; cursor: not-allowed; }
+.perk:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.perk-detail { min-height: 48px; font-size: 14px; color: var(--dim); border-left: 2px solid var(--accent); padding: 4px 0 4px 12px; }
+.perk-detail b { color: var(--text); font-weight: 600; }
+
+/* ---------- inventory mock */
+.inv { display: grid; grid-template-columns: minmax(0, auto) 250px; gap: 20px; align-items: start; }
+@media (max-width: 760px) { .inv { grid-template-columns: minmax(0, 1fr); } }
+.inv-grid {
+  --cell: 52px; position: relative; display: grid; grid-template-columns: repeat(10, var(--cell)); grid-template-rows: repeat(6, var(--cell));
+  gap: 3px; padding: 3px; background: var(--line); border-radius: 4px; width: max-content;
+}
+.inv-grid .cell { background: var(--panel); border-radius: 2px; }
+.item {
+  position: absolute; border-radius: 3px; padding: 5px 6px; display: grid; align-content: space-between; cursor: default;
+  font: 600 11px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; color: var(--text); overflow: hidden;
+  border: 1px solid var(--line2); background: linear-gradient(160deg, #26303b, #1b222a);
+}
+.item .q { font: 500 11px var(--mono); color: var(--accent); justify-self: end; }
+.item.weapon { border-color: #6a4a2a; }
+.item.cloth { border-color: #4f6130; background: linear-gradient(160deg, #2a3320, #1c2217); }
+.item.gadget { border-color: #3c4a86; }
+.item.cons { border-color: #2f5f45; }
+.item.quest { border-color: var(--accent); }
+.item:hover, .item:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; z-index: 2; }
+.equip { display: grid; gap: 8px; }
+.slot { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 13px; }
+.slot .k { font: 600 12px var(--display); letter-spacing: .14em; color: var(--dim); }
+.slot .v { color: var(--text); }
+.slot .v small { display: block; color: var(--faint); font-size: 12px; }
+.slot.empty .v { color: var(--faint); }
+.belt { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
+.belt div { background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 6px 4px; text-align: center; font: 600 11px/1.15 var(--display); text-transform: uppercase; letter-spacing: .04em; min-height: 52px; display: grid; align-content: space-between; }
+.belt div span { font: 500 11px var(--mono); color: var(--accent); }
+.belt div.active { border-color: var(--accent); background: var(--accent-soft); }
+.belt div.none { color: var(--faint); }
+.item-tip { font-size: 14px; color: var(--dim); min-height: 44px; border-left: 2px solid var(--accent); padding: 2px 0 2px 12px; }
+.item-tip b { color: var(--text); }
+
+/* ---------- disguise calculator */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+@media (max-width: 760px) { .calc { grid-template-columns: minmax(0, 1fr); } }
+.calc > div { background: var(--panel); padding: 18px; display: grid; gap: 14px; align-content: start; }
+.field { display: grid; gap: 6px; }
+.field > span { font: 600 12px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+select {
+  font: 500 14px var(--body); color: var(--text); background: var(--panel2); border: 1px solid var(--line2);
+  border-radius: 3px; padding: 7px 9px; max-width: 100%;
+}
+select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.chk { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; background: var(--panel2); border: 1px solid var(--line2); border-radius: 3px; padding: 6px 10px; cursor: pointer; }
+.chk input { accent-color: var(--accent); margin: 0; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row output { font: 500 15px var(--mono); color: var(--accent); min-width: 44px; }
+.verdict { display: grid; gap: 12px; }
+.verdict .big { font: 700 34px/1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.verdict .big.ok { color: var(--ok); }
+.verdict .big.warn { color: var(--warn); }
+.verdict .big.bad { color: var(--bad); }
+.math { font: 500 14px/1.7 var(--mono); color: var(--dim); background: var(--bg2); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+.math b { color: var(--text); font-weight: 500; }
+.meter { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.meter i { height: 10px; background: var(--panel2); border-radius: 2px; }
+.meter i.on { background: var(--accent); }
+.meter i.need { outline: 1px solid var(--dim); }
+
+/* ---------- cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.card h3 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+.card h3 .sw { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.card p { font-size: 14px; color: var(--dim); }
+.card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+.card dt { color: var(--faint); font: 600 12px var(--display); letter-spacing: .1em; text-transform: uppercase; padding-top: 2px; }
+.card dd { margin: 0; color: var(--text); }
+
+/* ---------- level sections */
+.level-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.beats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.beat { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid; border-radius: 4px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.beat h3 { font-size: 18px; }
+.beat p { font-size: 14px; color: var(--dim); }
+.beat.force { border-top-color: var(--force); } .beat.force h3 { color: var(--force); }
+.beat.stealth { border-top-color: var(--stealth); } .beat.stealth h3 { color: var(--stealth); }
+.beat.social { border-top-color: var(--social); } .beat.social h3 { color: var(--social); }
+.beat.tech { border-top-color: var(--tech); } .beat.tech h3 { color: var(--tech); }
+.beat.stakes { border-top-color: var(--bad); }
+
+.status { display: grid; gap: 8px; }
+.status-row { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; font-size: 14px; }
+.status-row small { display: block; color: var(--faint); font-size: 12px; font-family: var(--mono); }
+.s-done { color: var(--ok); } .s-now { color: var(--accent); } .s-next { color: var(--dim); }
+
+footer { margin-top: 80px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <div class="eyebrow">Contents</div>
+  <ol>
+    <li><a href="#loop">Systems loop</a></li>
+    <li><a href="#pillars">Pillars</a></li>
+    <li><a href="#skills">Skills &amp; XP</a></li>
+    <li><a href="#inventory">Inventory</a></li>
+    <li><a href="#dialog">Dialog</a></li>
+    <li><a href="#disguise">Disguise</a></li>
+    <li><a href="#factions">Factions</a></li>
+    <li><a href="#hub">Hub: Sump Market</a></li>
+    <li><a href="#sewer">The Drains</a></li>
+    <li><a href="#junkyard">Scrap King's Yard</a></li>
+    <li><a href="#build">Build status</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero" id="loop">
+  <div class="title-row">
+    <h1>Under<span>city</span></h1>
+    <span class="tag">immersive sim · systems design v0.1</span>
+  </div>
+  <p class="thesis">A runner in the drowned lower levels of Meridian. <em>Every problem has three doors</em>: force, stealth, or talking your way in.</p>
+  <p class="lede">This page is the systems reference for the first playable slice: the Sump Market hub, the sewer level and the junkyard level. It covers the character, inventory and equipment, dialog, disguise and perception, and how they feed each other.</p>
+
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 880 300" width="100%" style="min-width:700px" role="img" aria-label="Systems loop: missions give XP, XP gives levels and skill points, skills set check values; inventory and equipment set disguise quality; checks and cover feed dialog, disguise, locks and hacking, which solve missions.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9c978e"/></marker>
+          <marker id="aho" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ff9e2e"/></marker>
+        </defs>
+        <!-- nodes -->
+        <g font-size="13">
+          <rect x="20" y="30" width="150" height="56" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="95" y="54" text-anchor="middle" fill="#e6e2da" font-weight="600">Missions</text>
+          <text x="95" y="72" text-anchor="middle" fill="#9c978e" font-size="12">objectives, choices</text>
+
+          <rect x="240" y="30" width="150" height="56" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="315" y="54" text-anchor="middle" fill="#e6e2da" font-weight="600">XP → Level</text>
+          <text x="315" y="72" text-anchor="middle" fill="#9c978e" font-size="12">+2 skill points / level</text>
+
+          <rect x="460" y="30" width="150" height="56" rx="4" fill="rgba(255,158,46,.12)" stroke="#ff9e2e"/>
+          <text x="535" y="54" text-anchor="middle" fill="#e6e2da" font-weight="600">Skills (7 × rank 0–5)</text>
+          <text x="535" y="72" text-anchor="middle" fill="#9c978e" font-size="12">perks + check values</text>
+
+          <rect x="460" y="200" width="150" height="56" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="535" y="224" text-anchor="middle" fill="#e6e2da" font-weight="600">Inventory</text>
+          <text x="535" y="242" text-anchor="middle" fill="#9c978e" font-size="12">10 × 6 grid, belt 1–0</text>
+
+          <rect x="240" y="200" width="150" height="56" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="315" y="224" text-anchor="middle" fill="#e6e2da" font-weight="600">Equipment</text>
+          <text x="315" y="242" text-anchor="middle" fill="#9c978e" font-size="12">head · face · body · armor · boots</text>
+
+          <rect x="680" y="115" width="180" height="70" rx="4" fill="rgba(255,158,46,.12)" stroke="#ff9e2e"/>
+          <text x="770" y="140" text-anchor="middle" fill="#e6e2da" font-weight="600">Solutions</text>
+          <text x="770" y="158" text-anchor="middle" fill="#9c978e" font-size="12">dialog · disguise · locks</text>
+          <text x="770" y="174" text-anchor="middle" fill="#9c978e" font-size="12">hacking · combat · stealth</text>
+
+          <rect x="20" y="200" width="150" height="56" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="95" y="224" text-anchor="middle" fill="#e6e2da" font-weight="600">Cover</text>
+          <text x="95" y="242" text-anchor="middle" fill="#9c978e" font-size="12">Deception + disguise Q</text>
+        </g>
+        <!-- edges -->
+        <g stroke="#9c978e" stroke-width="1.5" fill="none" marker-end="url(#ah)">
+          <path d="M170 58 H236"/>
+          <path d="M390 58 H456"/>
+          <path d="M610 222 C 640 222, 660 205, 690 188"/>
+          <path d="M460 228 H394"/>
+          <path d="M240 228 H174"/>
+        </g>
+        <g stroke="#ff9e2e" stroke-width="1.8" fill="none" marker-end="url(#aho)">
+          <path d="M610 58 C 650 58, 660 110, 680 130"/>
+          <path d="M170 228 C 420 290, 640 260, 700 188"/>
+          <path d="M770 115 C 770 10, 120 0, 95 26"/>
+        </g>
+        <g font-size="11.5" fill="#9c978e">
+          <text x="203" y="50" text-anchor="middle">rewards</text>
+          <text x="423" y="50" text-anchor="middle">spend</text>
+          <text x="628" y="232">tools: picks,</text>
+          <text x="628" y="246">multitools, keys</text>
+          <text x="400" y="220" text-anchor="middle">wear</text>
+          <text x="205" y="220" text-anchor="middle">faction</text>
+          <text x="632" y="104">skill checks</text>
+          <text x="430" y="282" text-anchor="middle">cover vs. observer intelligence</text>
+          <text x="440" y="16" text-anchor="middle">solved objectives</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>The core loop. Skills set the numbers that checks read. Equipment sets how convincing a disguise is. Both feed the ways to solve an objective, and solved objectives pay XP.</figcaption>
+  </figure>
+</header>
+
+<section class="block" id="pillars">
+  <div class="section-head">
+    <div class="eyebrow">01 · Design pillars</div>
+    <h2>Five rules the levels are built around</h2>
+  </div>
+  <div class="pillars">
+    <div class="pillar"><h3>Three doors</h3><p>Each objective can be solved by force, stealth or social engineering, and usually by tech too. Every level has at least three routes to its key rooms.</p></div>
+    <div class="pillar"><h3>Talk to anyone</h3><p>Every hub NPC has a dialog tree. Hostiles become talkable when your disguise holds up to their scrutiny.</p></div>
+    <div class="pillar"><h3>Smart enemies</h3><p>Enemies differ in intelligence and senses. Bosses see through cheap disguises, and robot dogs smell you whatever you wear.</p></div>
+    <div class="pillar"><h3>No dice</h3><p>Checks are deterministic and shown up front: <span class="mono">[Deception 3]</span>. You plan a build instead of reloading a save.</p></div>
+    <div class="pillar"><h3>It sticks</h3><p>An alarm in the pump station costs a hostage. A dead boss means his gang stays hostile in the hub. State persists between levels.</p></div>
+  </div>
+</section>
+
+<section class="block" id="skills">
+  <div class="section-head">
+    <div class="eyebrow">02 · Character</div>
+    <h2>Skill trees, XP and levels</h2>
+    <p class="lede">Seven skills, ranks 0–5. Each rank unlocks a named perk and adds +1 to that skill's checks. Ranks 1–2 cost 1 point and ranks 3–5 cost 2. You start with 4 points and Deception 1. Each level up grants 2 more.</p>
+  </div>
+  <div class="tree-controls">
+    <label for="lvl">Plan a build at level <input type="range" id="lvl" min="1" max="12" value="4"> <output id="lvlOut" class="mono">4</output></label>
+    <span class="budget">Points left <strong id="ptsLeft">0</strong> / <span id="ptsTotal">0</span></span>
+    <button class="btn" id="resetBuild" type="button">Reset build</button>
+  </div>
+  <div class="frame scroll-x"><div class="tree" id="tree"></div></div>
+  <div class="perk-detail" id="perkDetail">Click a rank to buy it (or to refund it and every rank above it). Deception's upper ranks need Stealth 2.</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th class="num">XP to next</th><th class="num">Total XP</th><th class="num">Skill points</th><th class="num">Max health</th></tr></thead>
+      <tbody id="xpTable"></tbody>
+    </table>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>XP source</th><th class="num">XP</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Main mission objective</td><td class="num">400–1000</td><td>Paid on completion, whatever the route</td></tr>
+        <tr><td>Side objective</td><td class="num">150–300</td><td>Hostages alive, bonus loot, optional targets</td></tr>
+        <tr><td>Skill check passed</td><td class="num">25–100</td><td>Dialog, bluffs, intimidation</td></tr>
+        <tr><td>Lock picked / terminal hacked</td><td class="num">20 × tier</td><td>Tier 1–3</td></tr>
+        <tr><td>Non-lethal takedown</td><td class="num">40</td><td>Pays more than a kill, which gives 25</td></tr>
+        <tr><td>Secret found</td><td class="num">50</td><td>Stashes, vents, hidden rooms</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="block" id="inventory">
+  <div class="section-head">
+    <div class="eyebrow">03 · Inventory &amp; equipment</div>
+    <h2>What you carry is what you can do</h2>
+    <p class="lede">A Deus Ex-style grid: every item has a footprint, and ammo and consumables stack. Five equipment slots set armour, stealth and disguise. A ten-slot belt on keys 1–0 holds weapons, gadgets and consumables. Pressing the active weapon's key holsters it, and a holstered weapon keeps a disguise intact.</p>
+  </div>
+  <div class="inv">
+    <div class="stack">
+      <div class="scroll-x"><div class="inv-grid" id="invGrid" aria-label="Example inventory, 10 by 6 cells"></div></div>
+      <div class="item-tip" id="itemTip">Hover or focus an item to inspect it. This is an example loadout for walking into the Drains disguised as a Drain Rat.</div>
+      <div class="belt" id="belt"></div>
+    </div>
+    <div class="equip" id="equip"></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Category</th><th>Examples</th><th>Rules</th></tr></thead>
+      <tbody>
+        <tr><td>Weapons</td><td>Stun baton, silenced pistol, shotgun, SMG, rocket launcher</td><td>Go on the belt when picked up. A drawn weapon blows a disguise.</td></tr>
+        <tr><td>Ammo</td><td>10mm, shells, rockets</td><td>Stacks. Weapons draw ammo straight from the grid.</td></tr>
+        <tr><td>Consumables</td><td>Medkit, stim, noodle cup, synth-whisky</td><td>Use from the grid or the belt.</td></tr>
+        <tr><td>Gadgets</td><td>Lockpick, multitool, EMP, frag, noise maker</td><td>Lockpicks and multitools are used up per lock or terminal.</td></tr>
+        <tr><td>Clothing</td><td>Rat jacket, respirator, Kings vest, sanitation overalls</td><td>Carry a faction tag. Disguise quality comes from the matching pieces worn.</td></tr>
+        <tr><td>Keys &amp; quest</td><td>Service key, pump room key, gate keycard, nav core</td><td>Can't be dropped or sold.</td></tr>
+        <tr><td>Valuables</td><td>Credit chips, data shards, scrap</td><td>Sell to Kessler. Shards unlock dialog.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="block" id="dialog">
+  <div class="section-head">
+    <div class="eyebrow">04 · Dialog</div>
+    <h2>Trees with checks you can see</h2>
+    <p class="lede">Dialog trees are data (<code>data/dialog/*.json</code>) validated at build time. A choice can have conditions (flags, items, credits, skills, disguise, quest state), one deterministic check, and effects (flags, items, credits, XP, quests, trade, turn hostile).</p>
+  </div>
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 900 380" width="100%" style="min-width:760px" role="img" aria-label="Example dialog tree: Twitch, the hostage guard, when approached in a Drain Rats disguise.">
+        <defs>
+          <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9c978e"/></marker>
+        </defs>
+        <g font-size="12.5">
+          <rect x="20" y="150" width="200" height="78" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="32" y="172" fill="#9dbb45" font-weight="600">TWITCH · I3</text>
+          <text x="32" y="192" fill="#e6e2da">"Mother send you? Nobody</text>
+          <text x="32" y="209" fill="#e6e2da">comes in here."</text>
+
+          <!-- choices -->
+          <g>
+            <rect x="290" y="18" width="250" height="56" rx="4" fill="#161b22" stroke="#ff9e2e"/>
+            <text x="302" y="38" fill="#ff9e2e" font-family="IBM Plex Mono" font-size="11.5">[Deception 2]</text>
+            <text x="302" y="58" fill="#e6e2da">"Ransom's paid. Cut them loose."</text>
+          </g>
+          <g>
+            <rect x="290" y="108" width="250" height="56" rx="4" fill="#161b22" stroke="#ff9e2e"/>
+            <text x="302" y="128" fill="#ff9e2e" font-family="IBM Plex Mono" font-size="11.5">[Persuasion 4 · Negotiator]</text>
+            <text x="302" y="148" fill="#e6e2da">"Put it down. This ends one way."</text>
+          </g>
+          <g>
+            <rect x="290" y="198" width="250" height="56" rx="4" fill="#161b22" stroke="#3a4552"/>
+            <text x="302" y="218" fill="#9c978e" font-family="IBM Plex Mono" font-size="11.5">[200 credits]</text>
+            <text x="302" y="238" fill="#e6e2da">"Here's your cut. Take a walk."</text>
+          </g>
+          <g>
+            <rect x="290" y="288" width="250" height="56" rx="4" fill="#161b22" stroke="#3a4552"/>
+            <text x="302" y="308" fill="#9c978e" font-family="IBM Plex Mono" font-size="11.5">(leave)</text>
+            <text x="302" y="328" fill="#e6e2da">"Just checking the merchandise."</text>
+          </g>
+
+          <!-- outcomes -->
+          <rect x="620" y="8" width="260" height="46" rx="4" fill="#15241b" stroke="#58c27d"/>
+          <text x="632" y="27" fill="#58c27d" font-weight="600">PASS · hostages freed</text>
+          <text x="632" y="44" fill="#9c978e">+150 XP · flag hostages_free</text>
+          <rect x="620" y="62" width="260" height="46" rx="4" fill="#2a1612" stroke="#e3533f"/>
+          <text x="632" y="81" fill="#e3533f" font-weight="600">FAIL · "Mother'd call me herself!"</text>
+          <text x="632" y="98" fill="#9c978e">combat · Twitch shoots a hostage</text>
+          <rect x="620" y="118" width="260" height="46" rx="4" fill="#15241b" stroke="#58c27d"/>
+          <text x="632" y="137" fill="#58c27d" font-weight="600">PASS · Twitch surrenders</text>
+          <text x="632" y="154" fill="#9c978e">+200 XP · Twitch leaves</text>
+          <rect x="620" y="203" width="260" height="46" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="632" y="222" fill="#e6e2da" font-weight="600">Twitch walks off his post</text>
+          <text x="632" y="239" fill="#9c978e">−200 credits · the cage is unguarded</text>
+          <rect x="620" y="293" width="260" height="46" rx="4" fill="#1c232c" stroke="#3a4552"/>
+          <text x="632" y="312" fill="#e6e2da" font-weight="600">No change</text>
+          <text x="632" y="329" fill="#9c978e">come back with a better plan</text>
+        </g>
+        <g stroke="#9c978e" stroke-width="1.4" fill="none" marker-end="url(#ah2)">
+          <path d="M220 175 C 255 175, 255 46, 286 46"/>
+          <path d="M220 184 C 255 184, 255 136, 286 136"/>
+          <path d="M220 200 C 255 200, 255 226, 286 226"/>
+          <path d="M220 212 C 255 212, 255 316, 286 316"/>
+          <path d="M540 38 C 580 38, 580 31, 616 31"/>
+          <path d="M540 56 C 580 56, 580 85, 616 85"/>
+          <path d="M540 136 C 580 136, 580 141, 616 141"/>
+          <path d="M540 226 H616"/>
+          <path d="M540 316 H616"/>
+        </g>
+        <text x="20" y="372" fill="#6c6a66" font-size="11.5">Greyed out when you can't meet a requirement; shown anyway so you know what to build toward.</text>
+      </svg>
+    </div>
+    <figcaption>Example tree: Twitch, the hostage guard in the pump station, approached in a Drain Rats disguise. Only a disguise that passes his intelligence-3 scrutiny starts this conversation. Without one, he shoots on sight.</figcaption>
+  </figure>
+</section>
+
+<section class="block" id="disguise">
+  <div class="section-head">
+    <div class="eyebrow">05 · Disguise &amp; perception</div>
+    <h2>Cover versus intelligence</h2>
+    <p class="lede">Each clothing piece carries a faction tag. Disguise quality <b>Q</b> is the sum of the matching pieces worn: body 2, head 1, face 1. <b>Cover = Deception + Q</b>. An observer inside their scrutiny range (<span class="mono">2 + 2 × I</span> metres) accepts you only if Cover ≥ their intelligence <b>I</b>. Further away, a matching outfit passes at a glance.</p>
+  </div>
+
+  <div class="calc">
+    <div>
+      <label class="field" for="obs"><span>Observer</span>
+        <select id="obs"></select>
+      </label>
+      <label class="field" for="dfac"><span>Disguise faction</span>
+        <select id="dfac">
+          <option value="rats">Drain Rats</option>
+          <option value="kings">Scrap Kings</option>
+          <option value="sanit">City Sanitation</option>
+          <option value="mersec">MerSec</option>
+          <option value="none">Street clothes</option>
+        </select>
+      </label>
+      <div class="field"><span>Pieces worn</span>
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="pBody" checked> Body (+2)</label>
+          <label class="chk"><input type="checkbox" id="pHead"> Head (+1)</label>
+          <label class="chk"><input type="checkbox" id="pFace" checked> Face (+1)</label>
+        </div>
+      </div>
+      <div class="field"><span>Deception rank</span>
+        <div class="row"><input type="range" id="dec" min="0" max="5" value="1" aria-label="Deception rank"><output id="decOut">1</output></div>
+      </div>
+      <div class="field"><span>Distance to observer</span>
+        <div class="row"><input type="range" id="dist" min="1" max="20" value="4" aria-label="Distance in metres"><output id="distOut">4 m</output></div>
+      </div>
+      <div class="field"><span>Situation</span>
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="sWeapon"> Weapon drawn</label>
+          <label class="chk"><input type="checkbox" id="sZone"> Restricted zone</label>
+          <label class="chk"><input type="checkbox" id="sArmor"> Wrong armour</label>
+          <label class="chk"><input type="checkbox" id="sTalk"> Talking to them</label>
+        </div>
+      </div>
+    </div>
+    <div class="verdict" aria-live="polite">
+      <div class="eyebrow">Verdict</div>
+      <div class="big" id="vBig">Accepted</div>
+      <p id="vWhy" class="lede" style="font-size:15px"></p>
+      <div class="math" id="vMath"></div>
+      <div>
+        <div class="eyebrow" style="color:var(--dim);margin-bottom:8px">Cover against intelligence</div>
+        <div class="meter" id="vMeter"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="num">I</th><th>Who (first slice)</th><th>Fooled by</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Drain Rat grunts, junkies</td><td>Any matching jacket (Deception 1 + body 2 = 3)</td></tr>
+        <tr><td class="num">2</td><td>Scrap King grunts, Rat lieutenants</td><td>Jacket plus one piece, or Deception 2</td></tr>
+        <tr><td class="num">3</td><td>Twitch, Scrap King foremen</td><td>Near-full outfit</td></tr>
+        <tr><td class="num">4</td><td>Mother Rat, MerSec officers</td><td>Full outfit + Deception 2, plus her dialog check</td></tr>
+        <tr><td class="num">5</td><td>Crusher, future corp security chiefs</td><td>Full outfit + Deception 3, plus a dialog check</td></tr>
+        <tr><td class="num">—</td><td>Robot dogs, cameras, turrets</td><td>Nothing you wear. Use stealth, EMP or hacking.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 900 200" width="100%" style="min-width:720px" role="img" aria-label="Perception states: unaware, suspicious, searching, combat; losing the player returns to searching and then unaware; takedowns end in knocked out or dead.">
+        <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9c978e"/></marker></defs>
+        <g font-size="13" text-anchor="middle">
+          <rect x="20" y="60" width="150" height="54" rx="27" fill="#15241b" stroke="#58c27d"/><text x="95" y="92" fill="#e6e2da" font-weight="600">Unaware</text>
+          <rect x="250" y="60" width="150" height="54" rx="27" fill="#2a2512" stroke="#e8c64a"/><text x="325" y="84" fill="#e6e2da" font-weight="600">Suspicious</text><text x="325" y="101" fill="#9c978e" font-size="11">meter filling</text>
+          <rect x="480" y="60" width="150" height="54" rx="27" fill="#2a1f12" stroke="#ff9e2e"/><text x="555" y="84" fill="#e6e2da" font-weight="600">Searching</text><text x="555" y="101" fill="#9c978e" font-size="11">last known position</text>
+          <rect x="710" y="60" width="150" height="54" rx="27" fill="#2a1612" stroke="#e3533f"/><text x="785" y="92" fill="#e6e2da" font-weight="600">Combat</text>
+          <rect x="560" y="146" width="140" height="40" rx="20" fill="#1c232c" stroke="#3a4552"/><text x="630" y="171" fill="#9c978e">Knocked out / dead</text>
+        </g>
+        <g stroke="#9c978e" stroke-width="1.4" fill="none" marker-end="url(#ah3)">
+          <path d="M170 80 H246"/><path d="M400 80 H476"/><path d="M630 80 H706"/>
+          <path d="M785 60 C 785 20, 555 20, 555 56"/>
+          <path d="M480 100 C 400 150, 200 150, 95 118"/>
+          <path d="M325 60 C 325 30, 95 30, 95 56"/>
+        </g>
+        <g font-size="11.5" fill="#9c978e" text-anchor="middle">
+          <text x="208" y="74">sees / hears you</text>
+          <text x="438" y="74">meter full</text>
+          <text x="668" y="74">sees you</text>
+          <text x="670" y="18">loses sight</text>
+          <text x="290" y="158">search times out</text>
+          <text x="210" y="24">meter drains</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>How fast the meter fills depends on light level, distance, crouching and Stealth rank. Gunfire, bodies and alarms jump straight to searching. Cameras and dogs follow the same states but ignore disguises.</figcaption>
+  </figure>
+</section>
+
+<section class="block" id="factions">
+  <div class="section-head">
+    <div class="eyebrow">06 · Factions</div>
+    <h2>Who runs the Undercity</h2>
+  </div>
+  <div class="cards">
+    <div class="card"><h3><span class="sw" style="background:var(--civ)"></span>Sump residents</h3><p>Vendors, drinkers and scavengers in the hub. All friendly and all talkable, with rumours to trade.</p><dl><dt>Stance</dt><dd>Friendly</dd><dt>Where</dt><dd>Hub</dd></dl></div>
+    <div class="card"><h3><span class="sw" style="background:var(--rats)"></span>Drain Rats</h3><p>A scavenger and smuggler gang in respirators and patchwork hoods. They hold two sanitation workers hostage.</p><dl><dt>Stance</dt><dd>Hostile in the sewers, neutral in the hub</dd><dt>Boss</dt><dd>Mother Rat (I4)</dd></dl></div>
+    <div class="card"><h3><span class="sw" style="background:var(--kings)"></span>Scrap Kings</h3><p>A chop-shop gang of ex-military mechanics with cyber-arms and robot dogs. They sit on a stolen prototype nav core.</p><dl><dt>Stance</dt><dd>Hostile in the junkyard, neutral in the hub</dd><dt>Boss</dt><dd>Crusher (I5)</dd></dl></div>
+    <div class="card"><h3><span class="sw" style="background:var(--mersec)"></span>MerSec</h3><p>Corrupt private police. Officer Dace works the junkyard gate and can be bribed, persuaded or sneaked past.</p><dl><dt>Stance</dt><dd>Neutral</dd><dt>Later</dt><dd>Towers and malls</dd></dl></div>
+    <div class="card"><h3><span class="sw" style="background:var(--sanit)"></span>City Sanitation</h3><p>The overalls get you into sewer maintenance areas. Petra's brother is one of the hostages.</p><dl><dt>Stance</dt><dd>Friendly</dd><dt>Gives</dt><dd>Overalls, service key</dd></dl></div>
+  </div>
+</section>
+
+<section class="block" id="hub">
+  <div class="section-head">
+    <div class="eyebrow">07 · Hub</div>
+    <h2>Sump Market</h2>
+    <p class="lede">The bottom of Low Harbor: a rain-soaked market square under the maglev viaduct, with the lit windows of the megatowers filling the sky. Every NPC here can be talked to. The storm drain leads down to the sewers, and the MerSec gate opens onto Scrapyard Road.</p>
+  </div>
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 800 520" width="100%" style="min-width:680px" role="img" aria-label="Top-down schematic of the Sump Market hub.">
+        <defs>
+          <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#2a333e" stroke-width="3"/></pattern>
+          <marker id="ex" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff9e2e"/></marker>
+        </defs>
+        <rect x="0" y="0" width="800" height="520" fill="#0e1116"/>
+        <!-- buildings -->
+        <g stroke="#3a4552" stroke-width="1.5">
+          <rect x="20" y="20" width="290" height="150" fill="#1c232c"/>
+          <rect x="200" y="30" width="100" height="70" fill="#232c37"/>
+          <rect x="320" y="20" width="150" height="130" fill="#1c232c"/>
+          <rect x="480" y="20" width="140" height="130" fill="#1c232c"/>
+          <rect x="630" y="20" width="150" height="190" fill="url(#hatch)"/>
+          <rect x="20" y="190" width="90" height="300" fill="#161b22"/>
+          <rect x="300" y="420" width="120" height="60" fill="#1c232c"/>
+          <rect x="640" y="420" width="140" height="70" fill="#1c232c"/>
+        </g>
+        <!-- plaza + viaduct -->
+        <rect x="120" y="190" width="500" height="215" fill="#12161c" stroke="#2a333e"/>
+        <rect x="120" y="258" width="500" height="44" fill="rgba(91,149,232,.07)" stroke="#2a333e" stroke-dasharray="6 4"/>
+        <g fill="#3a4552">
+          <rect x="150" y="270" width="18" height="18"/><rect x="265" y="270" width="18" height="18"/><rect x="380" y="270" width="18" height="18"/><rect x="495" y="270" width="18" height="18"/><rect x="590" y="270" width="18" height="18"/>
+        </g>
+        <rect x="120" y="176" width="500" height="10" fill="rgba(255,158,46,.18)" stroke="#bf6b1a" stroke-dasharray="4 3"/>
+        <rect x="330" y="320" width="70" height="40" fill="#1c232c" stroke="#ff9e2e"/>
+        <!-- labels -->
+        <g font-family="Barlow Condensed" font-weight="600" letter-spacing="1.5" font-size="14" fill="#e6e2da">
+          <text x="32" y="44">THE RUSTY ANCHOR</text>
+          <text x="210" y="50" font-size="12" fill="#9c978e">BACK ROOM</text>
+          <text x="332" y="44">KESSLER'S PAWN</text>
+          <text x="492" y="44">DOC VO'S CLINIC</text>
+          <text x="646" y="44" fill="#9c978e">TOWER</text>
+          <text x="646" y="60" fill="#9c978e">FOUNDATION</text>
+          <text x="30" y="214">ALLEY</text>
+          <text x="312" y="442" font-size="12">PETRA'S STALL</text>
+          <text x="652" y="442" font-size="12">MERSEC GATE</text>
+          <text x="134" y="212" fill="#9c978e">SUMP MARKET PLAZA</text>
+          <text x="134" y="252" font-size="12" fill="#5b95e8">MAGLEV VIADUCT OVERHEAD</text>
+          <text x="126" y="172" font-size="11" fill="#bf6b1a">UPPER WALKWAY · FIRE ESCAPES</text>
+          <text x="336" y="344" font-size="12" fill="#ff9e2e">NOODLES</text>
+        </g>
+        <!-- exits -->
+        <g font-family="Barlow Condensed" font-weight="700" font-size="13" fill="#ff9e2e" letter-spacing="1">
+          <circle cx="62" cy="460" r="14" fill="none" stroke="#ff9e2e" stroke-width="2"/>
+          <text x="40" y="505">→ THE DRAINS</text>
+          <path d="M710 490 V512" stroke="#ff9e2e" stroke-width="2" marker-end="url(#ex)"/>
+          <text x="600" y="512">SCRAPYARD ROAD →</text>
+        </g>
+        <!-- NPCs -->
+        <g font-family="Barlow Condensed" font-weight="700" font-size="11" text-anchor="middle">
+          <g><circle cx="250" cy="78" r="11" fill="#ff9e2e"/><text x="250" y="82" fill="#1a1006">SI</text></g>
+          <g><circle cx="90" cy="110" r="11" fill="#b3b1ad"/><text x="90" y="114" fill="#0e1116">MA</text></g>
+          <g><circle cx="160" cy="176" r="11" fill="#b3b1ad"/><text x="160" y="180" fill="#0e1116">TA</text></g>
+          <g><circle cx="395" cy="100" r="11" fill="#b3b1ad"/><text x="395" y="104" fill="#0e1116">KE</text></g>
+          <g><circle cx="550" cy="100" r="11" fill="#b3b1ad"/><text x="550" y="104" fill="#0e1116">VO</text></g>
+          <g><circle cx="365" cy="380" r="11" fill="#b3b1ad"/><text x="365" y="384" fill="#0e1116">NG</text></g>
+          <g><circle cx="66" cy="300" r="11" fill="#b3b1ad"/><text x="66" y="304" fill="#0e1116">RI</text></g>
+          <g><circle cx="80" cy="380" r="11" fill="#b3b1ad"/><text x="80" y="384" fill="#0e1116">MO</text></g>
+          <g><circle cx="360" cy="460" r="11" fill="#e8c64a"/><text x="360" y="464" fill="#0e1116">PE</text></g>
+          <g><circle cx="690" cy="460" r="11" fill="#5b95e8"/><text x="690" y="464" fill="#0e1116">DA</text></g>
+          <g><circle cx="150" cy="370" r="11" fill="#9dbb45"/><text x="150" y="374" fill="#0e1116">SK</text></g>
+          <g><circle cx="590" cy="380" r="11" fill="#d8603f"/><text x="590" y="384" fill="#0e1116">JX</text></g>
+          <g fill="#6c6a66"><circle cx="230" cy="330" r="5"/><circle cx="470" cy="230" r="5"/><circle cx="520" cy="350" r="5"/><circle cx="280" cy="220" r="5"/></g>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><b class="dot" style="background:var(--accent)">SI</b>mission giver</span>
+      <span><b class="dot" style="background:var(--civ)">··</b>resident</span>
+      <span><b class="dot" style="background:var(--rats)">··</b>Drain Rat</span>
+      <span><b class="dot" style="background:var(--kings)">··</b>Scrap King</span>
+      <span><b class="dot" style="background:var(--mersec)">··</b>MerSec</span>
+      <span><b class="dot" style="background:var(--sanit)">··</b>Sanitation</span>
+      <span><b class="dot" style="background:var(--faint)"> </b>ambient civilians (small talk)</span>
+    </div>
+  </figure>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>NPC</th><th>Role</th><th>What they offer</th></tr></thead>
+      <tbody>
+        <tr><td><b>Silk</b></td><td>Fixer, in the bar's back room</td><td>Both contracts: <i>Rat Trap</i> and <i>Chop Job</i>. Pays by result, less if hostages die.</td></tr>
+        <tr><td><b>Mags</b></td><td>Bartender</td><td>Rumours about both levels, drinks (small heals)</td></tr>
+        <tr><td><b>Tank</b></td><td>Bouncer</td><td>[Persuasion 2] intimidation; lets you into the back room after hours</td></tr>
+        <tr><td><b>Kessler</b></td><td>Pawnbroker, arms dealer</td><td>Buys and sells weapons, ammo, lockpicks and multitools; buys loot</td></tr>
+        <tr><td><b>Doc Vo</b></td><td>Street doc</td><td>Heals for credits, sells medkits and stims</td></tr>
+        <tr><td><b>Nguyen</b></td><td>Noodle vendor</td><td>Noodles, gossip, and the sewer grate code if you're a regular</td></tr>
+        <tr><td><b>Rivet</b></td><td>Scavenger</td><td>Sells a Drain Rats jacket "off a dead rat"</td></tr>
+        <tr><td><b>Mouse</b></td><td>Street kid</td><td>Sells hints about vents and fence gaps</td></tr>
+        <tr><td><b>Petra</b></td><td>Sanitation worker</td><td>Her brother is a hostage. Gives overalls, the service key and the <i>Rat Trap</i> side goal.</td></tr>
+        <tr><td><b>Officer Dace</b></td><td>MerSec, at the gate</td><td>Bribe (100), [Persuasion 3], or sneak past on the walkway</td></tr>
+        <tr><td><b>Skiv</b></td><td>Drain Rats scout</td><td>Neutral here. [Deception 2] gets the camp password.</td></tr>
+        <tr><td><b>Jax</b></td><td>Scrap Kings recruiter</td><td>[Deception 3] or 300 credits for a gang pass. Wants Crusher dead.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="block" id="sewer">
+  <div class="section-head">
+    <div class="eyebrow">08 · Level · sewer</div>
+    <h2>The Drains: <i style="font-style:normal;color:var(--accent)">Rat Trap</i></h2>
+    <p class="lede">Drain Rats territory under the Sump: brick collector tunnels, water channels and pump machinery, with a shanty camp in an overflow cistern. The Rats hold two sanitation workers in the pump station.</p>
+  </div>
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 800 440" width="100%" style="min-width:680px" role="img" aria-label="Top-down schematic of the sewer level with four routes to the pump station.">
+        <defs>
+          <marker id="rf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e3533f"/></marker>
+          <marker id="rs" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3fbfae"/></marker>
+          <marker id="rt" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f95ff"/></marker>
+        </defs>
+        <rect width="800" height="440" fill="#0e1116"/>
+        <g stroke="#3a4552" stroke-width="1.5">
+          <rect x="20" y="190" width="150" height="130" fill="#1c232c"/>
+          <rect x="170" y="232" width="250" height="56" fill="#161b22"/>
+          <rect x="420" y="190" width="100" height="140" fill="#1c232c"/>
+          <rect x="420" y="360" width="200" height="40" fill="#11202a"/>
+          <rect x="520" y="150" width="175" height="240" fill="#161b22"/>
+          <rect x="695" y="175" width="90" height="190" fill="#1c232c"/>
+          <rect x="705" y="185" width="70" height="55" fill="#232c37"/>
+        </g>
+        <rect x="170" y="254" width="250" height="12" fill="#1d3a44"/>
+        <g font-family="Barlow Condensed" font-weight="600" letter-spacing="1.5" font-size="13" fill="#e6e2da">
+          <text x="30" y="212">MAINTENANCE</text>
+          <text x="30" y="228" font-size="11" fill="#9c978e">LOCKERS · TERMINAL</text>
+          <text x="180" y="250" font-size="12">COLLECTOR TUNNEL</text>
+          <text x="180" y="282" font-size="11" fill="#5fa8b8">WATER CHANNEL (WADING = NOISE)</text>
+          <text x="428" y="212">JUNCTION</text>
+          <text x="428" y="228" font-size="11" fill="#9c978e">CHECKPOINT</text>
+          <text x="428" y="382" font-size="11" fill="#5fa8b8">FLOODED BYPASS · GRATE</text>
+          <text x="532" y="172">RAT CAMP</text>
+          <text x="532" y="188" font-size="11" fill="#9c978e">OVERFLOW CISTERN · TENTS</text>
+          <text x="532" y="202" font-size="11" fill="#9c978e">CATWALK RING ABOVE</text>
+          <text x="703" y="200" font-size="11">MOTHER'S NEST</text>
+          <text x="703" y="214" font-size="10" fill="#9c978e">UPSTAIRS · SAFE</text>
+          <text x="703" y="262" font-size="12">PUMP</text>
+          <text x="703" y="276" font-size="12">STATION</text>
+          <text x="703" y="292" font-size="10" fill="#e3533f">HOSTAGE CAGE</text>
+          <text x="22" y="176" font-size="12" fill="#ff9e2e">← FROM THE SUMP (STORM DRAIN)</text>
+        </g>
+        <!-- routes -->
+        <g fill="none" stroke-width="3">
+          <path d="M95 300 H440 C 470 300, 480 300, 530 300 H720" stroke="#e3533f" marker-end="url(#rf)"/>
+          <path d="M60 190 V120 H740 V172" stroke="#3fbfae" stroke-dasharray="8 6" marker-end="url(#rs)"/>
+          <path d="M140 320 V380 H415 M620 380 H660 C 690 380, 700 360, 720 340" stroke="#7f95ff" stroke-dasharray="3 5" marker-end="url(#rt)"/>
+        </g>
+        <path d="M95 262 H720" stroke="#ff9e2e" stroke-width="2" stroke-dasharray="12 5" fill="none" opacity=".9"/>
+        <g font-size="11.5" fill="#9c978e">
+          <text x="300" y="112" fill="#3fbfae">vent crawl (crouch) · bypasses checkpoint and camp</text>
+          <text x="236" y="316" fill="#e3533f">fight through</text>
+          <text x="236" y="349" fill="#7f95ff">lockpick grate · hack pump door</text>
+        </g>
+        <!-- NPC dots -->
+        <g>
+          <circle cx="455" cy="252" r="7" fill="#9dbb45"/><circle cx="485" cy="272" r="7" fill="#9dbb45"/>
+          <circle cx="570" cy="240" r="6" fill="#9dbb45"/><circle cx="620" cy="300" r="6" fill="#9dbb45"/><circle cx="600" cy="350" r="6" fill="#9dbb45"/><circle cx="655" cy="230" r="6" fill="#9dbb45"/><circle cx="560" cy="320" r="6" fill="#9dbb45"/>
+          <circle cx="740" cy="310" r="8" fill="#9dbb45" stroke="#e6e2da" stroke-width="1.5"/>
+          <circle cx="760" cy="222" r="9" fill="#9dbb45" stroke="#ff9e2e" stroke-width="2"/>
+          <rect x="752" y="330" width="22" height="22" fill="none" stroke="#e8c64a" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="border-color:var(--force)"></i>Force</span>
+      <span><i class="dash" style="border-color:var(--stealth)"></i>Stealth</span>
+      <span><i class="dash" style="border-color:var(--social)"></i>Social (disguise + talk)</span>
+      <span><i class="dash" style="border-color:var(--tech)"></i>Tech (lockpick / hack)</span>
+      <span><b class="dot" style="background:var(--rats)"></b>Drain Rat</span>
+      <span><b class="dot" style="background:var(--rats);outline:2px solid var(--accent)"></b>Mother Rat (I4)</span>
+      <span><b class="dot" style="background:transparent;outline:2px solid var(--sanit);border-radius:0"></b>Hostages</span>
+    </div>
+  </figure>
+  <div class="beats">
+    <div class="beat force"><h3>Force</h3><p>Fight down the collector tunnel and through the camp. If Twitch hears the fight, he executes a hostage.</p></div>
+    <div class="beat stealth"><h3>Stealth</h3><p>Take the vent crawl from maintenance to the pump station. Knock Twitch out from behind, then pick the cage (Lockpicking 2) or use the pump room key.</p></div>
+    <div class="beat social"><h3>Social</h3><p>In a Rat jacket and respirator, pass the checkpoint with Skiv's password. Bluff Twitch ([Deception 2]), convince Mother Rat the city paid ([Deception 3] or [Persuasion 3]), or pay 500 credits.</p></div>
+    <div class="beat tech"><h3>Tech</h3><p>Pick the flooded grate (Lockpicking 1) and hack the pump room door (Hacking 2). Mother's terminal holds her safe code.</p></div>
+    <div class="beat stakes"><h3>Stakes</h3><p>Both hostages alive earns the full fee and Petra's gratitude. A dead hostage turns Petra hostile and Silk pays less.</p></div>
+  </div>
+</section>
+
+<section class="block" id="junkyard">
+  <div class="section-head">
+    <div class="eyebrow">09 · Level · junkyard</div>
+    <h2>Scrap King's Yard: <i style="font-style:normal;color:var(--accent)">Chop Job</i></h2>
+    <p class="lede">A walled scrapyard at night: crushed-car stacks, container rows, a crane, a car crusher, searchlights and robot dogs. The target is a prototype nav core in the safe in Crusher's office. Bonus contracts: kill Crusher for Jax, and steal the Kings' ledger for Petra.</p>
+  </div>
+  <figure>
+    <div class="frame scroll-x">
+      <svg viewBox="0 0 800 540" width="100%" style="min-width:680px" role="img" aria-label="Top-down schematic of the junkyard level with routes into the warehouse office.">
+        <defs>
+          <marker id="jf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e3533f"/></marker>
+          <marker id="js" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3fbfae"/></marker>
+          <marker id="jo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff9e2e"/></marker>
+          <marker id="jt" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f95ff"/></marker>
+        </defs>
+        <rect width="800" height="540" fill="#0e1116"/>
+        <rect x="20" y="20" width="760" height="470" fill="#12161c" stroke="#5a4a3a" stroke-width="3"/>
+        <g stroke="#3a4552" stroke-width="1.5">
+          <rect x="40" y="40" width="180" height="130" fill="#1c232c"/>
+          <g fill="#241e1a" stroke="#5a4a3a">
+            <rect x="250" y="60" width="90" height="34"/><rect x="350" y="60" width="90" height="34"/>
+            <rect x="250" y="120" width="34" height="90"/><rect x="300" y="120" width="90" height="34"/><rect x="400" y="120" width="40" height="90"/>
+            <rect x="250" y="236" width="90" height="34"/><rect x="350" y="236" width="90" height="34"/>
+          </g>
+          <g fill="#2a2320" stroke="#4d3c30">
+            <rect x="40" y="200" width="70" height="60"/><rect x="120" y="200" width="70" height="60"/><rect x="40" y="280" width="70" height="60"/><rect x="120" y="300" width="80" height="60"/><rect x="50" y="370" width="90" height="60"/>
+          </g>
+          <rect x="250" y="330" width="90" height="80" fill="#1c232c"/>
+          <rect x="520" y="60" width="240" height="340" fill="#1c232c"/>
+          <rect x="640" y="76" width="110" height="100" fill="#232c37"/>
+          <rect x="660" y="190" width="50" height="30" fill="none" stroke="#7f95ff" stroke-dasharray="3 3"/>
+        </g>
+        <circle cx="475" cy="120" r="14" fill="#2a2512" stroke="#e8c64a" stroke-width="2"/>
+        <rect x="430" y="480" width="100" height="20" fill="#2a1f12" stroke="#ff9e2e"/>
+        <path d="M20 318 v28" stroke="#0e1116" stroke-width="6"/>
+        <g font-family="Barlow Condensed" font-weight="600" letter-spacing="1.5" font-size="13" fill="#e6e2da">
+          <text x="50" y="62">CRANE + CRUSHER</text>
+          <text x="258" y="52" font-size="12" fill="#9c978e">CONTAINER MAZE (CLIMBABLE)</text>
+          <text x="46" y="196" font-size="12" fill="#9c978e">CAR STACKS</text>
+          <text x="258" y="352" font-size="12">GENERATOR</text>
+          <text x="258" y="366" font-size="11" fill="#9c978e">KILL POWER</text>
+          <text x="490" y="112" font-size="11" fill="#e8c64a">SEARCHLIGHT</text>
+          <text x="530" y="84">WAREHOUSE</text>
+          <text x="530" y="100" font-size="11" fill="#9c978e">CHOP SHOP · CARS ON LIFTS</text>
+          <text x="648" y="96" font-size="12">OFFICE</text>
+          <text x="648" y="112" font-size="11" fill="#ff9e2e">CRUSHER · SAFE</text>
+          <text x="664" y="236" font-size="10" fill="#7f95ff">SKYLIGHT</text>
+          <text x="440" y="494" font-size="12" fill="#ff9e2e">YARD GATE</text>
+          <text x="400" y="530" font-size="12" fill="#ff9e2e">↑ SCRAPYARD ROAD · FROM THE SUMP</text>
+          <text x="26" y="312" font-size="11" fill="#3fbfae">FENCE GAP</text>
+        </g>
+        <!-- dog patrol -->
+        <path d="M235 45 H455 V285 H235 Z" fill="none" stroke="#d8603f" stroke-width="1.5" stroke-dasharray="2 5" opacity=".8"/>
+        <!-- routes -->
+        <g fill="none" stroke-width="3">
+          <path d="M480 478 V420 H600 V404" stroke="#e3533f" marker-end="url(#jf)"/>
+          <path d="M500 478 C 520 440, 540 430, 560 405" stroke="#ff9e2e" stroke-dasharray="12 5" marker-end="url(#jo)"/>
+          <path d="M26 332 H215 C 230 332, 235 300, 245 290 H460 C 490 290, 500 300, 518 300" stroke="#3fbfae" stroke-dasharray="8 6" marker-end="url(#js)"/>
+          <path d="M395 150 C 420 30, 620 30, 684 188" stroke="#7f95ff" stroke-dasharray="3 5" marker-end="url(#jt)"/>
+          <path d="M215 332 C 240 350, 250 360, 262 368" stroke="#7f95ff" stroke-dasharray="3 5"/>
+        </g>
+        <g font-size="11.5" fill="#9c978e">
+          <text x="440" y="36" fill="#7f95ff">over the containers → catwalk → skylight</text>
+          <text x="300" y="306" fill="#3fbfae">crouch past dog patrol</text>
+          <text x="610" y="440" fill="#ff9e2e">bluff guards / gang pass / bribe</text>
+          <text x="610" y="456" fill="#e3533f">or shoot your way in</text>
+        </g>
+        <g>
+          <circle cx="455" cy="468" r="7" fill="#d8603f"/><circle cx="505" cy="468" r="7" fill="#d8603f"/>
+          <circle cx="560" cy="200" r="6" fill="#d8603f"/><circle cx="600" cy="300" r="6" fill="#d8603f"/><circle cx="700" cy="330" r="6" fill="#d8603f"/><circle cx="560" cy="360" r="6" fill="#d8603f"/>
+          <circle cx="720" cy="140" r="9" fill="#d8603f" stroke="#ff9e2e" stroke-width="2"/>
+          <path d="M340 190 l7 -12 l7 12 z" fill="#d8603f"/><path d="M290 110 l7 -12 l7 12 z" fill="#d8603f"/>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="border-color:var(--force)"></i>Force</span>
+      <span><i class="dash" style="border-color:var(--stealth)"></i>Stealth</span>
+      <span><i class="dash" style="border-color:var(--social)"></i>Social</span>
+      <span><i class="dash" style="border-color:var(--tech)"></i>High route / tech</span>
+      <span><b class="dot" style="background:var(--kings)"></b>Scrap King</span>
+      <span><b class="dot" style="background:var(--kings);outline:2px solid var(--accent)"></b>Crusher (I5)</span>
+      <span style="color:var(--kings)">▲ robot dog (scent: disguises don't work)</span>
+    </div>
+  </figure>
+  <div class="beats">
+    <div class="beat social"><h3>Front gate</h3><p>Show Jax's gang pass, bluff the two guards in a Scrap Kings vest (I2), or bribe them. Inside, a vest lets you walk the chop shop floor.</p></div>
+    <div class="beat stealth"><h3>Fence gap</h3><p>Crouch through the west gap and past the dog patrol. Dogs smell through any disguise, so time it or use a noise maker or EMP.</p></div>
+    <div class="beat tech"><h3>Power &amp; heights</h3><p>Killing the generator blinds the searchlight and unlocks the gate, but it sends a foreman to check. Climb the container stack to the catwalk and drop through the skylight into the office.</p></div>
+    <div class="beat force"><h3>Force</h3><p>Four Kings in the chop shop, two at the gate, dogs and a boss with a cyber-arm. Loud and expensive.</p></div>
+    <div class="beat stakes"><h3>The safe</h3><p>Open it with Lockpicking 3, the combination from Crusher's terminal (Hacking 3), or by talking Crusher into opening it for a "buyer" ([Deception 4], full Kings outfit).</p></div>
+  </div>
+</section>
+
+<section class="block" id="build">
+  <div class="section-head">
+    <div class="eyebrow">10 · Build status</div>
+    <h2>What exists in the game today</h2>
+    <p class="lede">This slice is built on the Brushfire tech: Godot 4.7 C#, levels modelled in Blender, baked lighting and Material Maker PBR. The three Brushfire arena maps stay in the project as reference maps.</p>
+  </div>
+  <div class="status">
+    <div class="status-row"><div>Design (this page, <code>docs/design/immersive_sim.md</code>)<small>pillars, systems, levels, missions</small></div><span class="pill s-done">Done</span></div>
+    <div class="status-row"><div>Character: skills, perks, XP and levels<small>scripts/RPG/Character.cs</small></div><span class="pill s-now">In progress</span></div>
+    <div class="status-row"><div>Items, grid inventory, equipment, belt<small>scripts/RPG/Items.cs · Inventory.cs</small></div><span class="pill s-now">In progress</span></div>
+    <div class="status-row"><div>Interaction, dialog runtime and UI, quests<small>scripts/RPG/Dialog*.cs · data/dialog</small></div><span class="pill s-next">Next</span></div>
+    <div class="status-row"><div>Humanoid NPCs, factions, disguise perception<small>scripts/NPC · tools/blender/build_characters.py</small></div><span class="pill s-next">Next</span></div>
+    <div class="status-row"><div>Levels: Sump Market, The Drains, Scrap King's Yard<small>tools/blender/build_hub.py · build_sewer.py · build_junkyard.py</small></div><span class="pill s-next">Next</span></div>
+  </div>
+</section>
+
+<footer>Undercity · systems design v0.1 · built on Brushfire (Godot 4.7 C#). Numbers are first-pass tuning.</footer>
+</main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // ------------------------------------------------------------------ skill tree planner
+  var SKILLS = [
+    { id: "firearms", name: "Firearms", blurb: "spread · recoil · reload", perks: [
+      ["Steady Hands", "−15% spread"], ["Quick Reload", "Faster weapon handling"], ["Headhunter", "+50% headshot damage"], ["Recoil Control", "−30% recoil"], ["Deadeye", "−40% spread while standing still"]] },
+    { id: "melee", name: "Melee", blurb: "baton · takedowns", perks: [
+      ["Clubber", "+25% baton damage"], ["Silent Takedown", "Knock out unaware targets from behind in one hit"], ["Fast Takedown", "Takedowns are faster"], ["Heavy Hitter", "+50% baton damage"], ["One-Punch", "Knock out anyone in one hit"]] },
+    { id: "stealth", name: "Stealth", blurb: "noise · visibility", perks: [
+      ["Soft Steps", "−25% footstep noise"], ["Low Profile", "Faster crouch-walking"], ["Shadow", "−30% visibility in shadow"], ["Ghost", "Sprinting makes no noise"], ["Vanish", "Enemies lose track of you twice as fast"]] },
+    { id: "hacking", name: "Hacking", blurb: "terminals · cameras · turrets", perks: [
+      ["Script Kiddie", "Hack tier-1 terminals"], ["Cracker", "Hack tier-2 terminals"], ["Camera Loop", "Hacked cameras stop watching"], ["Turret Control", "Turn turrets on their owners"], ["Ghost Login", "Hack tier-3 terminals without leaving a trace"]] },
+    { id: "lockpicking", name: "Lockpicking", blurb: "doors · lockers · safes", perks: [
+      ["Rake", "Pick tier-1 locks"], ["Tension", "Pick tier-2 locks"], ["Fast Picks", "Picking takes half the time"], ["Pin Master", "Pick tier-3 locks"], ["Safecracker", "Open safes without a code"]] },
+    { id: "deception", name: "Deception", blurb: "disguises · lies", req: { skill: "stealth", rank: 2 }, perks: [
+      ["Passing Glance", "A matching outfit passes at a glance outside scrutiny range"], ["Fast Talk", "Lie options in dialog"], ["Master of Disguise", "Drawing a weapon gives you 2 seconds before your cover breaks"], ["Silver Tongue", "Bluff bosses"], ["Doppelganger", "Halves every observer's scrutiny range"]] },
+    { id: "persuasion", name: "Persuasion", blurb: "charm · intimidate · prices", perks: [
+      ["Friendly", "Charm options in dialog"], ["Haggler", "−15% shop prices"], ["Intimidate", "Threaten weaker NPCs"], ["Negotiator", "Talk down hostage-takers"], ["Kingmaker", "Turn gang lieutenants"]] }
+  ];
+  var BASE = { deception: 1 };
+  var ranks = {};
+  function resetRanks() { SKILLS.forEach(function (s) { ranks[s.id] = BASE[s.id] || 0; }); }
+  resetRanks();
+  var lvlEl = document.getElementById("lvl"), lvlOut = document.getElementById("lvlOut");
+  var treeEl = document.getElementById("tree"), detailEl = document.getElementById("perkDetail");
+  function cost(r) { return r <= 2 ? 1 : 2; }
+  function spentOn(id) { var n = 0, from = (BASE[id] || 0) + 1; for (var r = from; r <= ranks[id]; r++) n += cost(r); return n; }
+  function totalPoints() { return 4 + 2 * (parseInt(lvlEl.value, 10) - 1); }
+  function spent() { return SKILLS.reduce(function (a, s) { return a + spentOn(s.id); }, 0); }
+  function reqMet(s, rank) { return !s.req || rank < 3 || ranks[s.req.skill] >= s.req.rank; }
+  function nameOf(id) { for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].id === id) return SKILLS[i].name; return id; }
+  function render() {
+    lvlOut.textContent = lvlEl.value;
+    var left = totalPoints() - spent();
+    document.getElementById("ptsLeft").textContent = left;
+    document.getElementById("ptsTotal").textContent = totalPoints();
+    treeEl.innerHTML = "";
+    SKILLS.forEach(function (s) {
+      var col = document.createElement("div"); col.className = "skill-col";
+      var h = document.createElement("div"); h.className = "skill-name";
+      h.innerHTML = s.name + "<small>" + s.blurb + "</small>";
+      col.appendChild(h);
+      s.perks.forEach(function (p, i) {
+        var rank = i + 1, b = document.createElement("button");
+        b.type = "button"; b.className = "perk";
+        var owned = ranks[s.id] >= rank, next = ranks[s.id] + 1 === rank;
+        var blocked = next && (left < cost(rank) || !reqMet(s, rank));
+        if (owned) b.classList.add("owned");
+        if (next) b.classList.add("next");
+        if (!owned && !next) b.classList.add("blocked");
+        if (blocked) b.classList.add("blocked");
+        if ((BASE[s.id] || 0) >= rank) b.title = "Starting rank";
+        b.innerHTML = '<span class="r">RANK ' + rank + " · " + cost(rank) + " pt" + (cost(rank) > 1 ? "s" : "") + "</span>" + p[0];
+        b.addEventListener("click", function () { clickPerk(s, rank, p); });
+        b.addEventListener("focus", function () { describe(s, rank, p); });
+        b.addEventListener("mouseenter", function () { describe(s, rank, p); });
+        col.appendChild(b);
+      });
+      treeEl.appendChild(col);
+    });
+  }
+  function describe(s, rank, p) {
+    var note = "";
+    if (s.req && rank >= 3) note = " Needs " + nameOf(s.req.skill) + " " + s.req.rank + ".";
+    detailEl.innerHTML = "<b>" + s.name + " " + rank + ": " + p[0] + "</b>. " + p[1] + ". Also +1 to " + s.name + " checks." + note;
+  }
+  function clickPerk(s, rank, p) {
+    var base = BASE[s.id] || 0;
+    if (ranks[s.id] >= rank) { // refund down to rank-1 (never below the starting rank)
+      ranks[s.id] = Math.max(base, rank - 1);
+      render(); describe(s, rank, p); return;
+    }
+    if (ranks[s.id] + 1 !== rank) { detailEl.innerHTML = "<b>" + p[0] + "</b> needs " + s.name + " " + (rank - 1) + " first."; return; }
+    var left = totalPoints() - spent();
+    if (!reqMet(s, rank)) { detailEl.innerHTML = "<b>" + p[0] + "</b> needs " + nameOf(s.req.skill) + " " + s.req.rank + " first."; return; }
+    if (left < cost(rank)) { detailEl.innerHTML = "Not enough skill points for <b>" + p[0] + "</b>. Raise the level or refund something."; return; }
+    ranks[s.id] = rank; render(); describe(s, rank, p);
+  }
+  lvlEl.addEventListener("input", function () {
+    // Dropping the level refunds from the top until the build fits.
+    while (spent() > totalPoints()) {
+      var top = null;
+      SKILLS.forEach(function (s) { if (ranks[s.id] > (BASE[s.id] || 0) && (!top || ranks[s.id] > ranks[top])) top = s.id; });
+      if (!top) break;
+      ranks[top]--;
+    }
+    render();
+  });
+  document.getElementById("resetBuild").addEventListener("click", function () { resetRanks(); render(); detailEl.textContent = "Build reset. Deception 1 is the runner's starting rank."; });
+  // A sensible example build: a disguise-and-talk infiltrator at level 4.
+  ranks.stealth = 2; ranks.deception = 2; ranks.persuasion = 1; ranks.lockpicking = 1;
+  render();
+
+  // XP table
+  var xpBody = document.getElementById("xpTable"), total = 0, rows = "";
+  for (var L = 1; L <= 10; L++) {
+    rows += "<tr><td>" + L + "</td><td class='num'>" + (L * 500).toLocaleString() + "</td><td class='num'>" + total.toLocaleString() +
+      "</td><td class='num'>" + (4 + 2 * (L - 1)) + "</td><td class='num'>" + (100 + (L - 1) * 10) + "</td></tr>";
+    total += L * 500;
+  }
+  xpBody.innerHTML = rows;
+
+  // ------------------------------------------------------------------ inventory mock
+  var ITEMS = [
+    { n: "Shotgun", x: 0, y: 0, w: 4, h: 1, c: "weapon", q: "", d: "Loud. 8 pellets, strong up close. Blows a disguise when drawn." },
+    { n: "Silenced pistol", x: 4, y: 0, w: 2, h: 1, c: "weapon", q: "", d: "10mm, suppressed. Hitscan, and quiet enough not to alert the next room." },
+    { n: "Stun baton", x: 9, y: 0, w: 1, h: 3, c: "weapon", q: "", d: "Non-lethal. Knocks out an unaware target from behind (Melee 2), which pays more XP than a kill." },
+    { n: "SMG", x: 0, y: 1, w: 3, h: 2, c: "weapon", q: "", d: "Spin-up rotary SMG. Draws 10mm from the grid." },
+    { n: "Rat jacket", x: 3, y: 1, w: 2, h: 2, c: "cloth", q: "", d: "Drain Rats · BODY · +2 disguise quality. Bought from Rivet in the alley." },
+    { n: "Medkit", s: "Med", x: 5, y: 1, w: 1, h: 1, c: "cons", q: "×3", d: "+40 health. Stacks to 5." },
+    { n: "10mm", x: 6, y: 1, w: 1, h: 1, c: "cons", q: "×46", d: "Pistol and SMG ammo. Stacks to 120." },
+    { n: "Shells", s: "Shell", x: 7, y: 1, w: 1, h: 1, c: "cons", q: "×16", d: "Shotgun ammo. Stacks to 40." },
+    { n: "Lockpick", s: "Picks", x: 8, y: 1, w: 1, h: 1, c: "gadget", q: "×4", d: "One per lock. Needs Lockpicking ≥ the lock's tier." },
+    { n: "Multitool", s: "Multi", x: 5, y: 2, w: 1, h: 1, c: "gadget", q: "×2", d: "One per terminal or keypad. Needs Hacking ≥ the tier." },
+    { n: "EMP", x: 6, y: 2, w: 1, h: 1, c: "gadget", q: "×2", d: "Stuns robot dogs and cameras and kills searchlights for 10 s." },
+    { n: "Noodles", s: "Noodle", x: 7, y: 2, w: 1, h: 1, c: "cons", q: "×2", d: "+10 health. Nguyen's. Warm." },
+    { n: "Service key", s: "Key", x: 8, y: 2, w: 1, h: 1, c: "quest", q: "", d: "City Sanitation key from Petra. Opens the sewer maintenance doors." },
+    { n: "Rat goggles", x: 0, y: 3, w: 2, h: 1, c: "cloth", q: "", d: "Drain Rats · HEAD · +1 disguise quality. Taken from a knocked-out grunt." },
+    { n: "Credit chip", s: "Chip", x: 2, y: 3, w: 1, h: 1, c: "cons", q: "×1", d: "Sell to Kessler for 120 credits." },
+    { n: "Data shard", s: "Shard", x: 3, y: 3, w: 1, h: 1, c: "quest", q: "", d: "Skiv's messages. Reveals the camp password (sets a flag)." }
+  ];
+  var grid = document.getElementById("invGrid"), tip = document.getElementById("itemTip");
+  for (var i = 0; i < 60; i++) { var c = document.createElement("div"); c.className = "cell"; grid.appendChild(c); }
+  function placeItems() {
+    var cellPx = parseFloat(getComputedStyle(grid).getPropertyValue("--cell")) || 52, gap = 3, pad = 3;
+    ITEMS.forEach(function (it) {
+      var el = document.createElement("div");
+      el.className = "item " + it.c; el.tabIndex = 0;
+      el.style.left = (pad + it.x * (cellPx + gap)) + "px";
+      el.style.top = (pad + it.y * (cellPx + gap)) + "px";
+      el.style.width = (it.w * cellPx + (it.w - 1) * gap) + "px";
+      el.style.height = (it.h * cellPx + (it.h - 1) * gap) + "px";
+      el.innerHTML = "<span>" + (it.s || it.n) + "</span><span class='q'>" + it.q + "</span>";
+      el.setAttribute("aria-label", it.n + " " + it.q + ". " + it.d);
+      var show = function () { tip.innerHTML = "<b>" + it.n + "</b> · " + it.w + "×" + it.h + " · " + it.d; };
+      el.addEventListener("mouseenter", show); el.addEventListener("focus", show);
+      grid.appendChild(el);
+    });
+  }
+  placeItems();
+  var EQUIP = [["HEAD", "", "Rat goggles in the grid (+1)"], ["FACE", "Respirator", "Drain Rats · +1 quality"], ["BODY", "Rat jacket", "wearing: swap from grid · +2"], ["ARMOR", "", "Vest breaks a Rat disguise"], ["BOOTS", "Soft soles", "−20% footstep noise"]];
+  var eq = document.getElementById("equip");
+  var head = document.createElement("div"); head.className = "eyebrow"; head.textContent = "Equipment"; eq.appendChild(head);
+  EQUIP.forEach(function (e) {
+    var s = document.createElement("div"); s.className = "slot" + (e[1] ? "" : " empty");
+    s.innerHTML = "<span class='k'>" + e[0] + "</span><span class='v'>" + (e[1] || "Empty") + "<small>" + e[2] + "</small></span>";
+    eq.appendChild(s);
+  });
+  var q = document.createElement("div"); q.className = "math";
+  q.innerHTML = "Disguise: <b>Drain Rats</b><br>Q = body 2 + face 1 = <b>3</b><br>Cover = Deception 1 + 3 = <b>4</b>";
+  eq.appendChild(q);
+  var BELT = [["Baton", 1, true], ["Pistol", 2], ["Shotgun", 3], ["SMG", 4], ["EMP", 5], ["Medkit", 6], ["Pick", 7], ["Multi", 8], ["", 9], ["", 0]];
+  var belt = document.getElementById("belt");
+  BELT.forEach(function (b) {
+    var d = document.createElement("div");
+    if (b[2]) d.className = "active";
+    if (!b[0]) d.className = "none";
+    d.innerHTML = "<span>" + b[1] + "</span>" + (b[0] || "—");
+    belt.appendChild(d);
+  });
+
+  // ------------------------------------------------------------------ disguise calculator
+  var OBS = [
+    { n: "Drain Rat grunt", f: "rats", i: 1 }, { n: "Rat lieutenant", f: "rats", i: 2 }, { n: "Twitch (hostage guard)", f: "rats", i: 3 },
+    { n: "Mother Rat", f: "rats", i: 4 }, { n: "Scrap King grunt", f: "kings", i: 2 }, { n: "Scrap King foreman", f: "kings", i: 3 },
+    { n: "Crusher", f: "kings", i: 5 }, { n: "Officer Dace (MerSec)", f: "mersec", i: 4 }, { n: "Robot dog", f: "kings", i: 0, sensor: true }
+  ];
+  var FACTION = { rats: "Drain Rats", kings: "Scrap Kings", mersec: "MerSec", sanit: "City Sanitation", none: "street clothes" };
+  var obsEl = document.getElementById("obs");
+  OBS.forEach(function (o, idx) { var op = document.createElement("option"); op.value = idx; op.textContent = o.n + (o.sensor ? " · sensors" : " · I" + o.i); obsEl.appendChild(op); });
+  obsEl.value = "2";
+  var $ = function (id) { return document.getElementById(id); };
+  var ids = ["obs", "dfac", "pBody", "pHead", "pFace", "dec", "dist", "sWeapon", "sZone", "sArmor", "sTalk"];
+  function calc() {
+    var o = OBS[parseInt(obsEl.value, 10)], fac = $("dfac").value;
+    var dec = parseInt($("dec").value, 10), dist = parseInt($("dist").value, 10);
+    $("decOut").textContent = dec; $("distOut").textContent = dist + " m";
+    var match = fac === o.f;
+    var Q = match ? ($("pBody").checked ? 2 : 0) + ($("pHead").checked ? 1 : 0) + ($("pFace").checked ? 1 : 0) : 0;
+    var cover = dec + Q;
+    var range = (2 + 2 * o.i) * (dec >= 5 ? 0.5 : 1);
+    var talking = $("sTalk").checked;
+    var inRange = talking || dist <= range;
+    var big = $("vBig"), why = $("vWhy"), math = $("vMath");
+    var verdict, cls, reason;
+    if (o.sensor) {
+      verdict = "Detected"; cls = "bad";
+      reason = "Robot dogs track scent and sensors. Clothes don't matter here. Use an EMP, a noise maker or stay out of range.";
+    } else if (!match || !$("pBody").checked) {
+      verdict = "Hostile"; cls = "bad";
+      reason = !match ? (o.n + " belongs to the " + FACTION[o.f] + " and you're dressed as " + FACTION[fac] + ".") : "No outfit on the BODY slot. Hats and masks alone aren't a disguise.";
+    } else if ($("sWeapon").checked && dec < 3) {
+      verdict = "Cover blown"; cls = "bad"; reason = "A drawn weapon breaks any disguise. Master of Disguise (Deception 3) buys you 2 seconds to holster.";
+    } else if ($("sZone").checked) {
+      verdict = "Cover blown"; cls = "bad"; reason = "Restricted zone. Even their own people don't go in there.";
+    } else if ($("sArmor").checked) {
+      verdict = "Suspicious"; cls = "warn"; reason = "They don't wear that armour. The meter fills fast, so take it off or keep moving.";
+    } else if (!inRange) {
+      verdict = "Accepted"; cls = "ok"; reason = "Out of scrutiny range (" + range + " m). A matching outfit passes at a glance.";
+    } else if (cover >= o.i) {
+      verdict = talking ? "Talkable" : "Accepted"; cls = "ok";
+      reason = talking ? ("Cover " + cover + " ≥ I" + o.i + ". Their dialog tree opens, and bosses add their own checks.") : ("Up close and your cover holds (" + cover + " ≥ " + o.i + ").");
+    } else {
+      verdict = "Sees through it"; cls = "bad";
+      reason = "Inside " + range + " m, cover " + cover + " is below intelligence " + o.i + ": \"You ain't one of ours.\" Add pieces or raise Deception.";
+    }
+    big.textContent = verdict; big.className = "big " + cls; why.textContent = reason;
+    math.innerHTML = o.sensor ? "sensor observer · disguise ignored"
+      : "Q = " + (match ? ($("pBody").checked ? "2" : "0") + " + " + ($("pHead").checked ? "1" : "0") + " + " + ($("pFace").checked ? "1" : "0") : "0 (wrong faction)") + " = <b>" + Q + "</b><br>" +
+        "Cover = Deception " + dec + " + Q " + Q + " = <b>" + cover + "</b><br>" +
+        "Intelligence I = <b>" + o.i + "</b> · scrutiny range = <b>" + range + " m</b>" + (dec >= 5 ? " (halved)" : "") + "<br>" +
+        (talking ? "Talking: always inside range" : "Distance " + dist + " m → " + (inRange ? "inside" : "outside") + " range");
+    var meter = $("vMeter"); meter.innerHTML = "";
+    for (var k = 1; k <= 10; k++) { var m = document.createElement("i"); if (k <= cover) m.className = "on"; if (k === o.i && !o.sensor) m.className += " need"; meter.appendChild(m); }
+  }
+  ids.forEach(function (id) { $(id).addEventListener("input", calc); $(id).addEventListener("change", calc); });
+  calc();
+})();
+</script>
