@@ -9,6 +9,9 @@ namespace Brushfire;
 /// </summary>
 public static class Stairs
 {
+    /// <summary>Minimum free floor ahead of a step's landing (treads are 0.5 m or deeper; trims are ~0.1 m).</summary>
+    const float LedgeDepth = 0.2f;
+
     static bool Test(CharacterBody3D body, Transform3D from, Vector3 motion, PhysicsTestMotionResult3D result)
     {
         var p = new PhysicsTestMotionParameters3D { From = from, Motion = motion, Margin = 0.001f };
@@ -48,6 +51,13 @@ public static class Stairs
         Vector3 target = moved.Origin + down.GetTravel();
         float height = target.Y - from.Origin.Y;
         if (height < 0.02f || height > maxStep + 0.01f)
+            return 0f;
+        // A step needs somewhere to stand: if the body can't move another 20 cm forward from the
+        // landing, it's a ledge against a wall (a baseboard or plinth trim), not a stair tread.
+        var room = new PhysicsTestMotionResult3D();
+        Vector3 ahead = move.Normalized() * LedgeDepth;
+        if (Test(body, new Transform3D(from.Basis, target + Vector3.Up * 0.01f), ahead, room)
+            && room.GetTravel().Length() < LedgeDepth * 0.5f)
             return 0f;
         body.GlobalPosition = target;
         body.ApplyFloorSnap();
