@@ -15,7 +15,9 @@ Entry keys:
 - z: optional. Omitted means the ground or floor at that spot (the Pit's floor, a room's floor).
   "roof" means the roof of the building under the spot; "service_deck" means the Skyway service
   deck; a number is metres above the street.
-- props: placement extras for the scene: an NPC's id, a zone's or trigger's size.
+- props: placement extras for the scene: an NPC's id, a zone's or trigger's size ("w,d" metres),
+  a door's width and style (barrier), an exit's style (gate, grate, panel, none), a container's
+  model (locker, safe, crate, tool_box, shelf, offering_box, stash_box), a patrol ("x,y;x,y").
 - data: the core's record for it (ContainerDef, DoorDef, TerminalDef, ExitDef, ZoneDef,
   TriggerDef), in data-file form; for an item, the "item:count" spec.
 
@@ -97,63 +99,63 @@ SPAWNS = [
 ]
 
 EXITS = [
-    {"kind": "exit", "id": "storm_drain", "at": (40, 156.2), "facing_deg": 0, "props": {},
+    {"kind": "exit", "id": "storm_drain", "at": (40, 156.2), "facing_deg": 0, "props": {"style": "gate"},
      "data": {"label": "Go down the storm drain", "target": "drains", "spawn": "storm_drain",
               "lock": _lock(1, code_flag="code_storm_drain")}},
-    {"kind": "exit", "id": "outfall", "at": (191.6, 98.5), "facing_deg": 270, "props": {},
+    {"kind": "exit", "id": "outfall", "at": (191.6, 98.5), "facing_deg": 270, "props": {"style": "grate"},
      "data": {"label": "Crawl into the outfall", "target": "drains", "spawn": "outfall", "lock": _lock(1)}},
-    {"kind": "exit", "id": "scrapyard_road", "at": (170, 168.8), "facing_deg": 0, "props": {"size": "6,1.5"},
+    {"kind": "exit", "id": "scrapyard_road", "at": (170, 168.8), "facing_deg": 0, "props": {"style": "none", "size": "6,1.5"},
      "data": {"label": "Scrapyard Road", "target": "yard", "spawn": "checkpoint"}},
-    {"kind": "exit", "id": "freight_tunnel", "at": (125, 165.4), "facing_deg": 0, "props": {},
+    {"kind": "exit", "id": "freight_tunnel", "at": (125, 165.4), "facing_deg": 0, "props": {"style": "panel"},
      "data": {"label": "Into the freight tunnel", "target": "yard", "spawn": "rail_gate",
               "lock": _lock(1, kind="device", pick=False, hack=True)}},
-    {"kind": "exit", "id": "lift_up", "at": (128.6, 107), "facing_deg": 90, "props": {},
+    {"kind": "exit", "id": "lift_up", "at": (128.6, 107), "facing_deg": 90, "props": {"style": "panel"},
      "data": {"label": "Take the service lift up", "target": "hub", "spawn": "lift_top",
               "lock": _lock(1, kind="device", pick=False, hack=True)}},
     {"kind": "exit", "id": "lift_down", "at": (125.5, viaduct_y(125.5) - 1.5), "facing_deg": 270,
-     "z": "service_deck", "props": {},
+     "z": "service_deck", "props": {"style": "panel"},
      "data": {"label": "Take the service lift down", "target": "hub", "spawn": "lift_bottom"}},
 ]
 
 DOORS = [
-    {"kind": "door", "id": "anchor_backroom", "at": (100, 53), "facing_deg": 270, "props": {"width": 1.2},
+    {"kind": "door", "id": "anchor_backroom", "at": (100, 53), "facing_deg": 270, "props": {"width": 1.4},
      "data": {"lock": _BARRED, "owner": "residents"}},
-    {"kind": "door", "id": "anchor_back_door", "at": (112, 60), "facing_deg": 90, "props": {"width": 1.2},
+    {"kind": "door", "id": "anchor_back_door", "at": (112, 60), "facing_deg": 90, "props": {"width": 1.4},
      "data": {"lock": _lock(1), "owner": "residents"}},
-    {"kind": "door", "id": "kessler_office", "at": (144, 56), "facing_deg": 0, "props": {"width": 1.2},
+    {"kind": "door", "id": "kessler_office", "at": (144, 56), "facing_deg": 0, "props": {"width": 1.4},
      "data": {"lock": _lock(2), "owner": "residents"}},
-    {"kind": "door", "id": "clinic_pharmacy", "at": (168, 54), "facing_deg": 0, "props": {"width": 1.2},
+    {"kind": "door", "id": "clinic_pharmacy", "at": (168, 54), "facing_deg": 0, "props": {"width": 1.4},
      "data": {"lock": _lock(1, hack=True), "owner": "residents"}},
-    {"kind": "door", "id": "records_door", "at": (232, 131), "facing_deg": 270, "props": {"width": 1.2},
+    {"kind": "door", "id": "records_door", "at": (232, 131), "facing_deg": 270, "props": {"width": 1.4},
      "data": {"lock": _lock(2, hack=True), "owner": "mersec"}},
     {"kind": "door", "id": "checkpoint_barrier", "at": (169.5, 157.8), "facing_deg": 0,
      "props": {"width": 9, "style": "barrier"}, "data": {"lock": _BARRED, "owner": "mersec"}},
 ]
 
 LOOT = [
-    {"kind": "loot", "id": "rooftop_stash", "at": (62, 18), "facing_deg": 180, "z": "roof", "props": {},
+    {"kind": "loot", "id": "rooftop_stash", "at": (62, 18), "facing_deg": 180, "z": "roof", "props": {"model": "stash_box"},
      "data": {"noun": "stash", "items": ["neural_chip", "credit_chip:4"]}},
     {"kind": "loot", "id": "girder_cache", "at": (64, viaduct_y(64) - 2), "facing_deg": 90, "z": "service_deck",
-     "props": {}, "data": {"noun": "tool box", "items": ["data_shard", "stim", "ammo_10mm:12"]}},
-    {"kind": "loot", "id": "drowned_locker", "at": (214.8, 66), "facing_deg": 270, "props": {},
+     "props": {"model": "tool_box"}, "data": {"noun": "tool box", "items": ["data_shard", "stim", "ammo_10mm:12"]}},
+    {"kind": "loot", "id": "drowned_locker", "at": (214.8, 66), "facing_deg": 270, "props": {"model": "locker"},
      "data": {"noun": "locker", "items": ["whisper", "ammo_10mm:10"], "lock": _lock(1)}},
-    {"kind": "loot", "id": "offering_box", "at": (95.5, 136.6), "facing_deg": 180, "props": {},
+    {"kind": "loot", "id": "offering_box", "at": (95.5, 136.6), "facing_deg": 180, "props": {"model": "offering_box"},
      "data": {"noun": "offering box", "items": ["credit_chip:5"], "owner": "residents", "lock": _lock(2)}},
-    {"kind": "loot", "id": "kessler_safe", "at": (146.8, 60.2), "facing_deg": 270, "props": {},
+    {"kind": "loot", "id": "kessler_safe", "at": (146.8, 60.2), "facing_deg": 270, "props": {"model": "safe"},
      "data": {"noun": "safe", "items": ["credit_chip:16", "data_shard"], "owner": "residents",
               "lock": _lock(3, kind="safe")}},
-    {"kind": "loot", "id": "pharmacy_shelf", "at": (170.5, 60.2), "facing_deg": 0, "props": {},
+    {"kind": "loot", "id": "pharmacy_shelf", "at": (170.5, 60.2), "facing_deg": 0, "props": {"model": "shelf"},
      "data": {"noun": "shelf", "items": ["medkit:2", "stim:2"], "owner": "residents"}},
-    {"kind": "loot", "id": "depot_lockers", "at": (235.5, 106.2), "facing_deg": 180, "props": {},
+    {"kind": "loot", "id": "depot_lockers", "at": (235.5, 106.2), "facing_deg": 180, "props": {"model": "locker"},
      "data": {"noun": "locker", "items": ["sanitation_overalls", "sanitation_cap", "sanitation_mask"],
               "owner": "sanitation"}},
-    {"kind": "loot", "id": "anchor_store", "at": (106, 60), "facing_deg": 180, "props": {},
+    {"kind": "loot", "id": "anchor_store", "at": (106, 60), "facing_deg": 180, "props": {"model": "crate"},
      "data": {"noun": "crate", "items": ["synth_whisky:2", "noodles:2"], "owner": "residents"}},
-    {"kind": "loot", "id": "garage_toolbox", "at": (174, 114.6), "facing_deg": 180, "props": {},
+    {"kind": "loot", "id": "garage_toolbox", "at": (174, 114.6), "facing_deg": 180, "props": {"model": "tool_box"},
      "data": {"noun": "tool box", "items": ["multitool", "scrap_electronics:2"], "owner": "scrap_kings"}},
-    {"kind": "loot", "id": "stacks_crate", "at": (12, 127.5), "facing_deg": 180, "props": {},
+    {"kind": "loot", "id": "stacks_crate", "at": (12, 127.5), "facing_deg": 180, "props": {"model": "crate"},
      "data": {"noun": "crate", "items": ["lockpick:2", "noodles"]}},
-    {"kind": "loot", "id": "freight_crate", "at": (122, 149), "facing_deg": 90, "props": {},
+    {"kind": "loot", "id": "freight_crate", "at": (122, 149), "facing_deg": 90, "props": {"model": "crate"},
      "data": {"noun": "crate", "items": ["scrap_electronics:3", "ammo_darts:4"], "lock": _lock(1)}},
 ]
 

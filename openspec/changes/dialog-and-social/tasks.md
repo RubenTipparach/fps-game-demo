@@ -3,21 +3,21 @@
 ## 1. Data
 
 - [ ] 1.1 Dialog schema; `data/factions.json`; `data/barks.json`; `data/flags.json` (declared flags).
-- [ ] 1.2 Trees: Silk, Mags, Tank, Kessler, Doc Vo, Nguyen, Rivet, Mouse, Petra, Dace, Skiv, Jax, Sister Lin (hub); Lug, Old Wick, Twitch, Mother Rat (Drains); Bolt, Dutch, Crusher (Yard); civilian pools.
+- [ ] 1.2 (The hub trees and the civilian pool are done; the Drains and Yard trees come with their levels.) Trees: Silk, Mags, Tank, Kessler, Doc Vo, Nguyen, Rivet, Mouse, Petra, Dace, Skiv, Jax, Sister Lin (hub); Lug, Old Wick, Twitch, Mother Rat (Drains); Bolt, Dutch, Crusher (Yard); civilian pools.
 
 ## 2. Core
 
-- [ ] 2.1 `DialogRunner`: entry node, choice views (enabled, requirement text), pick, enter, apply.
-- [ ] 2.2 Conditions and effects as small classes registered by name (open for extension, no switch).
-- [ ] 2.3 `Reputation` with thresholds; Friendly multiplier.
-- [ ] 2.4 Seeded small talk and rumours.
+- [x] 2.1 `DialogRunner`: entry node, choice views (enabled, requirement text), pick, enter, apply.
+- [x] 2.2 Conditions and effects as small classes registered by name (open for extension, no switch).
+- [x] 2.3 `Reputation` with thresholds; Friendly multiplier.
+- [x] 2.4 Seeded small talk and rumours.
 
 ## 3. Tests
 
 - [ ] 3.1 Every tree: all links resolve, all ids exist, every node reaches an exit, every check has pass and fail.
-- [ ] 3.2 Story conditions hide; build conditions grey out with requirement text.
+- [x] 3.2 Story conditions hide; build conditions grey out with requirement text.
 - [ ] 3.3 Talking to a hostile runs the disguise judgement at talking range.
-- [ ] 3.4 Same seed, same small talk.
+- [x] 3.4 Same seed, same small talk.
 
 ## 4. Interface (after mockup approval)
 

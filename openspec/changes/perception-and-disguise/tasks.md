@@ -2,7 +2,7 @@
 
 ## 1. Data
 
-- [ ] 1.1 `data/perception.json`: cones, ranges, rates, state timers, noise radii, alarm timings.
+- [x] 1.1 `data/perception.json`: cones, ranges, rates, state timers, noise radii, alarm timings.
 - [ ] 1.2 `data/enemies.json` perception fields per archetype (I, cone, range, senses, alarm ability).
 
 ## 2. Core
@@ -18,8 +18,8 @@
 - [ ] 3.1 Detection fill and drain rates against a table of cases.
 - [ ] 3.2 State transitions and timers, including Vanish and Wary.
 - [ ] 3.3 The intelligence table: for each I, the cheapest Cover that passes, and one that fails.
-- [ ] 3.4 Unfoolable observers ignore disguises.
-- [ ] 3.5 Deception 0 disables disguises; a disguise needs the BODY piece.
+- [x] 3.4 Unfoolable observers ignore disguises.
+- [x] 3.5 Deception 0 disables disguises; a disguise needs the BODY piece.
 
 ## 4. Godot
 

@@ -8,7 +8,7 @@
     "motion": {"still": 0.6, "walking": 1.0, "sprinting": 1.5},
     "shadow_light_below": 0.25
   },
-  "law": {"warning_window_s": 60, "backup_delay_s": 60, "crime_rep_penalty": 5},
+  "law": {"warning_window_s": 60, "backup_delay_s": 60, "crime_rep_penalty": 5, "crime_rep_faction": "residents"},
   "noise_m": {
     "crouch_walk": 1, "walk": 4, "sprint": 10, "landing": 6, "wading": 8, "door": 5, "takedown": 6, "body_drop": 5,
     "lockpicking": 3, "hacking": 2, "kestrel": 20, "whisper": 5, "dart": 3, "rattler": 25, "scattergun": 30,

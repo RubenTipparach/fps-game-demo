@@ -26,6 +26,9 @@ public partial class Game : Node
     };
 
     public GameSettings Settings { get; } = new();
+
+    /// <summary>The Undercity run, if one is in progress. Only this composition root reads it; levels receive it.</summary>
+    Undercity.Client.Session _undercity;
     public int CurrentLevel { get; private set; } = -1;
     public LevelStats Stats { get; } = new();
 
@@ -42,6 +45,40 @@ public partial class Game : Node
         Input.UseAccumulatedInput = false; // every mouse event, not one per frame: precise aim
         if (!string.IsNullOrEmpty(OS.GetEnvironment("BRUSHFIRE_AUTOTEST")))
             AddChild(new AutoTest());
+        GetTree().NodeAdded += OnNodeAdded;
+    }
+
+    // ------------------------------------------------------------------ Undercity
+
+    /// <summary>
+    /// Hands the run to an Undercity level as it enters the tree, before its _Ready. A level
+    /// opened directly (F6 in the editor, or as the main scene) starts a new game.
+    /// </summary>
+    void OnNodeAdded(Node node)
+    {
+        if (node is not Undercity.Client.UndercityLevel level)
+            return;
+        _undercity ??= Undercity.Client.Session.NewGame(Undercity.Client.Session.NewSeed());
+        CurrentLevel = -1;
+        level.Begin(_undercity, TravelUndercity, LoadUndercity);
+    }
+
+    /// <summary>Changes to another Undercity level; the run has already recorded where to spawn.</summary>
+    void TravelUndercity(string levelId)
+    {
+        GetTree().Paused = false;
+        GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, Undercity.Client.Session.SceneOf(levelId));
+    }
+
+    /// <summary>Loads a save slot and goes to its level. Returns false when the slot is empty.</summary>
+    bool LoadUndercity(string slot)
+    {
+        var loaded = Undercity.Client.Session.Load(slot);
+        if (loaded == null)
+            return false;
+        _undercity = loaded;
+        TravelUndercity(loaded.State.World.CurrentLevel);
+        return true;
     }
 
     public void StartLevel(int index)

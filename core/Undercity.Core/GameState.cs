@@ -42,6 +42,13 @@ public sealed class GameState
         };
         Character.XpGained += (xp, why) => Say($"+{xp} XP  {why}");
         Quests.Updated += (q, line) => Say($"{q.Title}: {line}");
+        Inventory.Changed += () =>
+        {
+            if (Drawn is { } id && !Inventory.Pack.Has(id))
+            {
+                Holster();
+            }
+        };
     }
 
     /// <summary>The data tables.</summary>
@@ -96,6 +103,73 @@ public sealed class GameState
     /// <summary>Asks the engine to do something by name, with an argument.</summary>
     public void Host(string action, string arg = "") => HostAction?.Invoke(action, arg);
 
+    /// <summary>The weapon in the runner's hands (an item id), or null when holstered.</summary>
+    public string? Drawn { get; private set; }
+
+    /// <summary>Seconds the current weapon has been out; the disguise rule's grace period reads it.</summary>
+    public double DrawnS { get; private set; }
+
+    /// <summary>Raised when a weapon is drawn or holstered.</summary>
+    public event Action? LoadoutChanged;
+
+    /// <summary>
+    /// Uses belt slot <paramref name="slot"/> (0-9, keys 1 to 0): a weapon is drawn, or holstered
+    /// if it's already out; a consumable is used. The one belt rule, for the keys and the HUD alike.
+    /// </summary>
+    public BeltResult UseBelt(int slot)
+    {
+        if (slot < 0 || slot >= Inventory.Belt.Count || Inventory.Belt[slot] is not { } id)
+        {
+            return BeltResult.Empty;
+        }
+        var def = Data.Items.Get(id);
+        if (def.Category == Items.ItemCategory.Weapon)
+        {
+            if (Drawn == id)
+            {
+                Holster();
+                return BeltResult.Holstered;
+            }
+            Drawn = id;
+            DrawnS = 0;
+            LoadoutChanged?.Invoke();
+            return BeltResult.Drawn;
+        }
+        var stack = Inventory.Pack.Stacks.FirstOrDefault(x => x.Def.Id == id);
+        return stack is not null && Use(stack) ? BeltResult.Used : BeltResult.Refused;
+    }
+
+    /// <summary>Puts the weapon away.</summary>
+    public void Holster()
+    {
+        if (Drawn is null)
+        {
+            return;
+        }
+        Drawn = null;
+        DrawnS = 0;
+        LoadoutChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// A crime (theft, a picked lock) seen by <paramref name="witness"/>: it costs reputation with
+    /// the Sump's residents and is reported to the law. The one crime rule.
+    /// </summary>
+    public LawResponse ReportCrime(string witness)
+    {
+        var law = Data.Perception.Law;
+        Reputation.Change(law.CrimeRepFaction, -law.CrimeRepPenalty, 1.0);
+        Say($"{witness} saw that.");
+        return Law.CrimeSeen();
+    }
+
+    /// <summary>Sleeps: health back to full.</summary>
+    public void Rest()
+    {
+        Health.Set(Health.Max);
+        Say("Rested.");
+    }
+
     /// <summary>Advances time: health regeneration, heals over time, the law's clock, play time.</summary>
     public void Tick(double dt)
     {
@@ -120,6 +194,10 @@ public sealed class GameState
             }
         }
         Law.Tick(dt);
+        if (Drawn is not null)
+        {
+            DrawnS += dt;
+        }
         World.PlayTimeS += dt;
     }
 
@@ -433,6 +511,25 @@ public sealed class GameState
         s.World = save.World;
         return (s, repairs);
     }
+}
+
+/// <summary>What a belt key did.</summary>
+public enum BeltResult
+{
+    /// <summary>Nothing on that slot.</summary>
+    Empty,
+
+    /// <summary>A weapon came out.</summary>
+    Drawn,
+
+    /// <summary>The weapon went away.</summary>
+    Holstered,
+
+    /// <summary>A consumable was used.</summary>
+    Used,
+
+    /// <summary>It would do nothing (a medkit at full health, a lockpick).</summary>
+    Refused,
 }
 
 /// <summary>A saved run (user://saves/&lt;slot&gt;.json).</summary>

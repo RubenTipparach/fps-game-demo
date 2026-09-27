@@ -152,6 +152,7 @@ public sealed class GameData
                 errors.Add($"{where}: unknown faction '{id}'");
             }
         }
+        Faction(Perception.Law.CrimeRepFaction, "perception.law.crime_rep_faction");
         foreach (var s in Progression.StartKit)
         {
             Item(s.Item, "progression.start_kit");

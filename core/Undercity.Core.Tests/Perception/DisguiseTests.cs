@@ -62,6 +62,33 @@ public class DisguiseTests
         var s = InRatColours(1);
         Assert.Equal(Verdict.Blown, s.Judge(MotherRat, new Situation(30, WeaponDrawnS: 0.1)).Verdict);
     }
+
+    [Fact]
+    public void An_unfoolable_observer_ignores_any_disguise()
+    {
+        var s = InRatColours(3);
+        var dog = new Observer("drain_rats", 1, Unfoolable: true);
+        Assert.Equal(Verdict.NotDisguised, s.Judge(dog, new Situation(30)).Verdict);
+    }
+
+    [Fact]
+    public void Goggles_and_a_respirator_without_the_jacket_are_no_disguise()
+    {
+        var s = TestData.NewGame();
+        s.Inventory.Wear(TestData.Data.Items.Get("rat_goggles"));
+        s.Inventory.Wear(TestData.Data.Items.Get("rat_respirator"));
+        Assert.True(s.Inventory.DisguiseQuality == 0, "the faction comes from the body piece; the street jacket is still worn");
+        Assert.Equal(Verdict.NotDisguised, s.Judge(MotherRat, new Situation(30)).Verdict);
+    }
+
+    [Fact]
+    public void The_whole_outfit_adds_up_its_quality()
+    {
+        var s = InRatColours(1);
+        s.Inventory.Wear(TestData.Data.Items.Get("rat_goggles"));
+        s.Inventory.Wear(TestData.Data.Items.Get("rat_respirator"));
+        Assert.Equal(2 + 1 + 1, s.Inventory.DisguiseQuality);
+    }
 }
 
 public class LawWatchTests
@@ -89,5 +116,14 @@ public class LawWatchTests
     {
         var law = new LawWatch(TestData.Data.Perception.Law);
         Assert.Equal(LawResponse.Hostile, law.ShotFired());
+    }
+
+    [Fact]
+    public void A_witnessed_crime_costs_five_with_the_residents_and_is_reported()
+    {
+        var s = TestData.NewGame();
+        var before = s.Reputation.Get("residents");
+        Assert.Equal(LawResponse.Report, s.ReportCrime("Kessler"));
+        Assert.Equal(before - 5, s.Reputation.Get("residents"));
     }
 }

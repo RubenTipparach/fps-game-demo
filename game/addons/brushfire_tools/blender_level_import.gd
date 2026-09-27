@@ -6,6 +6,13 @@ extends EditorScenePostImport
 ## lights, doors...). Custom properties set on the empty in Blender arrive as glTF "extras":
 ##   ENT_light:   energy, range, color          -> a baked OmniLight3D
 ##   ENT_secret / ENT_message: size (x, y, z), text -> trigger volumes
+## Any other kind (Undercity's npc, civ, loot, poi, mission, exit_<id>...) becomes a Marker3D
+## named <kind>_<id>, with every extra copied onto it as metadata and the node in the group
+## "ent_<kind>". The kind is the "kind" extra when the empty has one, else the name's first word.
+##
+## Mesh objects may carry render settings as extras (tools/levels/city_plan.py writes them):
+##   visibility_range_end_m -> visibility_range_end; lightmap_texel_scale -> gi_lightmap_texel_scale;
+##   gi_mode, cast_shadow -> the GeometryInstance3D enums of the same name.
 
 const SCENES := {
 	"player_start": "res://scenes/props/player_start.tscn",
@@ -32,6 +39,18 @@ const SCENES := {
 }
 const TRIGGER_SCRIPT := "res://scripts/World/Trigger.cs"
 
+## Undercity entities (tools/levels/layouts/<level>_entities.py), by their "kind" extra. Loot picks
+## its scene by "model", doors and exits by "style" (see _undercity_scene).
+const UNDERCITY := {
+	"npc": "res://scenes/undercity/npc.tscn",
+	"civ": "res://scenes/undercity/npc.tscn",
+	"item": "res://scenes/undercity/world_item.tscn",
+	"terminal": "res://scenes/undercity/terminal.tscn",
+	"zone": "res://scenes/undercity/zone.tscn",
+	"trigger": "res://scenes/undercity/trigger.tscn",
+	"bed": "res://scenes/undercity/bed.tscn",
+}
+
 
 func _kind_of(node_name: String) -> String:
 	if not node_name.begins_with("ENT_"):
@@ -52,7 +71,10 @@ func _post_import(scene: Node) -> Object:
 		var kind := _kind_of(n.name)
 		var extras: Dictionary = n.get_meta("extras", {})
 		var node: Node3D = null
-		if SCENES.has(kind):
+		var undercity := _undercity_scene(extras)
+		if undercity != "":
+			node = _undercity_entity(undercity, extras)
+		elif SCENES.has(kind):
 			node = (load(SCENES[kind]) as PackedScene).instantiate()
 		elif kind == "light":
 			var l := OmniLight3D.new()
@@ -79,15 +101,75 @@ func _post_import(scene: Node) -> Object:
 			area.add_child(shape)
 			node = area
 		else:
-			push_warning("[Brushfire] unknown entity '%s' in %s" % [n.name, scene.name])
-			continue
-		node.name = n.name.trim_prefix("ENT_")
+			node = _marker(n.name, extras)
+		if not (node is Marker3D) and undercity == "":
+			node.name = n.name.trim_prefix("ENT_")
 		entities.add_child(node)
 		node.transform = _transform_in(n as Node3D, scene)
 		_own(node, scene)
 		n.get_parent().remove_child(n)
 		n.free()
+	for g in scene.find_children("*", "GeometryInstance3D", true, false):
+		_apply_render_extras(g as GeometryInstance3D)
 	return scene
+
+
+func _undercity_scene(extras: Dictionary) -> String:
+	var kind := str(extras.get("kind", ""))
+	match kind:
+		"loot":
+			return "res://scenes/undercity/loot_%s.tscn" % str(extras.get("model", "crate"))
+		"door":
+			return "res://scenes/undercity/%s.tscn" % ("barrier" if str(extras.get("style", "")) == "barrier" else "door")
+		"exit":
+			return "res://scenes/undercity/exit_%s.tscn" % str(extras.get("style", "none"))
+	return UNDERCITY.get(kind, "")
+
+
+## An Undercity entity: its scene, with every extra as metadata (the game reads "id" and the rest),
+## in the group "ent_<kind>", and its trigger box sized from a "size" extra ("w,d" metres).
+func _undercity_entity(scene_path: String, extras: Dictionary) -> Node3D:
+	var node := (load(scene_path) as PackedScene).instantiate() as Node3D
+	var kind := str(extras.get("kind", ""))
+	var id := str(extras.get("id", ""))
+	node.name = "%s_%s" % [kind, id]
+	for key in extras.keys():
+		node.set_meta(StringName(str(key)), extras[key])
+	node.add_to_group(StringName("ent_" + kind), true)
+	var shape := node.find_child("Shape", true, false) as CollisionShape3D
+	if shape != null and shape.shape is BoxShape3D and extras.has("size"):
+		var wd := str(extras["size"]).split(",")
+		var box := (shape.shape as BoxShape3D).duplicate() as BoxShape3D
+		box.size = Vector3(float(wd[0]), box.size.y, float(wd[1]))
+		shape.shape = box
+	return node
+
+
+## A kind this importer has no scene for: a marker the game (or a later mapping) resolves.
+func _marker(node_name: String, extras: Dictionary) -> Marker3D:
+	var rest := node_name.trim_prefix("ENT_")
+	var kind := str(extras.get("kind", rest.get_slice("_", 0)))
+	var id := str(extras.get("id", rest.trim_prefix(kind + "_")))
+	var m := Marker3D.new()
+	m.name = "%s_%s" % [kind, id]
+	for key in extras.keys():
+		m.set_meta(StringName(str(key)), extras[key])
+	m.set_meta(&"id", id)
+	m.set_meta(&"kind", kind)
+	m.add_to_group(StringName("ent_" + kind), true)
+	return m
+
+
+func _apply_render_extras(g: GeometryInstance3D) -> void:
+	var extras: Dictionary = g.get_meta("extras", {})
+	if extras.has("visibility_range_end_m"):
+		g.visibility_range_end = float(extras["visibility_range_end_m"])
+	if extras.has("lightmap_texel_scale"):
+		g.gi_lightmap_texel_scale = float(extras["lightmap_texel_scale"])
+	if extras.has("gi_mode"):
+		g.gi_mode = int(extras["gi_mode"]) as GeometryInstance3D.GIMode
+	if extras.has("cast_shadow"):
+		g.cast_shadow = int(extras["cast_shadow"]) as GeometryInstance3D.ShadowCastingSetting
 
 
 ## The imported scene isn't inside the tree yet, so accumulate transforms by hand.

@@ -1,0 +1,449 @@
+// The root of an Undercity level: places the player at the run's spawn, builds the services and
+// wires every node that needs them, applies the core's host actions (open, npc, drop), runs the
+// law and disguise watch, and handles travel and saves.
+//
+// It lives in the Godot layer because it is the level loader (CLAUDE.md 5.3): the rules it calls
+// are the core's; it only turns engine events into core calls and core results into nodes.
+
+#nullable enable
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Brushfire;
+using Godot;
+using Undercity.Core;
+using Undercity.Core.Perception;
+using Undercity.Core.World;
+
+namespace Undercity.Client;
+
+/// <summary>The root node of an Undercity level scene.</summary>
+public partial class UndercityLevel : Node3D, ILevelHost
+{
+    /// <summary>The level id in data/levels, such as "hub".</summary>
+    [Export] public string LevelId = "hub";
+
+    /// <summary>The player scene.</summary>
+    [Export] public PackedScene PlayerScene = GD.Load<PackedScene>("res://scenes/undercity/player.tscn");
+
+    /// <summary>The UI scene (implements <see cref="IScreens"/>).</summary>
+    [Export] public PackedScene ScreensScene = GD.Load<PackedScene>("res://ui/undercity/screens.tscn");
+
+    /// <summary>The scene for items on the floor.</summary>
+    [Export] public PackedScene WorldItemScene = GD.Load<PackedScene>("res://scenes/undercity/world_item.tscn");
+
+    /// <summary>Seconds between law and disguise checks.</summary>
+    private const double WatchIntervalS = 0.2;
+
+    /// <summary>How far a resident or trooper notices a crime, metres.</summary>
+    private const float ReportRangeM = 12f;
+
+    /// <summary>How far a trooper notices a drawn weapon, metres.</summary>
+    private const float LawSightM = 25f;
+
+    /// <summary>How far the disguise chip looks for an observer of the outfit's faction, metres.</summary>
+    private const float DisguiseChipRangeM = 25f;
+
+    private Session? _session;
+    private Action<string>? _travel;
+    private Func<string, bool>? _load;
+    private Services? _services;
+    private Node? _screensNode;
+    private PlayerController? _player;
+    private LevelDef? _def;
+    private readonly Dictionary<string, Node> _stable = new(StringComparer.Ordinal);
+    private double _watchS;
+    private bool _weaponSeenThisDraw;
+    private int _drops;
+
+    /// <summary>
+    /// Called by the composition root as the level enters the tree, before _Ready: the run, how to
+    /// change level, and how to load a save.
+    /// </summary>
+    public void Begin(Session session, Action<string> travel, Func<string, bool> load)
+    {
+        _session = session;
+        _travel = travel;
+        _load = load;
+    }
+
+    private GameState State => _session!.State;
+
+    private IScreens Screens => _services!.Screens;
+
+    // ------------------------------------------------------------------ ILevelHost
+
+    /// <inheritdoc/>
+    public string Id => LevelId;
+
+    /// <inheritdoc/>
+    public LevelDef Def => _def!;
+
+    /// <inheritdoc/>
+    public PlayerController Player => _player!;
+
+    /// <inheritdoc/>
+    public Vector3 PlayerEye => _player!.EyePosition;
+
+    private readonly Dictionary<string, double> _restricted = new(StringComparer.Ordinal);
+
+    /// <inheritdoc/>
+    public double RestrictedS => _restricted.Count == 0 ? 0 : _restricted.Values.Max();
+
+    /// <inheritdoc/>
+    public void SetRestricted(string zoneId, double seconds)
+    {
+        if (seconds <= 0)
+        {
+            _restricted.Remove(zoneId);
+        }
+        else
+        {
+            _restricted[zoneId] = seconds;
+        }
+    }
+
+    /// <summary>The run, for the AutoTest harness only (scripted captures set up state and log it).</summary>
+    public GameState? AutoTestState => _session?.State;
+
+    /// <summary>The node with a stable id, or null.</summary>
+    public Node3D? FindStable(string stableId) => _stable.TryGetValue(stableId, out var n) ? n as Node3D : null;
+
+    // ------------------------------------------------------------------ start
+
+    public override void _Ready()
+    {
+        if (_session is null)
+        {
+            GD.PushError("[Undercity] a level started without a session; is the Game autoload missing?");
+            return;
+        }
+        _def = _session.State.Data.Levels[LevelId];
+        State.World.CurrentLevel = LevelId;
+
+        _player = PlayerScene.Instantiate<PlayerController>();
+        PlaceAtSpawn(_player, State.World.Spawn);
+        AddChild(_player);
+        _player.ResetPhysicsInterpolation();
+
+        _screensNode = ScreensScene.Instantiate();
+        AddChild(_screensNode);
+        var screens = (IScreens)_screensNode;
+
+        _services = new Services(State, this, screens, _session.Saves);
+        foreach (var n in Descendants(this))
+        {
+            if (n is IStable s)
+            {
+                _stable[s.StableId] = n;
+            }
+        }
+        ((IWired)_screensNode).Wire(_services);
+        foreach (var w in Descendants(this).Where(n => !IsUnder(n, _screensNode)).OfType<IWired>())
+        {
+            w.Wire(_services);
+        }
+        GetTree().NodeAdded += OnNodeAdded;
+        State.HostAction += OnHost;
+
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+        _session.Save("auto");
+    }
+
+    public override void _ExitTree()
+    {
+        GetTree().NodeAdded -= OnNodeAdded;
+        if (_session is not null)
+        {
+            State.HostAction -= OnHost;
+        }
+    }
+
+    private void PlaceAtSpawn(Node3D body, string spawnId)
+    {
+        var marker = FindSpawn(spawnId) ?? FindSpawn("start");
+        if (marker is null)
+        {
+            GD.PushWarning($"[Undercity] no spawn '{spawnId}' or 'start' in {LevelId}");
+            return;
+        }
+        // Placed before it enters the tree, so it never touches anything at the origin.
+        body.Transform = new Transform3D(Basis.FromEuler(new Vector3(0, marker.GlobalRotation.Y, 0)),
+            marker.GlobalPosition + Vector3.Up * 0.05f);
+    }
+
+    private Node3D? FindSpawn(string id) => GetTree().GetNodesInGroup("ent_spawn").OfType<Node3D>()
+        .FirstOrDefault(n => n.HasMeta("id") && n.GetMeta("id").AsString() == id);
+
+    private void OnNodeAdded(Node node)
+    {
+        if (_services is null || _screensNode is null || IsUnder(node, _screensNode))
+        {
+            return;
+        }
+        if (node is IStable s)
+        {
+            _stable[s.StableId] = node;
+        }
+        if (node is IWired w)
+        {
+            // After the node's own _Ready, as for everything wired at load.
+            Callable.From(() =>
+            {
+                if (IsInstanceValid(node))
+                {
+                    w.Wire(_services);
+                }
+            }).CallDeferred();
+        }
+    }
+
+    private static IEnumerable<Node> Descendants(Node root)
+    {
+        foreach (var c in root.GetChildren())
+        {
+            yield return c;
+            foreach (var d in Descendants(c))
+            {
+                yield return d;
+            }
+        }
+    }
+
+    private static bool IsUnder(Node n, Node ancestor) => n == ancestor || ancestor.IsAncestorOf(n);
+
+    // ------------------------------------------------------------------ frame
+
+    public override void _Process(double delta)
+    {
+        if (_services is null || _player is null)
+        {
+            return;
+        }
+        // A screen that takes the mouse also stops the body: no walking through a conversation.
+        _player.ProcessMode = Screens.Blocking ? ProcessModeEnum.Disabled : ProcessModeEnum.Inherit;
+        State.Tick(delta);
+        _watchS -= delta;
+        if (_watchS <= 0)
+        {
+            _watchS = WatchIntervalS;
+            WatchLaw();
+            WatchDisguise();
+        }
+    }
+
+    public override void _UnhandledInput(InputEvent e)
+    {
+        if (_services is null)
+        {
+            return;
+        }
+        if (e.IsActionPressed("quicksave"))
+        {
+            _session!.Save("quick");
+            State.Say("Quicksaved.");
+        }
+        else if (e.IsActionPressed("quickload"))
+        {
+            if (!_load!("quick"))
+            {
+                State.Say("No quicksave.");
+            }
+        }
+        else if (e.IsActionPressed("pause") && !Screens.Blocking)
+        {
+            Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Captured
+                ? Input.MouseModeEnum.Visible
+                : Input.MouseModeEnum.Captured;
+        }
+        else if (e is InputEventMouseButton { Pressed: true } && !Screens.Blocking && Input.MouseMode != Input.MouseModeEnum.Captured)
+        {
+            Input.MouseMode = Input.MouseModeEnum.Captured;
+        }
+        else if (!Screens.Blocking)
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                if (e.IsActionPressed($"belt_{i + 1}"))
+                {
+                    State.UseBelt(i);
+                    _weaponSeenThisDraw = false;
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ host actions
+
+    private void OnHost(string action, string arg)
+    {
+        switch (action)
+        {
+            case "open" when _stable.TryGetValue(arg, out var n) && n is IOpenable o:
+                o.Open();
+                break;
+            case "npc":
+                var parts = arg.Split(':', 2);
+                foreach (var npc in Npcs().Where(x => x.NpcId == parts[0]))
+                {
+                    npc.React(parts.Length > 1 ? parts[1] : "");
+                }
+                break;
+            case "drop":
+                var (item, count) = GameState.ParseSpec(arg);
+                DropAtPlayer(item, count, null);
+                break;
+            default:
+                GD.PushWarning($"[Undercity] host action '{action}' ({arg}) has no handler here");
+                break;
+        }
+    }
+
+    /// <inheritdoc/>
+    public void DropAtPlayer(string itemId, int count, string? stolenFrom)
+    {
+        var node = WorldItemScene.Instantiate<WorldItem>();
+        node.SetMeta("id", $"drop_{++_drops}");
+        node.SetMeta("item", count > 1 ? $"{itemId}:{count}" : itemId);
+        if (stolenFrom is not null)
+        {
+            node.SetMeta("stolen_from", stolenFrom);
+        }
+        // The body never turns; the look yaw lives on the camera rig.
+        var forward = new Vector3(-Mathf.Sin(_player!.Yaw), 0, -Mathf.Cos(_player.Yaw));
+        node.Position = _player.GlobalPosition + forward * 0.8f + Vector3.Up * 0.05f;
+        AddChild(node);
+    }
+
+    // ------------------------------------------------------------------ travel and saves
+
+    /// <inheritdoc/>
+    public void Travel(ExitDef exit)
+    {
+        if (exit.Target == LevelId)
+        {
+            var marker = FindSpawn(exit.Spawn);
+            if (marker is not null)
+            {
+                _player!.GlobalPosition = marker.GlobalPosition + Vector3.Up * 0.05f;
+                _player.SetLook(Mathf.RadToDeg(marker.GlobalRotation.Y), 0);
+                _player.ResetPhysicsInterpolation();
+            }
+            return;
+        }
+        var entry = State.Data.LevelIndex.Find(exit.Target);
+        if (entry is not { Built: true })
+        {
+            State.Say($"{entry?.Title ?? exit.Target}: not in this build.");
+            return;
+        }
+        State.World.CurrentLevel = exit.Target;
+        State.World.Spawn = exit.Spawn;
+        _session!.Save("auto");
+        _travel!(exit.Target);
+    }
+
+    /// <summary>Saves to a slot now (the capsule bed, quicksave).</summary>
+    public void SaveTo(string slot) => _session!.Save(slot);
+
+    // ------------------------------------------------------------------ who sees the runner
+
+    /// <summary>The NPCs in this level.</summary>
+    public IEnumerable<NpcActor> Npcs() => GetTree().GetNodesInGroup("npcs").OfType<NpcActor>();
+
+    /// <summary>The nearest NPC matching <paramref name="who"/> that can see the runner within <paramref name="rangeM"/>.</summary>
+    public NpcActor? Seer(Func<NpcActor, bool> who, float rangeM)
+    {
+        NpcActor? best = null;
+        var bestD = float.MaxValue;
+        foreach (var npc in Npcs().Where(who))
+        {
+            var d = npc.GlobalPosition.DistanceTo(_player!.GlobalPosition);
+            if (d < bestD && npc.CanSee(PlayerEye, rangeM))
+            {
+                best = npc;
+                bestD = d;
+            }
+        }
+        return best;
+    }
+
+    /// <inheritdoc/>
+    public bool CrimeWitnessed(out string witness)
+    {
+        var npc = Seer(n => n.Reports && n.Alive, ReportRangeM);
+        witness = npc?.DisplayName ?? "";
+        return npc is not null;
+    }
+
+
+    private void WatchLaw()
+    {
+        if (State.Drawn is null)
+        {
+            _weaponSeenThisDraw = false;
+            return;
+        }
+        if (_weaponSeenThisDraw || State.Law.Hostile)
+        {
+            return;
+        }
+        var cop = Seer(n => n.IsLaw && n.Alive, LawSightM);
+        if (cop is null)
+        {
+            return;
+        }
+        _weaponSeenThisDraw = true;
+        switch (State.Law.WeaponSeen())
+        {
+            case LawResponse.Warn:
+                cop.Say("weapon_warning", "Put it away.");
+                Screens.ShowAlert($"{cop.DisplayName}: put it away.");
+                break;
+            case LawResponse.Hostile:
+                TurnLawHostile(cop);
+                break;
+        }
+    }
+
+    /// <summary>MerSec turns on the runner: every trooper goes hostile and the alarm sounds.</summary>
+    public void TurnLawHostile(NpcActor who)
+    {
+        who.Say("alarm", "Hostile!");
+        foreach (var npc in Npcs().Where(n => n.IsLaw && n.Alive))
+        {
+            npc.React("hostile");
+        }
+        Screens.ShowAlert("MerSec is hostile.");
+    }
+
+    private void WatchDisguise()
+    {
+        var faction = State.Inventory.OutfitFaction;
+        if (faction is null)
+        {
+            Screens.ShowDisguise(null);
+            return;
+        }
+        NpcActor? nearest = null;
+        var bestD = float.MaxValue;
+        foreach (var npc in Npcs().Where(n => n.Faction == faction && n.Alive))
+        {
+            var d = npc.GlobalPosition.DistanceTo(_player!.GlobalPosition);
+            if (d < bestD && d <= DisguiseChipRangeM)
+            {
+                nearest = npc;
+                bestD = d;
+            }
+        }
+        var name = State.Data.Factions.Factions.First(f => f.Id == faction).Name;
+        if (nearest is null)
+        {
+            var alone = State.Judge(new Observer(faction, 1), new Situation(DisguiseChipRangeM + 1));
+            Screens.ShowDisguise(new DisguiseView(name, alone, "", 0, 0));
+            return;
+        }
+        var judgement = nearest.Judge(bestD, talking: false);
+        Screens.ShowDisguise(new DisguiseView(name, judgement, nearest.DisplayName, nearest.Intelligence, bestD));
+    }
+}

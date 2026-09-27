@@ -6,4 +6,8 @@
     <LangVersion>12</LangVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Undercity's rules (CLAUDE.md 5.2). The core never references Godot. -->
+    <ProjectReference Include="..\core\Undercity.Core\Undercity.Core.csproj" />
+  </ItemGroup>
 </Project>

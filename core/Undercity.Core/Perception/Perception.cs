@@ -77,6 +77,9 @@ public sealed class LawTable
 
     /// <summary>Residents' reputation lost when a crime is seen.</summary>
     public required int CrimeRepPenalty { get; init; }
+
+    /// <summary>The faction whose reputation a witnessed crime costs (the Sump's residents).</summary>
+    public required string CrimeRepFaction { get; init; }
 }
 
 /// <summary>data/perception.json.</summary>

@@ -14,8 +14,8 @@
 
 ## 3. Content
 
-- [ ] 3.1 13 dialog trees and the civilian pool; vendor stocks.
-- [ ] 3.2 S3 Mouse's Debt and S4 Last Call quest data.
+- [x] 3.1 13 dialog trees and the civilian pool; vendor stocks (game/data/dialog, vendors.json; DataValidationTests and DialogSessionTests).
+- [x] 3.2 S3 Mouse's Debt and S4 Last Call quest data.
 - [ ] 3.3 MerSec hub rules (warning, crime, backup).
 
 ## 4. Prove it

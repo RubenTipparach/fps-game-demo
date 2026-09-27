@@ -50,6 +50,17 @@ public class DataValidationTests
     }
 
     [Fact]
+    public void Every_item_icon_is_a_drawing_on_the_design_page()
+    {
+        var page = File.ReadAllText(Path.Combine(TestData.RepoRoot, "docs", "design", "src", "body.html"));
+        foreach (var item in TestData.Data.Items.Items)
+        {
+            Assert.True(page.Contains($"<symbol id=\"i-{item.Icon}\"", StringComparison.Ordinal),
+                $"{item.Id}: icon '{item.Icon}' isn't a symbol on the design page");
+        }
+    }
+
+    [Fact]
     public void A_misspelt_key_is_an_error_naming_the_file_and_the_key()
     {
         var real = TestData.Source.Read("factions.json");

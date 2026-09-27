@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/LevelExit.cs" id="1_LevelExit"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(4.0, 3.0, 1.5)
+
+[node name="Exit" type="Node3D"]
+script = ExtResource("1_LevelExit")
+WalkIn = true
+
+[node name="Area" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Shape" type="CollisionShape3D" parent="Area"]
+position = Vector3(0.0, 1.5, 0.0)
+shape = SubResource("BoxShape3D_2")

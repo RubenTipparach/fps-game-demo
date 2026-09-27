@@ -61,6 +61,7 @@ public partial class PlayerController : CharacterBody3D, IDamageable
     public float BobWeight => _bobWeight;
     public float BobPhase => _bobPhase;
     public bool Sprinting => _sprinting;
+    public bool Crouched => _crouched;
     public Vector3 LookDirection => -Basis.FromEuler(new Vector3(_pitch, _yaw, 0)).Z;
     /// <summary>Eye position at the current physics tick (use for hitscan origin).</summary>
     public Vector3 EyePosition => GlobalPosition + Vector3.Up * _eyeHeight;
@@ -109,7 +110,7 @@ public partial class PlayerController : CharacterBody3D, IDamageable
         _camera = GetNode<Camera3D>("CameraRig/Camera3D");
         _weapons = GetNode<WeaponManager>("CameraRig/Camera3D/WeaponManager");
         _flashlight = GetNode<SpotLight3D>("CameraRig/Camera3D/Flashlight");
-        _hud = GetNode<Hud>("Hud");
+        _hud = GetNodeOrNull<Hud>("Hud"); // Undercity's player has its own HUD (ui/undercity)
 
         _rig.TopLevel = true;
         _rig.PhysicsInterpolationMode = PhysicsInterpolationModeEnum.Off;
@@ -526,7 +527,7 @@ public partial class PlayerController : CharacterBody3D, IDamageable
         if (info.Knockback != Vector3.Zero)
             AddVelocity(info.Knockback);
         AddTrauma(Mathf.Clamp(info.Amount / 60f, 0.12f, 0.6f));
-        _hud.OnDamaged(info, this);
+        _hud?.OnDamaged(info, this);
         if (Health <= 0f)
         {
             Die();
@@ -564,7 +565,7 @@ public partial class PlayerController : CharacterBody3D, IDamageable
         _weapons.Visible = false;
         _flashlight.Visible = false;
         Audio.Play2D(this, "player_death", 0f, 0f);
-        _hud.ShowCenterMessage("YOU DIED", "Press FIRE to restart");
+        _hud?.ShowCenterMessage("YOU DIED", "Press FIRE to restart");
         SetStanding(false);
     }
 

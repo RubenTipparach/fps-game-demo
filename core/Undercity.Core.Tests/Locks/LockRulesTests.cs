@@ -70,4 +70,22 @@ public class LockRulesTests
         s.OpenLock(StormDrain, "hub", "hub:storm_drain");
         Assert.True(s.Character.TotalXp == TestData.Data.Progression.Xp.LockPerTier, "a lock pays once");
     }
+
+    [Fact]
+    public void Safecracker_keeps_the_lockpick_and_halves_safe_time_again()
+    {
+        var s = TestData.NewGame();
+        s.Character.AddSkillPoints(20);
+        for (var i = 0; i < 5; i++)
+        {
+            s.Character.Raise(Skill.Lockpicking);
+        }
+        var safe = TestData.Data.Levels["hub"].Containers["hub:kessler_safe"].Lock!;
+        var plan = s.PlanLock(safe);
+        Assert.Null(plan.Consumes);
+        Assert.True(Math.Abs(plan.HoldS - 3 * 1.0 * 0.5 * 2.0 * 0.5) < 1e-9, "tier 3, Fast Picks 0.5, safe x2, Safecracker 0.5");
+        var picks = s.Inventory.Pack.Count("lockpick");
+        s.OpenLock(safe, "hub", "hub:kessler_safe");
+        Assert.Equal(picks, s.Inventory.Pack.Count("lockpick"));
+    }
 }

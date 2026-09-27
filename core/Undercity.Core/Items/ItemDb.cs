@@ -90,6 +90,9 @@ public sealed class ItemDef
     /// <summary>The stable id, snake_case.</summary>
     public required string Id { get; init; }
 
+    /// <summary>The icon: a drawing on the design page (docs/design/src/body.html, symbol "i-&lt;icon&gt;"), exported to game/ui/undercity/icons.</summary>
+    public required string Icon { get; init; }
+
     /// <summary>The display name.</summary>
     public required string Name { get; init; }
 
