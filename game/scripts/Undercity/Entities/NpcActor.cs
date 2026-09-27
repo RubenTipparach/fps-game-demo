@@ -346,7 +346,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         var session = _s.State.Talk(_tree, speaker);
         var role = _def?.Role ?? "resident";
         _talking = true;
-        _s.Screens.OpenDialog(session, new SpeakerView(DisplayName, role, judgement));
+        _s.Screens.OpenDialog(session, new SpeakerView(DisplayName, role, judgement, Intelligence));
         WaitForClose(session);
     }
 

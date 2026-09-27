@@ -28,7 +28,8 @@ public enum DeckTab
 /// <param name="Name">Their name.</param>
 /// <param name="Role">Their role or faction line, such as "MerSec sergeant".</param>
 /// <param name="Disguise">The disguise verdict at talking range, when the runner is disguised as their faction; else null.</param>
-public sealed record SpeakerView(string Name, string Role, Judgement? Disguise);
+/// <param name="Intelligence">Their intelligence, 1 to 5, which the verdict was judged against.</param>
+public sealed record SpeakerView(string Name, string Role, Judgement? Disguise, int Intelligence = 1);
 
 /// <summary>The disguise chip: the nearest observer of the runner's outfit faction.</summary>
 /// <param name="Faction">The outfit's faction name.</param>

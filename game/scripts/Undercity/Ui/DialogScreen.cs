@@ -59,8 +59,8 @@ public partial class DialogScreen : Control, IWired
         _cover.Visible = speaker.Disguise is not null;
         if (speaker.Disguise is { } j)
         {
-            // The core's own words for the verdict, such as "Cover 5 holds against I 3".
-            _cover.Text = j.Reason.ToUpperInvariant();
+            // As in the mockup: the runner's Cover against the speaker's intelligence, coloured by verdict.
+            _cover.Text = $"COVER {j.Cover} vs I {speaker.Intelligence}";
             _cover.AddThemeColorOverride("font_color", GetThemeColor(UndercityHud.VerdictStyle(j.Verdict).Role, "Palette"));
         }
         Show();
