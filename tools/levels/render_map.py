@@ -179,6 +179,102 @@ def polygons(g):
     return [p for p in getattr(g, "geoms", []) if isinstance(p, Polygon)]
 
 
+def water_geom(w):
+    return street_geom(w) if "pts" in w else Polygon(w["poly"])
+
+
+def base_geometry(m):
+    """The layout's open ground, water and named buildings as shapely geometry.
+
+    Also stores each open area's and building's shape on it as "_g" (the renderer's labels
+    read it). The Blender build (tools/levels/city_plan.py) calls this too, so the map and
+    the level are cut from the same shapes."""
+    open_geoms = []
+    for o in m.get("open", []):
+        g = street_geom(o) if "pts" in o else Polygon(o["poly"])
+        o["_g"] = g
+        open_geoms.append(g)
+    open_u = unary_union(open_geoms) if open_geoms else Polygon()
+    water_u = unary_union([water_geom(w) for w in m.get("water", []) if not w.get("lower")]) if m.get("water") else Polygon()
+    lower_u = unary_union([water_geom(w) for w in m.get("water", []) if w.get("lower")]) if m.get("water") else Polygon()
+    bld_geoms = [Polygon(b["poly"]) if "poly" in b else rect(*b["rect"]) for b in m.get("buildings", [])]
+    for b, g in zip(m.get("buildings", []), bld_geoms):
+        b["_g"] = g
+    return {"open": open_u, "water": water_u, "lower": lower_u, "buildings": bld_geoms}
+
+
+def city_blocked(m, geo):
+    """Ground that is not split into lots: open areas, water, and a 0.9 m margin round named
+    buildings and keep_clear shapes."""
+    return unary_union([geo["open"], geo["water"]] + [g.buffer(0.9, join_style=2) for g in geo["buildings"]] +
+                       [shape_geom(k).buffer(0.9, join_style=2) for k in m.get("keep_clear", [])])
+
+
+def city_lots(m, blocked):
+    """Split the solid ground between open spaces into building lots, district by district.
+
+    Yields one dict per lot, in a stable order: "poly" (the lot, already shrunk off its
+    neighbours), "district" (the layout's district dict), "shade" (map fill colour), "roof"
+    (rooftop plant: ("tank", x, y, radius) or ("box", x, y, w, h), metres) and "piece" (the
+    index of the solid piece it was cut from). One seeded RNG per piece drives every choice,
+    so the design map and the Blender build get the same lots."""
+    W, H = m["size"]
+    solid = box(0, 0, W, H).difference(blocked)
+    districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
+    for bi, piece in enumerate(polygons(solid)):
+        if piece.area < 4:
+            continue
+        cen = piece.representative_point()
+        dist = next((d for d, pg in districts if pg.contains(cen)), m["districts"][0])
+        rng = random.Random(f"{m['seed']}:{bi}:{dist['name']}")
+        amin, amax = dist["lot"]
+        for lot in subdivide(piece, rng, amin, amax, dist.get("jitter", 0)):
+            shr = lot.buffer(-rng.choice((0.3, 0.35, 0.45, 0.7)), join_style=2)
+            for lp in polygons(shr):
+                if lp.area < 3:
+                    continue
+                if lp.area > dist.get("court_min", 1e9) and rng.random() < dist.get("court_p", 0):
+                    hole = lp.buffer(-rng.uniform(3.5, 5.5), join_style=2)
+                    if not hole.is_empty and hole.area > 20:
+                        lp = lp.difference(hole)
+                shade = ROLE["lot"][rng.randrange(len(ROLE["lot"]))]
+                if dist.get("shade"):
+                    shade = dist["shade"][rng.randrange(len(dist["shade"]))]
+                # rooftop plant: AC boxes, vents, water tanks
+                roof = []
+                inner = lp.buffer(-1.3, join_style=2)
+                if not inner.is_empty and inner.area >= 6:
+                    for _ in range(rng.randint(0, dist.get("roof_n", 3))):
+                        p = random_point_in(inner, rng)
+                        if p is None:
+                            continue
+                        if rng.random() < 0.18:
+                            roof.append(("tank", p.x, p.y, rng.uniform(0.8, 1.5)))
+                        else:
+                            roof.append(("box", p.x, p.y, rng.uniform(1.0, 3.0), rng.uniform(0.8, 2.2)))
+                yield {"poly": lp, "district": dist, "shade": shade, "roof": roof, "piece": bi}
+
+
+def viaduct_pillars(e):
+    """Pillar pairs of a viaduct: every pillar_every metres along its line, starting half a
+    step in, each pair 0.3 of the deck width either side of the centreline. Returns
+    [{"x", "y", "angle_deg", "station_m", "side"}], side -1 or +1."""
+    ls = LineString(e["pts"])
+    step = e.get("pillar_every", 24)
+    out = []
+    d = step / 2
+    while d < ls.length:
+        p = ls.interpolate(d)
+        q = ls.interpolate(min(d + 0.5, ls.length))
+        ang = math.degrees(math.atan2(q.y - p.y, q.x - p.x))
+        for side, off in ((-1, -e["w"] * 0.3), (1, e["w"] * 0.3)):
+            ox = -math.sin(math.radians(ang)) * off
+            oy = math.cos(math.radians(ang)) * off
+            out.append({"x": p.x + ox, "y": p.y + oy, "angle_deg": ang, "station_m": d, "side": side})
+        d += step
+    return out
+
+
 # ---------------------------------------------------------------- drawing
 
 def defs(c):
@@ -324,45 +420,17 @@ def draw_rooms(c, b):
 
 
 def draw_city(c, m, blocked):
-    """Split the solid ground between open spaces into building lots, district by district."""
-    W, H = m["size"]
-    solid = box(0, 0, W, H).difference(blocked)
-    districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
+    """Draw the building lots (city_lots) and their rooftop plant."""
     g = ['<g data-layer="lots">']
-    for bi, piece in enumerate(polygons(solid)):
-        if piece.area < 4:
-            continue
-        cen = piece.representative_point()
-        dist = next((d for d, pg in districts if pg.contains(cen)), m["districts"][0])
-        rng = random.Random(f"{m['seed']}:{bi}:{dist['name']}")
-        amin, amax = dist["lot"]
-        for lot in subdivide(piece, rng, amin, amax, dist.get("jitter", 0)):
-            shr = lot.buffer(-rng.choice((0.3, 0.35, 0.45, 0.7)), join_style=2)
-            for lp in polygons(shr):
-                if lp.area < 3:
-                    continue
-                if lp.area > dist.get("court_min", 1e9) and rng.random() < dist.get("court_p", 0):
-                    hole = lp.buffer(-rng.uniform(3.5, 5.5), join_style=2)
-                    if not hole.is_empty and hole.area > 20:
-                        lp = lp.difference(hole)
-                shade = ROLE["lot"][rng.randrange(len(ROLE["lot"]))]
-                if dist.get("shade"):
-                    shade = dist["shade"][rng.randrange(len(dist["shade"]))]
-                g.append(f'<path class="lot" fill="{shade}" d="{c.path(lp)}"/>')
-                # rooftop plant: AC boxes, vents, water tanks
-                inner = lp.buffer(-1.3, join_style=2)
-                if inner.is_empty or inner.area < 6:
-                    continue
-                for _ in range(rng.randint(0, dist.get("roof_n", 3))):
-                    p = random_point_in(inner, rng)
-                    if p is None:
-                        continue
-                    if rng.random() < 0.18:
-                        r = rng.uniform(0.8, 1.5)
-                        g.append(f'<circle class="roofbox" cx="{c.X(p.x):.1f}" cy="{c.Y(p.y):.1f}" r="{r * c.S:.1f}"/>')
-                    else:
-                        w, h = rng.uniform(1.0, 3.0), rng.uniform(0.8, 2.2)
-                        g.append(f'<rect class="roofbox" x="{c.X(p.x - w / 2):.1f}" y="{c.Y(p.y - h / 2):.1f}" width="{w * c.S:.1f}" height="{h * c.S:.1f}"/>')
+    for lot in city_lots(m, blocked):
+        g.append(f'<path class="lot" fill="{lot["shade"]}" d="{c.path(lot["poly"])}"/>')
+        for item in lot["roof"]:
+            if item[0] == "tank":
+                _, x, y, r = item
+                g.append(f'<circle class="roofbox" cx="{c.X(x):.1f}" cy="{c.Y(y):.1f}" r="{r * c.S:.1f}"/>')
+            else:
+                _, x, y, w, h = item
+                g.append(f'<rect class="roofbox" x="{c.X(x - w / 2):.1f}" y="{c.Y(y - h / 2):.1f}" width="{w * c.S:.1f}" height="{h * c.S:.1f}"/>')
     g.append("</g>")
     c.add("\n".join(g))
 
@@ -414,16 +482,8 @@ def render(m):
     base = m.get("base", "city")
     c.add(f'<rect x="{c.X(0)}" y="{c.Y(0)}" width="{W * S}" height="{H * S}" fill="{ROLE["ground"] if base != "rock" else "url(#hatch-rock-" + m["id"] + ")"}"/>')
 
-    open_geoms = []
-    for o in m.get("open", []):
-        g = street_geom(o) if "pts" in o else Polygon(o["poly"])
-        o["_g"] = g
-        open_geoms.append(g)
-    open_u = unary_union(open_geoms) if open_geoms else Polygon()
-    def water_geom(w):
-        return street_geom(w) if "pts" in w else Polygon(w["poly"])
-    water_u = unary_union([water_geom(w) for w in m.get("water", []) if not w.get("lower")]) if m.get("water") else Polygon()
-    lower_u = unary_union([water_geom(w) for w in m.get("water", []) if w.get("lower")]) if m.get("water") else Polygon()
+    geo = base_geometry(m)
+    open_u, water_u, lower_u = geo["open"], geo["water"], geo["lower"]
 
     # ground layer
     c.add('<g data-layer="ground">')
@@ -451,14 +511,8 @@ def render(m):
             edge = edge.difference(Point(d[0], d[1]).buffer(d[2] / 2 if len(d) > 2 else 0.8, cap_style=3))
         c.add(f'<path class="wall" d="{c.path(edge)}"/>')
 
-    bld_geoms = [Polygon(b["poly"]) if "poly" in b else rect(*b["rect"]) for b in m.get("buildings", [])]
-    for b, g in zip(m.get("buildings", []), bld_geoms):
-        b["_g"] = g
-
     if base == "city":
-        blocked = unary_union([open_u, water_u] + [g.buffer(0.9, join_style=2) for g in bld_geoms] +
-                              [shape_geom(k).buffer(0.9, join_style=2) for k in m.get("keep_clear", [])])
-        draw_city(c, m, blocked)
+        draw_city(c, m, city_blocked(m, geo))
 
     c.add('<g data-layer="bridges">')
     draw_shapes(c, m.get("bridges", []), "bridge")
@@ -497,17 +551,8 @@ def render(m):
         if k == "viaduct":
             ls = LineString(e["pts"])
             c.add(f'<path class="viaduct" d="{c.path(ls.buffer(e["w"] / 2, cap_style=2, join_style=2))}"><title>{esc(e.get("name", "Viaduct"))}</title></path>')
-            step = e.get("pillar_every", 24)
-            d = step / 2
-            while d < ls.length:
-                p = ls.interpolate(d)
-                q = ls.interpolate(min(d + 0.5, ls.length))
-                ang = math.degrees(math.atan2(q.y - p.y, q.x - p.x))
-                for off in (-e["w"] * 0.3, e["w"] * 0.3):
-                    ox = -math.sin(math.radians(ang)) * off
-                    oy = math.cos(math.radians(ang)) * off
-                    c.add(f'<path class="pillar" d="{c.path(shape_geom(("orect", p.x + ox, p.y + oy, 1.6, 1.6, ang)))}"/>')
-                d += step
+            for pl in viaduct_pillars(e):
+                c.add(f'<path class="pillar" d="{c.path(shape_geom(("orect", pl["x"], pl["y"], 1.6, 1.6, pl["angle_deg"])))}"/>')
         elif k == "catwalk":
             g = Polygon(e["poly"]) if "poly" in e else street_geom(e)
             c.add(f'<path class="catwalk" d="{c.path(g)}"><title>{esc(e.get("name", "Catwalk"))}</title></path>')

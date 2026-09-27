@@ -69,5 +69,59 @@
     "normal_scale": 1.0,
     "source": "alias of crate (2 m crates)",
     "alias": "crate"
+  },
+  "asphalt": {
+    "tile_m": 4.0,
+    "normal_scale": 0.8,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "paving_wet": {
+    "tile_m": 2.0,
+    "normal_scale": 0.9,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_lit_warm": {
+    "tile_m": 1.5,
+    "normal_scale": 0.0,
+    "emission_energy": 2.2,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_lit_cool": {
+    "tile_m": 1.5,
+    "normal_scale": 0.0,
+    "emission_energy": 2.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_dark": {
+    "tile_m": 1.5,
+    "normal_scale": 0.3,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "glass": {
+    "tile_m": 2.0,
+    "normal_scale": 0.3,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "neon_pink": {
+    "tile_m": 1.0,
+    "normal_scale": 0.0,
+    "emission_energy": 6.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "neon_cyan": {
+    "tile_m": 1.0,
+    "normal_scale": 0.0,
+    "emission_energy": 6.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "water": {
+    "tile_m": 6.0,
+    "normal_scale": 0.6,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "awning": {
+    "tile_m": 1.0,
+    "normal_scale": 0.5,
+    "source": "procedural: tools/fx/generate_city_materials.py"
   }
 }

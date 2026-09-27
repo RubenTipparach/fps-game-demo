@@ -799,7 +799,14 @@ CHECKPOINT</title></path>
 <path class="floor" d="M1140.0,936.0 L1140.0,1020.0 L1080.0,1020.0 L1080.0,936.0 Z"/>
 <path class="wall" d="M1078.7,934.7 L1078.7,972.0 L1081.3,972.0 L1081.3,937.3 L1138.7,937.3 L1138.7,1018.7 L1081.3,1018.7 L1081.3,984.0 L1078.7,984.0 L1078.7,1021.3 L1141.3,1021.3 L1141.3,934.7 Z"/>
 <path class="fix-lt" d="M1128.0,948.0 L1128.0,955.2 L1092.0,955.2 L1092.0,948.0 Z"/>
-<path class="bld" d="M1380.0,804.0 L1476.0,804.0 L1476.0,876.0 L1380.0,876.0 Z"><title>PRECINCT 9</title></path>
+<path class="bld-enter" d="M1380.0,804.0 L1476.0,804.0 L1476.0,876.0 L1380.0,876.0 Z"><title>PRECINCT 9</title></path>
+<path class="floor" d="M1476.0,804.0 L1428.0,804.0 L1380.0,804.0 L1380.0,876.0 L1428.0,876.0 L1476.0,876.0 L1476.0,840.0 Z"/>
+<path class="wall" d="M1378.7,834.0 L1381.3,834.0 L1381.3,805.3 L1426.7,805.3 L1426.7,817.8 L1429.3,817.8 L1429.3,805.3 L1474.7,805.3 L1474.7,838.7 L1429.3,838.7 L1429.3,826.2 L1426.7,826.2 L1426.7,838.7 L1426.7,841.3 L1426.7,853.8 L1429.3,853.8 L1429.3,841.3 L1474.7,841.3 L1474.7,874.7 L1429.3,874.7 L1429.3,862.2 L1426.7,862.2 L1426.7,874.7 L1381.3,874.7 L1381.3,846.0 L1378.7,846.0 L1378.7,877.3 L1426.7,877.3 L1429.3,877.3 L1477.3,877.3 L1477.3,841.3 L1477.3,838.7 L1477.3,802.7 L1429.3,802.7 L1426.7,802.7 L1378.7,802.7 Z"/>
+<path class="fix-lt" d="M1416.0,816.0 L1416.0,823.2 L1392.0,823.2 L1392.0,816.0 Z"/>
+<path class="fix-cyan" d="M1473.6,810.0 L1473.6,834.0 L1465.2,834.0 L1465.2,810.0 Z"/>
+<text class="lbl-room m-lbl" x="1404.0" y="840.0" text-anchor="middle">FRONT DESK</text>
+<text class="lbl-room m-lbl" x="1452.0" y="822.0" text-anchor="middle">RECORDS</text>
+<text class="lbl-room m-lbl" x="1452.0" y="858.0" text-anchor="middle">CELLS</text>
 <path class="bld-enter" d="M252.0,702.0 L312.0,702.0 L312.0,756.0 L252.0,756.0 Z"><title></title></path>
 <path class="floor" d="M312.0,702.0 L312.0,756.0 L252.0,756.0 L252.0,702.0 Z"/>
 <path class="wall" d="M250.7,700.7 L250.7,721.8 L253.3,721.8 L253.3,703.3 L310.7,703.3 L310.7,754.7 L253.3,754.7 L253.3,730.2 L250.7,730.2 L250.7,757.3 L313.3,757.3 L313.3,700.7 Z"/>
@@ -860,7 +867,7 @@ WASH</title></path>
 </g>
 <g class="enemy" data-enemy="2"><title>MerSec trooper at the station (I2)</title><path d="M751.8,222.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
 </g>
-<g class="enemy" data-enemy="3"><title>Tank, bouncer</title><path d="M571.8,285.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
+<g class="enemy" data-enemy="3"><title>Tank, bouncer</title><path d="M618.6,366.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
 </g>
 </g>
 <g data-layer="routes">
@@ -918,7 +925,7 @@ WASH</title></path>
 <text class="lbl-bld m-lbl" x="588.0" y="825.0" text-anchor="middle" transform="rotate(0 588.0 825.0)">TSANG SHRINE</text>
 <text class="lbl-bld m-lbl" x="1179.0" y="978.0" text-anchor="middle" transform="rotate(-90 1179.0 984.0)">MERSEC</text>
 <text class="lbl-bld m-lbl" x="1179.0" y="990.0" text-anchor="middle" transform="rotate(-90 1179.0 984.0)">CHECKPOINT</text>
-<text class="lbl-bld m-lbl" x="1428.0" y="840.0" text-anchor="middle" transform="rotate(0 1428.0 840.0)">PRECINCT 9</text>
+<text class="lbl-bld m-lbl" x="1428.0" y="787.2" text-anchor="middle" transform="rotate(0 1428.0 787.2)">PRECINCT 9</text>
 <text class="lbl-bld m-lbl" x="120.0" y="342.0" text-anchor="middle" transform="rotate(0 120.0 348.0)">BUBBLE</text>
 <text class="lbl-bld m-lbl" x="120.0" y="354.0" text-anchor="middle" transform="rotate(0 120.0 348.0)">WASH</text>
 <text class="lbl-bld m-lbl" x="1422.0" y="276.0" text-anchor="middle" transform="rotate(-90 1422.0 276.0)">MV ANSELM</text>
@@ -940,7 +947,7 @@ WASH</title></path>
 <g class="poi" data-poi="hub-6"><title>6. Harbor Fish Hall: night market; black-market stalls</title><circle cx="1056.0" cy="636.0" r="8" fill="#5fd38a"/><text class="num m-lbl" x="1056.0" y="636.5">6</text></g>
 <g class="poi" data-poi="hub-7"><title>7. Oracle kiosk: data broker; buys data shards</title><circle cx="900.0" cy="636.0" r="8" fill="#5fd38a"/><text class="num m-lbl" x="900.0" y="636.5">7</text></g>
 <g class="poi" data-poi="hub-8"><title>8. Silk, the fixer: back room of the Anchor; gives M1 and M2</title><circle cx="672.0" cy="345.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="672.0" y="345.5">8</text></g>
-<g class="poi" data-poi="hub-9"><title>9. Tank, the bouncer: lets you into the back room; Persuasion 2</title><circle cx="552.0" cy="285.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="552.0" y="285.5">9</text></g>
+<g class="poi" data-poi="hub-9"><title>9. Tank, the bouncer: guards the back room; Persuasion 2 or 50 cr</title><circle cx="622.8" cy="366.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="622.8" y="366.5">9</text></g>
 <g class="poi" data-poi="hub-10"><title>10. Petra: sanitation worker; her brother is a hostage</title><circle cx="1398.0" cy="681.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="1398.0" y="681.5">10</text></g>
 <g class="poi" data-poi="hub-11"><title>11. Officer Dace: runs the checkpoint; bribable</title><circle cx="1038.0" cy="966.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="1038.0" y="966.5">11</text></g>
 <g class="poi" data-poi="hub-12"><title>12. Mouse: street kid; vents, rooftops, gossip</title><circle cx="282.0" cy="741.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="282.0" y="741.5">12</text></g>
@@ -1018,7 +1025,7 @@ WASH</title></path>
 <rect x="24" y="448" width="488" height="1" fill="#1f2933"/>
 <text class="lg-h m-lbl" x="24" y="462" fill="#4aa8ff">CONTACTS</text>
 <g class="poi lg" data-poi-ref="hub-8"><circle cx="32" cy="470" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="470.5">8</text><text class="lg-t m-lbl" x="45" y="474">Silk, the fixer<tspan class="lg-n" dx="8">back room of the Anchor; gives M1 and M2</tspan></text></g>
-<g class="poi lg" data-poi-ref="hub-9"><circle cx="32" cy="486" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="486.5">9</text><text class="lg-t m-lbl" x="45" y="490">Tank, the bouncer<tspan class="lg-n" dx="8">lets you into the back room; Persuasion 2</tspan></text></g>
+<g class="poi lg" data-poi-ref="hub-9"><circle cx="32" cy="486" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="486.5">9</text><text class="lg-t m-lbl" x="45" y="490">Tank, the bouncer<tspan class="lg-n" dx="8">guards the back room; Persuasion 2 or 50 cr</tspan></text></g>
 <g class="poi lg" data-poi-ref="hub-10"><circle cx="32" cy="502" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="502.5">10</text><text class="lg-t m-lbl" x="45" y="506">Petra<tspan class="lg-n" dx="8">sanitation worker; her brother is a hostage</tspan></text></g>
 <g class="poi lg" data-poi-ref="hub-11"><circle cx="32" cy="518" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="518.5">11</text><text class="lg-t m-lbl" x="45" y="522">Officer Dace<tspan class="lg-n" dx="8">runs the checkpoint; bribable</tspan></text></g>
 <g class="poi lg" data-poi-ref="hub-12"><circle cx="32" cy="534" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="534.5">12</text><text class="lg-t m-lbl" x="45" y="538">Mouse<tspan class="lg-n" dx="8">street kid; vents, rooftops, gossip</tspan></text></g>

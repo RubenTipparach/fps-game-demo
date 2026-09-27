@@ -128,12 +128,18 @@ def write_material(mat_dir, name, spec, has_emission):
 
 
 def main():
-    raw, game = sys.argv[1], sys.argv[2]
+    process(sys.argv[1], sys.argv[2], set(sys.argv[3:]))
+
+
+def process(raw, game, only=()):
+    """Convert the maps in `raw` (<name>_albedo/_normal/_orm/_emission.png) for every material in
+    materials.json (or just `only`). tools/fx/generate_city_materials.py calls this too, so
+    procedural materials get the same textures, import presets and emission rules."""
     manifest = json.load(open(os.path.join(game, "materials", "materials.json")))
     tex_dir = os.path.join(game, "textures")
     mat_dir = os.path.join(game, "materials")
     os.makedirs(tex_dir, exist_ok=True)
-    only = set(sys.argv[3:])
+    only = set(only)
     for name, spec in manifest.items():
         if name.startswith("_") or "alias" in spec or (only and name not in only):
             continue
