@@ -40,5 +40,6 @@ Two surfaces must never share a plane while overlapping and facing the same way.
 - **Rebuild and bake** with the `BRUSHFIRE_BATCH=... godot --editor --path game` command in README.md. It needs Xvfb (`DISPLAY=:99`) and Vulkan (lavapipe), and takes about 15 minutes per level.
   - Don't regenerate level files or run `dotnet build` while a bake is running: the editor reloads them mid-bake.
   - Commit the `.lmbake`, `.exr` and scene files a bake produces.
+- **Emissive materials must use `emission_operator = 1` (Multiply).** Godot's default Add makes every texel glow when the emission colour is white; that's how the lava once rendered solid white. `tools/material_maker/postprocess.py` writes this for you.
 - **Godot won't overwrite existing `save_to_file` meshes** (`models/doorway/leaf_*.res`) on reimport. Delete them before reimporting a changed `door_leaves.glb`.
 - **Check changes before a bake.** Build with `dotnet build` in `game/`. Use `BRUSHFIRE_AUTOTEST=script.json` for scripted playtests and screenshots.
