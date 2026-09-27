@@ -50,7 +50,7 @@ public partial class MainMenu : Control
             b.Alignment = HorizontalAlignment.Left;
             first ??= b;
             card.AddChild(b);
-            var desc = UiTheme.MakeLabel($"Made with {info.Tool}  —  {info.Description}", 20, UiTheme.TextDim);
+            var desc = UiTheme.MakeLabel($"Made with {info.Tool}. {info.Description}", 20, UiTheme.TextDim);
             desc.AutowrapMode = TextServer.AutowrapMode.WordSmart;
             desc.CustomMinimumSize = new Vector2(640, 0);
             card.AddChild(desc);

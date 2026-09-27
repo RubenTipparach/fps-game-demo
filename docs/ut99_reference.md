@@ -74,7 +74,7 @@ Source keys: **T** ut99.org Top10 thread (t=163), **B** ut99.org "Best maps" (t=
 |54|DM-Viridian|Akuma|DM|Tech circuit|Pillared hub, jump pad|A|
 |55|DM-Closer|Talisman|DM|Industrial|Pipes, vents and ducts wrap the arena|T|
 |56|DM-Gen][|Inoxx|DM|Skaarj generator|Walkable reactor with a deadly beam|T CB|
-|57|DM-Chronos|AcidPablo|DM|Burnt factory|Avoids the room–corridor–room pattern|CB|
+|57|DM-Chronos|AcidPablo|DM|Burnt factory|Avoids the room-corridor-room pattern|CB|
 |58|DOM-Condemned|Dave Ewing|DOM|City slums|Alleys, garage, rooftop|W|
 |59|DOM-Cryptic|Talisman|DOM|Ancient castle|Semicircular rooms|W|
 |60|DOM-Sesmar|XceptOne|DOM|Egyptian|Underground hall of pillars|W|
@@ -132,9 +132,9 @@ Items marked *(rule of thumb)* are our own inference rather than a quoted source
 
 ### (a) Architectural vocabulary
 
-- **Trim everywhere.** A separate, plain, contrasting trim texture at floor–wall joints, along ramp
+- **Trim everywhere.** A separate, plain, contrasting trim texture at floor-wall joints, along ramp
   and walkway edges and on stair nosings (UnrealWiki). The stock sets (UTtech1/2, Skaarj, SkyCity)
-  each ship matching door, trim, pillar and floor textures. *(rule of thumb)* 16–32 UU baseboard,
+  each ship matching door, trim, pillar and floor textures. *(rule of thumb)* 16-32 UU baseboard,
   a band at the ceiling, a middle band in rooms taller than 256 UU.
 - **Pillars.** Square or 8-sided shafts with a wider base and top. Industrial: boxed girders with
   hazard-striped bases. Castle: chamfered stone. Egyptian: dense "halls of pillars" (Sesmar).
@@ -153,19 +153,19 @@ Items marked *(rule of thumb)* are our own inference rather than a quoted source
   team-coloured brushed metal, all bordered with trim.
 - **Pipes and grates.** Oversized overhead pipes (Synapse); pipes, vents and ducts wrapping the
   room (Closer); masked grates.
-- **Bevels.** Low-poly 45° chamfers; 8–16-sided cylinders; curved corridors made of visible
+- **Bevels.** Low-poly 45° chamfers; 8-16-sided cylinders; curved corridors made of visible
   segments (Zeto, Command); lifts in wall slots (Agio); deliberate damage (cracked pipes, missing
   panes, stray blocks).
 
 ### (b) Theme palettes
 
-- **Liandri industrial** – UTtech1–3, Metalmys, Mine, Lian-X, Factory, Indus1–5. Rust brown,
+- **Liandri industrial**: UTtech1-3, Metalmys, Mine, Lian-X, Factory, Indus1-5. Rust brown,
   gunmetal, hazard yellow/black, molten orange, teal or green slime.
-- **Gothic castle** – ShaneChurch, UT, castle1, NaliCast, SkyCity, Crypt/UTcrypt. Grey and brown
+- **Gothic castle**: ShaneChurch, UT, castle1, NaliCast, SkyCity, Crypt/UTcrypt. Grey and brown
   stone, warm torch orange, purple or blue moonlight, jewel-tone glass.
-- **Nali / Egyptian temple** – Ancient, Egypt, EgyptPan, GenEarth/GenTerra, PhraelFx. Sandstone
+- **Nali / Egyptian temple**: Ancient, Egypt, EgyptPan, GenEarth/GenTerra, PhraelFx. Sandstone
   and ochre, turquoise water, hot sunlight.
-- **Space / tech** – PlayrShp, Coret_FX, Starship, Skaarj, Queen, XbpFX/SpaceFX. Steel, cyan and
+- **Space / tech**: PlayrShp, Coret_FX, Starship, Skaarj, Queen, XbpFX/SpaceFX. Steel, cyan and
   blue light, black starfields, red alarm accents.
 
 ### (c) Lighting
@@ -180,18 +180,18 @@ Items marked *(rule of thumb)* are our own inference rather than a quoted source
   architecture speak".
 - **Effects:** flicker for broken fixtures, pulse for machinery, strobe for alarms. Lava and
   screens are unlit/self-lit. Volumetric lights for haze and light shafts.
-- **Skies:** every exterior has a skybox – Earth (Face), purple night (Gothic), storm
+- **Skies:** every exterior has a skybox: Earth (Face), purple night (Gothic), storm
   (Barricade), city skyline (Morpheus, Tempest).
 
 ### (d) Layout and gameplay
 
 - **Scale.** 1 UU ≈ 1.9 cm (52.5 UU = 1 m, 16 UU = 1 ft). Player 78 × 34 UU. Ceilings 128 UU
-  recommended (83 minimum). Halls ≥ 48 UU wide. Jumps ≈ 64–72 UU up, ≈ 344 UU across. Doors
-  128 UU. *(rule of thumb)* corridors 128–256 UU wide, main rooms 512–1024 UU, atriums
-  1024–2048 UU with tiers ≈ 256 UU apart. CliffyB: Turbine too tight, Deck16 too big, FWTBT just
+  recommended (83 minimum). Halls ≥ 48 UU wide. Jumps ≈ 64-72 UU up, ≈ 344 UU across. Doors
+  128 UU. *(rule of thumb)* corridors 128-256 UU wide, main rooms 512-1024 UU, atriums
+  1024-2048 UU with tiers ≈ 256 UU apart. CliffyB: Turbine too tight, Deck16 too big, FWTBT just
   right.
 - **Verticality.** Two or three tiers; ledges overlooking a central hub or courtyard.
-- **Flow.** Avoid room–corridor–room. Loops, spirals, criss-crossing paths (Nitro, Pah, Chronos).
+- **Flow.** Avoid room-corridor-room. Loops, spirals, criss-crossing paths (Nitro, Pah, Chronos).
   A landmark in almost every room.
 - **Movement.** Lifts and jump pads, each lift with its own sound; teleporters used sparingly.
 - **Items.** Every weapon at least once, one of each armour type (Epic's rule). Power-ups where
@@ -201,9 +201,9 @@ Items marked *(rule of thumb)* are our own inference rather than a quoted source
 
 ### (e) Checklist: what makes a room read as UT99
 
-1. Every floor–wall edge, ramp lip and stair nosing has a contrasting trim strip.
+1. Every floor-wall edge, ramp lip and stair nosing has a contrasting trim strip.
 2. Every doorway has a thick framed jamb and a lintel, inset from the wall.
-3. Pillars always have a base and a capital – never a bare prism.
+3. Pillars always have a base and a capital, never a bare prism.
 4. Light fixtures are recessed or bracketed, with a corona, and cast a coloured pool of light.
 5. One warm key colour, one cool fill colour, at most one saturated accent per room.
 6. At least one opening onto a dramatic skybox, or a view down into a hazard.
@@ -240,7 +240,7 @@ toolchains rather than by hand. The numbers below refer to the checklist in sect
 
 Scale: 1 m = 52.5 UU. The player is 1.8 m tall (UT's 78 UU is about 1.49 m; Brushfire uses a
 Quake-style taller player). Doorways are 3.2 m (≈ 168 UU) and corridors 4 m (≈ 210 UU, within
-the 128–256 UU corridor guideline). Main rooms are 12–32 m (630–1680 UU).
+the 128-256 UU corridor guideline). Main rooms are 12-32 m (630-1680 UU).
 
 ## Sources
 

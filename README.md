@@ -1,5 +1,14 @@
 # Brushfire
 
+> **Undercity is next.** Brushfire is becoming the tech base for *Undercity*, an immersive sim
+> set in the underbelly of a cyberpunk city. It is designed, not built yet:
+> - the requirements are in [`openspec/changes/`](openspec/changes/);
+> - the design page is [`docs/design/`](docs/design/), with Deus Ex-style maps generated from
+>   [`tools/levels/layouts/`](tools/levels/layouts/);
+> - the rules for working in this repository are in [CLAUDE.md](CLAUDE.md).
+>
+> The three levels below stay as reference maps.
+
 An old-school first-person shooter in **Godot 4.7 (.NET / C#)**, built the way Quake 2 and
 Unreal-era levels were: brushes, a "compile" step, and fully baked lighting. It has three
 levels, each built in a different tool:
