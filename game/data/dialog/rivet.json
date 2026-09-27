@@ -1,0 +1,58 @@
+// Rivet, scavenger and fence (hub POI 13). Runs the Fish Hall's black market, which buys stolen
+// goods, and sells his own Drain Rats jacket: 60 cr, or 40 with [Persuasion 1].
+{
+  "id": "rivet", "name": "Rivet", "vendor": "fish_hall",
+  "starts": [{"node": "stall"}],
+  "nodes": {
+    "stall": {
+      "say": ["Everything's for sale. Everything's second hand. Some of it's third."],
+      "choices": [
+        {"text": "What have you got?", "next": "stock"},
+        {"text": "That Drain Rats jacket.", "if": [{"not_flag": "rivet_jacket_sold"}], "next": "jacket"},
+        {"text": "I've got goods. Don't ask where from.", "next": "fence"},
+        {"text": "Later.", "exit": true}
+      ]
+    },
+    "stock": {
+      "say": ["Quiet things, mostly."],
+      "choices": [
+        {"text": "Knockout gas grenade.", "if": [{"can_afford": "gas_grenade"}], "do": [{"buy": "gas_grenade"}], "next": "stock"},
+        {"text": "Noise maker.", "if": [{"can_afford": "noise_maker"}], "do": [{"buy": "noise_maker"}], "next": "stock"},
+        {"text": "Lockpick.", "if": [{"can_afford": "lockpick"}], "do": [{"buy": "lockpick"}], "next": "stock"},
+        {"text": "Soft-soled boots.", "if": [{"can_afford": "soft_soles"}], "do": [{"buy": "soft_soles"}], "next": "stock"},
+        {"text": "Something else.", "next": "stall"}
+      ]
+    },
+    "jacket": {
+      "say": ["Pulled it off a Rat who didn't need it any more. Sixty. It'll get you a second look down there, not a third."],
+      "choices": [
+        {"text": "Sixty. Done.", "if": [{"credits": 60}],
+         "do": [{"credits": -60}, {"give": "rat_jacket"}, {"flag": "rivet_jacket_sold"}], "next": "stall"},
+        {"text": "Sixty for a dead man's coat? It still smells of him. Forty.",
+         "check": {"skill": "persuasion", "dc": 1}, "pass": "forty"},
+        {"text": "Not today.", "next": "stall"}
+      ]
+    },
+    "forty": {
+      "say": ["...Forty. And you never tell anybody I folded."],
+      "choices": [
+        {"text": "Forty.", "if": [{"credits": 40}],
+         "do": [{"credits": -40}, {"give": "rat_jacket"}, {"flag": "rivet_jacket_sold"}], "next": "stall"},
+        {"text": "Not today.", "next": "stall"}
+      ]
+    },
+    "fence": {
+      "say": ["Hot goods pay cold. Clean goods pay better. Show me."],
+      "choices": [
+        {"text": "Scrap electronics.", "if": [{"item": "scrap_electronics"}], "do": [{"sell": "scrap_electronics"}], "next": "fence"},
+        {"text": "Data shards.", "if": [{"item": "data_shard"}], "do": [{"sell": "data_shard"}], "next": "fence"},
+        {"text": "Synth-whisky.", "if": [{"item": "synth_whisky"}], "do": [{"sell": "synth_whisky"}], "next": "fence"},
+        {"text": "Medkits.", "if": [{"item": "medkit"}], "do": [{"sell": "medkit"}], "next": "fence"},
+        {"text": "Stims.", "if": [{"item": "stim"}], "do": [{"sell": "stim"}], "next": "fence"},
+        {"text": "Silver Lighter.", "if": [{"item": "silver_lighter"}], "do": [{"sell": "silver_lighter"}], "next": "fence"},
+        {"text": "That's all.", "next": "stall"}
+      ]
+    }
+  },
+  "barks": {"greeting": ["Looking or buying?", "Mind the fish."]}
+}

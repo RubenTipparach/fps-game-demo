@@ -118,6 +118,16 @@ small talk and one rumour. Three MerSec troopers: two patrol and one guards the 
 | Stealth | Precinct 9; the roof run; getting past the checkpoint camera |
 | Firearms and Melee | none: the hub is the safe place, and using them there costs you |
 
+### 8. Sectors (owner C2, 2026-09-27)
+
+"Recommended, we should sectorize these for rendering efficiency as well."
+- **One glb and one lightmap per district,** plus `streets` and `skyway`. Bake one district
+  first and time it.
+- **Chunks for culling.** Geometry inside a sector is split into chunks of about 40 x 40 m, so
+  Godot can frustum-cull them.
+- **Visibility ranges.** Interiors are drawn within about 45 m and small props within about
+  70 m.
+
 ## Risks / Trade-offs
 
 - **Size.** 240 x 170 m of dense facades is the biggest level the pipeline has baked. The bake

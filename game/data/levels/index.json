@@ -1,0 +1,8 @@
+// Every level of the campaign. Built levels have a scene and a level data file; the rest are later slices.
+{
+  "levels": [
+    {"id": "hub", "title": "Low Harbor", "built": true, "scene": "res://levels/undercity/hub/hub.tscn"},
+    {"id": "drains", "title": "The Drains", "built": false},
+    {"id": "yard", "title": "Scrap King's Yard", "built": false}
+  ]
+}

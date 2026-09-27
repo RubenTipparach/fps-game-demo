@@ -1,0 +1,15 @@
+// Factions and stances (openspec/changes/dialog-and-social, design section 6).
+{
+  "hated_at_most": -50,
+  "disliked_at_most": -10,
+  "liked_at_least": 25,
+  "trusted_at_least": 60,
+  "price_mult": {"hated": 1.2, "disliked": 1.1, "liked": 0.9, "trusted": 0.9},
+  "factions": [
+    {"id": "residents", "name": "Sump residents", "start_rep": 10},
+    {"id": "drain_rats", "name": "Drain Rats", "start_rep": -20},
+    {"id": "scrap_kings", "name": "Scrap Kings", "start_rep": -10},
+    {"id": "mersec", "name": "MerSec", "start_rep": 0},
+    {"id": "sanitation", "name": "City Sanitation", "start_rep": 5}
+  ]
+}

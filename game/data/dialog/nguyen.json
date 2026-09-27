@@ -1,0 +1,26 @@
+// Nguyen, noodle vendor (hub POI 4). Feeds the Sump; customers learn the storm drain gate code.
+{
+  "id": "nguyen", "name": "Nguyen", "vendor": "nguyen",
+  "starts": [{"node": "counter"}],
+  "nodes": {
+    "counter": {
+      "say": ["Broth's hot. Sit."],
+      "choices": [
+        {"text": "A bowl of noodles.", "if": [{"can_afford": "noodles"}], "do": [{"buy": "noodles"}, {"flag": "ate_at_nguyen"}], "next": "counter"},
+        {"text": "The storm drain gate in the Pit. You know the code?",
+         "if": [{"not_flag": "ate_at_nguyen"}, {"not_flag": "code_storm_drain"}], "next": "customers"},
+        {"text": "About that storm drain code.",
+         "if": [{"flag": "ate_at_nguyen"}, {"not_flag": "code_storm_drain"}], "next": "code"},
+        {"text": "Where do I find Silk?", "if": [{"quest": "t0_arrival"}, {"not_objective": "t0_arrival/meet_silk"}], "next": "silk"},
+        {"text": "Heard anything?", "next": "rumour"},
+        {"text": "Thanks.", "exit": true}
+      ]
+    },
+    "customers": {"say": ["Customers get conversation. You're not a customer yet."], "next": "counter"},
+    "code": {"say": ["Four-one-one-seven. My cousin chalked it on the wall of the Pit. Don't tell sanitation it was me."],
+             "do": [{"flag": "code_storm_drain"}, {"say": "Learned the storm drain gate code."}], "next": "counter"},
+    "silk": {"say": ["The Rusty Anchor, on Lantern Row. The back room. Tank's the wall in front of it."], "next": "counter"},
+    "rumour": {"say": ["{rumour}"], "next": "counter"}
+  },
+  "barks": {"greeting": ["Sit, sit.", "Broth's hot."]}
+}

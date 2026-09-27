@@ -1,0 +1,37 @@
+// Petra, sanitation worker (hub POI 10). Her brother is a hostage: she gives the sewer service key
+// and overalls for M1, and S2 The Ledger after it.
+{
+  "id": "petra", "name": "Petra",
+  "starts": [{"node": "desk"}],
+  "nodes": {
+    "desk": {
+      "say": ["Depot's closed to the public."],
+      "choices": [
+        {"text": "Something wrong?", "if": [{"quest": "m1_rat_trap", "state": "not_started"}], "next": "worry"},
+        {"text": "Silk sent me. I'm going after your brother.",
+         "if": [{"quest": "m1_rat_trap"}, {"not_objective": "m1_rat_trap/petra"}], "next": "brother"},
+        {"text": "Your brother's home.", "if": [{"flag": "m1_done"}, {"quest": "s2_ledger", "state": "not_started"}], "next": "ledger"},
+        {"text": "Sorry to bother you.", "exit": true}
+      ]
+    },
+    "worry": {"say": ["My brother Tomas is down in the pump station with the Drain Rats. The city says wait. I'm tired of waiting."], "next": "desk"},
+    "brother": {
+      "say": [
+        "Silk's runner. Good. Tomas went down with Ines on Tuesday to clear the intake. Only their radios came back.",
+        "Here's the service key: it opens the maintenance doors down there. And take a set of overalls. The Rats don't shoot sanitation. Usually."
+      ],
+      "do": [{"objective": "m1_rat_trap/petra"}, {"give": "sewer_service_key"}, {"give": "sanitation_overalls"},
+             {"rep": "sanitation", "delta": 10}],
+      "next": "desk"
+    },
+    "ledger": {
+      "say": [
+        "Tomas told me what he saw down there. Kings' crates going through Rat tunnels, with MerSec seals on them.",
+        "The Scrap Kings keep a ledger of who they pay. If the city saw that ledger, the checkpoint would have a new sergeant by morning."
+      ],
+      "do": [{"start_quest": "s2_ledger"}],
+      "next": "desk"
+    }
+  },
+  "barks": {"greeting": ["Depot's closed.", "Mind the hoses."]}
+}

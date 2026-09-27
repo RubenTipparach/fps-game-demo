@@ -1,0 +1,43 @@
+// Mags, the Rusty Anchor's bartender (hub POI 1). Sells drinks, trades gossip, gives S4 Last Call.
+{
+  "id": "mags", "name": "Mags", "vendor": "mags",
+  "starts": [{"node": "bar"}],
+  "nodes": {
+    "bar": {
+      "say": ["What'll it be?"],
+      "choices": [
+        {"text": "Synth-whisky.", "if": [{"can_afford": "synth_whisky"}], "do": [{"buy": "synth_whisky"}], "next": "bar"},
+        {"text": "Noodles.", "if": [{"can_afford": "noodles"}], "do": [{"buy": "noodles"}], "next": "bar"},
+        {"text": "One on the house?", "if": [{"flag": "mags_free_drinks"}], "once": true,
+         "do": [{"give": "synth_whisky"}], "next": "free"},
+        {"text": "You look like someone drowned your cat.", "if": [{"quest": "s4_last_call", "state": "not_started"}],
+         "next": "last_call"},
+        {"text": "Found your whisky. The Rats have been drinking it.",
+         "if": [{"quest": "s4_last_call"}, {"objective": "s4_last_call/find"}],
+         "do": [{"objective": "s4_last_call/tell"}, {"complete_quest": "s4_last_call"}, {"credits": 150},
+                {"flag": "mags_free_drinks"}, {"rep": "residents", "delta": 5}],
+         "next": "thanks"},
+        {"text": "Heard anything?", "next": "gossip"},
+        {"text": "I'm good.", "exit": true}
+      ]
+    },
+    "last_call": {
+      "say": [
+        "Twenty cases of real whisky, from upstairs, off a barge that came through the outfall. The barge made it. The cases went down a drain.",
+        "Now the Drain Rats are having a party I paid for. Find out where it went and I'll owe you."
+      ],
+      "do": [{"start_quest": "s4_last_call"}],
+      "next": "bar"
+    },
+    "thanks": {"say": ["Figures. You drink here free from now on. Once a night, don't push it."], "next": "bar"},
+    "free": {"say": ["Don't tell Tank."], "next": "bar"},
+    "gossip": {
+      "say": [
+        "Silk's in the back and hiring. Tank's in the way, and Tank likes money more than manners.",
+        "And the Rats come up through the outfall grate on the Cut when the tide's out. Keep your door locked."
+      ],
+      "next": "bar"
+    }
+  },
+  "barks": {"greeting": ["What'll it be?", "You drinking or loitering?"]}
+}

@@ -7,3 +7,6 @@ tools/material_maker/raw/
 __pycache__/
 *.pyc
 *.blend1
+# .NET build output
+**/bin/
+**/obj/

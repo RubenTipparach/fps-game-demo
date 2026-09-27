@@ -50,7 +50,7 @@ channels, trims, pillars with capitals. The Drains reuse it at a larger scale.
 | Get into the Drains | 100 | any entrance |
 | Find the hostages | 150 | revealed by the office terminal, the Rats' talk, or seeing the cage |
 | Free the hostages | 400 | open the cage |
-| Get them out | 300 | they follow you (walk speed); out by the stairs or the outfall |
+| Get them out | 300 | freed, they escape on their own by the route you came in (owner A1); the objective completes when they reach it |
 | Bonus: Mother Rat's safe | 150 | 400 cr, a data shard (the ransom emails), 2 EMP grenades |
 | Optional: deal with Mother Rat | 0 to 300 | talked down 300; paid 100; left alone 0; knocked out 200; killed 0 |
 | Mission bonuses | 500 / 300 / 200 | Ghost / Merciful / Smooth Operator |
@@ -130,9 +130,8 @@ That makes 11 hostiles, 2 turrets or traps, and 2 talkable Rats.
 
 ## Risks / Trade-offs
 
-- **Hostages who follow you** are an escort, which players dislike. They move at your walk
-  speed, never trigger detection, and can be told to wait. If the owner prefers, freed
-  hostages can leave on their own by the route you came in (open question in the design
-  page).
+- **Freed hostages leave on their own (owner A1, 2026-09-27).** They walk out by the route
+  you came in, so there's no escort. If the level alarm is up when they pass Rats, those Rats
+  turn on them, which keeps a loud run costly.
 - **The Twitch rule can feel unfair** if the player doesn't know it. It's barked, it's in Lug's
   dialog, and it's in Silk's briefing ("Twitch is jumpy. Don't give him a reason.").

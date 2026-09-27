@@ -1,0 +1,17 @@
+// Every hub civilian: one small-talk line and one rumour, drawn from data/npcs.json's pool with a
+// stream seeded by the civilian's stable id (dialog-and-social design section 7).
+{
+  "id": "civilian", "name": "Resident",
+  "starts": [{"node": "chat"}],
+  "nodes": {
+    "chat": {
+      "say": ["{small_talk}"],
+      "choices": [
+        {"text": "Heard anything?", "next": "rumour"},
+        {"text": "Take care.", "exit": true}
+      ]
+    },
+    "rumour": {"say": ["{rumour}"], "exit": true}
+  },
+  "barks": {"greeting": ["Evening.", "Mm.", "Watch the puddles."], "alarm": ["They're shooting!", "Run!"]}
+}

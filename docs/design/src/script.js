@@ -104,8 +104,8 @@
     { id: "firearms", n: "Firearms", p: [["Steady Hands", "spread -20 %"], ["Quick Reload", "reload -25 %"], ["Headhunter", "headshots x3.0"], ["Recoil Control", "recoil -40 %"], ["Deadeye", "still 1 s: zero spread, x1.5", ["stealth", 1]]] },
     { id: "melee", n: "Melee", p: [["Clubber", "melee +25 %"], ["Silent Takedown", "takedowns silent"], ["Quick Hands", "takedowns -50 % time"], ["Heavy Hitter", "take down heavies"], ["One-Punch", "frontal KO, I <= 3", ["stealth", 2]]] },
     { id: "stealth", n: "Stealth", p: [["Soft Steps", "footsteps -30 %"], ["Low Profile", "crouch 3.0 m/s, x0.45"], ["Shadow", "x0.5 in the dark"], ["Ghost", "silent sprint"], ["Vanish", "searches end 2x sooner"]] },
-    { id: "hacking", n: "Hacking", p: [["Script Kiddie", "tier 1 devices"], ["Operator", "tier 2, -20 % time"], ["Turret Control", "turn turrets, loop cams"], ["Root Access", "tier 3"], ["Ghost Login", "keep multitools; 6 m"]] },
-    { id: "lockpicking", n: "Lockpicking", p: [["Rake", "tier 1 locks"], ["Tension", "tier 2"], ["Fast Picks", "-50 % time"], ["Master Picks", "tier 3"], ["Safecracker", "keep picks; safes x0.5"]] },
+    { id: "hacking", n: "Hacking", p: [["Script Kiddie", "tier 1 devices"], ["Operator", "tier 2, -20 % time"], ["Root Access", "tier 3, turn turrets"], ["Loop Master", "camera loops 120 s"], ["Ghost Login", "keep multitools; 6 m"]] },
+    { id: "lockpicking", n: "Lockpicking", p: [["Rake", "tier 1 locks"], ["Tension", "tier 2"], ["Master Picks", "tier 3"], ["Fast Picks", "-50 % time"], ["Safecracker", "keep picks; safes x0.5"]] },
     { id: "deception", n: "Deception", p: [["Passing Glance", "disguises work"], ["Fast Talk", "talk down a blown cover"], ["Master of Disguise", "weapon grace 2 s", ["stealth", 2]], ["Silver Tongue", "suspicion -25 %"], ["Doppelganger", "scrutiny halved"]] },
     { id: "persuasion", n: "Persuasion", p: [["Friendly", "rumours; rep +25 %"], ["Haggler", "buy -15 %, sell +15 %"], ["Intimidate", "threats; surrenders"], ["Negotiator", "bribes -40 %"], ["Kingmaker", "turn lieutenants", ["deception", 3]]] }
   ];
@@ -154,8 +154,8 @@
       ["Cover, Rat jacket", c("deception") ? c("deception") + 2 : "no disguise"],
       ["Cover, full outfit", c("deception") ? c("deception") + 4 : "no disguise"],
       ["Fools up to (full outfit)", c("deception") ? "I " + Math.min(5, c("deception") + 4) : "nobody"],
-      ["Locks", c("lockpicking") ? "tier " + Math.min(3, [0, 1, 2, 2, 3, 3][c("lockpicking")]) : "keys only"],
-      ["Devices", c("hacking") ? "tier " + Math.min(3, [0, 1, 2, 2, 3, 3][c("hacking")]) : "none"],
+      ["Locks", c("lockpicking") ? "tier " + Math.min(3, c("lockpicking")) : "keys only"],
+      ["Devices", c("hacking") ? "tier " + Math.min(3, c("hacking")) : "none"],
       ["Dialog checks", "Dec " + c("deception") + " · Per " + c("persuasion")]
     ];
     $("#bsum").innerHTML = rows.map(function (r) { return '<div class="row"><span>' + r[0] + "</span><span>" + r[1] + "</span></div>"; }).join("");

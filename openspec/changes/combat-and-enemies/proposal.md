@@ -15,7 +15,8 @@ Combat has to be possible and costly, and non-lethal has to be a full path.
 - **Damage types.** Ballistic, blunt, shock, explosive, EMP, gas and tranq, with per-archetype
   resistances and immunities.
 - **Hit zones.** Head x2 (x3 with Headhunter), torso x1, limbs x0.7.
-- **Health.** No regeneration: medkits, stims, food and Doc Vo.
+- **Health.** Regenerates only up to 25 % (owner B1); above that, medkits, stims, food and
+  Doc Vo.
 - **Non-lethal.** Stun damage fills a stun pool equal to health. A full pool is a KO. Tranq darts
   sleep a target in 4 s (8 s if Alerted). Gas knocks out in 3 s.
 - **Takedowns.** From behind, on an Unaware or Suspicious target: non-lethal (1.5 s, noise 6 m)

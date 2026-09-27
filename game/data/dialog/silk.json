@@ -1,0 +1,80 @@
+// Silk, the fixer (hub POI 8). Gives M1 Rat Trap and M2 Chop Job, and pays for them.
+// openspec/changes/sump-market-hub, design section 2; dialog-and-social for the format.
+{
+  "id": "silk", "name": "Silk",
+  "starts": [
+    {"if": [{"not_flag": "met_silk"}], "node": "first"},
+    {"node": "desk"}
+  ],
+  "nodes": {
+    "first": {
+      "say": [
+        "So you're the one who came down the service stairs with no papers and a good pair of boots.",
+        "Silk. I find people problems, and I find problems people. You look like the second kind."
+      ],
+      "do": [{"flag": "met_silk"}, {"objective": "t0_arrival/meet_silk"}, {"complete_quest": "t0_arrival"}],
+      "next": "desk"
+    },
+    "desk": {
+      "say": ["What do you need?"],
+      "choices": [
+        {"text": "You said you had work.", "if": [{"quest": "m1_rat_trap", "state": "not_started"}], "next": "m1_offer"},
+        {"text": "Anything bigger?", "if": [{"quest": "m2_chop_job", "state": "not_started"}], "next": "m2_offer"},
+        {"text": "Your rates are an insult. Twenty-five percent more, or find another runner.",
+         "if": [{"not_flag": "silk_fee_up"}], "check": {"skill": "persuasion", "dc": 3}, "pass": "fee_up"},
+        {"text": "The sanitation crew are out.",
+         "if": [{"quest": "m1_rat_trap"}, {"objective": "m1_rat_trap/out"}, {"not_flag": "silk_fee_up"}],
+         "do": [{"complete_quest": "m1_rat_trap"}, {"credits": 800}, {"flag": "m1_done"}, {"rep": "residents", "delta": 5}],
+         "next": "m1_paid"},
+        {"text": "The sanitation crew are out.",
+         "if": [{"quest": "m1_rat_trap"}, {"objective": "m1_rat_trap/out"}, {"flag": "silk_fee_up"}],
+         "do": [{"complete_quest": "m1_rat_trap"}, {"credits": 1000}, {"flag": "m1_done"}, {"rep": "residents", "delta": 5}],
+         "next": "m1_paid"},
+        {"text": "Your nav core.",
+         "if": [{"quest": "m2_chop_job"}, {"item": "nav_core"}, {"not_flag": "silk_fee_up"}],
+         "do": [{"take": "nav_core"}, {"complete_quest": "m2_chop_job"}, {"credits": 1200}, {"flag": "m2_done"}],
+         "next": "m2_paid"},
+        {"text": "Your nav core.",
+         "if": [{"quest": "m2_chop_job"}, {"item": "nav_core"}, {"flag": "silk_fee_up"}],
+         "do": [{"take": "nav_core"}, {"complete_quest": "m2_chop_job"}, {"credits": 1500}, {"flag": "m2_done"}],
+         "next": "m2_paid"},
+        {"text": "Who's who down here?", "next": "who"},
+        {"text": "Later.", "exit": true}
+      ]
+    },
+    "m1_offer": {
+      "say": [
+        "The Drain Rats pulled two city sanitation workers out of the pump station on Tuesday. The city won't pay. Their families can't.",
+        "Their union can, a little. Eight hundred for both, breathing. The storm drain in the Pit goes down; Nguyen knows the gate code, if you eat his noodles.",
+        "Petra at the depot is one of the workers' sisters. Talk to her first. She has keys."
+      ],
+      "choices": [
+        {"text": "I'll get them out.", "do": [{"start_quest": "m1_rat_trap"}], "next": "desk"},
+        {"text": "Not yet.", "next": "desk"}
+      ]
+    },
+    "m2_offer": {
+      "say": [
+        "The Scrap Kings stripped a courier van last week. There was a prototype nav core in it that belongs to someone who pays better than they do.",
+        "It's in Crusher's office safe, in the Yard past Dace's checkpoint. Twelve hundred. Nobody needs to die for it, and I'd rather they didn't."
+      ],
+      "choices": [
+        {"text": "Consider it stolen.", "do": [{"start_quest": "m2_chop_job"}], "next": "desk"},
+        {"text": "Not yet.", "next": "desk"}
+      ]
+    },
+    "fee_up": {"say": ["...You're cheaper than a funeral and more expensive than you look. Fine. Twenty-five percent."],
+               "do": [{"flag": "silk_fee_up"}], "next": "desk"},
+    "m1_paid": {"say": ["The union sends its thanks, and I send the money. Kessler will have better stock for you now."], "next": "desk"},
+    "m2_paid": {"say": ["Clean work. The buyer will never know your name, which is the best compliment this city gives."], "next": "desk"},
+    "who": {
+      "say": [
+        "Mags runs the bar and hears everything. Kessler sells hardware. Doc Vo stitches. Nguyen feeds the Sump.",
+        "Officer Dace owns the checkpoint to the Yard and rents it out by the hour. Jax recruits for the Scrap Kings in Kiln. Skiv watches the Pit for the Rats.",
+        "And Mouse knows every roof in the Tin Stacks, if you can find the kid."
+      ],
+      "next": "desk"
+    }
+  },
+  "barks": {"greeting": ["Runner.", "Sit down, you're making Tank nervous."]}
+}

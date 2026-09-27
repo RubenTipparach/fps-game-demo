@@ -31,6 +31,14 @@ A force route SHALL also exist.
   frees the hostages with the pump room key
 - **THEN** the mission completes with no combat and the Ghost and Merciful bonuses
 
+### Requirement: Freed hostages escape on their own
+Once the cage opens, the hostages SHALL walk out by the route the player came in, with no
+escort. The "Get them out" objective SHALL complete when they reach that exit.
+
+#### Scenario: Freed through the vent
+- **WHEN** the player came in by the crawl vent and opens the cage
+- **THEN** the hostages leave through the maintenance station and up the storm drain stairs
+
 ### Requirement: No skill gate is the only way
 Every locked door, device or check in the Drains SHALL have an alternative that needs no skill.
 

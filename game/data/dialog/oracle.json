@@ -1,0 +1,17 @@
+// The Oracle, data broker (hub POI 7). Buys data shards, clean or not; sells rumours.
+{
+  "id": "oracle", "name": "The Oracle", "vendor": "oracle",
+  "starts": [{"node": "kiosk"}],
+  "nodes": {
+    "kiosk": {
+      "say": ["Data. Bought, sold, forgotten."],
+      "choices": [
+        {"text": "Data shards.", "if": [{"item": "data_shard"}], "do": [{"sell": "data_shard"}], "next": "kiosk"},
+        {"text": "What do you know?", "next": "rumour"},
+        {"text": "Nothing.", "exit": true}
+      ]
+    },
+    "rumour": {"say": ["{rumour}"], "next": "kiosk"}
+  },
+  "barks": {"greeting": ["Data.", "Bought, sold, forgotten."]}
+}

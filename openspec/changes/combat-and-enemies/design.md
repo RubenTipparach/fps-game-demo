@@ -70,7 +70,11 @@ are cheap. What makes combat "technical" is that each archetype has a known weak
 
 ### 4. Health
 
-- **Player:** max health 100 + 10 per level. No regeneration.
+- **Player:** max health 100 + 10 per level.
+- **Regeneration floor (owner B1, 2026-09-27):** "med kits, health minimal regen is 25%".
+  Health regenerates at 2 per second, starting 5 s after the last damage, but only up to 25 %
+  of maximum. Above that, only medkits, food, stims and Doc Vo heal. Numbers are in
+  `data/progression.json` (`regen_floor_pct`, `regen_rate_per_s`, `regen_delay_s`).
 - **Healing:** medkits (+40 over 1 s), stims (+25), noodles (+10), whisky (+5), and Doc Vo
   (full, 5 cr per point).
 - **Death** loads the last save (autosaves at every level transition, plus quicksave).

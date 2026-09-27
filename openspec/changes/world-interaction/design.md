@@ -8,8 +8,7 @@
 - A tool is consumed only when the action completes.
 
 **Non-Goals:**
-- Lockpicking or hacking minigames. Deus Ex used held timers; skill decides and time is the
-  cost. A minigame can come later behind the same rule.
+- Physics puzzles and object stacking beyond the slice.
 - Physics puzzles and object stacking. They come after the slice.
 
 ## Decisions
@@ -107,10 +106,45 @@ appear as the Code way on every lock that accepts them, and in the Notes tab.
 - **Returning.** A returning level applies these after it loads and before the first frame
   is shown.
 
+### 7. Minigames (owner B2, 2026-09-27: "play minigame")
+
+The skill still decides what you may attempt: a lock of tier T needs Lockpicking >= T, and a
+device of tier T needs Hacking >= T (section 2). The minigame decides how quickly and how
+quietly you get through. Every number is in `data/locks.json`.
+
+**Lockpicking: the pin stack.**
+- The lock shows a side view of its pins: 3 at tier 1, 5 at tier 2, 7 at tier 3. Each pin
+  has a shear line.
+- Hold tension and lift the pin under the pick. Release inside the shear window and it sets;
+  it clicks, and the next pin binds. Release outside the window and the pin drops (1 m noise).
+- The shear window is 12 % of the pin's travel, +4 % per rank above the tier. Fast Picks
+  slows the pins' drop by half.
+- Three drops in a row break the pick, and the lock remembers the pins still set. The pick is
+  also used up when the lock opens, except at Lockpicking 5.
+- Safes use the same stack with 1.5x the pins.
+
+**Hacking: the trace.**
+- The device shows a small node graph: entry, target, and 4 to 12 nodes between, by tier.
+  Capturing a node takes 0.6 s; the target takes 1.2 s.
+- A captured node opens its neighbours. Some nodes are firewalls: capturing one starts the
+  trace, which runs back toward your entry at one node every 2.5 s (tier 1), 2.0 s (tier 2)
+  or 1.5 s (tier 3).
+- If the trace reaches the entry, you're locked out for 30 s and the device raises the alarm if
+  it has an owner watching. Otherwise capture the target, then choose the action
+  (loop, disable, turn, open).
+- Hacking ranks above the tier add 20 % to the trace interval each. Operator (Hacking 2) makes
+  captures 20 % faster. Ghost Login (Hacking 5) hides the first firewall.
+- A multitool is used up when the hack succeeds, except at Hacking 5.
+
+**Prompts and previews** keep coming from the same rule: "Pick lock, tier 2 (5 pins)".
+
+**Until the minigame mockups are approved** (survey E1, E2), builds use the held timer from
+section 2 as a stand-in, with the same skill gates and tool costs.
+
 ## Risks / Trade-offs
 
-- **Held timers are less tactile than a minigame.** They keep the rule single and
-  deterministic, which matters more here. A minigame can wrap the same rule later without
-  changing its outcomes.
+- **Minigames add player skill to a skill system.** The rank still gates what you may attempt,
+  and it widens the windows and slows the trace, so a high rank feels easier without making
+  a low rank impossible.
 - **Fixed loot is less replayable.** It is exactly what the level design and the design map
   promise, which matters more for a hand-built slice.

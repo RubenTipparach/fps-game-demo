@@ -47,8 +47,8 @@ open levels.
 | **Firearms** | Steady Hands: spread -20 % | Quick Reload: reload time -25 % | Headhunter: headshots x3.0 (base x2.0) | Recoil Control: recoil -40 % | Deadeye*: crouched and still 1 s, next shot has zero spread and x1.5 damage |
 | **Melee** | Clubber: melee damage +25 % | Silent Takedown: takedowns make no noise (base 6 m) | Quick Hands: takedown time -50 % | Heavy Hitter: can take down heavies from behind | One-Punch*: frontal takedown on unaware or suspicious I <= 3 |
 | **Stealth** | Soft Steps: footstep radius -30 % | Low Profile: crouch speed 3.0 m/s (base 2.2), crouch visibility x0.45 (base x0.6) | Shadow: visibility x0.5 in light < 0.25 | Ghost: sprint is as quiet as a walk | Vanish: searchers lose you 2x faster once line of sight breaks |
-| **Hacking** | Script Kiddie: tier 1 devices | Operator: tier 2, hack time -20 % | Turret Control: turn turrets, loop cameras | Root Access: tier 3 | Ghost Login: multitools no longer consumed; hack from 6 m |
-| **Lockpicking** | Rake: tier 1 locks | Tension: tier 2 | Fast Picks: pick time -50 % | Master Picks: tier 3 | Safecracker: lockpicks no longer consumed; safes in half time |
+| **Hacking** | Script Kiddie: tier 1 devices | Operator: tier 2, hack time -20 % | Root Access: tier 3, turn turrets | Loop Master: camera loops last 120 s (base 60) | Ghost Login: multitools no longer consumed; hack from 6 m |
+| **Lockpicking** | Rake: tier 1 locks | Tension: tier 2 | Master Picks: tier 3 | Fast Picks: pick time -50 % | Safecracker: lockpicks no longer consumed; safes in half time |
 | **Deception** | Passing Glance: disguises work (at a glance) | Fast Talk: one chance to talk down a blown disguise | Master of Disguise*: drawn weapon tolerated 2 s; light armour never clashes | Silver Tongue: suspicion fills 25 % slower; told lies stick | Doppelganger: scrutiny range halved |
 | **Persuasion** | Friendly: rumour options; reputation gains +25 % | Haggler: buy -15 %, sell +15 % | Intimidate: threaten options; wounded enemies may surrender | Negotiator: bribes -40 %; retry a failed check once with a bribe | Kingmaker*: turn lieutenants against their bosses |
 
@@ -61,6 +61,11 @@ Perks marked * have cross-tree requirements:
 | Master of Disguise (Deception 3) | Stealth 2 | You move like one of them |
 | Kingmaker (Persuasion 5) | Deception 3 | Turning a lieutenant is a lie as much as a pitch |
 
+- **Rank N opens tier N.** Lockpicking and Hacking ranks 1 to 3 each open the next tier of
+  locks and devices, so every level can say "Lockpicking 3" for a tier 3 safe, and the lock
+  rule stays "rank >= tier". Speed and tool perks sit at ranks 4 and 5. (Corrected
+  2026-09-27: the first table put tier 3 at rank 4, which the levels and the lock rule
+  didn't match.)
 - **Deception 0 means no disguise works at all.** "You wear it like a costume." That is why
   the runner starts at Deception 1, which is the trade.
 - **Every numeric effect is a field in `skills.json`.** For example Steady Hands is

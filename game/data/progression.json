@@ -1,0 +1,20 @@
+// The XP curve, health and the new runner (openspec/changes/character-progression, combat-and-enemies).
+{
+  "xp_per_level": 500,
+  "level_cap": 20,
+  "points_per_level": 2,
+  "start_points": 4,
+  "start_ranks": {"deception": 1},
+  "base_health": 100,
+  "health_per_level": 10,
+  // Owner B1: "med kits, health minimal regen is 25%".
+  "health_regen": {"floor_pct": 25, "rate_per_s": 2, "delay_s": 5},
+  "xp": {"dialog_check_per_dc": 25, "lock_per_tier": 20, "takedown": 40, "kill": 20, "secret": 50, "clue": 25,
+         "ghost": 500, "merciful": 300, "smooth_operator": 200},
+  "start_credits": 150,
+  "start_kit": [
+    {"item": "stun_baton"}, {"item": "pistol"}, {"item": "ammo_10mm", "count": 24},
+    {"item": "lockpick", "count": 2}, {"item": "multitool"}, {"item": "medkit"}
+  ],
+  "start_worn": {"body": "street_jacket"}
+}

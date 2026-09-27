@@ -1,0 +1,26 @@
+// Tank, the Anchor's bouncer (hub POI 9). The back room: [Persuasion 2], 50 cr, or the back door.
+{
+  "id": "tank", "name": "Tank",
+  "starts": [
+    {"if": [{"flag": "tank_ok"}], "node": "ok"},
+    {"node": "door"}
+  ],
+  "nodes": {
+    "door": {
+      "say": ["Back room's private."],
+      "choices": [
+        {"text": "Silk sent for me.", "if": [{"quest": "t0_arrival"}, {"not_flag": "tank_heard_silk"}],
+         "do": [{"flag": "tank_heard_silk"}], "next": "everyone"},
+        {"text": "Silk's going to ask why her new runner is standing out here. Want to tell her, or should I?",
+         "check": {"skill": "persuasion", "dc": 2}, "pass": "let_in"},
+        {"text": "For your trouble.", "if": [{"credits": 50}], "do": [{"credits": -50}], "next": "let_in"},
+        {"text": "Never mind.", "exit": true}
+      ]
+    },
+    "everyone": {"say": ["Everybody says Silk sent them. Silk sends for people she's heard of. Have I heard of you?"], "next": "door"},
+    "let_in": {"say": ["Fine. Go on. Don't touch the whisky."],
+               "do": [{"flag": "tank_ok"}, {"open": "hub:anchor_backroom"}], "exit": true},
+    "ok": {"say": ["Go on through."], "do": [{"open": "hub:anchor_backroom"}], "exit": true}
+  },
+  "barks": {"greeting": ["Mm.", "Hands where I can see them."]}
+}

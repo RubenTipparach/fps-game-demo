@@ -1,0 +1,20 @@
+// Doc Vo, street doctor (hub POI 3). Heals at 5 cr a point; sells medkits and stims.
+{
+  "id": "doc_vo", "name": "Doc Vo", "vendor": "doc_vo",
+  "starts": [{"node": "clinic"}],
+  "nodes": {
+    "clinic": {
+      "say": ["Sit. Where does it hurt?"],
+      "choices": [
+        {"text": "Patch me up. Five a point, as far as my credits go.", "do": [{"heal_per_point_cr": 5}], "next": "patched"},
+        {"text": "Medkit.", "if": [{"can_afford": "medkit"}], "do": [{"buy": "medkit"}], "next": "clinic"},
+        {"text": "Stim.", "if": [{"can_afford": "stim"}], "do": [{"buy": "stim"}], "next": "clinic"},
+        {"text": "What's in the back?", "next": "pharmacy"},
+        {"text": "Nothing today.", "exit": true}
+      ]
+    },
+    "patched": {"say": ["Done. Stop collecting holes; I'm running out of thread."], "next": "clinic"},
+    "pharmacy": {"say": ["Pharmacy. Locked. The last man who tried the lock is in the recovery ward, and he'll be there a while."], "next": "clinic"}
+  },
+  "barks": {"greeting": ["Next.", "Sit."]}
+}

@@ -44,12 +44,17 @@ perks.
 - **WHEN** the player is behind the Unaware Hatchet with Melee 2
 - **THEN** no takedown is offered
 
-### Requirement: Health does not regenerate
-The player's health SHALL NOT regenerate over time. It SHALL be restored only by consumables
-and healers.
+### Requirement: Health regenerates only to a 25 % floor
+The player's health SHALL regenerate at 2 per second, starting 5 s after the last damage, up to
+25 % of maximum health and no further. Above 25 %, health SHALL be restored only by
+consumables and healers.
 
-#### Scenario: Waiting it out
-- **WHEN** the player at 40 health waits 60 s
+#### Scenario: Waiting it out when badly hurt
+- **WHEN** a player with 100 maximum health drops to 10 and takes no damage for 20 s
+- **THEN** health is 25
+
+#### Scenario: Waiting it out when lightly hurt
+- **WHEN** the player at 40 of 100 health waits 60 s
 - **THEN** health is still 40
 
 ### Requirement: Every archetype has counters beyond damage

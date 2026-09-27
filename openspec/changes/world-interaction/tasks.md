@@ -20,4 +20,5 @@
 - [ ] 3.1 `Interactor` with progress ring, cancel on release, damage or detection.
 - [ ] 3.2 Kit scenes: door, loot container, terminal, security camera, turret, level exit, world item.
 - [ ] 3.3 Terminal screen scene (after mockup approval).
+- [ ] 3.5 Lockpicking and hacking minigames (after mockups E1 and E2 are approved); held-timer stand-in until then.
 - [ ] 3.4 Capture: a lock opened four ways in a test room; a camera looped; a turret turned.

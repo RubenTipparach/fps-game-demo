@@ -1,0 +1,50 @@
+// Mouse, street kid (hub POI 12). Gives S3 Mouse's Debt; afterwards shows the roof run and the
+// Drains' crawl vent.
+{
+  "id": "mouse", "name": "Mouse",
+  "starts": [
+    {"if": [{"quest": "s3_mouses_debt", "state": "done"}], "node": "friend"},
+    {"node": "den"}
+  ],
+  "nodes": {
+    "den": {
+      "say": ["You lost? Nobody comes up Pit Lane on purpose."],
+      "choices": [
+        {"text": "You look like you're waiting for bad news.", "if": [{"quest": "s3_mouses_debt", "state": "not_started"}], "next": "debt"},
+        {"text": "Dace is off your back.", "if": [{"quest": "s3_mouses_debt"}, {"flag": "mouse_debt_settled"}],
+         "do": [{"objective": "s3_mouses_debt/tell"}, {"complete_quest": "s3_mouses_debt"}, {"flag": "roof_run_shown"},
+                {"flag": "knows_crawl_vent"}, {"rep": "residents", "delta": 5}],
+         "next": "thanks"},
+        {"text": "You get around?", "next": "around"},
+        {"text": "See you.", "exit": true}
+      ]
+    },
+    "debt": {
+      "say": [
+        "Officer Dace says I owe him three hundred. For protection. From him, I think.",
+        "He comes by every night now. I don't have three hundred. I don't have thirty."
+      ],
+      "do": [{"start_quest": "s3_mouses_debt"}],
+      "next": "den"
+    },
+    "thanks": {
+      "say": [
+        "For real? Okay. Okay. I owe you, and I pay my debts, unlike some people.",
+        "Fire escapes behind the laundromat go all the way to Lantern Row, roof to roof. Nobody looks up.",
+        "And the Drains: there's a vent in the pump station break room. It comes out right over the Rats' camp."
+      ],
+      "do": [{"say": "Mouse showed you the roof run and the Drains' crawl vent."}],
+      "next": "friend"
+    },
+    "friend": {
+      "say": ["Hey. Still alive?"],
+      "choices": [
+        {"text": "The roof run again?", "next": "roof"},
+        {"text": "See you.", "exit": true}
+      ]
+    },
+    "roof": {"say": ["Behind Bubble Wash, the laundromat. Climb, then keep going east."], "next": "friend"},
+    "around": {"say": ["Every roof in the Stacks. Every vent too. Nobody notices a kid."], "next": "den"}
+  },
+  "barks": {"greeting": ["Hey.", "What?"]}
+}

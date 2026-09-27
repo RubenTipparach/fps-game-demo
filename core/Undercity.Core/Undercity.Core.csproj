@@ -1,0 +1,7 @@
+<!-- Undercity.Core: every gameplay rule, with no Godot reference (CLAUDE.md 5.2). -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Undercity.Core</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

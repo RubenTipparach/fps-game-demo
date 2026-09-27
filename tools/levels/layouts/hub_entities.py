@@ -1,0 +1,236 @@
+"""Low Harbor's gameplay entities: who stands where, and every lock, container, terminal, exit,
+zone and trigger the hub places. Metres, x east, y south, as in hub.py.
+
+Single source (CLAUDE.md 7.1). The Blender build (tools/blender/build_undercity.py) places an
+`ENT_<kind>_<id>` empty for each entry, carrying `props` as extras. tools/levels/export_level_data.py
+writes each entry's `data` to game/data/levels/hub.json under the stable id `hub:<id>`, which is
+what Undercity.Core reads. The scene says where a thing is; the data says what it is.
+
+Entry keys:
+- kind: npc, civ, exit, loot, item, terminal, door, zone, trigger, spawn, bed, stash.
+- id: unique in the level; the stable id is "hub:<id>".
+- at: (x, y) in layout metres.
+- facing_deg: compass heading, 0 = north (-y), 90 = east. For an NPC, where they look; for a
+  terminal, container or exit, the side the player uses it from faces this way.
+- z: optional. Omitted means the ground or floor at that spot (the Pit's floor, a room's floor).
+  "roof" means the roof of the building under the spot; "service_deck" means the Skyway service
+  deck; a number is metres above the street.
+- props: placement extras for the scene: an NPC's id, a zone's or trigger's size.
+- data: the core's record for it (ContainerDef, DoorDef, TerminalDef, ExitDef, ZoneDef,
+  TriggerDef), in data-file form; for an item, the "item:count" spec.
+
+The design is openspec/changes/sump-market-hub (sections 2 to 7).
+"""
+
+from .hub import viaduct_y
+
+# The MerSec pair's beat (hub.py "patrols"), as the patrol prop: "x,y;x,y;...".
+_BEAT = [(40, 39), (118, 37), (120, 72), (146, 96), (156, 118), (166, 148),
+         (158, 130), (150, 112), (100, 110), (84, 96), (60, 80), (56, 44)]
+PATROL = ";".join(f"{x:g},{y:g}" for x, y in _BEAT)
+
+
+def _npc(npc_id, at, facing, **props):
+    return {"kind": "npc", "id": npc_id, "at": at, "facing_deg": facing, "props": {"npc": npc_id, **props}}
+
+
+def _lock(tier, kind="door", key=None, code_flag=None, pick=True, hack=False):
+    lock = {"tier": tier, "kind": kind, "pick": pick, "hack": hack}
+    if key:
+        lock["key"] = key
+    if code_flag:
+        lock["code_flag"] = code_flag
+    return lock
+
+
+# A lock that only a conversation opens (Tank's door, the checkpoint barrier).
+_BARRED = _lock(3, pick=False)
+
+NPCS = [
+    _npc("silk", (108.5, 51), 270),
+    _npc("tank", (97.8, 55), 270),
+    _npc("mags", (90, 51), 180),
+    _npc("kessler", (138, 55.2), 0),
+    _npc("doc_vo", (160, 49.5), 0),
+    _npc("nguyen", (106.5, 100.4), 0),
+    _npc("rivet", (177, 97.5), 90),
+    _npc("mouse", (43, 115.5), 270),
+    _npc("petra", (227, 108), 270),
+    _npc("dace", (169, 155.5), 0),
+    _npc("mersec_gate", (168, 160), 0),
+    _npc("mersec_station", (120, 31), 180),
+    _npc("mersec_patrol_a", (40, 39), 90, patrol=PATROL, patrol_start=0),
+    _npc("mersec_patrol_b", (146, 96), 135, patrol=PATROL, patrol_start=3),
+    _npc("skiv", (50, 146), 270),
+    _npc("jax", (181.5, 119.5), 270),
+    _npc("lin", (90, 141), 90),
+    _npc("oracle", (142.4, 100), 90),
+]
+
+# About 25 residents, dock workers and night-market customers (design section 2).
+_CIVS = [
+    (20, 41, 90), (70, 40.5, 270), (100, 39.5, 180), (125, 38, 0), (150, 39, 90), (180, 40, 270),
+    (119, 50, 180), (120, 65, 0),
+    (95, 80, 135), (100, 92, 45), (112, 90, 270), (125, 85, 180), (135, 95, 90), (145, 85, 225),
+    (150, 105, 315), (115, 110, 0), (100, 108, 90),
+    (83, 57, 90), (90, 64.5, 0), (75, 68, 45),
+    (170, 90, 180), (176, 103, 0),
+    (60, 97, 90), (40, 101, 270),
+    (32, 145, 45),
+    (156, 122, 200), (170, 129.5, 270),
+    (110, 142, 180),
+    (188, 80, 0), (217.5, 90, 180), (230, 90, 270),
+]
+CIVILIANS = [{"kind": "civ", "id": f"civ_{i + 1:02d}", "at": (x, y), "facing_deg": f, "props": {}}
+             for i, (x, y, f) in enumerate(_CIVS)]
+
+SPAWNS = [
+    {"kind": "spawn", "id": "start", "at": (50, 30.5), "facing_deg": 180, "props": {}},
+    {"kind": "spawn", "id": "capsule", "at": (52.2, 26.8), "facing_deg": 180, "props": {}},
+    {"kind": "spawn", "id": "storm_drain", "at": (40, 152.5), "facing_deg": 0, "props": {}},
+    {"kind": "spawn", "id": "outfall", "at": (189, 98.5), "facing_deg": 270, "props": {}},
+    {"kind": "spawn", "id": "checkpoint", "at": (170, 165), "facing_deg": 0, "props": {}},
+    {"kind": "spawn", "id": "freight_tunnel", "at": (125, 162), "facing_deg": 0, "props": {}},
+    {"kind": "spawn", "id": "lift_bottom", "at": (130, 107), "facing_deg": 90, "props": {}},
+    {"kind": "spawn", "id": "lift_top", "at": (123.5, viaduct_y(123.5) - 1.5), "facing_deg": 270,
+     "z": "service_deck", "props": {}},
+]
+
+EXITS = [
+    {"kind": "exit", "id": "storm_drain", "at": (40, 156.2), "facing_deg": 0, "props": {},
+     "data": {"label": "Go down the storm drain", "target": "drains", "spawn": "storm_drain",
+              "lock": _lock(1, code_flag="code_storm_drain")}},
+    {"kind": "exit", "id": "outfall", "at": (191.6, 98.5), "facing_deg": 270, "props": {},
+     "data": {"label": "Crawl into the outfall", "target": "drains", "spawn": "outfall", "lock": _lock(1)}},
+    {"kind": "exit", "id": "scrapyard_road", "at": (170, 168.8), "facing_deg": 0, "props": {"size": "6,1.5"},
+     "data": {"label": "Scrapyard Road", "target": "yard", "spawn": "checkpoint"}},
+    {"kind": "exit", "id": "freight_tunnel", "at": (125, 165.4), "facing_deg": 0, "props": {},
+     "data": {"label": "Into the freight tunnel", "target": "yard", "spawn": "rail_gate",
+              "lock": _lock(1, kind="device", pick=False, hack=True)}},
+    {"kind": "exit", "id": "lift_up", "at": (128.6, 107), "facing_deg": 90, "props": {},
+     "data": {"label": "Take the service lift up", "target": "hub", "spawn": "lift_top",
+              "lock": _lock(1, kind="device", pick=False, hack=True)}},
+    {"kind": "exit", "id": "lift_down", "at": (125.5, viaduct_y(125.5) - 1.5), "facing_deg": 270,
+     "z": "service_deck", "props": {},
+     "data": {"label": "Take the service lift down", "target": "hub", "spawn": "lift_bottom"}},
+]
+
+DOORS = [
+    {"kind": "door", "id": "anchor_backroom", "at": (100, 53), "facing_deg": 270, "props": {"width": 1.2},
+     "data": {"lock": _BARRED, "owner": "residents"}},
+    {"kind": "door", "id": "anchor_back_door", "at": (112, 60), "facing_deg": 90, "props": {"width": 1.2},
+     "data": {"lock": _lock(1), "owner": "residents"}},
+    {"kind": "door", "id": "kessler_office", "at": (144, 56), "facing_deg": 0, "props": {"width": 1.2},
+     "data": {"lock": _lock(2), "owner": "residents"}},
+    {"kind": "door", "id": "clinic_pharmacy", "at": (168, 54), "facing_deg": 0, "props": {"width": 1.2},
+     "data": {"lock": _lock(1, hack=True), "owner": "residents"}},
+    {"kind": "door", "id": "records_door", "at": (232, 131), "facing_deg": 270, "props": {"width": 1.2},
+     "data": {"lock": _lock(2, hack=True), "owner": "mersec"}},
+    {"kind": "door", "id": "checkpoint_barrier", "at": (169.5, 157.8), "facing_deg": 0,
+     "props": {"width": 9, "style": "barrier"}, "data": {"lock": _BARRED, "owner": "mersec"}},
+]
+
+LOOT = [
+    {"kind": "loot", "id": "rooftop_stash", "at": (62, 18), "facing_deg": 180, "z": "roof", "props": {},
+     "data": {"noun": "stash", "items": ["neural_chip", "credit_chip:4"]}},
+    {"kind": "loot", "id": "girder_cache", "at": (64, viaduct_y(64) - 2), "facing_deg": 90, "z": "service_deck",
+     "props": {}, "data": {"noun": "tool box", "items": ["data_shard", "stim", "ammo_10mm:12"]}},
+    {"kind": "loot", "id": "drowned_locker", "at": (214.8, 66), "facing_deg": 270, "props": {},
+     "data": {"noun": "locker", "items": ["whisper", "ammo_10mm:10"], "lock": _lock(1)}},
+    {"kind": "loot", "id": "offering_box", "at": (95.5, 136.6), "facing_deg": 180, "props": {},
+     "data": {"noun": "offering box", "items": ["credit_chip:5"], "owner": "residents", "lock": _lock(2)}},
+    {"kind": "loot", "id": "kessler_safe", "at": (146.8, 60.2), "facing_deg": 270, "props": {},
+     "data": {"noun": "safe", "items": ["credit_chip:16", "data_shard"], "owner": "residents",
+              "lock": _lock(3, kind="safe")}},
+    {"kind": "loot", "id": "pharmacy_shelf", "at": (170.5, 60.2), "facing_deg": 0, "props": {},
+     "data": {"noun": "shelf", "items": ["medkit:2", "stim:2"], "owner": "residents"}},
+    {"kind": "loot", "id": "depot_lockers", "at": (235.5, 106.2), "facing_deg": 180, "props": {},
+     "data": {"noun": "locker", "items": ["sanitation_overalls", "sanitation_cap", "sanitation_mask"],
+              "owner": "sanitation"}},
+    {"kind": "loot", "id": "anchor_store", "at": (106, 60), "facing_deg": 180, "props": {},
+     "data": {"noun": "crate", "items": ["synth_whisky:2", "noodles:2"], "owner": "residents"}},
+    {"kind": "loot", "id": "garage_toolbox", "at": (174, 114.6), "facing_deg": 180, "props": {},
+     "data": {"noun": "tool box", "items": ["multitool", "scrap_electronics:2"], "owner": "scrap_kings"}},
+    {"kind": "loot", "id": "stacks_crate", "at": (12, 127.5), "facing_deg": 180, "props": {},
+     "data": {"noun": "crate", "items": ["lockpick:2", "noodles"]}},
+    {"kind": "loot", "id": "freight_crate", "at": (122, 149), "facing_deg": 90, "props": {},
+     "data": {"noun": "crate", "items": ["scrap_electronics:3", "ammo_darts:4"], "lock": _lock(1)}},
+]
+
+ITEMS = [
+    {"kind": "item", "id": "pit_ammo", "at": (28, 152), "facing_deg": 0, "props": {}, "data": "ammo_10mm:12"},
+    {"kind": "item", "id": "gutter_chip", "at": (6, 130.5), "facing_deg": 0, "props": {}, "data": "credit_chip"},
+    {"kind": "item", "id": "ferry_scrap", "at": (229, 50), "facing_deg": 0, "props": {}, "data": "scrap_electronics:2"},
+    {"kind": "item", "id": "yard_stim", "at": (117, 149), "facing_deg": 0, "props": {}, "data": "stim"},
+    {"kind": "item", "id": "roof_noise", "at": (22, 88), "facing_deg": 0, "z": "roof", "props": {}, "data": "noise_maker:2"},
+]
+
+TERMINALS = [
+    {"kind": "terminal", "id": "capsule_terminal", "at": (52.2, 25.4), "facing_deg": 180, "props": {},
+     "data": {"title": "GOLDEN CARP: CAPSULE 12", "pages": [
+         {"from": "Silk", "subject": "Welcome to the Sump",
+          "body": "You made it down. Good. I have work, and it pays. The Rusty Anchor, on Lantern Row: "
+                  "back room. Tank watches the door; tell him Silk sent for you, or don't, and see how "
+                  "far that gets you.\n\nBuy what you need first. Kessler has hardware. Doc Vo patches holes."},
+         {"from": "Golden Carp management", "subject": "House rules",
+          "body": "Capsule 12 is yours while the rent clears. The locker is yours. The corridor is not. "
+                  "No cooking. No weapons drawn in the lobby. MerSec does not come in here, and neither "
+                  "do their problems."}],
+              "on_read": [{"start_quest": "t0_arrival"}]}},
+    {"kind": "terminal", "id": "kessler_terminal", "at": (141.2, 57.5), "facing_deg": 180, "props": {},
+     "data": {"title": "KESSLER'S PAWN: OFFICE", "owner": "residents", "lock": _lock(1, kind="device", pick=False, hack=True),
+              "pages": [
+                  {"from": "Kessler", "subject": "Safe",
+                   "body": "Moved the float to the office safe. If anybody's lifting the till again, it isn't "
+                           "getting past a tier three. Remind me to stop telling Mags things."},
+                  {"from": "Jax", "subject": "Re: the pistol order",
+                   "body": "Crusher wants twelve. Put them on the account. He'll pay when the nav core sells."}]}},
+    {"kind": "terminal", "id": "depot_terminal", "at": (227, 117.2), "facing_deg": 0, "props": {},
+     "data": {"title": "CITY SANITATION: DEPOT 4", "owner": "sanitation", "pages": [
+         {"from": "Depot manager", "subject": "Missing crew",
+          "body": "Two of ours went into the pump station on Tuesday and didn't come back up. The Rats are "
+                  "asking for money. The city is asking for patience. Service key's with Petra; nobody "
+                  "else goes down."},
+         {"from": "Maintenance", "subject": "Crawl vent",
+          "body": "Break room vent in the pump station is loose again. Somebody keeps using it as a door."}],
+              "on_read": [{"flag": "knows_crawl_vent"}]}},
+    {"kind": "terminal", "id": "precinct_records", "at": (238.1, 131), "facing_deg": 270, "props": {},
+     "data": {"title": "MERSEC PRECINCT 9: RECORDS", "owner": "mersec",
+              "lock": _lock(2, kind="device", pick=False, hack=True), "pages": [
+                  {"from": "Sgt. Dace", "subject": "Checkpoint ledger (private)",
+                   "body": "Scrap Kings, weekly: 400. Kings, crates waved through: 12. Street debts "
+                           "outstanding: Mouse (Tin Stacks), 300. Note to self: purge before audit."},
+                  {"from": "Precinct 9 duty desk", "subject": "Standing orders",
+                   "body": "Weapons drawn on Lantern Row or the market: one warning. Shots fired: "
+                           "respond with force. Checkpoint traffic is at the sergeant's discretion."}],
+              "on_read": [{"flag": "dace_evidence"}, {"objective": "s3_mouses_debt/evidence"}]}},
+]
+
+ZONES = [
+    {"kind": "zone", "id": "checkpoint", "at": (179, 157), "facing_deg": 0, "props": {"size": "14,18"},
+     "data": {"faction": "mersec", "name": "MerSec checkpoint", "allow": [{"flag": "dace_waves"}]}},
+    {"kind": "zone", "id": "depot", "at": (231.5, 113), "facing_deg": 0, "props": {"size": "17,18"},
+     "data": {"faction": "sanitation", "name": "the depot"}},
+    {"kind": "zone", "id": "precinct", "at": (231, 134), "facing_deg": 0, "props": {"size": "18,16"},
+     "data": {"faction": "mersec", "name": "Precinct 9"}},
+    {"kind": "zone", "id": "station_gates", "at": (123, 9), "facing_deg": 0, "props": {"size": "34,10"},
+     "data": {"faction": "mersec", "name": "the station gates"}},
+]
+
+TRIGGERS = [
+    {"kind": "trigger", "id": "station_sealed", "at": (120, 16), "facing_deg": 0, "props": {"size": "12,3"},
+     "data": {"once": False, "do": [{"say": "The gates are sealed. The board says the line reopens soon."}]}},
+    {"kind": "trigger", "id": "found_roof_run", "at": (34, 98), "facing_deg": 0, "z": "roof", "props": {"size": "4,4"},
+     "data": {"do": [{"say": "The roof run: fire escapes all the way to Lantern Row."},
+                     {"xp": 50, "source": "hub:found_roof_run"}]}},
+    {"kind": "trigger", "id": "found_girder_cache", "at": (66, viaduct_y(66) - 2), "facing_deg": 0,
+     "z": "service_deck", "props": {"size": "4,3"},
+     "data": {"do": [{"xp": 50, "source": "hub:found_girder_cache"}]}},
+]
+
+FURNITURE = [
+    {"kind": "bed", "id": "capsule_12", "at": (52.2, 23.2), "facing_deg": 180, "props": {}},
+    {"kind": "stash", "id": "capsule_locker", "at": (47, 29.8), "facing_deg": 180, "props": {}},
+]
+
+ENTITIES = NPCS + CIVILIANS + SPAWNS + EXITS + DOORS + LOOT + ITEMS + TERMINALS + ZONES + TRIGGERS + FURNITURE
