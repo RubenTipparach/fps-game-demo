@@ -193,6 +193,18 @@ public partial class AutoTest : Node
             p.ResetPhysicsInterpolation();
             await Frames(3);
         }
+        if (step.TryGetValue("probe", out var probeId))
+        {
+            foreach (var n in level.Npcs().Where(n => n.NpcId == probeId.AsString()))
+            {
+                var model = n.GetNodeOrNull<Node3D>("Model");
+                var p = PlayerController.Instance;
+                GD.Print($"[AutoTest] probe {n.StableId}: rot {n.RotationDegrees} global {n.GlobalRotationDegrees} " +
+                         $"fwd {-n.GlobalBasis.Z} det {n.GlobalBasis.Determinant():0.00} parent {n.GetParent().Name} " +
+                         $"parent_det {(n.GetParent() as Node3D)?.GlobalBasis.Determinant():0.00} model_fwd {(model != null ? model.GlobalBasis.Z : Vector3.Zero)} " +
+                         $"to_player {(p.GlobalPosition - n.GlobalPosition).Normalized()}");
+            }
+        }
         if (step.TryGetValue("talk", out var npcId))
         {
             var npc = level.Npcs().FirstOrDefault(n => n.NpcId == npcId.AsString());

@@ -285,23 +285,31 @@ public sealed class GameState
         return Math.Max(0, line.Count - World.SoldCount(vendorId, itemId));
     }
 
-    /// <summary>Buys one item. Returns false, changing nothing, when it's out of stock, too dear, or won't fit.</summary>
-    public bool Buy(string vendorId, string itemId)
+    /// <summary>
+    /// Buys <paramref name="count"/> of an item (a box of rounds is 12), whole or not at all: it
+    /// returns false, changing nothing, when the vendor has fewer, the runner can't pay for all of
+    /// them, or they don't all fit (CLAUDE.md 5.6).
+    /// </summary>
+    public bool Buy(string vendorId, string itemId, int count = 1)
     {
         var price = BuyPrice(vendorId, itemId);
         var def = Data.Items.Get(itemId);
-        if (InStock(vendorId, itemId) < 1 || Inventory.Credits < price)
+        if (count < 1 || InStock(vendorId, itemId) < count || Inventory.Credits < price * count)
         {
             return false;
         }
-        if (!def.CreditsOnPickup && Inventory.Pack.RoomFor(def, 1) < 1)
+        if (!def.CreditsOnPickup && Inventory.Pack.RoomFor(def, count) < count)
         {
             Say($"{def.Name}: no room");
             return false;
         }
-        Inventory.Spend(price);
-        PickUp(itemId, 1);
-        World.RecordSale(vendorId, itemId);
+        Inventory.Spend(price * count);
+        Inventory.PickUp(def, count);
+        for (var i = 0; i < count; i++)
+        {
+            World.RecordSale(vendorId, itemId);
+        }
+        Say(count > 1 ? $"{def.Name} x{count}: -{price * count} cr" : $"{def.Name}: -{price} cr");
         return true;
     }
 

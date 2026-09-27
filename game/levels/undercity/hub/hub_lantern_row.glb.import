@@ -41,6 +41,18 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "materials": {
+"ammo_olive": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/ammo_olive.tres"
+},
+"armor_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/armor_green.tres"
+},
+"armor_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/armor_red.tres"
+},
 "asphalt": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/asphalt.tres"
@@ -50,6 +62,22 @@ _subresources={
 "use_external/fallback_path": "res://materials/awning.tres",
 "use_external/path": "res://materials/awning.tres"
 },
+"barrel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/barrel.tres"
+},
+"bottle_amber": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/bottle_amber.tres"
+},
+"box_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/box_blue.tres"
+},
+"box_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/box_green.tres"
+},
 "brass": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/brass.tres"
@@ -58,6 +86,14 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/brick_wall.tres",
 "use_external/path": "res://materials/brick_wall.tres"
+},
+"canvas": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/canvas.tres"
+},
+"cardboard": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/cardboard.tres"
 },
 "ceiling_tiles": {
 "use_external/enabled": true,
@@ -97,10 +133,22 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/crate_large.tres"
 },
+"crate_stencil": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/crate_stencil.tres"
+},
 "diamond_plate": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/diamond_plate.tres",
 "use_external/path": "res://materials/diamond_plate.tres"
+},
+"door_metal": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/door_metal.tres"
+},
+"exit_glow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/exit_glow.tres"
 },
 "floor_tiles": {
 "use_external/enabled": true,
@@ -111,6 +159,10 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/glass.tres",
 "use_external/path": "res://materials/glass.tres"
+},
+"gun_wood": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/gun_wood.tres"
 },
 "gunmetal": {
 "use_external/enabled": true,
@@ -126,6 +178,22 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/hazard_stripes.tres"
 },
+"hazard_triplanar": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/hazard_triplanar.tres"
+},
+"lacquer_black": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/lacquer_black.tres"
+},
+"lacquer_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/lacquer_red.tres"
+},
+"lamp_cage": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/lamp_cage.tres"
+},
 "lamp_glow": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/props/lamp_glow.tres",
@@ -135,9 +203,29 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/lava.tres"
 },
+"led_amber": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_amber.tres"
+},
+"led_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_red.tres"
+},
+"light_fixture": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/light_fixture.tres"
+},
 "light_panel": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/light_panel.tres"
+},
+"megahealth": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/megahealth.tres"
+},
+"mersec_label": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/mersec_label.tres"
 },
 "neon_cyan": {
 "use_external/enabled": true,
@@ -149,9 +237,29 @@ _subresources={
 "use_external/fallback_path": "res://materials/neon_pink.tres",
 "use_external/path": "res://materials/neon_pink.tres"
 },
+"paint_grimy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_grimy.tres"
+},
+"paint_navy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_navy.tres"
+},
+"paint_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_red.tres"
+},
+"paint_safe": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paint_safe.tres"
+},
 "paving_wet": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/paving_wet.tres"
+},
+"red_cross": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/red_cross.tres"
 },
 "rubber": {
 "use_external/enabled": true,
@@ -162,6 +270,10 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/rust_metal.tres",
 "use_external/path": "res://materials/rust_metal.tres"
+},
+"shell_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/shell_red.tres"
 },
 "sky_moon": {
 "use_external/enabled": true,
@@ -184,14 +296,26 @@ _subresources={
 "use_external/fallback_path": "res://materials/stone_blocks.tres",
 "use_external/path": "res://materials/stone_blocks.tres"
 },
+"stripe_yellow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/stripe_yellow.tres"
+},
 "tech_panel": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/tech_panel.tres",
 "use_external/path": "res://materials/tech_panel.tres"
 },
+"terminal_screen": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/terminal_screen.tres"
+},
 "water": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/water.tres"
+},
+"white_plastic": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/white_plastic.tres"
 },
 "window_dark": {
 "use_external/enabled": true,

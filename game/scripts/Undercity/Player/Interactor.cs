@@ -12,8 +12,8 @@ namespace Undercity.Client;
 /// <summary>The player's use key.</summary>
 public partial class Interactor : Node, IWired
 {
-    /// <summary>How far the player can reach, metres.</summary>
-    [Export] public float ReachM = 2.6f;
+    /// <summary>How far the player can reach, metres: across a 2 m bar to the bartender (hub layout, the Rusty Anchor).</summary>
+    [Export] public float ReachM = 3.4f;
 
     private Services? _s;
     private Brushfire.PlayerController? _player;

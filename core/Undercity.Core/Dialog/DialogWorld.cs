@@ -154,8 +154,9 @@ public sealed class DialogWorld : IDialogWorld
         new(e => e.FailQuest is not null, (e, w, _, _) => w._s.Quests.Fail(e.FailQuest!)),
         new(e => e.Buy is not null, (e, w, t, _) =>
         {
-            for (var i = 0; t.Vendor is not null && i < e.Count && w._s.Buy(t.Vendor, e.Buy!); i++)
+            if (t.Vendor is not null)
             {
+                w._s.Buy(t.Vendor, e.Buy!, e.Count);
             }
         }),
         new(e => e.Sell is not null, (e, w, t, _) =>

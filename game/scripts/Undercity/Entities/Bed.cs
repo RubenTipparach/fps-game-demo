@@ -8,9 +8,12 @@ using Godot;
 namespace Undercity.Client;
 
 /// <summary>A bed the runner can sleep in.</summary>
-public partial class Bed : Node3D, IWired, IInteractable
+public partial class Bed : Node3D, IWired, IInteractable, IStable
 {
     private Services? _s;
+
+    /// <inheritdoc/>
+    public string StableId => Entity.StableIdOf(this);
 
     /// <inheritdoc/>
     public void Wire(Services services) => _s = services;

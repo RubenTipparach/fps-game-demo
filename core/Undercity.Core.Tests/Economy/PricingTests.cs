@@ -62,4 +62,27 @@ public class PricingTests
         s.World.SetFlag("m1_done");
         Assert.Equal(1, s.InStock("kessler", "whisper"));
     }
+
+    [Fact]
+    public void A_box_is_bought_whole_with_one_line_in_the_feed()
+    {
+        var s = TestData.NewGame();
+        var lines = new List<string>();
+        s.Feed += lines.Add;
+        var rounds = s.Inventory.Pack.Count("ammo_10mm");
+        Assert.True(s.Buy("kessler", "ammo_10mm", 12));
+        Assert.Equal(rounds + 12, s.Inventory.Pack.Count("ammo_10mm"));
+        Assert.Equal("10mm rounds x12: -24 cr", Assert.Single(lines));
+    }
+
+    [Fact]
+    public void A_box_the_runner_cant_pay_for_in_full_changes_nothing()
+    {
+        var s = TestData.NewGame();
+        s.Inventory.Spend(s.Inventory.Credits - 20);
+        var rounds = s.Inventory.Pack.Count("ammo_10mm");
+        Assert.False(s.Buy("kessler", "ammo_10mm", 12));
+        Assert.Equal(20, s.Inventory.Credits);
+        Assert.Equal(rounds, s.Inventory.Pack.Count("ammo_10mm"));
+    }
 }
