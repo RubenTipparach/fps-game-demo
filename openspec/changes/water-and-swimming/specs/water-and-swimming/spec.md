@@ -1,14 +1,16 @@
 ## ADDED Requirements
 
-### Requirement: Water volumes come from the layout
-Every water body in a level's layout SHALL become a water volume in the built level, carrying
-the body's surface and bed heights from the layout, so the water the map draws, the water the
-level shows and the water the game simulates are one entry.
+### Requirement: Water comes from the layout
+Every water body in a level's layout SHALL be carried into the level's data
+(`data/levels/<id>.json` "water") with its polygon and its surface and bed heights, so the water
+the map draws, the water the level shows and the water the game simulates are one entry. One
+rule in `Undercity.Core` SHALL say which water a point is in and how deep a body is in it, for
+the player, ragdolls and dropped items alike.
 
 #### Scenario: The Cut
-- **WHEN** the hub is built from `tools/levels/layouts/hub.py`
-- **THEN** the level holds a water volume for the Cut with surface -2.2 m and bed -4.5 m, and
-  one for each other water body in the layout
+- **WHEN** the hub's data is exported from `tools/levels/layouts/hub.py`
+- **THEN** it holds the Cut with surface -2.2 m and bed -4.5 m, and each other water body in the
+  layout, and a point in the canal is in the Cut while a point on the quay is in no water
 
 ### Requirement: The player wades and swims
 The player SHALL wade where the water at their feet is 0.1-1.2 m deep, at 0.6 x their ground
@@ -51,13 +53,18 @@ does damage.
 - **THEN** their stamina is full again
 
 ### Requirement: Ladders and ledges lead out of the water
-A ladder SHALL be climbable at 2.4 m/s by facing it and moving forward, and SHALL put the player
-on the floor at its top. A ledge whose top is 0.2-1.0 m above the water surface, within 0.6 m in
-front of a swimming player and with room to stand, SHALL be climbable by jumping.
+A ladder SHALL be climbable at 3.0 m/s by facing it and moving forward, and SHALL put the player
+on the floor at its landing, stepping over any kerb on the way; from that floor, using it SHALL
+climb down it. A ledge whose top is 0.2-1.0 m above the water surface, within 0.6 m in front of
+a swimming player and with room to stand, SHALL be climbable by jumping.
 
 #### Scenario: Out by the ladder
 - **WHEN** the runner swims to a quay ladder in the Cut and holds forward while facing it
 - **THEN** they climb out and stand on the quay within 2 s
+
+#### Scenario: Back down
+- **WHEN** the runner stands at a quay ladder's landing, uses the ladder and holds back
+- **THEN** they climb down it and let go floating at the surface
 
 #### Scenario: Onto a boat
 - **WHEN** the runner swims up to a moored boat whose deck is 0.5 m above the surface and jumps
@@ -73,11 +80,12 @@ until the player is wading or dry.
 
 ### Requirement: Bodies float and things sink
 A ragdoll in water SHALL float, pushed up in proportion to how much of each bone is under the
-surface, with water damping; a dropped item SHALL sink to the bed and stay usable there.
+surface, with water damping, and SHALL NOT be frozen while it is in the water; a dropped item
+SHALL fall to the floor under it, sinking through water to the bed, and stay usable there.
 
 #### Scenario: A body in the Cut
 - **WHEN** an NPC dies falling into the Cut
-- **THEN** the body floats at the surface and comes to rest there
+- **THEN** the body floats at the surface and comes to rest there within 8 s
 
 #### Scenario: A dropped medkit
 - **WHEN** the runner drops a medkit while swimming

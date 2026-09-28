@@ -436,6 +436,53 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
+[node name="Air" type="PanelContainer" parent="Frame"]
+unique_name_in_owner = true
+visible = false
+clip_contents = true
+custom_minimum_size = Vector2(432, 30)
+custom_maximum_size = Vector2(432, 30)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = -40.0
+offset_right = 480.0
+offset_bottom = -10.0
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"AirPanel"
+
+[node name="AirRow" type="HBoxContainer" parent="Frame/Air"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="AirLabel" type="Label" parent="Frame/Air/AirRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_type_variation = &"AirLabel"
+text = "AIR"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="AirBar" type="ProgressBar" parent="Frame/Air/AirRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"AirBar"
+max_value = 45.0
+step = 0.0
+value = 45.0
+show_percentage = false
+
 [node name="Vitals" type="PanelContainer" parent="Frame"]
 clip_contents = true
 custom_minimum_size = Vector2(432, 150)

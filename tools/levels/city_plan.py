@@ -122,6 +122,9 @@ LIGHTS = {
 SIGN_COLOURS = [("neon_pink", "pink"), ("neon_cyan", "cyan"), ("lamp_glow", "warm_sign")]
 CORONA_EXTRAS = {"gi_mode": 0, "cast_shadow": 0, "visibility_range_end_m": 110.0}
 PROP_EXTRAS = {"visibility_range_end_m": 70.0}
+# the water's surface refracts and reflects what is around it (shaders/water.gdshader): it takes no
+# baked light and casts no shadow
+WATER_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
 # Lightmap texels: the import bakes at 0.4 m (import_presets.py); interiors ask for 0.15 m.
 EXTERIOR_TEXEL_M = 0.4
 INTERIOR_TEXEL_M = 0.15
@@ -904,7 +907,7 @@ class City:
                 P.obj("streets", "walk", name=f"streets_walk_{i}_{j}", col="col").append(
                     self.ground_prism(pg, w["bed"], QUAY_Z, {"top": "concrete", "bottom": "stone_blocks",
                                                              "side": "stone_blocks"}, flip=True, side_top=side))
-                P.obj("streets", "water", name=f"streets_water_{i}_{j}").append(
+                P.obj("streets", "water", name=f"streets_water_{i}_{j}", extras=WATER_EXTRAS).append(
                     prism(pg, w["surface"], w["surface"], {"top": "water", "side": "water", "bottom": "water"}))
 
     def bridge_geometry(self):

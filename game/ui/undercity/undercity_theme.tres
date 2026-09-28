@@ -578,6 +578,40 @@ content_margin_top = 3.0
 content_margin_bottom = 3.0
 bg_color = Color(0.949, 0.702, 0.2392, 1)
 
+[sub_resource type="StyleBoxFlat" id="Sb_hud_air"]
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+bg_color = Color(0.0196, 0.0314, 0.0392, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.1216, 0.1725, 0.2157, 1)
+
+[sub_resource type="StyleBoxFlat" id="Sb_hud_air_low"]
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+bg_color = Color(0.0196, 0.0314, 0.0392, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.3569, 0.3098, 1)
+
+[sub_resource type="StyleBoxFlat" id="Sb_bar_cyan"]
+bg_color = Color(0.2078, 0.8784, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="Sb_bar_danger"]
+bg_color = Color(1, 0.3569, 0.3098, 1)
+
+[sub_resource type="FontVariation" id="Font_mono_caps"]
+base_font = ExtResource("4_mono")
+spacing_glyph = 2
+
 [resource]
 default_font = ExtResource("1_body")
 default_font_size = 18
@@ -605,6 +639,24 @@ Palette/colors/sunk = Color(0.0275, 0.0431, 0.0588, 1)
 Palette/colors/tech = Color(1, 0.6196, 0.1804, 1)
 Palette/colors/text = Color(0.851, 0.8863, 0.9137, 1)
 Palette/colors/text_dim = Color(0.5412, 0.6078, 0.6706, 1)
+AirBar/base_type = &"ProgressBar"
+AirBar/styles/background = SubResource("Sb_bar_bg")
+AirBar/styles/fill = SubResource("Sb_bar_cyan")
+AirBarLow/base_type = &"ProgressBar"
+AirBarLow/styles/background = SubResource("Sb_bar_bg")
+AirBarLow/styles/fill = SubResource("Sb_bar_danger")
+AirLabel/base_type = &"Label"
+AirLabel/colors/font_color = Color(0.2078, 0.8784, 1, 1)
+AirLabel/font_sizes/font_size = 14
+AirLabel/fonts/font = SubResource("Font_mono_caps")
+AirLabelLow/base_type = &"Label"
+AirLabelLow/colors/font_color = Color(1, 0.3569, 0.3098, 1)
+AirLabelLow/font_sizes/font_size = 14
+AirLabelLow/fonts/font = SubResource("Font_mono_caps")
+AirPanel/base_type = &"PanelContainer"
+AirPanel/styles/panel = SubResource("Sb_hud_air")
+AirPanelLow/base_type = &"PanelContainer"
+AirPanelLow/styles/panel = SubResource("Sb_hud_air_low")
 AlertLabel/base_type = &"Label"
 AlertLabel/colors/font_color = Color(1, 0.3569, 0.3098, 1)
 AlertLabel/colors/font_outline_color = Color(0, 0, 0, 0.85)

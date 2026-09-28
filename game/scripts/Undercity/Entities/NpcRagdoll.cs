@@ -25,6 +25,7 @@ public partial class NpcRagdoll : PhysicalBoneSimulator3D
     private readonly List<PhysicalBone3D> _bodies = new();
     private readonly Dictionary<PhysicalBone3D, CollisionShape3D?> _shapes = new();
     private LevelWater? _water;
+    private bool _splashed;
 
     /// <summary>True once the joints are built at rest; the body may animate from then on.</summary>
     public bool Prepared { get; private set; }
@@ -147,6 +148,13 @@ public partial class NpcRagdoll : PhysicalBoneSimulator3D
             if (f <= 0)
             {
                 continue;
+            }
+            if (!_splashed && _water.SurfaceAt(b.GlobalPosition) is { } s)
+            {
+                _splashed = true;
+                var p = b.GlobalPosition;
+                Splash.At(this, new Vector3(p.X, s, p.Z), Mathf.Clamp(-b.LinearVelocity.Y / 8f, 0.3f, 1f));
+                Brushfire.Audio.Play3D(this, "water_splash", p, -4f);
             }
             b.ApplyCentralImpulse(Vector3.Up * ((float)t.BodyBuoyancyRatio * b.Mass * g * f * (float)delta));
             b.LinearDamp = (float)t.BodyLinearDampPerS;

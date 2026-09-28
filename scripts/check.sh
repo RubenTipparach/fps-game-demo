@@ -42,6 +42,9 @@ if [[ $FAST == 0 ]]; then
   # pipefail carries Godot's exit code through the filter
   (cd game && flock /tmp/undercity-godot.lock timeout 900 godot --headless --path . \
       res://scenes/undercity/tests/placement_test.tscn 2>&1 | grep -E "FAIL|placement_test\] [0-9]")
+  step "UI panels keep their size with overlong text (CLAUDE.md 8, ui_size_test.tscn)"
+  (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
+      res://ui/undercity/ui_size_test.tscn 2>&1 | grep -E "^FAIL|ui_size_test\] [0-9]+ passed, 0 failed")
   step "Water: falling in, swimming, breath, ladders, mantling, floating bodies (swim_test.tscn)"
   (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
       res://scenes/undercity/tests/swim_test.tscn 2>&1 | grep -E "FAIL|swim_test\] [0-9]")

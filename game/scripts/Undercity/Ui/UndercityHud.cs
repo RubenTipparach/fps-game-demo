@@ -1,6 +1,7 @@
 // The Undercity HUD (hud.tscn), after the approved F11 mockup: the compass, the objective, the
 // vitals with the disguise chip, the belt, the weapon line, the feed, barks, the law alert, and
-// the crosshair with its prompt and hold bar.
+// the crosshair with its prompt and hold bar; and, after the approved D8 mockup, the AIR bar
+// under the vitals while breath isn't full.
 //
 // It lives in the UI layer as a thin view: health, the belt, the drawn weapon, quests and the
 // feed come from the game state's own values and events; the prompt, hold, disguise, bark and
@@ -64,6 +65,10 @@ public partial class UndercityHud : Control, IWired
     private Label _chipSub = null!;
     private BeltSlotView[] _belt = Array.Empty<BeltSlotView>();
     private Label _weapon = null!;
+    private PanelContainer _air = null!;
+    private Label _airLabel = null!;
+    private ProgressBar _airBar = null!;
+    private double _airFullS;
     private double _barkLeftS;
     private double _alertLeftS;
     private Control _frame = null!;
@@ -90,6 +95,9 @@ public partial class UndercityHud : Control, IWired
         _chipSub = GetNode<Label>("%ChipSub");
         _belt = GetNode<Control>("%Belt").GetChildren().OfType<BeltSlotView>().ToArray();
         _weapon = GetNode<Label>("%Weapon");
+        _air = GetNode<PanelContainer>("%Air");
+        _airLabel = GetNode<Label>("%AirLabel");
+        _airBar = GetNode<ProgressBar>("%AirBar");
         ShowPrompt("", false);
         ShowHold(-1);
         ShowDisguise(null);
@@ -152,6 +160,33 @@ public partial class UndercityHud : Control, IWired
         {
             _alert.Visible = false;
         }
+        RefreshAir(delta);
+    }
+
+    // Breath (mockup D8): shown while it isn't full, red below breath_low_fraction, and faded out
+    // over air_bar_fade_s once it refills.
+    private void RefreshAir(double delta)
+    {
+        if (_services is null)
+        {
+            return;
+        }
+        var b = _services.State.Breath;
+        var t = _services.Data.Water;
+        _airFullS = b.Full ? _airFullS + delta : 0;
+        var alpha = (float)Math.Clamp(1 - _airFullS / t.AirBarFadeS, 0, 1);
+        _air.Visible = alpha > 0;
+        if (!_air.Visible)
+        {
+            return;
+        }
+        _air.Modulate = new Color(1, 1, 1, alpha);
+        var low = b.Value < b.Max * t.BreathLowFraction;
+        _air.ThemeTypeVariation = low ? "AirPanelLow" : "AirPanel";
+        _airLabel.ThemeTypeVariation = low ? "AirLabelLow" : "AirLabel";
+        _airBar.ThemeTypeVariation = low ? "AirBarLow" : "AirBar";
+        _airBar.MaxValue = b.Max;
+        _airBar.Value = b.Value;
     }
 
     // ------------------------------------------------------------------ what the level drives (IScreens)

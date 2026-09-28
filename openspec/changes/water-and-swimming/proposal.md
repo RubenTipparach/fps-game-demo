@@ -28,8 +28,9 @@ Drains' flooded bypass.
 
 ## What Changes
 
-- **Water volumes.** Every water body in a layout becomes a volume the game knows about, with
-  its surface and bed heights, built from the same layout entry that draws it.
+- **Water in the level's data.** Every water body in a layout goes into the level's data, with
+  its surface and bed heights, from the same layout entry that draws it, and one core rule says
+  how deep a body is in it.
 - **Wading and swimming.** The player wades in water up to the chest and swims above that:
   buoyancy holds the eyes just above the surface, jump rises and crouch dives, and speeds, drag
   and noise come from `data/water.json`.
@@ -38,11 +39,12 @@ Drains' flooded bypass.
 - **Stamina for swimming** (owner, I3): 100 points, draining 0.8 a second while swimming, so a
   runner can swim about 125 s before tiring. Tired, they swim at half speed. It refills in
   about 8 s out of deep water. Heavier breathing warns you; it adds no meter.
-- **Ways out.** Climbable ladders on every quay, no more than 25 m of swimming from anywhere,
-  and a mantle onto any ledge up to 1.0 m above the water: boat decks, the outfall ledge. The
-  outfall's decorative ladder becomes a real one.
-- **Water physics for bodies and things.** Ragdolls float face down, with water drag; dropped
-  items sink to the bed and can be picked up there; splashes and ripples where things enter.
+- **Ways out.** Climbable ladders on every quay and over the side of the dry dock's ship, no
+  more than 25 m of swimming from anywhere, and a mantle onto any ledge up to 1.0 m above the
+  water: boat decks, the outfall ledge. The outfall's decorative ladder becomes a real one.
+- **Water physics for bodies and things.** Ragdolls float, with water drag; dropped items fall
+  to the floor, sinking through water to the bed, and can be picked up there; splashes where
+  things enter.
 - **Seeing and hearing water.** A water shader (depth colour, scrolling normals, rain ripples,
   refraction, both faces drawn), an underwater fog and tint, and muffled sound below the
   surface.
@@ -55,8 +57,8 @@ Drains' flooded bypass.
 ## Capabilities
 
 ### New Capabilities
-- `water-and-swimming`: water volumes, wading, swimming, breath, exits, and water physics for
-  bodies and items.
+- `water-and-swimming`: water in the level's data, wading, swimming, breath, stamina, exits,
+  and water physics for bodies and items.
 
 ### Modified Capabilities
 - `level-geometry`: "People stand clear of the level" also keeps people out of water, and a
@@ -64,12 +66,17 @@ Drains' flooded bypass.
 
 ## Impact
 
-- **Layout and plan:** `tools/levels/city_plan.py` places water volumes, ladders and railing gaps
-  from `tools/levels/layouts/hub.py`, and asserts the exit rule. `the-drains` reuses all of it.
-- **Core:** `Undercity.Core/Vitals/Breath.cs`, with tests.
-- **Godot:** a swim motor used by `PlayerController`, `scenes/undercity/ladder.tscn`, the water
-  shader, a buoyancy component for ragdolls and a sinking rule for world items.
+- **Layout and plan:** `tools/levels/city_plan.py` places ladders (quays, the outfall, the dry
+  dock's ship), their landings and railing gaps from `tools/levels/layouts/hub.py`, and asserts
+  the exit rule; `export_level_data.py` writes the water into the level's data. `the-drains`
+  reuses all of it.
+- **Core:** `Undercity.Core/Vitals/Water.cs` (the water table, breath, stamina) and
+  `World/WaterBodies.cs` (the contact rule), with tests; the save carries breath and stamina.
+- **Godot:** `PlayerWater` and its swim, ladder and mantle motors, handed the body by
+  `PlayerController`; `scenes/undercity/ladder.tscn`; ragdoll buoyancy; falling and sinking
+  items; the water and underwater shaders; a splash; the AIR bar.
 - **Data:** `data/water.json`; `data/perception.json` gains a swimming noise (6 m).
-- **Art:** a ladder prop (Blender), water normal and ripple textures (Material Maker).
-- **Rebuild:** the hub's `streets` sector and the sectors that get ladders are rebuilt and
-  rebaked.
+- **Art:** the ladders are built by the level plan with the quays (their heights differ per
+  quay), not a Blender prop; the water's normal map is the existing procedural one, and its
+  rain ripples are computed in the shader.
+- **Rebuild:** the hub's sectors are rebuilt and rebaked.

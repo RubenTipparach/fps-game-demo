@@ -11,14 +11,16 @@ namespace Brushfire;
 /// Script: { "level": 0, "out": "/tmp/shots", "god": true, "steps": [ step, ... ] }
 /// Steps:  {"wait": frames} | {"teleport": [x,y,z], "yaw": deg, "pitch": deg} | {"shot": "name.png"}
 ///         {"debug_draw": 1} (unshaded, for checking geometry before a bake) | {"freeze": true} (enemies)
-///         {"hold": "action", "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
+///         {"hold": "action" | ["action", ...], "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
 ///         {"goto": "hub:tank", "distance": m} (stand facing a stable entity) | {"talk": "tank"}
 ///         {"setup": {"credits": n, "items": ["id:n"], "wear": ["id"], "flags": [..], "skills": {"persuasion": 2},
-///                    "quests": [..], "health": n}} | {"state": true} (log the run)
+///                    "quests": [..], "health": n, "breath": s, "stamina": n}} | {"state": true} (log the run and the water)
 ///         {"click": "SaveHere"} (press a button by node name: title, pause, save rows by slot)
-///         {"kill": "tank" | "hub:civ_01"} (the NPC dies and its body falls; test only until combat lands)
+///         {"kill": "tank" | "hub:civ_01", "at": [x,y,z]} (the NPC dies and its body falls, from "at" if given;
+///                    test only until combat lands) | {"look": [yaw, pitch]} (turn without moving)
+///         {"face": [x,y,z]} (look at a point) | {"walk_to": [x,z], "within": m, "max": frames} (steer there, forward held)
 /// </summary>
 public partial class AutoTest : Node
 {
@@ -74,6 +76,39 @@ public partial class AutoTest : Node
                 player.ResetPhysicsInterpolation();
                 await Frames(3);
             }
+            if (step.TryGetValue("look", out var lk) && player != null)
+            {
+                var a = lk.AsGodotArray();
+                player.SetLook((float)a[0], (float)a[1]);
+            }
+            if (step.TryGetValue("face", out var fc) && player != null)
+            {
+                // look at a point: [x, y, z]
+                var a = fc.AsGodotArray();
+                var d = new Vector3((float)a[0], (float)a[1], (float)a[2]) - player.EyePosition;
+                player.SetLook(Mathf.RadToDeg(Mathf.Atan2(-d.X, -d.Z)),
+                    Mathf.RadToDeg(Mathf.Atan2(d.Y, new Vector2(d.X, d.Z).Length())));
+            }
+            if (step.TryGetValue("walk_to", out var wt) && player != null)
+            {
+                // steer toward [x, z] with forward held (walking or swimming) until within "within" metres
+                var a = wt.AsGodotArray();
+                var goal = new Vector2((float)a[0], (float)a[1]);
+                float within = step.TryGetValue("within", out var wv) ? (float)wv.AsDouble() : 0.5f;
+                int max = step.TryGetValue("max", out var mv) ? mv.AsInt32() : 600;
+                float pitchDeg = Mathf.RadToDeg(player.Pitch);
+                Input.ActionPress("move_forward");
+                for (int i = 0; i < max; i++)
+                {
+                    var here = new Vector2(player.GlobalPosition.X, player.GlobalPosition.Z);
+                    var to = goal - here;
+                    if (to.Length() <= within)
+                        break;
+                    player.SetLook(Mathf.RadToDeg(Mathf.Atan2(-to.X, -to.Y)), pitchDeg);
+                    await Frames(1);
+                }
+                Input.ActionRelease("move_forward");
+            }
             if (step.TryGetValue("give", out _) && player != null)
             {
                 player.Weapons.GiveWeapon(2, 200);
@@ -84,10 +119,16 @@ public partial class AutoTest : Node
                 player.Weapons.SwitchTo(player.Weapons.All.FirstOrDefault(x => x.Slot == ws.AsInt32()));
             if (step.TryGetValue("hold", out var action))
             {
+                // one action, or several held together: {"hold": ["move_forward", "crouch"]}
                 int frames = step.TryGetValue("frames", out var f) ? f.AsInt32() : 30;
-                Input.ActionPress(action.AsString());
+                var actions = action.VariantType == Variant.Type.Array
+                    ? action.AsGodotArray().Select(a => a.AsString()).ToArray()
+                    : new[] { action.AsString() };
+                foreach (var a in actions)
+                    Input.ActionPress(a);
                 await Frames(frames);
-                Input.ActionRelease(action.AsString());
+                foreach (var a in actions)
+                    Input.ActionRelease(a);
             }
             if (step.TryGetValue("press", out var pa))
             {
@@ -171,6 +212,10 @@ public partial class AutoTest : Node
                 state.Inventory.Earn(cr.AsInt32());
             if (d.TryGetValue("health", out var hp))
                 state.Health.Set(hp.AsDouble());
+            if (d.TryGetValue("breath", out var br))
+                state.Breath.Set(br.AsDouble());
+            if (d.TryGetValue("stamina", out var st))
+                state.Stamina.Set(st.AsDouble());
             if (d.TryGetValue("items", out var items))
                 foreach (var spec in items.AsGodotArray())
                 {
@@ -241,6 +286,12 @@ public partial class AutoTest : Node
                 GD.PrintErr($"[AutoTest] no npc '{killId}'");
             else
             {
+                if (step.TryGetValue("at", out var at))
+                {
+                    var a = at.AsGodotArray();
+                    npc.GlobalPosition = new Vector3((float)a[0], (float)a[1], (float)a[2]);
+                    await Frames(2);
+                }
                 state.World.SetNpc(npc.NpcId, Undercity.Core.World.NpcStatus.Dead);
                 var away = npc.GlobalPosition - PlayerController.Instance.GlobalPosition;
                 away.Y = 0;
@@ -254,6 +305,9 @@ public partial class AutoTest : Node
             var c = state.Character;
             GD.Print($"[AutoTest] state: level {c.Level} xp {c.Xp}/{c.XpToNext} points {c.SkillPoints} credits {state.Inventory.Credits} " +
                      $"health {state.Health.Value:0}/{state.Health.Max:0} drawn {state.Drawn ?? "-"} law {(state.Law.Hostile ? "hostile" : "calm")}");
+            var p = PlayerController.Instance;
+            GD.Print($"[AutoTest] water: {state.Water} breath {state.Breath.Value:0.0}/{state.Breath.Max:0} " +
+                     $"stamina {state.Stamina.Value:0.0}/{state.Stamina.Max:0} feet {p?.GlobalPosition}");
             GD.Print($"[AutoTest] pack: {string.Join(", ", state.Inventory.Pack.Stacks.Select(x => $"{x.Def.Id}x{x.Count}{(x.StolenFrom != null ? "(stolen)" : "")}"))}");
             GD.Print($"[AutoTest] flags: {string.Join(", ", state.World.Flags)}");
             GD.Print($"[AutoTest] quests: {string.Join(", ", state.Quests.Table.Quests.Where(q => state.Quests.State(q.Id) != Undercity.Core.Quests.QuestState.NotStarted).Select(q => $"{q.Id}={state.Quests.State(q.Id)}"))}");

@@ -2,12 +2,17 @@
 
 [ext_resource type="Script" path="res://scripts/Player/PlayerController.cs" id="1_PlayerContro"]
 [ext_resource type="Script" path="res://scripts/Player/WeaponManager.cs" id="3_WeaponManage"]
-[ext_resource type="Script" path="res://scripts/Undercity/Player/Interactor.cs" id="4_Interactor"]
-[ext_resource type="Script" path="res://scripts/Undercity/Player/PlayerWater.cs" id="5_PlayerWater"]
+[ext_resource type="Script" path="res://scripts/Undercity/Player/UnderwaterView.cs" id="4_UnderwaterVi"]
+[ext_resource type="Material" path="res://materials/underwater.tres" id="6_underwater"]
+[ext_resource type="Script" path="res://scripts/Undercity/Player/Interactor.cs" id="7_Interactor"]
+[ext_resource type="Script" path="res://scripts/Undercity/Player/PlayerWater.cs" id="8_PlayerWater"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
 height = 1.8
 radius = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_5"]
+size = Vector2(2.0, 2.0)
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
@@ -42,8 +47,16 @@ spot_range = 32.0
 spot_angle = 26.0
 spot_angle_attenuation = 0.6
 
+[node name="Underwater" type="MeshInstance3D" parent="CameraRig/Camera3D"]
+visible = false
+cast_shadow = 0
+extra_cull_margin = 16384.0
+script = ExtResource("4_UnderwaterVi")
+mesh = SubResource("QuadMesh_5")
+material_override = ExtResource("6_underwater")
+
 [node name="Interactor" type="Node" parent="."]
-script = ExtResource("4_Interactor")
+script = ExtResource("7_Interactor")
 
 [node name="Water" type="Node" parent="."]
-script = ExtResource("5_PlayerWater")
+script = ExtResource("8_PlayerWater")

@@ -340,6 +340,8 @@ STYLE = """
 .route-tech{fill:none;stroke:#35e0ff;stroke-width:2.2;stroke-dasharray:6 3 1 3}
 .route-main{fill:none;stroke:#f2b33d;stroke-width:2.2;stroke-dasharray:12 5}
 .patrol{fill:none;stroke:#ff5b4f;stroke-width:1.3;stroke-dasharray:2 3;stroke-opacity:.9}
+.ladder{fill:#0a0e13;stroke:#35e0ff;stroke-width:1.4}
+.ladder-rung{stroke:#35e0ff;stroke-width:1.2}
 .cone{fill:#ff5b4f;fill-opacity:.13;stroke:#ff5b4f;stroke-opacity:.5;stroke-width:.8}
 .cone-light{fill:#fff3b0;fill-opacity:.10;stroke:#fff3b0;stroke-opacity:.45;stroke-width:.8}
 .restricted{fill:url(#hatch-restricted-%(id)s);stroke:#ff5b4f;stroke-opacity:.6;stroke-width:1;stroke-dasharray:4 3}
@@ -469,7 +471,19 @@ def draw_enemy(c, e, idx):
     c.add("</g>")
 
 
-def render(m):
+def draw_ladders(c, ladders):
+    """The ways out of the water the level plan places (city_plan.py plan_ladders(), ladder()):
+    a small ladder on the quay's edge, turned with it."""
+    c.add('<g data-layer="ladders">')
+    for ld in ladders:
+        x, y = c.X(ld["at"][0]), c.Y(ld["at"][1])
+        ang = math.degrees(math.atan2(ld["n"][1], ld["n"][0])) + 90
+        c.add(f'<g class="ladder-mark" transform="translate({x:.1f},{y:.1f}) rotate({ang:.1f})"><title>Ladder {esc(ld["id"])}</title>'
+              '<rect x="-4" y="-6" width="8" height="12" class="ladder"/><path class="ladder-rung" d="M-4,-2 H4 M-4,2 H4"/></g>')
+    c.add("</g>")
+
+
+def render(m, ladders=()):
     c = Canvas(m)
     W, H, S = c.W, c.H, c.S
     LW = m.get("legend_width", 520)
@@ -618,6 +632,8 @@ def render(m):
         c.add(f'<text class="{lb.get("cls", "lbl-note")} m-lbl" x="{c.X(x):.1f}" y="{c.Y(y):.1f}" text-anchor="{anchor}" transform="rotate({rot} {c.X(x):.1f} {c.Y(y):.1f})">{esc(lb["text"])}</text>')
     c.add("</g>")
 
+    draw_ladders(c, ladders)
+
     # points of interest and mission markers
     c.add('<g data-layer="pois">')
     for p in m.get("pois", []):
@@ -688,6 +704,8 @@ KEY_STYLES = {
     "dog": ("Robot dog", '<path d="M20,0 L8,-7 L12,0 L8,7 Z" fill="#ff9e2e"/>'),
     "hostage": ("Hostage", '<circle cx="13" cy="0" r="5" fill="#f2b33d"/>'),
     "civ": ("Neutral NPC", '<circle cx="13" cy="0" r="4.5" fill="#4aa8ff"/>'),
+    "ladder": ("Ladder out of the water", '<g transform="translate(13,0)">' + '<rect x="-4" y="-6" width="8" height="12" class="ladder"/>'
+               '<path class="ladder-rung" d="M-4,-2 H4 M-4,2 H4"/></g>'),
 }
 
 
@@ -765,11 +783,26 @@ def draw_legend(c, m, x0, LW, vh):
     c.add("</g>")
 
 
+def plan_ladders(level_id):
+    """The ladders the level plan places, for a city level with water (city_plan.py, which
+    builds on this module's geometry, so it is imported here rather than at the top)."""
+    import contextlib
+    import io
+    import city_plan
+    m, ents = city_plan.load(level_id)
+    if m.get("base", "city") != "city" or not m.get("water"):
+        return []
+    city = city_plan.City(m, ents)
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        city.build()
+    return city.ladders
+
+
 def main(ids):
     OUT.mkdir(parents=True, exist_ok=True)
     for i in ids:
         mod = importlib.import_module(f"layouts.{i}")
-        svg = render(mod.MAP)
+        svg = render(mod.MAP, plan_ladders(i) if mod.MAP.get("base", "city") == "city" else ())
         (OUT / f"{i}.svg").write_text(svg)
         print(f"wrote {OUT / (i + '.svg')} ({len(svg) // 1024} KB)")
 

@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/underwater.gdshader" id="1"]
+
+[resource]
+resource_name = "underwater"
+render_priority = 100
+shader = ExtResource("1")
+shader_parameter/fog_color = Color(0.0392, 0.1333, 0.149, 1)
+shader_parameter/tint = Color(0.7, 0.95, 0.9, 1)
+shader_parameter/visibility_m = 8.0
+shader_parameter/wobble = 0.004
+shader_parameter/wobble_hz = 0.6

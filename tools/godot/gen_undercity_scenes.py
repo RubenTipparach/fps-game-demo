@@ -18,7 +18,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tscn import Scene, hexcolor, path, v3  # noqa: E402
+from tscn import Scene, hexcolor, path, v2, v3  # noqa: E402
 
 GAME = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "game")
 PROPS = "res://models/undercity/props/"
@@ -48,6 +48,11 @@ def player():
     s.node("Flashlight", "SpotLight3D", "CameraRig/Camera3D", visible=False, position=v3(0.15, -0.1, 0),
            light_color=hexcolor("#fff1d6"), light_energy=4.0, light_bake_mode=0, shadow_enabled=True,
            spot_range=32.0, spot_angle=26.0, spot_angle_attenuation=0.6)
+    # the underwater view: a 2 x 2 quad the shader stretches over the screen, never culled
+    s.node("Underwater", "MeshInstance3D", "CameraRig/Camera3D", visible=False, cast_shadow=0,
+           extra_cull_margin=16384.0, script=script(s, "Player/UnderwaterView.cs"),
+           mesh=s.sub_res("QuadMesh", size=v2(2, 2)),
+           material_override=s.ext_res("Material", "res://materials/underwater.tres"))
     s.node("Interactor", "Node", ".", script=script(s, "Player/Interactor.cs"))
     s.node("Water", "Node", ".", script=script(s, "Player/PlayerWater.cs"))
     s.save(out("player.tscn"))
@@ -153,6 +158,21 @@ def ladder():
     s.save(out("ladder.tscn"))
 
 
+def splash():
+    """Water thrown up where something falls in (Splash.cs frees it once it has played). One
+    shot of droplets thrown up and out, falling back under gravity; the thrower sets how many."""
+    s = Scene("Splash", "GPUParticles3D")
+    drops = s.sub_res("ParticleProcessMaterial", direction=v3(0, 1, 0), spread=38.0,
+                      initial_velocity_min=2.2, initial_velocity_max=4.8, gravity=v3(0, -9.8, 0),
+                      scale_min=0.5, scale_max=1.3, emission_shape=1, emission_sphere_radius=0.35)
+    look = s.sub_res("StandardMaterial3D", transparency=1, shading_mode=1, vertex_color_use_as_albedo=True,
+                     albedo_color=hexcolor("#a9c9c6", 0.7), billboard_mode=3, billboard_keep_scale=True)
+    s.nodes[0][3].update(script=script(s, "Player/Splash.cs"), emitting=False, amount=48, lifetime=0.9,
+                         one_shot=True, explosiveness=0.92, cast_shadow=0, process_material=drops,
+                         draw_pass_1=s.sub_res("QuadMesh", size=v2(0.09, 0.09), material=look))
+    s.save(out("splash.tscn"))
+
+
 def main():
     player()
     npc()
@@ -166,6 +186,7 @@ def main():
     areas()
     bed()
     ladder()
+    splash()
     print("wrote", len(os.listdir(os.path.join(GAME, "scenes", "undercity"))), "scenes to game/scenes/undercity")
 
 

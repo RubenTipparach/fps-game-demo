@@ -18,8 +18,9 @@ channels, trims, pillars with capitals. The Drains reuse it at a larger scale.
 - **The Twitch rule** turns "go loud" into a real decision, not a default.
 
 **Non-Goals:**
-- Swimming as a system. The bypass is a scripted 35 s swim with a breath bar, or a walk once
-  it's drained.
+- Swimming rules of its own. The bypass is a 35 s swim, or a walk once it's drained, under
+  the hub's water rules (`water-and-swimming`: the same breath, stamina, swim motor and AIR
+  bar); the Drains only adds its water to its layout.
 - Rat reinforcements from outside the level.
 
 ## Decisions

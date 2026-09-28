@@ -8,7 +8,8 @@ style .tres, so this step:
   * writes albedo as textures/<name>.png so TrenchBroom, func_godot and Godot all see the
     same image (and therefore agree on texel density), plus <name>_normal/_orm/_emission,
   * writes .import presets (VRAM compression, mipmaps, BC5 normal maps),
-  * writes materials/<name>.tres as ORMMaterial3D with PBR settings from materials.json.
+  * writes materials/<name>.tres as ORMMaterial3D with PBR settings from materials.json, or as a
+    ShaderMaterial for a material that names its own "shader" (the canal water).
 
 Usage: postprocess.py <raw_export_dir> <godot_project_dir> [material ...]
 
@@ -92,7 +93,38 @@ def write_import(tex_dir, file, normal=False):
         f.write(IMPORT_TEMPLATE.format(file=file, normal=1 if normal else 0))
 
 
+def shader_value(v):
+    """A materials.json shader parameter as a .tres value: a number, [x, y], or a "#rrggbb" colour."""
+    if isinstance(v, str) and v.startswith("#") and len(v) == 7:
+        r, g, b = (int(v[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        return f"Color({r:.4f}, {g:.4f}, {b:.4f}, 1)"
+    if isinstance(v, list) and len(v) == 2:
+        return f"Vector2({float(v[0])}, {float(v[1])})"
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return str(float(v))
+    raise SystemExit(f"materials.json: shader parameter {v!r} is not a number, [x, y] or #rrggbb")
+
+
+def write_shader_material(mat_dir, name, spec):
+    """A material drawn by its own shader (materials.json "shader"): the normal map is its
+    normal_map parameter, and "shader_params" set the rest by uniform name."""
+    lines = ['[gd_resource type="ShaderMaterial" format=3]', "",
+             f'[ext_resource type="Shader" path="{spec["shader"]}" id="1"]',
+             f'[ext_resource type="Texture2D" path="res://textures/{name}_normal.png" id="2"]',
+             "", "[resource]", f'resource_name = "{name}"', 'shader = ExtResource("1")',
+             'shader_parameter/normal_map = ExtResource("2")',
+             f"shader_parameter/tile_m = {float(spec.get('tile_m', 1.0))}",
+             f"shader_parameter/normal_strength = {float(spec.get('normal_scale', 1.0))}"]
+    for key, value in sorted(spec.get("shader_params", {}).items()):
+        lines.append(f"shader_parameter/{key} = {shader_value(value)}")
+    with open(os.path.join(mat_dir, name + ".tres"), "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
 def write_material(mat_dir, name, spec, has_emission):
+    if "shader" in spec:
+        write_shader_material(mat_dir, name, spec)
+        return
     lines = ['[gd_resource type="ORMMaterial3D" format=3]', ""]
     res = [("albedo", f"res://textures/{name}.png"),
            ("orm", f"res://textures/{name}_orm.png"),

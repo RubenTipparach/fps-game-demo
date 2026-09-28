@@ -117,7 +117,15 @@
   "water": {
     "tile_m": 6.0,
     "normal_scale": 0.6,
-    "source": "procedural: tools/fx/generate_city_materials.py"
+    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/water.gdshader (openspec/changes/water-and-swimming)",
+    "shader": "res://shaders/water.gdshader",
+    "shader_params": {
+      "shallow_color": "#1f4a4a", "deep_color": "#0b2327", "deep_m": 2.3, "clarity": 0.55,
+      "flow_a_mps": [0.035, 0.012], "flow_b_mps": [-0.022, 0.028],
+      "ripple_cell_m": 0.9, "ripple_rate_hz": 0.7, "ripple_strength": 0.35,
+      "ripple_wave_per_m": 40.0, "ripple_falloff_per_m": 18.0,
+      "refraction": 0.025, "surface_roughness": 0.05
+    }
   },
   "awning": {
     "tile_m": 1.0,

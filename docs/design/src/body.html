@@ -871,7 +871,7 @@
         <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>hub-combat</code></td><td>the Kestrel, damage, everyone can be shot, defences, crime, death</td><td class="n">8</td><td><span class="chip proposed">Proposed</span></td></tr>
-        <tr><td><code>water-and-swimming</code></td><td>water volumes, swimming, breath, ways out, floating and sinking</td><td class="n">6 + 2</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>hub-skyline</code></td><td>the towers around the hub, coverage, rendering, the map inset</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, the body pool</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
@@ -888,8 +888,8 @@
 <!-- ========================================================= F14 -->
 <section id="water">
   <div class="sh"><span class="key">F14</span><h2>Water, swimming and ways out</h2><span class="spec">openspec/changes/water-and-swimming</span></div>
-  <p class="intro">Owner, 2026-09-28: "Falling into the Bay there's no water physics, swimming, and no way to get back out." Today the water is a flat, opaque surface with no collider. A fall sinks you to the bed, 4.5 m under a quay you can't jump to. The fix is one set of rules for every water body, the Drains' bypass included: wade, swim, hold your breath, and always have a way out within 25 m.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (I3 to I6) · building first</span></div>
+  <p class="intro">Owner, 2026-09-28: "Falling into the Bay there's no water physics, swimming, and no way to get back out." It was a flat, opaque surface with no collider: a fall sank you to the bed, 4.5 m under a quay you couldn't jump to. Now one set of rules serves every water body, the Drains' bypass included: wade, swim, hold your breath, tire slowly, and always have a way out within 25 m of swimming. The hub has 17 ladders: 12 on the Cut, one on the dry dock's quay and four over the side of the MV Anselm, which fills the dock. They are on the hub map (F2) as cyan ladders.</p>
+  <div class="controls"><span class="chip built">Built (I1: first)</span><span class="chip enforced">Checked: the plan's exit rule, swim_test 18 of 18, ladders in the placement test</span></div>
   <div class="sub">
     <h3>The Cut in section <small>measured heights; 60 px = 1 m</small></h3>
     <div class="diagram" role="img" aria-label="Section through the Cut's quay showing the water, the bed, the jump height, a ladder and a boat ledge">
@@ -917,11 +917,11 @@
           <path d="M530 280 H556 M530 250 H556 M530 220 H556 M530 190 H556 M530 160 H556 M530 130 H556 M530 100 H556"/>
           <path d="M530 80 Q543 60 556 80" fill="none"/>
         </g>
-        <text x="570" y="96" font-family="IBM Plex Mono, monospace" font-size="17" fill="#35e0ff">ladder: 2.4 m/s, hoops 1.0 m above the quay</text>
+        <text x="570" y="96" font-family="IBM Plex Mono, monospace" font-size="17" fill="#35e0ff">ladder: 3.0 m/s, hoops 1.0 m above the quay</text>
         <path d="M940 242 H1060 V272 H940 Z" fill="#6b5a3a"/>
         <text x="900" y="232" font-family="IBM Plex Mono, monospace" font-size="17" fill="#8fd6a0">boat deck 0.5 m up: mantle 0.2-1.0 m</text>
         <g font-family="Barlow Condensed, sans-serif" font-size="22" fill="#dfe7ee" letter-spacing="1">
-          <text x="600" y="480">Every point of the surface within 25 m of a way out (8 s at 3 m/s)</text>
+          <text x="560" y="480">Every point of the surface within 25 m of swimming of a way out (8 s at 3 m/s)</text>
         </g>
       </svg>
     </div>
@@ -936,8 +936,8 @@
         <tr><td>Floating</td><td class="n">eyes 0.15 m up</td><td>spring 18/s², damping 7/s: settles without bobbing</td></tr>
         <tr><td>Breath</td><td class="n">45 s</td><td>the Drains' bypass number; refills in 3 s; then 8 damage/s</td></tr>
         <tr><td>Stamina (owner, I3)</td><td class="n">100, -0.8/s</td><td>"swimming consumes stamina but slowly": 125 s of swimming, then half speed; refills in about 8 s out of deep water; heavier breathing below 25 %, no meter</td></tr>
-        <tr><td>Ladders</td><td class="n">every 30 m</td><td>3 m clear of bridges, boats and pillars; a 1.2 m gap in the railing</td></tr>
-        <tr><td>Bodies and items</td><td class="n">x1.15 buoyancy</td><td>ragdolls float face down; dropped items sink at 0.6 m/s and can be picked up on the bed</td></tr>
+        <tr><td>Ladders</td><td class="n">every 30 m, 3.0 m/s</td><td>3 m clear of bridges, boats and pillars; a 1.2 m gap in the railing; each lands its climber on level ground past any kerb. 3.0, not 2.4: a floating swimmer's feet are 1.5 m down, and 2.4 m/s took 1.97 s of the 2 s allowed</td></tr>
+        <tr><td>Bodies and items</td><td class="n">x1.3 buoyancy</td><td>ragdolls float and settle at the surface in about 4 s, and aren't frozen while in water (at 1.15 a body was still rising after 6 s); dropped items fall to the floor, sinking at 0.6 m/s, and can be picked up on the bed</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">

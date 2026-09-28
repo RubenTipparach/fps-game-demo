@@ -85,6 +85,9 @@ public sealed class WaterTable : IValidated
     /// <summary>Below this share of breath the AIR bar turns red (mockup D8).</summary>
     public required double BreathLowFraction { get; init; }
 
+    /// <summary>The AIR bar fades out over this long once breath is full again, seconds.</summary>
+    public required double AirBarFadeS { get; init; }
+
     /// <summary>Surfacing with less than this share of breath gasps.</summary>
     public required double GaspBelowBreathFraction { get; init; }
 
@@ -187,6 +190,7 @@ public sealed class WaterTable : IValidated
         Positive("stroke_s", StrokeS);
         Positive("tired_stroke_s", TiredStrokeS);
         Fraction("breath_low_fraction", BreathLowFraction);
+        Positive("air_bar_fade_s", AirBarFadeS);
         Fraction("gasp_below_breath_fraction", GaspBelowBreathFraction);
         Positive("mantle_reach_m", MantleReachM);
         Positive("mantle_min_rise_m", MantleMinRiseM);

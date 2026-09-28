@@ -24,7 +24,7 @@ Yard come next. Their exits are in the hub, but they tell you they're not in thi
 | Key | Does |
 |---|---|
 | WASD, mouse | Move, look |
-| Shift, Ctrl, Space | Sprint, crouch, jump |
+| Shift, Ctrl, Space | Sprint, crouch, jump. In deep water: crouch dives, jump rises, and jump in front of a low ledge climbs onto it |
 | E | Use: talk, open, search, read, take, travel. Hold it for locks (the timer stands in for the minigames, owner decision B2). |
 | 1 to 0 | Belt slots: draw or holster a weapon, use a medkit or stim |
 | Tab | The deck: Inventory, Skills, Journal (F1 to F3 switch tabs) |
@@ -76,7 +76,7 @@ In the deck:
 9. **Secrets.** These are:
    - the rooftop stash on the Golden Carp's roof;
    - the girder cache on the Skyway service deck (the service lift takes Hacking 1);
-   - the drowned locker under the Tin Bridge;
+   - the drowned locker on the bed of the Cut under the Tin Bridge: a dive;
    - the shrine's offering box (Lockpicking 2).
 10. **Sleep** in capsule 12. It heals you and saves.
 11. **The people.** Every NPC is now a generated body (MPFB2 and CC0 assets) that plays one
@@ -84,7 +84,15 @@ In the deck:
     turns to you and gestures. The factions dress the part: MerSec armour, the Drain Rats'
     respirators, the Scrap Kings' scrap plates, Petra's orange overalls. Their look is still yours
     to review (survey H2, answered conditionally).
-12. **The pause menu.** Esc. Save into slot 1 to 3 (or over the quicksave), load any slot, or
+12. **Water.** Walk off the quay into the Cut. You float; you swim where you look (3 m/s), dive
+    with crouch and rise with jump. Under the surface the AIR bar counts down 45 s of breath,
+    then you lose 8 health a second; it refills in 3 s at the surface. Long swims tire you
+    slowly (about two minutes before you slow to half speed). You can't draw a weapon while
+    swimming. To get out, face one of the ladders on the quay walls (striped grab hoops above
+    the quay mark them; the hub map shows all 17) and hold forward, or jump in front of a moored
+    boat's deck. On the quay, a ladder's top offers "Climb down". The MV Anselm, in the dry
+    dock, has boarding ladders over her side. A body that falls in floats.
+13. **The pause menu.** Esc. Save into slot 1 to 3 (or over the quicksave), load any slot, or
     open Options. Draw your pistol in front of MerSec twice first: with a hostile watching, the
     save buttons grey out and say why. Quit to title asks once if your last save is more than
     5 minutes old.
@@ -96,6 +104,8 @@ In the deck:
 - **Deaths.** Every NPC is a generated body with a ragdoll that falls and settles (see
   `docs/validation/2026-09-28-npc-bodies.md`), but nothing in play can kill one until combat
   lands. The faces don't move, and the guards hold no weapons yet.
+- **Dying.** Drowning takes health down to 0, but nothing happens at 0 yet: the fade and the
+  reload come with `hub-combat`.
 - **The lockpicking and hacking minigames.** A held timer stands in for both until mockups E1 and
   E2 are approved.
 - **Missing screens.** There's no trade screen, stash screen, map, notes or conversation log,

@@ -8,7 +8,7 @@
 ## 2. Build
 
 - [ ] 2.1 Blender build from the layout, reusing the cistern kit; rooms, channels, catwalk ring, nest mezzanine, vent.
-- [ ] 2.2 Bypass swim volume with the breath bar; drained variant toggled by the sluice.
+- [ ] 2.2 The bypass as a layout water body (the water rules are `water-and-swimming`'s); drained variant toggled by the sluice.
 - [ ] 2.3 Bake; captures of every space.
 
 ## 3. Content

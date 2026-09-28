@@ -38,16 +38,20 @@ Measured on the committed hub (2026-09-28, `docs/playtest/scripts/baseline_edges
 
 ## Decisions
 
-### 1. Water volumes from the layout
+### 1. Water from the level's data
 
-`city_plan.py` gives every layout water body an `ENT_water_<id>` entity. Its extras are
-`surface_m`, `bed_m` and the polygon. The importer makes it a `Water` node: an Area3D on no
-layer, which watches the player, NPC bodies, ragdoll bones and items. Its shape is the polygon
-split into convex pieces, from the bed to 0.5 m above the surface.
+`tools/levels/export_level_data.py` writes every layout water body into the level's data
+(`data/levels/<id>.json` "water": id, `surface_m`, `bed_m` and the polygon). `Undercity.Core`
+holds the one rule for how deep a body is in it (`WaterRules.At`, `WaterRules.Contact`), and the
+Godot layer asks it through `LevelWater` in engine coordinates (layout x, y is Godot x, z). The
+player, ragdoll bones and dropped items all ask the same rule.
 
-Nothing reads the collider's top as the surface: the surface is data, `surface_m`. The water
-prim keeps no collider, so things still pass through the surface and the volume decides what
-happens to them.
+Changed in building: the plan was an `ENT_water_<id>` entity per body and an Area3D split into
+convex pieces. Data and a point-in-polygon test do the same with nothing to keep in step: no
+physics volume, no importer case, and a core test pins the Cut's numbers.
+
+The water prim keeps no collider, and nothing reads a collider's top as the surface: the
+surface is data.
 
 ### 2. Wading and swimming (the player)
 
@@ -74,6 +78,18 @@ The swim motor (`game/scripts/Player/SwimMotor.cs`) is its own class, with a sin
 
 Weapons holster on entering the swimming state, and the belt refuses to draw ("Not while
 swimming.") until you are wading or dry.
+
+Found in building:
+- **The fall is caught at the surface.** The swim motor also takes over the moment the feet
+  cross the surface where the water is too deep to stand in (no floor within `swim_depth_m` of
+  the surface below). Waiting for swimming depth let a runner falling off the quay accelerate
+  through the first 1.2 m of water under gravity.
+- **Under the surface with no vertical input, a swimmer hovers** (drag only); the float spring
+  acts only while the eyes are above the surface. Jump rises until the eyes break the surface,
+  and the spring settles them from there.
+- **The hand-off** is `Brushfire.IMovementOverride`: the controller asks `PlayerWater` first on
+  every physics tick, and wading slows its ground speed and stops the sprint. `PlayerWater`
+  chooses the rule: a mantle under way, a ladder held, the swim motor, or the ground and air.
 
 ### 3. Breath (the core)
 
@@ -103,7 +119,7 @@ there is no meter, and the approved D8 shows air only. A save keeps the current 
 
 | Exit | Rule |
 |---|---|
-| **Ladder** | A `ladder` entity (`scenes/undercity/ladder.tscn`, rails and rungs from Blender). Its climb volume runs from 0.6 m below the surface to 1.0 m above the quay. Facing it (look · into-wall > 0.3) with forward held climbs at 2.4 m/s, and back descends. Jump pushes off at 3.0 m/s. At the top, the player steps onto the quay 0.7 m in, over 0.3 s. At the top, Use climbs down. |
+| **Ladder** | A `ladder` entity (`scenes/undercity/ladder.tscn`); its stiles, rungs and hoops are built by the level plan with the quay. It reaches 0.6 m below the surface. Within reach of it (0.5 m out, 0.3 m past a stile, eyes above its foot), facing it (look · into-wall > 0.3) with forward held climbs at 3.0 m/s, and back descends. Jump pushes off at 3.0 m/s. At the top, the player steps in to the ladder's landing over 0.3 s. From the floor there, Use ("Climb down") takes hold at the top. |
 | **Mantle** | Swimming or standing, with a ledge top 0.2-1.0 m above the water surface within 0.6 m ahead and 1.8 m of headroom: jump pulls you up in 0.45 s. This covers boat decks (0.5 m) and the outfall ledge (0.22 m). |
 | **Stairs** | Any stair or slipway that runs into the water (none in the hub today). |
 
@@ -115,38 +131,75 @@ there is no meter, and the approved D8 shows air only. A save keeps the current 
   the quay, the way real quay ladders do.
 
 **The exit rule** is asserted by the plan: every point of every water surface, sampled on a
-1 m grid, is within 25 m in a straight line (inside the water) of an exit. That is at most
+1 m grid, is within 25 m of swimming (the shortest path through the water, round hulls,
+buildings and pillars) of a ladder's foot or of a quay low enough to climb onto. That is at most
 8.3 s of swimming at 3.0 m/s, a fifth of the breath.
 
-For the Cut, this puts 5 or 6 ladders on each bank. The dry dock gets one ladder on each long
-side; the gate channel is covered by the dock's ladders.
+Found in building (the plan's checks and the placement test found each):
+- **A straight line was the wrong measure.** A Skyway pillar in the Cut blocked the straight
+  line from the water under the Freight Bridge to the nearest ladder, which is 20 m away round
+  it. The rule measures the swim.
+- **The dry dock is a moat.** The MV Anselm fills the basin, leaving 2-4 m of water round it,
+  and buildings stand on the basin's north and east walls, so quay ladders alone left its far
+  corner 42 m of swimming from one. The ship hangs four boarding ladders over its side instead:
+  its deck is 3.4 m above the water and 2 m from the quay, a jump ashore.
+- **A ladder needs somewhere to step off.** Most of the Cut's east quay has a raised strip under
+  a metre wide between the water and Quay Road, so a climber stepping 0.7 m in would stand
+  astride its kerb. Each ladder's landing is the first spot 0.7-2.0 m in from the edge where a
+  standing player (their collider, from `player.tscn`) is on level ground; the climb clears any
+  kerb on the way, no more than the player's step (0.45 m) above the landing.
+- **Ladder speed is 3.0 m/s, not 2.4.** A floating swimmer's feet are 1.47 m under the surface,
+  so the climb to a quay is 3.8 m; at 2.4 m/s plus the 0.3 s step it took 1.97 s, too close to
+  the requirement's 2 s. It now takes 1.7 s.
+- **Ledges count only as low quays.** A boat deck or the outfall's ledge can be climbed onto,
+  and a tired swimmer can rest there, but it leads nowhere, so it isn't a way out.
+- **Street lamps step aside.** A lamp that would stand on a ladder's landing moves 2.5 m along
+  its street.
+
+The hub has 12 ladders on the Cut (the outfall's among them), one on the dry dock's quay and
+four on the ship.
 
 ### 5. Water physics for bodies and things
 
-- **Ragdolls float face down.** Each ragdoll capsule in the water gets an upward force
-  `1.15 x m x g x f`, where `f` is the submerged fraction of that capsule (from its centre
-  height and radius). Linear damping is 2.5/s and angular damping 3.0/s.
-  - The ragdoll's freeze rule is unchanged: it freezes `settle_s` after the fall, wherever it
-    floats.
-- **Dropped items sink** at 0.6 m/s to the bed and rest there. The use ray reaches them under
-  water.
+- **Ragdolls float.** Each ragdoll bone in the water gets an upward force
+  `1.3 x m x g x f`, where `f` is the submerged fraction of that bone's collider (from its
+  centre height and how upright it lies). Linear damping is 2.5/s and angular damping 3.0/s.
+  - Changed in building: the ratio was 1.15, and a body that fell in from the quay had risen
+    only halfway back to the surface after 6 s. At 1.3 it floats at the surface from 4 s.
+  - Changed in building: a body in water isn't frozen at `settle_s`; the freeze stopped a
+    rising body under water. It floats on, damped. A body on land freezes as before.
+- **Dropped items fall to the floor under them**, through air and, in water, sinking at
+  0.6 m/s to the bed, and rest there. The use ray reaches them under water. (Before this, a
+  dropped item hung where it was dropped; at a quay's edge it would have hung over the water.)
 - **Splashes and ripples** mark where anything enters: player, body, item, bullet.
 
 ### 6. Seeing and hearing water
 
 **The surface:** `game/shaders/water.gdshader` replaces the opaque material.
 - A depth colour from shallow `#1f4a4a` to deep `#0b2327`, over the water's thickness.
-- Two scrolling normal maps, plus a rain-ripple flipbook (the hub always rains). The textures
-  come from Material Maker.
+- Two scrolling normal maps (the existing procedural water normal), plus rain ripples, one ring
+  at a time in each 0.9 m cell (the hub always rains). The ripples are computed in the shader
+  rather than a flipbook texture.
 - Roughness 0.05, a screen-space refraction offset, reflections from the existing probes, and
   both faces drawn so the surface shows from below.
+- Its numbers are `materials.json` "water" "shader_params": the material pipeline
+  (`postprocess.py`) now writes a ShaderMaterial for a material that names a shader. The surface
+  takes no baked light and casts no shadow.
 
 **Under the surface:** when the camera is below it, a tint and a dense fog (colour `#0a2226`,
-about 8 m of visibility) cover the view. The world audio bus goes through a low-pass filter
-(800 Hz); the UI bus doesn't.
+about 8 m of visibility) cover the view: a full-screen quad in front of the player's camera
+(`shaders/underwater.gdshader`, `materials/underwater.tres`, `UnderwaterView.cs`). The SFX bus,
+which the world bus sends into, goes through a low-pass filter (800 Hz); music doesn't. There is
+no separate UI bus, so a menu's clicks are muffled too, and only while the head is under.
+
+**Sound:** splashes (by impact speed), strokes, tired strokes with heavy breathing below 25 %
+stamina, and a gasp on surfacing short of air, synthesised by `tools/sfx/generate_sfx.py`. A
+splash of droplets (`scenes/undercity/splash.tscn`) marks where the runner, a body or a dropped
+item enters.
 
 **The breath meter** (mockup D8, approved by the owner, survey I6): a thin cyan AIR bar under the health bar, shown only
-while breath isn't full. It turns red below 25 %, and fades 1 s after it refills.
+while breath isn't full. It turns red below 25 %, and fades 1 s after it refills. The colours
+are the theme's `cyan` and `danger` roles.
 
 ### 7. Data
 
@@ -161,24 +214,32 @@ while breath isn't full. It turns red below 25 %, and fades 1 s after it refills
   "entry_keep_fraction": 0.3,
   "breath_s": 45.0, "breath_refill_s": 3.0, "drown_damage_per_s": 8.0,
   "stamina_max": 100.0, "swim_stamina_per_s": 0.8, "stamina_regen_per_s": 12.0, "tired_speed_factor": 0.5,
+  "stamina_low_fraction": 0.25, "stroke_s": 0.9, "tired_stroke_s": 1.3,
+  "breath_low_fraction": 0.25, "air_bar_fade_s": 1.0, "gasp_below_breath_fraction": 0.5,
   "mantle_reach_m": 0.6, "mantle_min_rise_m": 0.2, "mantle_max_rise_m": 1.0, "mantle_time_s": 0.45,
-  "ladder_speed_mps": 2.4, "ladder_facing_dot": 0.3, "ladder_push_off_mps": 3.0, "ladder_top_step_m": 0.7,
-  "body_buoyancy_ratio": 1.15, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
+  "ladder_speed_mps": 3.0, "ladder_facing_dot": 0.3, "ladder_reach_m": 0.5, "ladder_side_reach_m": 0.3,
+  "ladder_push_off_mps": 3.0, "ladder_top_step_m": 0.7, "ladder_top_step_s": 0.3,
+  "body_buoyancy_ratio": 1.3, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
   "item_sink_mps": 0.6
 }
 ```
 
+The keys from `stamina_low_fraction` to `gasp_below_breath_fraction`, `ladder_reach_m`,
+`ladder_side_reach_m` and `ladder_top_step_s` were added in building: they were numbers in the
+design's prose, and CLAUDE.md 5.5 keeps them out of code. The level plan reads
+`ladder_top_step_m` and the mantle rise from this file too.
+
 The placement numbers are level construction, so they live in `city_plan.py` with the other
-kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `LADDER_CLEAR_M` 3, `RAIL_GAP_M` 1.2,
-`LADDER_HOOP_M` 1.0.
+kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `EXIT_GRID_M` 1, `LADDER_CLEAR_M` 3,
+`LADDER_SPACING_M` 10, `RAIL_GAP_M` 1.2, `LADDER_HOOP_M` 1.0, `LADDER_LAND_MAX_M` 2.0.
 
 ### 8. Walkthrough: the owner's fall, again
 
 1. The runner walks off the open quay beside the Tin Bridge at (192, 66). Splash. They sink
    about 0.7 m, and the water catches them.
 2. They bob up with their eyes 0.15 m above the surface.
-3. The nearest ladder is 11 m up the bank. Swimming there takes about 4 s. Forward climbs the
-   2.8 m in 1.2 s, and the runner steps onto the quay.
+3. The nearest ladder is 9 m up the bank. Swimming there takes about 3 s. Forward climbs the
+   3.8 m in 1.3 s, and the runner steps over the kerb onto the street behind it.
 4. Or they dive: crouch takes them to the bed in about 1 s. The AIR bar appears and drains.
    Surfacing refills it in 3 s.
 
@@ -186,8 +247,11 @@ kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `LADDER_CLEAR_M` 3, `RAIL
 
 - **Transparent water loses screen-space reflections** in Godot. The probes and a fresnel mix
   stand in. A still will show whether that reads well enough.
-- **Area3D shapes from concave polygons** are split into convex pieces. The Cut's bends take a
-  few more pieces, which cost nothing that matters.
+- **A point-in-polygon test per body per tick** replaces the Area3D. The hub has three water
+  bodies of 4 to 8 points, so it costs nothing that matters; a level with many would want a
+  grid.
+- **Floating bodies keep simulating.** Each costs a ragdoll's physics while it floats; the hub
+  has few, and a level that drowns many would want a cap.
 - **Mantling could climb onto things it shouldn't**, such as the top of a moored boat's cabin.
   The 1.0 m limit and the headroom check keep it to decks and ledges.
 - **Brushfire's controller predates the rules** (CLAUDE.md 13). The swim motor is new code
