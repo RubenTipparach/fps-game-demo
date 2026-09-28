@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_combat", "god": false,
  "steps": [
-  {"log": "hub combat (openspec/changes/hub-combat): the Kestrel drawn and fired in the Sump Market, people fleeing and cowering, MerSec at a shot, a reload, Tank and his baton, a death and the newest save (run with --write-movie)"},
+  {"log": "hub combat (openspec/changes/archive/2026-09-28-hub-combat): the Kestrel drawn and fired in the Sump Market, people fleeing and cowering, MerSec at a shot, a reload, Tank and his baton, a death and the newest save (run with --write-movie)"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"render_scale": 0.67},
   {"wait": 20},

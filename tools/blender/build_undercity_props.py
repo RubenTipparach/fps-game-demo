@@ -956,7 +956,7 @@ def kestrel(coll, reg):
 
 
 def baton(coll, reg):
-    """Tank's baton, in his hand when he fights (openspec/changes/hub-combat): a steel shaft with a
+    """Tank's baton, in his hand when he fights (openspec/changes/archive/2026-09-28-hub-combat): a steel shaft with a
     ribbed rubber grip, a flared butt and a rounded tip. Origin: the web of the hand at the grip's
     front end; the shaft points +Y, as the Kestrel's barrel does, so NPC hands hold every weapon
     the same way (gen_npc_scenes.gd's Grip). No collision."""
@@ -969,7 +969,7 @@ def baton(coll, reg):
 
 
 def scattergun(coll, reg):
-    """Kessler's scattergun, from under his counter (openspec/changes/hub-combat): a sawn-off pump
+    """Kessler's scattergun, from under his counter (openspec/changes/archive/2026-09-28-hub-combat): a sawn-off pump
     gun, a squared receiver, the barrel over its magazine tube, a pump, a pistol grip and a stub
     of stock. Origin: the web of the hand where the grip meets the receiver; the barrel points +Y.
     No collision."""

@@ -1,5 +1,5 @@
 // Weapons: every weapon an item names (the runner's, with openspec/changes/combat-and-enemies'
-// numbers) and the ones only NPCs carry in the hub (openspec/changes/hub-combat, design section
+// numbers) and the ones only NPCs carry in the hub (openspec/changes/archive/2026-09-28-hub-combat, design section
 // 2). Keyed by the "weapon" id in items.json. Damage per hit, before zones and resistances;
 // "pellets" hits per shot; "burst" shots per trigger pull, "burst_gap_s" between bursts;
 // "magazine" 0 for a melee weapon, which uses "reach_m"; "noise_m" how far a shot is heard.

@@ -13,7 +13,7 @@
     "surrender": "undercity/Surrender",
     "cower": "undercity/Cower",
     "death": "Death01",
-    // Combat (openspec/changes/hub-combat, design section 5): UAL has pistol clips and no rifle
+    // Combat (openspec/changes/archive/2026-09-28-hub-combat, design section 5): UAL has pistol clips and no rifle
     // ones; a baton swings with the sword attack.
     "aim": "Pistol_Aim_Neutral",
     "shoot": "Pistol_Shoot",

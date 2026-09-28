@@ -56,7 +56,7 @@ def player():
            material_override=s.ext_res("Material", "res://materials/underwater.tres"))
     s.node("Interactor", "Node", ".", script=script(s, "Player/Interactor.cs"))
     s.node("Water", "Node", ".", script=script(s, "Player/PlayerWater.cs"))
-    # draws the belt's firearm into the WeaponManager and feeds it (openspec/changes/hub-combat)
+    # draws the belt's firearm into the WeaponManager and feeds it (openspec/changes/archive/2026-09-28-hub-combat)
     s.node("Weapons", "Node", ".", script=script(s, "Player/WeaponAdapter.cs"))
     s.save(out("player.tscn"))
 
@@ -69,7 +69,7 @@ def kerb_floor_angle():
     """The steepest contact a person's capsule still stands on, radians: where the capsule's
     rounded bottom meets the edge of a kerb as high as the level's paving (city_plan.PAVED_Z),
     plus 3 degrees. The navmesh runs over kerbs; without this a fleeing person stops at the first
-    one, its edge a wall to CharacterBody3D's default 45 degrees (openspec/changes/hub-combat)."""
+    one, its edge a wall to CharacterBody3D's default 45 degrees (openspec/changes/archive/2026-09-28-hub-combat)."""
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "levels"))
     from city_plan import PAVED_Z  # noqa: E402  (the one source of the kerb height)
     return math.acos((NPC_RADIUS_M - PAVED_Z) / NPC_RADIUS_M) + math.radians(3)
@@ -82,7 +82,7 @@ def npc():
                          floor_max_angle=round(kerb_floor_angle(), 4), floor_snap_length=0.2)
     s.node("CollisionShape3D", "CollisionShape3D", ".", position=v3(0, NPC_HEIGHT_M / 2, 0),
            shape=s.sub_res("CapsuleShape3D", radius=NPC_RADIUS_M, height=NPC_HEIGHT_M))
-    # how they flee and close in, on the level's baked navmesh (openspec/changes/hub-combat). The
+    # how they flee and close in, on the level's baked navmesh (openspec/changes/archive/2026-09-28-hub-combat). The
     # navmesh lies 0.3 m above the street (level_common.add_navigation's cells), and the agent
     # measures in 3D, so the path is lowered to the feet; a waypoint then counts as reached within
     # 0.35 m, and a sprinter (0.09 m a physics tick) turns late enough not to clip the corner the
@@ -199,7 +199,7 @@ def splash():
 
 
 def kestrel():
-    """The Kestrel 10mm in the runner's hand (openspec/changes/hub-combat, design section 8):
+    """The Kestrel 10mm in the runner's hand (openspec/changes/archive/2026-09-28-hub-combat, design section 8):
     Brushfire's Weapon with the prop kit's model, its muzzle and flash. WeaponAdapter sets its
     numbers from data/weapons.json when it is drawn; the scene holds only its parts. Viewmodel
     space, as Brushfire's weapons (WeaponManager draws them at 1/4 scale): the model is full size,

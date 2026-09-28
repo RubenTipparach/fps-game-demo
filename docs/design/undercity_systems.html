@@ -3145,7 +3145,6 @@ SHED</title></path>
         <tr><td><code>dialog-and-social</code></td><td>trees, checks, hostile talk, parley, factions</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
-        <tr><td><code>hub-combat</code></td><td>the Kestrel, damage, everyone can be shot, defences, crime, death</td><td class="n">8</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>hub-skyline</code></td><td>the towers around the hub, coverage, rendering, the map inset</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
@@ -3156,6 +3155,7 @@ SHED</title></path>
         <tr><td><code>specs/level-geometry</code></td><td>no z-fighting, frame reveals, carved rooms, people clear of the level</td><td class="n">4</td><td><span class="chip enforced">Enforced</span></td></tr>
         <tr><td><code>specs/title-and-pause</code></td><td>title, save list, the save rule, quitting, one objective, panel sizes</td><td class="n">6</td><td><span class="chip built">Built</span></td></tr>
         <tr><td><code>specs/npc-characters</code></td><td>generated bodies, one skeleton and library, ragdolls, the body budget</td><td class="n">4</td><td><span class="chip built">Built</span></td></tr>
+        <tr><td><code>specs/hub-combat</code></td><td>the Kestrel, damage, everyone can be shot, defences, crime, death</td><td class="n">8</td><td><span class="chip built">Built</span></td></tr>
       </tbody></table></div>
   </div>
 </section>
@@ -3392,7 +3392,7 @@ SHED</title></path>
 
 <!-- ========================================================= F18 -->
 <section id="hubcombat">
-  <div class="sh"><span class="key">F18</span><h2>The Kestrel fires</h2><span class="spec">openspec/changes/hub-combat</span></div>
+  <div class="sh"><span class="key">F18</span><h2>The Kestrel fires</h2><span class="spec">openspec/specs/hub-combat</span></div>
   <p class="intro">Owner, 2026-09-28: "I wish I had a gun in the main hub to actually do stuff." The runner already carries the Kestrel on belt key 2, but it's a prop: nothing fires it, and NPCs can't be hurt. This is the hub's slice of F10, landing first: the Kestrel fires from the pack's ammo, everyone can be shot, those who can defend themselves do, gunfire is a crime, and the runner can die. The HUD readout ("12 / 36") is already in the approved D3 mockup.</p>
   <div class="controls"><span class="chip built">Built (I1: second)</span><span class="chip enforced">Checked: combat_test 23 of 23, 173 core tests</span></div>
   <div class="sub">

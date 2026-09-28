@@ -1,5 +1,5 @@
 // Who an NPC is, for a hit: the key their status and health are kept under, their faction and
-// their body (openspec/changes/hub-combat, design sections 4 and 6).
+// their body (openspec/changes/archive/2026-09-28-hub-combat, design sections 4 and 6).
 //
 // It lives in the core because the key is saved. A named NPC is kept under their NPC id, which
 // dialog and quests read; a civilian under their own stable id. Every civilian was once kept under

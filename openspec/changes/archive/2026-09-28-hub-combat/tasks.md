@@ -48,6 +48,6 @@
 
 - [x] 5.1 Headless `combat_test.tscn`: shots on a test NPC change its health by the rule; a
   shot heard by a trooper makes MerSec hostile; a fleeing civilian ends at least 25 m away.
-- [ ] 5.2 Video: draw and fire in the market, the patrol's response, civilians fleeing and
+- [x] 5.2 Video: draw and fire in the market, the patrol's response, civilians fleeing and
   cowering, Tank with his baton, a death and a reload. Validation record.
-- [ ] 5.3 Archive, moving the requirements into `openspec/specs/hub-combat`.
+- [x] 5.3 Archive, moving the requirements into `openspec/specs/hub-combat`.

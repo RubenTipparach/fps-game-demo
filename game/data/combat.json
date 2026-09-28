@@ -1,4 +1,4 @@
-// Combat in the hub (openspec/changes/hub-combat, design sections 3 to 7): hit zones on a 1.8 m
+// Combat in the hub (openspec/changes/archive/2026-09-28-hub-combat, design sections 3 to 7): hit zones on a 1.8 m
 // body, resistance caps, the NPCs' hit chance, how people flee, cower and surrender, what hurting
 // and killing costs, and the death fade. "run_mps" is a fighter closing in (the Jog_Fwd clip),
 // "sprint_mps" a person fleeing (Sprint); "death_push_ns" shoves a body along the killing shot.

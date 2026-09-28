@@ -1,5 +1,5 @@
 // The combat rules: where a hit lands, what it does after zones and resistances, how likely an
-// NPC's shot is to hit, and which defence a civilian takes (openspec/changes/hub-combat, design
+// NPC's shot is to hit, and which defence a civilian takes (openspec/changes/archive/2026-09-28-hub-combat, design
 // sections 3 to 5).
 //
 // It lives in the core because each is a rule the HUD, the NPCs, a save and a balance tool must

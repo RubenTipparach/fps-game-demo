@@ -1,5 +1,5 @@
 // Named NPCs and the civilian pool (openspec/changes/sump-market-hub, design section 2), with
-// their health, resistances, defence and weapon (openspec/changes/hub-combat, design section 4).
+// their health, resistances, defence and weapon (openspec/changes/archive/2026-09-28-hub-combat, design section 4).
 {
   "npcs": [
     {"id": "silk", "name": "Silk", "role": "the fixer", "faction": "residents", "intelligence": 3, "dialog": "silk", "model": "silk", "idle": "idle", "health": 90, "resist_pct": {"ballistic": 10}, "defence": "surrender"},

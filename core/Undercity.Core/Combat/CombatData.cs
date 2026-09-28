@@ -1,7 +1,7 @@
 // Weapons and the combat numbers (data/weapons.json, data/combat.json).
 //
 // It lives in the core because damage, magazines, the NPCs' aim and what violence costs are rules
-// a save, the HUD and the NPCs must agree on (CLAUDE.md 5.1; openspec/changes/hub-combat). The
+// a save, the HUD and the NPCs must agree on (CLAUDE.md 5.1; openspec/changes/archive/2026-09-28-hub-combat). The
 // Godot layer fires and animates; it reads these numbers and asks the core what a hit does.
 
 using Undercity.Core.Data;

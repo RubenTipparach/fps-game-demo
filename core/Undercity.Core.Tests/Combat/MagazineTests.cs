@@ -1,4 +1,4 @@
-// Loaded rounds and the reload rule (openspec/changes/hub-combat, design section 2).
+// Loaded rounds and the reload rule (openspec/changes/archive/2026-09-28-hub-combat, design section 2).
 
 using Undercity.Core.Combat;
 

@@ -1,5 +1,5 @@
 // The combat check (scenes/undercity/tests/combat_test.tscn): loads the hub and fires the Kestrel
-// with the real keys, the real weapon and the real people (openspec/changes/hub-combat): drawing
+// with the real keys, the real weapon and the real people (openspec/changes/archive/2026-09-28-hub-combat): drawing
 // it, a shot's damage by the rule and its zone, a kill that leaves the other civilians alive, a
 // shot no trooper hears, civilians fleeing and cowering, the magazine and a reload, Silk
 // surrendering and Tank holding at a shot he only hears and fighting when shot, MerSec turning

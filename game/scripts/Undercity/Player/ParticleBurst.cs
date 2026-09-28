@@ -1,6 +1,6 @@
 // A one-shot burst of particles from an authored scene: a splash where something falls into water
 // (openspec/changes/water-and-swimming, design section 5), blood where a shot hits a person
-// (openspec/changes/hub-combat). One place plays every burst, so they all scale alike and free
+// (openspec/changes/archive/2026-09-28-hub-combat). One place plays every burst, so they all scale alike and free
 // themselves alike.
 //
 // It lives in the Godot layer because it is only an effect: scenes/undercity/splash.tscn and

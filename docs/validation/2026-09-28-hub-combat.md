@@ -3,7 +3,7 @@
 The owner, playtesting the hub on 2026-09-28: "I wish I had a gun in the main hub to actually do
 stuff." The survey put this change second (I1), after water, and settled that the Kestrel fires
 in the hub, everyone can be shot, gunfire is a crime and MerSec fight back (I2), and that death
-fades out and loads the newest save (I15). This record covers `openspec/changes/hub-combat`,
+fades out and loads the newest save (I15). This record covers `openspec/changes/archive/2026-09-28-hub-combat`,
 built on branch `claude/elegant-gauss-qwjhk1`.
 
 ## Environment
@@ -77,7 +77,34 @@ Each is in the design's section 10.
 
 ## Captures
 
-(filled from the capture run)
+`docs/screenshots/hub_combat/hub_combat.mp4` comes from `docs/playtest/scripts/hub_combat.json`,
+written with `--write-movie` at 30 fps with `BRUSHFIRE_SEED=7`: 1,098 frames, 36.6 s, rendered
+in 64 minutes on lavapipe at 1600 x 900 with the 3D view at 0.67 scale, encoded to H.264 at
+1280 x 720 with its sound. The run quit with exit 0 and logged no errors. The stills beside it:
+
+| Still | Shows | Requirement |
+|---|---|---|
+| `01_kestrel_drawn.png` | The Kestrel drawn in the Sump Market, 12 / 24; a trooper who sees it barks "Put it away." | The Kestrel fires from the pack's ammunition |
+| `02_the_shot.png` | The shot, 11 / 24. The market-goer the script aims at had walked on in this run, so the shot hits nobody; it is heard. | Gunfire is a crime |
+| `03_people_flee.png`, `04_people_cower.png` | A civilian across the square drops and cowers at the sound. | Those who can defend themselves do |
+| `05_mersec_fires_back.png` | Outside Low Harbor Station, a shot a trooper hears: "MerSec is hostile", "Hostile in the Sump!" | Gunfire is a crime |
+| `06_reloading.png`, `07_reloaded.png` | The magazine emptied, 0 / 24 and RELOADING, then 12 / 12. | The Kestrel fires from the pack's ammunition |
+| `08_tank_swings.png` | The Rusty Anchor: the runner shoots Tank behind his bar. | Those who can defend themselves do |
+| `09_fading.png` | Frame 1,036 of the movie: the screen half dark after the killing blow. | Death loads the newest save |
+| `10_the_newest_save.png` | The newest save loaded: full health, holstered, the law calm, MerSec's reputation as it was. | Death loads the newest save |
+
+What the video shows that the stills don't, and what it doesn't show:
+- **The death takes longer than the script says.** The script sets the runner's health to 4 and
+  calls the next blow a kill. Health first climbs to 22 (the regeneration up to the 25 % floor,
+  owner B1) while Tank comes round the bar, and then two baton blows take it to 6 and 0. The
+  fade starts at 33.8 s and lasts 1.5 s, and the save loads at 35.3 s. The script's own still
+  09 came 5 s before the blow, showing health 14 and no fade; the still above is the movie's
+  own frame, and the script's is not kept.
+- **The trooper doesn't hit in this run.** MerSec turns hostile and the trooper barks, but the
+  runner's health stays 100 through the stand-off. The combat test's run (the table above) is
+  the one where the trooper fires back and hits.
+- **Tank's swing is off screen.** The view stays on the bar while he comes round it, so the
+  blows show as the health bar falling.
 
 ## What the checks establish
 
@@ -92,9 +119,9 @@ Each is in the design's section 10.
 
 ## What they don't establish
 
-- **The load after death.** The fade is checked; the newest save loading after it is
-  `SaveStore.Newest`'s (its core tests) and the capture's, not the headless test's, which would
-  lose its own scene to the load.
+- **The load after death, headless.** The test checks the fade; the newest save loading after
+  it is `SaveStore.Newest`'s (its core tests) and the capture's (still 10), not the headless
+  test's, which would lose its own scene to the load.
 - **Kessler's scattergun, surrender's end and a fighter losing the runner** (pursuit ends 20 s
   after the last shot or hit) are built and not checked.
 - **Frame cost.** Lavapipe doesn't measure it.

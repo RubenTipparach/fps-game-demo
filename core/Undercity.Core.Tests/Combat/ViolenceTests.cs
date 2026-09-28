@@ -1,4 +1,4 @@
-// Hurting and killing people, and what it costs (openspec/changes/hub-combat, design sections 4
+// Hurting and killing people, and what it costs (openspec/changes/archive/2026-09-28-hub-combat, design sections 4
 // and 6); the runner's health, armour and death (section 7).
 
 using Undercity.Core.Combat;

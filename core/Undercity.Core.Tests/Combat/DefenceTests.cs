@@ -1,4 +1,4 @@
-// Who does what when violence starts, and whether an NPC's shot hits (openspec/changes/hub-combat,
+// Who does what when violence starts, and whether an NPC's shot hits (openspec/changes/archive/2026-09-28-hub-combat,
 // design section 5), against the shipped data/npcs.json and data/combat.json.
 
 using Undercity.Core.Combat;

@@ -41,7 +41,7 @@ public sealed class NpcDef
     /// <summary>True for MerSec troopers who enforce the hub's law.</summary>
     public bool Law { get; init; }
 
-    /// <summary>Health when unhurt (openspec/changes/hub-combat).</summary>
+    /// <summary>Health when unhurt (openspec/changes/archive/2026-09-28-hub-combat).</summary>
     public required double Health { get; init; }
 
     /// <summary>Resistance by damage type, percent (capped by combat.json).</summary>
@@ -69,7 +69,7 @@ public sealed class CivilianPool
     /// <summary>Rumours: hints about routes.</summary>
     public required IReadOnlyList<string> Rumours { get; init; }
 
-    /// <summary>A civilian's health when unhurt (openspec/changes/hub-combat).</summary>
+    /// <summary>A civilian's health when unhurt (openspec/changes/archive/2026-09-28-hub-combat).</summary>
     public required double Health { get; init; }
 
     /// <summary>A civilian's resistance by damage type, percent.</summary>

@@ -16,7 +16,7 @@
 # exceptions between neighbouring bodies are added there too, because neither can be saved.
 #
 # Each scene also has a RightHand bone attachment with a Grip node, where NpcActor puts the
-# weapon they fight with (openspec/changes/hub-combat). Every hand model has its origin at the web
+# weapon they fight with (openspec/changes/archive/2026-09-28-hub-combat). Every hand model has its origin at the web
 # of the hand and its barrel (or shaft) along -Z, so one Grip holds them all. Grip's transform is
 # worked out from the body's own pose in UAL's Pistol_Aim_Neutral: at that pose the barrel points
 # along the body's facing, level, from the palm.

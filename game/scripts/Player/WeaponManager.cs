@@ -45,7 +45,7 @@ public partial class WeaponManager : Node3D
 
     /// <summary>
     /// Where rounds come from, when not the manager's own counts: Undercity's pack and magazines
-    /// (openspec/changes/hub-combat). Null for Brushfire's reference maps.
+    /// (openspec/changes/archive/2026-09-28-hub-combat). Null for Brushfire's reference maps.
     /// </summary>
     public IAmmoSource AmmoSource { get; set; }
 

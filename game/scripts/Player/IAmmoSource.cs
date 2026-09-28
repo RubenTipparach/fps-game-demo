@@ -3,7 +3,7 @@ namespace Brushfire;
 /// <summary>
 /// Where a weapon's rounds come from when the WeaponManager's own counts don't apply: Undercity
 /// keeps rounds in each firearm's magazine and the pack (Undercity.Core's Magazines), so its
-/// weapons fire through this (openspec/changes/hub-combat, design section 1). Brushfire's
+/// weapons fire through this (openspec/changes/archive/2026-09-28-hub-combat, design section 1). Brushfire's
 /// reference maps leave it unset and keep their counts.
 /// </summary>
 public interface IAmmoSource

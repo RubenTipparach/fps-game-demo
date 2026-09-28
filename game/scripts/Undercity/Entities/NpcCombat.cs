@@ -1,5 +1,5 @@
 // How a person defends themselves once violence starts: a fighter closes in and shoots or swings,
-// everyone else flees along the navmesh, cowers or surrenders (openspec/changes/hub-combat,
+// everyone else flees along the navmesh, cowers or surrenders (openspec/changes/archive/2026-09-28-hub-combat,
 // design section 5).
 //
 // It lives in the Godot layer because it moves a body and plays clips. Who does what is the

@@ -674,7 +674,7 @@ def music_loop():
 
 
 # ----------------------------------------------------------------------------- hub combat
-# (openspec/changes/hub-combat, design section 8)
+# (openspec/changes/archive/2026-09-28-hub-combat, design section 8)
 
 def kestrel_fire():
     """The Kestrel 10mm: a pistol's short, bright crack with a hard slap and a small room tail."""

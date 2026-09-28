@@ -1,5 +1,5 @@
 // The rounds loaded in each of the runner's firearms, and the one reload rule
-// (openspec/changes/hub-combat, design section 2).
+// (openspec/changes/archive/2026-09-28-hub-combat, design section 2).
 //
 // It lives in the core because what a weapon holds is saved, the HUD shows it ("12 / 24"), and a
 // reload takes rounds out of the pack, which is the pack's rule: whole or not at all (CLAUDE.md

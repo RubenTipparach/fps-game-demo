@@ -17,7 +17,7 @@ surrender.
 
 The owner, 2026-09-28: "I wish I had a gun in the main hub to actually do stuff." The hub's part
 of this change (the Kestrel, the damage rule, everyone can be shot, defences, the health floor
-and death) moved to `openspec/changes/hub-combat`, which lands first. Its five requirements
+and death) moved to `openspec/changes/archive/2026-09-28-hub-combat`, which lands first. Its five requirements
 left this change's spec with it. This change keeps non-lethal tools, EMP, takedowns, the
 archetypes and the other player weapons.
 

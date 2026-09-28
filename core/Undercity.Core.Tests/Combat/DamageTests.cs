@@ -1,5 +1,5 @@
 // The damage rule, the hit zones and the NPCs' aim, against the shipped data/combat.json and
-// data/weapons.json (openspec/changes/hub-combat, design sections 3 and 5).
+// data/weapons.json (openspec/changes/archive/2026-09-28-hub-combat, design sections 3 and 5).
 
 using Undercity.Core.Combat;
 
