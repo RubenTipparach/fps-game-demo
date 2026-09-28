@@ -1,15 +1,22 @@
 [gd_scene format=3 uid="uid://l1qnarhl3xo8"]
 
 [ext_resource type="Script" uid="uid://bo2c6r8mihcgv" path="res://scripts/Undercity/Level/UndercityLevel.cs" id="1_UndercityLev"]
+[ext_resource type="LightmapGIData" uid="uid://d2s6ckmwjw4h3" path="res://levels/undercity/hub/hub_streets.lmbake" id="3_i8ysp"]
 [ext_resource type="LightmapGIData" uid="uid://bb7otx04ciwdg" path="res://levels/undercity/hub/hub_lantern_row.lmbake" id="4_3ltta"]
 [ext_resource type="PackedScene" uid="uid://cqfou82gvoif8" path="res://levels/undercity/hub/hub_streets.glb" id="6_hub_streets"]
+[ext_resource type="LightmapGIData" uid="uid://d2wbir60dhisn" path="res://levels/undercity/hub/hub_sump_market.lmbake" id="7_4c3ra"]
 [ext_resource type="PackedScene" uid="uid://0t5spjib8jcv" path="res://levels/undercity/hub/hub_lantern_row.glb" id="7_hub_lantern_"]
 [ext_resource type="PackedScene" uid="uid://bkixdkvrdnb5n" path="res://levels/undercity/hub/hub_sump_market.glb" id="8_hub_sump_mar"]
+[ext_resource type="LightmapGIData" uid="uid://cs5wlavoofi05" path="res://levels/undercity/hub/hub_drydock.lmbake" id="9_hobq3"]
 [ext_resource type="PackedScene" uid="uid://cs2cggjqlh5b8" path="res://levels/undercity/hub/hub_drydock.glb" id="9_hub_drydock"]
 [ext_resource type="PackedScene" uid="uid://bu1xxoo1rvdd7" path="res://levels/undercity/hub/hub_kiln.glb" id="10_hub_kiln"]
+[ext_resource type="LightmapGIData" uid="uid://b01e36cavm5h" path="res://levels/undercity/hub/hub_kiln.lmbake" id="11_54ynu"]
 [ext_resource type="PackedScene" uid="uid://mt1cynlvenor" path="res://levels/undercity/hub/hub_tin_stacks.glb" id="11_hub_tin_stac"]
 [ext_resource type="PackedScene" uid="uid://dnvepfdsav0fh" path="res://levels/undercity/hub/hub_spire_foundations.glb" id="12_hub_spire_fo"]
 [ext_resource type="PackedScene" uid="uid://bvfrurioohkum" path="res://levels/undercity/hub/hub_skyway.glb" id="13_hub_skyway"]
+[ext_resource type="LightmapGIData" uid="uid://dbbdma4skj8jy" path="res://levels/undercity/hub/hub_tin_stacks.lmbake" id="13_neumk"]
+[ext_resource type="LightmapGIData" uid="uid://cpjt2ey1qyj7w" path="res://levels/undercity/hub/hub_spire_foundations.lmbake" id="15_xq8wy"]
+[ext_resource type="LightmapGIData" uid="uid://chkom3bst2pq7" path="res://levels/undercity/hub/hub_skyway.lmbake" id="17_nbdaa"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_2"]
 geometry_parsed_geometry_type = 1
@@ -97,6 +104,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("3_i8ysp")
 
 [node name="FillLights" type="Node3D" parent="Sectors/streets" unique_id=1986196451]
 
@@ -1952,6 +1960,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("7_4c3ra")
 
 [node name="ZoneAmbient" type="Node3D" parent="Sectors/sump_market" unique_id=1303348463]
 
@@ -2389,6 +2398,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("9_hobq3")
 
 [node name="ZoneAmbient" type="Node3D" parent="Sectors/drydock" unique_id=1700107618]
 
@@ -2721,6 +2731,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("11_54ynu")
 
 [node name="ZoneAmbient" type="Node3D" parent="Sectors/kiln" unique_id=1720790650]
 
@@ -3191,6 +3202,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("13_neumk")
 
 [node name="ZoneAmbient" type="Node3D" parent="Sectors/tin_stacks" unique_id=1018875809]
 
@@ -3670,6 +3682,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("15_xq8wy")
 
 [node name="BakeOnlyLights" type="Node3D" parent="Sectors/spire_foundations" unique_id=1350111554]
 
@@ -3765,6 +3778,7 @@ denoiser_strength = 0.12
 environment_mode = 3
 environment_custom_color = Color(0.172549, 0.164706, 0.321569, 1)
 environment_custom_energy = 0.55
+light_data = ExtResource("17_nbdaa")
 
 [node name="BakeOnlyLights" type="Node3D" parent="Sectors/skyway" unique_id=1458419907]
 
