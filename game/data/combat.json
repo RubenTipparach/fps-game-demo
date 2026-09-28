@@ -1,14 +1,21 @@
 // Combat in the hub (openspec/changes/hub-combat, design sections 3 to 7): hit zones on a 1.8 m
 // body, resistance caps, the NPCs' hit chance, how people flee, cower and surrender, what hurting
-// and killing costs, and the death fade.
+// and killing costs, and the death fade. "run_mps" is a fighter closing in (the Jog_Fwd clip),
+// "sprint_mps" a person fleeing (Sprint); "death_push_ns" shoves a body along the killing shot.
+// A hostile fighter goes after the runner while they see them ("sight_m") or for "pursue_s" after
+// the last shot or hit; otherwise they hold where they are.
 {
   "zones": {"head_from_m": 1.52, "legs_below_m": 0.85, "head": 2.0, "torso": 1.0, "limbs": 0.7},
   "resist_cap_pct": {"npc": 75, "player": 60},
-  "hit_chance": {"base": 0.55, "per_m": 0.02, "moving": 0.15, "crouched": 0.10, "min": 0.08, "max": 0.60},
-  "fight": {"close_to_m": 18, "back_off_m": 6},
+  "hit_chance": {"base": 0.55, "per_m": 0.02, "moving": 0.15, "crouched": 0.10, "min": 0.08, "max": 0.60,
+                 "moving_mps": 0.5},
+  "fight": {"close_to_m": 18, "back_off_m": 6, "sight_m": 40, "pursue_s": 20},
   "flee_m": 25,
   "cower_s": 20,
   "surrender_radius_m": 15,
   "reputation": {"assault": -15, "murder": -50},
-  "death_fade_s": 1.5
+  "death_fade_s": 1.5,
+  "run_mps": 3.5,
+  "sprint_mps": 5.5,
+  "death_push_ns": 30
 }

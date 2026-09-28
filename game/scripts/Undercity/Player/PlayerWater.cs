@@ -109,7 +109,7 @@ public partial class PlayerWater : Node, IWired, Brushfire.IMovementOverride
             var v = body.Velocity;
             var hard = Mathf.Clamp(-v.Y / 12f, 0f, 1f);
             Brushfire.Audio.Play2D(body, "water_splash", Mathf.Lerp(-14f, -2f, hard), 0.1f);
-            Splash.At(body, new Vector3(feet.X, s, feet.Z), hard);
+            ParticleBurst.Splash(body, new Vector3(feet.X, s, feet.Z), hard);
             body.Velocity = new Vector3(v.X, _swim.Entry(v.Y), v.Z);
         }
         if (input.JumpPressed && Contact < WaterContact.Submerged && _mantle.TryStart(body, s, _radius))

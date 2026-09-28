@@ -47,6 +47,30 @@ public sealed class NpcBodiesTests
         }
     }
 
+    /// <summary>The animation names in a .glb's JSON chunk, with the "_Loop" suffix the import strips.</summary>
+    private static List<string> GlbClips(string resPath)
+    {
+        var bytes = File.ReadAllBytes(Path.Combine(TestData.RepoRoot, "game", resPath));
+        var length = BitConverter.ToInt32(bytes, 12);
+        using var doc = System.Text.Json.JsonDocument.Parse(bytes.AsMemory(20, length));
+        return doc.RootElement.GetProperty("animations").EnumerateArray()
+            .Select(a => a.GetProperty("name").GetString()!)
+            .Select(n => n.EndsWith("_Loop", StringComparison.Ordinal) ? n[..^"_Loop".Length] : n)
+            .ToList();
+    }
+
+    [Fact]
+    public void Every_clip_the_table_names_is_in_the_shipped_libraries()
+    {
+        // The libraries the NPC scenes hold (tools/godot/gen_npc_scenes.gd): UAL with no prefix, ours as "undercity/".
+        var clips = GlbClips("animations/ual/ual_standard.glb")
+            .Concat(GlbClips("animations/undercity_clips.glb").Select(c => "undercity/" + c)).ToHashSet(StringComparer.Ordinal);
+        foreach (var (state, clip) in TestData.Data.NpcBodies.Clips)
+        {
+            Assert.True(clips.Contains(clip), $"the state '{state}' plays '{clip}', which no library has");
+        }
+    }
+
     [Fact]
     public void A_table_without_a_walk_clip_is_refused()
     {

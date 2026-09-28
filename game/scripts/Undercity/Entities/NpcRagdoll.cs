@@ -153,7 +153,7 @@ public partial class NpcRagdoll : PhysicalBoneSimulator3D
             {
                 _splashed = true;
                 var p = b.GlobalPosition;
-                Splash.At(this, new Vector3(p.X, s, p.Z), Mathf.Clamp(-b.LinearVelocity.Y / 8f, 0.3f, 1f));
+                ParticleBurst.Splash(this, new Vector3(p.X, s, p.Z), Mathf.Clamp(-b.LinearVelocity.Y / 8f, 0.3f, 1f));
                 Brushfire.Audio.Play3D(this, "water_splash", p, -4f);
             }
             b.ApplyCentralImpulse(Vector3.Up * ((float)t.BodyBuoyancyRatio * b.Mass * g * f * (float)delta));

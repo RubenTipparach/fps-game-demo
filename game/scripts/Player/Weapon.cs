@@ -26,6 +26,8 @@ public partial class Weapon : Node3D
     [Export] public float FireVolumeDb;
     [Export] public float NoiseRadius = 35f;
     [Export] public bool Tracers;
+    /// <summary>Undercity: the weapon's id in data/weapons.json, carried by every hit it makes; empty for Brushfire's own.</summary>
+    [Export] public string WeaponId = "";
 
     public WeaponManager Manager;
     protected float Cooldown;
@@ -33,7 +35,7 @@ public partial class Weapon : Node3D
     Node3D _flash;
     float _flashTimer;
 
-    public bool HasAmmo => Manager.GetAmmo(Ammo) >= AmmoPerShot;
+    public bool HasAmmo => Manager.AmmoSource?.HasRound(this) ?? Manager.GetAmmo(Ammo) >= AmmoPerShot;
     public bool ReadyToFire => Cooldown <= 0f;
     /// <summary>Current spread in degrees; the crosshair opens up to match.</summary>
     public virtual float CurrentSpread => SpreadDegrees;
@@ -53,7 +55,7 @@ public partial class Weapon : Node3D
         _flashTimer -= dt;
         if (_flash != null)
             _flash.Visible = _flashTimer > 0f && Visible;
-        if (Cooldown > 0f || !trigger)
+        if (Cooldown > 0f || !trigger || Manager.AmmoSource is { } source && !source.CanFire(this))
             return;
         if (!HasAmmo)
         {
@@ -61,6 +63,7 @@ public partial class Weapon : Node3D
             {
                 Audio.Play2D(this, "dry_fire", -6f);
                 Cooldown = 0.3f;
+                Manager.AmmoSource?.DryFired(this);
             }
             return;
         }
@@ -69,7 +72,15 @@ public partial class Weapon : Node3D
 
     protected void TryFire(float dt)
     {
-        Manager.TakeAmmo(Ammo, AmmoPerShot);
+        if (Manager.AmmoSource is { } source)
+        {
+            if (!source.TakeRound(this))
+                return;
+        }
+        else
+        {
+            Manager.TakeAmmo(Ammo, AmmoPerShot);
+        }
         // Carry the remainder so the fire rate is exact regardless of frame rate.
         Cooldown = Mathf.Max(Cooldown, -dt) + FireInterval;
         Fire();
@@ -108,7 +119,7 @@ public partial class Weapon : Node3D
         Basis aim = Basis.FromEuler(new Vector3(player.Pitch, player.Yaw, 0f));
         var space = player.GetWorld3D().DirectSpaceState;
         var exclude = new Godot.Collections.Array<Rid> { player.GetRid() };
-        var hits = new Dictionary<GodotObject, (float amount, Vector3 point, Vector3 dir)>();
+        var hits = new Dictionary<GodotObject, (float amount, Vector3 point, Vector3 dir, int count)>();
         int fxCount = 0;
 
         for (int i = 0; i < pellets; i++)
@@ -131,9 +142,14 @@ public partial class Weapon : Node3D
             if (collider is IDamageable target && !target.IsDead)
             {
                 hits.TryGetValue(collider, out var acc);
-                hits[collider] = (acc.amount + damage, pos, dir);
+                hits[collider] = (acc.amount + damage, pos, dir, acc.count + 1);
                 if (fxCount++ < 4)
-                    Fx.RobotHit(this, pos, normal);
+                {
+                    if (collider is IHitEffect fx)
+                        fx.ShowHit(pos, normal);
+                    else
+                        Fx.RobotHit(this, pos, normal);
+                }
             }
             else
             {
@@ -141,15 +157,17 @@ public partial class Weapon : Node3D
             }
         }
 
-        foreach (var (obj, (amount, point, dir)) in hits)
+        foreach (var (obj, (amount, point, dir, count)) in hits)
         {
             var target = (IDamageable)obj;
             target.TakeDamage(new DamageInfo(amount, DamageKind.Bullet, point, dir, player)
             {
                 Knockback = dir * Mathf.Min(amount * 0.05f, 5f),
+                WeaponId = string.IsNullOrEmpty(WeaponId) ? null : WeaponId,
+                Hits = count,
             });
             Game.Instance.Stats.ShotsHit++;
-            player.Hud.ShowHitMarker(target.IsDead);
+            player.Hud?.ShowHitMarker(target.IsDead);
         }
     }
 

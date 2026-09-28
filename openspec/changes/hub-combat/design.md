@@ -176,6 +176,55 @@ live in `data/combat.json`.
 - **Saves** are version 3: the rounds loaded in each firearm. Older saves load every firearm
   full. The world's memory gains NPC health and who has been hurt.
 
+### 10. Found in building the Godot half
+
+- **Who does what is the core's.** `CombatRules.DefenceOf` gives a person's defence (a named
+  NPC's data, a civilian's seeded draw), and `CombatRules.Respond` says what they do about a
+  provocation: a fighter fights when hurt or when they see one of their own killed, and a shot
+  they only hear doesn't start their fight (the law's own rule turns MerSec). Everyone else takes
+  their defence at the first shot. `CombatRules.NpcShotHits` rolls an NPC's shot from a stream
+  seeded by the run, the shooter and the shot's number, so a replay hits the same shots.
+- **A reload takes time in the core.** `GameState.StartReload` starts it, `Tick` ends it and moves
+  the rounds, drawing or holstering cuts it short, and nothing fires meanwhile. The HUD reads
+  `Reloading`; a dry pull on the trigger starts one.
+- **Fighters don't all cross the hub.** A hostile fighter goes after the runner while they see them
+  (40 m, a clear line) or for 20 s after the last shot heard or hit taken; otherwise they hold
+  where they stand. Without this, every trooper in the hub ran at the runner the moment MerSec
+  turned.
+- **New numbers, in data.** `combat.json` gains `run_mps` 3.5 (a fighter closing in, Jog_Fwd),
+  `sprint_mps` 5.5 (a person fleeing, Sprint from the start rather than a jog first),
+  `death_push_ns` 30, `hit_chance.moving_mps` 0.5, `fight.sight_m` 40 and `fight.pursue_s` 20.
+  `weapons.json` gains each weapon's `fire_sound`, `reload_sound` and `hand_model`; a core test
+  checks every named sound, scene and model exists.
+- **The Kestrel is a prop-kit model.** It is built by `tools/blender/build_undercity_props.py`
+  with the kit's materials, z-fighting check and glTF export, not a separate `build_weapons.py`,
+  which would copy that machinery (CLAUDE.md 5.1). Its source is the kit's `.blend`.
+- **Hands.** MerSec's service pistol is drawn with the Kestrel's model; Tank's baton and Kessler's
+  scattergun are two more kit props. Every NPC scene has a `RightHand` attachment with a `Grip`,
+  fitted by `gen_npc_scenes.gd` from the body's own pose in UAL's `Pistol_Aim_Neutral`, and the
+  weapon shows only while they fight.
+- **A cowering person keeps a standing capsule.** The ray hits the 1.8 m capsule whatever the
+  clip, so a shot at a crouched head counts by its height on the standing body. Fitting the
+  capsule to the pose is left for `combat-and-enemies`.
+- **Flinches are whole-body.** The NPCs play clips on one `AnimationPlayer`, which has no
+  upper-body layer, so a hit plays `Hit_Chest` or `Hit_Head` in full and they stop for its length.
+- **People bleed.** A third small seam in Brushfire, `IHitEffect`, lets a person show their own
+  hits; Brushfire's robots keep their sparks. The splash and the blood share one particle player
+  (`ParticleBurst`).
+- **The hit marker comes through `IScreens`,** from the NPC that was hit, not through a static
+  event bus.
+- **People climb kerbs.** The navmesh runs over the 0.15 m kerbs, but a 0.35 m capsule meets a
+  kerb's edge at 55 degrees from level, a wall to CharacterBody3D's default 45: the first fleeing
+  civilian stopped at the first kerb. The NPC scene's floor angle is now worked out from the
+  kerb height (`city_plan.PAVED_Z`) and the capsule, plus 3 degrees (58.2). Patrols never met
+  this because the plan keeps their legs off kerbs.
+- **The path is lowered to the feet.** The navmesh lies 0.3 m above the street, and the agent
+  measures waypoints in 3D, so with a tight waypoint radius it never reached one. The agent's
+  `path_height_offset` is 0.3 and a waypoint is reached within 0.35 m, tight enough that a
+  sprinter no longer clips the corner a path bends around (a market stall's hull did).
+- **The AutoTest `kill` step had the civilian bug too:** it wrote every civilian's death under
+  "civ". It now uses the target key.
+
 ## Walkthrough
 
 1. The runner draws the Kestrel (key 2) in the Sump Market. A trooper 20 m away sees it:
@@ -195,8 +244,9 @@ live in `data/combat.json`.
   data, and the survey asks whether combat should stay "outsmart, don't outshoot" (I2).
 - **Navmesh fleeing through a dense market** can bunch people at chokepoints. Flee points are
   chosen in a fan away from the shooter, and a point whose path is blocked is skipped.
-- **Brushfire's code predates the rules** (CLAUDE.md 13). The two seams (`IAmmoSource` and the
-  HUD null checks) are the only changes inside it.
+- **Brushfire's code predates the rules** (CLAUDE.md 13). The seams are the only changes inside
+  it: `IAmmoSource` with `WeaponManager.Adopt` and `Release`, the HUD null checks, the weapon id
+  and hit count on `DamageInfo`, and `IHitEffect`.
 
 ## Owner decisions (survey, 2026-09-28)
 

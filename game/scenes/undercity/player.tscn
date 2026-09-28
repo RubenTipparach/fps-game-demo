@@ -6,6 +6,7 @@
 [ext_resource type="Material" path="res://materials/underwater.tres" id="6_underwater"]
 [ext_resource type="Script" path="res://scripts/Undercity/Player/Interactor.cs" id="7_Interactor"]
 [ext_resource type="Script" path="res://scripts/Undercity/Player/PlayerWater.cs" id="8_PlayerWater"]
+[ext_resource type="Script" path="res://scripts/Undercity/Player/WeaponAdapter.cs" id="9_WeaponAdapte"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
 height = 1.8
@@ -60,3 +61,6 @@ script = ExtResource("7_Interactor")
 
 [node name="Water" type="Node" parent="."]
 script = ExtResource("8_PlayerWater")
+
+[node name="Weapons" type="Node" parent="."]
+script = ExtResource("9_WeaponAdapte")

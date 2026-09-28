@@ -6,13 +6,23 @@
     "idle": "Idle",
     "walk": "Walk",
     "talk": "Idle_Talking",
-    // No NPC holds a weapon model until combat lands, so the guards stand.
+    // A guard's weapon stays out of sight until they fight, so the guards stand.
     "guard": "Idle",
     "hostile": "Idle",
     "sit": "Sitting_Idle",
     "surrender": "undercity/Surrender",
     "cower": "undercity/Cower",
-    "death": "Death01"
+    "death": "Death01",
+    // Combat (openspec/changes/hub-combat, design section 5): UAL has pistol clips and no rifle
+    // ones; a baton swings with the sword attack.
+    "aim": "Pistol_Aim_Neutral",
+    "shoot": "Pistol_Shoot",
+    "reload": "Pistol_Reload",
+    "run": "Jog_Fwd",
+    "sprint": "Sprint",
+    "swing": "Sword_Attack",
+    "hit_chest": "Hit_Chest",
+    "hit_head": "Hit_Head"
   },
   "blend_s": 0.25,
   // Measured in docs/spikes/npc-pipeline on Jolt: 20 capsules, 80.5 kg. Every Jolt body was below

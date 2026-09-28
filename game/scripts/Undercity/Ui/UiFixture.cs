@@ -100,6 +100,16 @@ public sealed class StubLevelHost : ILevelHost
     public string SaveRefusal() => Refusal;
 
     /// <inheritdoc/>
+    public void ShotHeard(Vector3 at, float radiusM, bool byRunner)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void Killed(NpcActor victim, Vector3 from)
+    {
+    }
+
+    /// <inheritdoc/>
     public bool TrySave(string slot, out string reason)
     {
         reason = Refusal;

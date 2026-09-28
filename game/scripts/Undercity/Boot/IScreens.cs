@@ -77,4 +77,10 @@ public interface IScreens
 
     /// <summary>A warning line in the law colour, such as "MerSec: Put it away."; empty hides it.</summary>
     void ShowAlert(string text);
+
+    /// <summary>The hit marker on the crosshair: the runner's shot hurt someone, or killed them.</summary>
+    void ShowHitMarker(bool killed);
+
+    /// <summary>Fades the whole screen to black over <paramref name="seconds"/> (the runner's death).</summary>
+    void FadeToBlack(double seconds);
 }

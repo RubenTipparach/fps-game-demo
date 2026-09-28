@@ -67,4 +67,13 @@ public interface ILevelHost
 
     /// <summary>Saves the run to a slot unless the save rule refuses. Returns false with the reason.</summary>
     bool TrySave(string slot, out string reason);
+
+    /// <summary>
+    /// A shot (or a swing) at <paramref name="at"/>, heard within <paramref name="radiusM"/>: the
+    /// people who hear it react, and MerSec turns hostile if it was the runner's and a trooper heard.
+    /// </summary>
+    void ShotHeard(Vector3 at, float radiusM, bool byRunner);
+
+    /// <summary><paramref name="victim"/> was killed by a shot from <paramref name="from"/>: their own who see it may fight.</summary>
+    void Killed(NpcActor victim, Vector3 from);
 }

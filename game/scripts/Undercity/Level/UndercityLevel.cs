@@ -12,6 +12,7 @@ using System.Linq;
 using Brushfire;
 using Godot;
 using Undercity.Core;
+using Undercity.Core.Combat;
 using Undercity.Core.Perception;
 using Undercity.Core.World;
 
@@ -150,6 +151,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
         }
         GetTree().NodeAdded += OnNodeAdded;
         State.HostAction += OnHost;
+        State.Died += OnDied;
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
         _session.Save(SavesTable.Auto);
@@ -161,6 +163,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
         if (_session is not null)
         {
             State.HostAction -= OnHost;
+            State.Died -= OnDied;
         }
     }
 
@@ -225,8 +228,9 @@ public partial class UndercityLevel : Node3D, ILevelHost
         {
             return;
         }
-        // A screen that takes the mouse also stops the body: no walking through a conversation.
-        _player.ProcessMode = Screens.Blocking ? ProcessModeEnum.Disabled : ProcessModeEnum.Inherit;
+        // A screen that takes the mouse also stops the body: no walking through a conversation, or
+        // on after death while the screen fades.
+        _player.ProcessMode = Screens.Blocking || State.Dead ? ProcessModeEnum.Disabled : ProcessModeEnum.Inherit;
         State.Tick(delta);
         _watchS -= delta;
         if (_watchS <= 0)
@@ -432,6 +436,48 @@ public partial class UndercityLevel : Node3D, ILevelHost
             npc.React("hostile");
         }
         Screens.ShowAlert("MerSec is hostile.");
+    }
+
+    // ------------------------------------------------------------------ violence
+
+    /// <inheritdoc/>
+    public void ShotHeard(Vector3 at, float radiusM, bool byRunner)
+    {
+        var heard = Npcs().Where(n => n.Alive && n.GlobalPosition.DistanceTo(at) <= radiusM).ToList();
+        if (byRunner && !State.Law.Hostile && heard.FirstOrDefault(n => n.IsLaw) is { } trooper
+            && State.Law.ShotFired() == LawResponse.Hostile)
+        {
+            TurnLawHostile(trooper);
+        }
+        foreach (var npc in heard)
+        {
+            npc.Provoke(Provocation.ShotHeard, at);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void Killed(NpcActor victim, Vector3 from)
+    {
+        // Their own who see the body fall: the victim's faction, alive, with a clear line to it.
+        var body = victim.GlobalPosition + Vector3.Up * 1.0f;
+        foreach (var npc in Npcs().Where(n => n != victim && n.Alive && n.Faction == victim.Faction
+                     && n.GlobalPosition.DistanceTo(body) <= (float)State.Data.Combat.Fight.SightM && n.ClearLine(body)))
+        {
+            npc.Provoke(Provocation.MurderSeen, from);
+        }
+    }
+
+    /// <summary>The runner died: the screen fades out, then the newest save loads (or the title opens).</summary>
+    private async void OnDied()
+    {
+        var fadeS = State.Data.Combat.DeathFadeS;
+        Screens.FadeToBlack(fadeS);
+        await ToSignal(GetTree().CreateTimer(fadeS, processAlways: true), SceneTreeTimer.SignalName.Timeout);
+        if (_session?.Saves.Newest() is { } newest && _shell!.Load(newest.Slot))
+        {
+            return;
+        }
+        _shell?.ToTitle();
     }
 
     private void WatchDisguise()

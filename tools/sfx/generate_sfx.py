@@ -673,6 +673,37 @@ def music_loop():
     return looped
 
 
+# ----------------------------------------------------------------------------- hub combat
+# (openspec/changes/hub-combat, design section 8)
+
+def kestrel_fire():
+    """The Kestrel 10mm: a pistol's short, bright crack with a hard slap and a small room tail."""
+    return reverb(gunshot(0.16, 110, 5200, 1.2, 0.3, 3.2), wet=0.14, room=0.45, tail=0.4)
+
+
+def mersec_pistol_fire():
+    """MerSec's service pistol: the same class of round, a touch duller, so the runner can tell
+    whose shot it was."""
+    return reverb(gunshot(0.18, 95, 4200, 1.0, 0.35, 3.0), wet=0.16, room=0.5, tail=0.45)
+
+
+def kestrel_reload():
+    """Magazine out, a new one seated with a slap, the slide let go: three metal clicks over 1.2 s."""
+    d = 1.3
+    out_ = mix(metal_hit(1700, 0.1, 0.025) * 0.5, bp(noise(0.05), 1500, 6000) * env_exp(0.05, 0.012))
+    seat = mix(metal_hit(1100, 0.14, 0.035) * 0.7, bp(noise(0.06), 800, 5000) * env_exp(0.06, 0.01) * 1.2)
+    slide = mix(bp(noise(0.08), 2500, 9000) * env_adsr(0.08, 0.005, 0.03, 0.3, 0.03) * 0.4,
+                metal_hit(2100, 0.12, 0.03) * 0.6)
+    return mix(at(out_, 0.05, d), at(seat, 0.6, d), at(slide, 1.05, d))
+
+
+def baton_swing():
+    """A baton cutting the air: a quick band-passed whoosh that rises and falls."""
+    d = 0.35
+    whoosh = sweep_lp(noise(d), 400, 2600, 0.6) * env_adsr(d, 0.08, 0.12, 0.3, 0.12)
+    return hp(whoosh, 150) * 0.8
+
+
 def main():
     save("shotgun_fire", shotgun_fire())
     save("shotgun_pump", shotgun_pump())
@@ -731,6 +762,11 @@ def main():
     for i in range(2):
         save(f"swim_stroke_tired_{i + 1}", swim_stroke_tired(i), peak=0.65)
     save("breath_gasp", breath_gasp(), peak=0.7)
+    # hub combat, after water for the same reason
+    save("kestrel_fire", kestrel_fire())
+    save("mersec_pistol_fire", mersec_pistol_fire())
+    save("kestrel_reload", kestrel_reload(), peak=0.7)
+    save("baton_swing", baton_swing(), peak=0.6)
 
 
 if __name__ == "__main__":

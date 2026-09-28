@@ -165,6 +165,12 @@ public partial class Screens : CanvasLayer, IScreens, IWired
     /// <inheritdoc/>
     public void ShowAlert(string text) => _hud.ShowAlert(text);
 
+    /// <inheritdoc/>
+    public void ShowHitMarker(bool killed) => _hud.ShowHitMarker(killed);
+
+    /// <inheritdoc/>
+    public void FadeToBlack(double seconds) => _hud.FadeToBlack(seconds);
+
     // The mouse is free while a screen is open, and captured again when the last one closes.
     private void OnScreenChanged()
     {

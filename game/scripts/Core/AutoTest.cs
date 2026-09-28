@@ -11,6 +11,7 @@ namespace Brushfire;
 /// Script: { "level": 0, "out": "/tmp/shots", "god": true, "steps": [ step, ... ] }
 /// Steps:  {"wait": frames} | {"teleport": [x,y,z], "yaw": deg, "pitch": deg} | {"shot": "name.png"}
 ///         {"debug_draw": 1} (unshaded, for checking geometry before a bake) | {"freeze": true} (enemies)
+///         {"render_scale": 0.67} (the 3D view's resolution scale, for long captures on lavapipe)
 ///         {"hold": "action" | ["action", ...], "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
@@ -149,6 +150,8 @@ public partial class AutoTest : Node
                     ((Node)e).ProcessMode = ProcessModeEnum.Disabled;
             if (step.TryGetValue("debug_draw", out var dd))    // 0 normal, 1 unshaded (geometry checks before a bake)
                 GetViewport().DebugDraw = (Viewport.DebugDrawEnum)dd.AsInt32();
+            if (step.TryGetValue("render_scale", out var rs))  // the 3D view's resolution scale; the UI stays sharp (lavapipe captures)
+                GetViewport().Scaling3DScale = (float)rs.AsDouble();
             if (step.TryGetValue("log", out var msg))
                 GD.Print($"[AutoTest] {msg}");
             if (step.TryGetValue("stats", out _))
@@ -280,7 +283,8 @@ public partial class AutoTest : Node
         }
         if (step.TryGetValue("kill", out var killId))
         {
-            // Test harness only, until combat lands: the NPC is dead in the world and its body falls.
+            // Test harness: the NPC is dead in the world, under its target key, and its body falls.
+            // A shot kills through the damage rule; this skips the shooting.
             var npc = level.Npcs().FirstOrDefault(n => n.NpcId == killId.AsString() || n.StableId == killId.AsString());
             if (npc == null)
                 GD.PrintErr($"[AutoTest] no npc '{killId}'");
@@ -292,7 +296,7 @@ public partial class AutoTest : Node
                     npc.GlobalPosition = new Vector3((float)a[0], (float)a[1], (float)a[2]);
                     await Frames(2);
                 }
-                state.World.SetNpc(npc.NpcId, Undercity.Core.World.NpcStatus.Dead);
+                state.World.SetNpc(npc.TargetKey, Undercity.Core.World.NpcStatus.Dead);
                 var away = npc.GlobalPosition - PlayerController.Instance.GlobalPosition;
                 away.Y = 0;
                 npc.Collapse(away.Normalized() * 40f);
@@ -304,7 +308,9 @@ public partial class AutoTest : Node
         {
             var c = state.Character;
             GD.Print($"[AutoTest] state: level {c.Level} xp {c.Xp}/{c.XpToNext} points {c.SkillPoints} credits {state.Inventory.Credits} " +
-                     $"health {state.Health.Value:0}/{state.Health.Max:0} drawn {state.Drawn ?? "-"} law {(state.Law.Hostile ? "hostile" : "calm")}");
+                     $"health {state.Health.Value:0}/{state.Health.Max:0} drawn {state.Drawn ?? "-"} " +
+                     $"rounds {(state.Rounds is { } r ? $"{r.Loaded}/{r.Reserve}" : "-")}{(state.Reloading ? " reloading" : "")} " +
+                     $"law {(state.Law.Hostile ? "hostile" : "calm")}{(state.Dead ? " DEAD" : "")}");
             var p = PlayerController.Instance;
             GD.Print($"[AutoTest] water: {state.Water} breath {state.Breath.Value:0.0}/{state.Breath.Max:0} " +
                      $"stamina {state.Stamina.Value:0.0}/{state.Stamina.Max:0} feet {p?.GlobalPosition}");

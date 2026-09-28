@@ -32,21 +32,21 @@
 
 ## 4. Godot
 
-- [ ] 4.1 `IAmmoSource` in Brushfire's `WeaponManager` (the reference maps keep their own
+- [x] 4.1 `IAmmoSource` in Brushfire's `WeaponManager` (the reference maps keep their own
   counts); null-safe HUD calls in `Weapon.cs` and `Projectile.cs`.
-- [ ] 4.2 `WeaponAdapter`: draw and holster through `GameState.LoadoutChanged`; the Kestrel
+- [x] 4.2 `WeaponAdapter`: draw and holster through `GameState.LoadoutChanged`; the Kestrel
   scene configured from data; the Kestrel viewmodel (`tools/blender/build_weapons.py`, glb and
   `.blend`); shot and reload sounds.
-- [ ] 4.3 `NpcActor` becomes `IDamageable`; zones from the hit height; hit reactions; deaths
+- [x] 4.3 `NpcActor` becomes `IDamageable`; zones from the hit height; hit reactions; deaths
   pushed along the shot.
-- [ ] 4.4 Defences: fight (ranged, melee), flee, cower and surrender on a `NavigationAgent3D`,
+- [x] 4.4 Defences: fight (ranged, melee), flee, cower and surrender on a `NavigationAgent3D`,
   with the UAL clips listed in the design.
-- [ ] 4.5 The HUD's loaded / reserve readout, "RELOADING", and the hit marker on the crosshair.
-- [ ] 4.6 Death: fade, "You died.", load the newest save (owner I15).
+- [x] 4.5 The HUD's loaded / reserve readout, "RELOADING", and the hit marker on the crosshair.
+- [x] 4.6 Death: fade, "You died.", load the newest save (owner I15).
 
 ## 5. Checks and captures
 
-- [ ] 5.1 Headless `combat_test.tscn`: shots on a test NPC change its health by the rule; a
+- [x] 5.1 Headless `combat_test.tscn`: shots on a test NPC change its health by the rule; a
   shot heard by a trooper makes MerSec hostile; a fleeing civilian ends at least 25 m away.
 - [ ] 5.2 Video: draw and fire in the market, the patrol's response, civilians fleeing and
   cowering, Tank with his baton, a death and a reload. Validation record.

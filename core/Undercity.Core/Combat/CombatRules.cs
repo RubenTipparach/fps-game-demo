@@ -7,6 +7,7 @@
 // through the same damage rule.
 
 using Undercity.Core.Data;
+using Undercity.Core.World;
 
 namespace Undercity.Core.Combat;
 
@@ -37,6 +38,19 @@ public enum Defence
 
     /// <summary>Puts their hands up.</summary>
     Surrender,
+}
+
+/// <summary>What sets a person off.</summary>
+public enum Provocation
+{
+    /// <summary>A shot heard within the weapon's noise radius.</summary>
+    ShotHeard,
+
+    /// <summary>They were hurt.</summary>
+    Hurt,
+
+    /// <summary>They saw one of their own faction killed.</summary>
+    MurderSeen,
 }
 
 /// <summary>The combat rules.</summary>
@@ -101,6 +115,31 @@ public static class CombatRules
         }
         return Defence.Cower;
     }
+
+    /// <summary>
+    /// The defence a person takes: a named NPC's from data/npcs.json, a civilian's drawn from the
+    /// pool (<see cref="CivilianDefence"/>). The one rule for who does what when violence starts.
+    /// </summary>
+    public static Defence DefenceOf(NpcDef? named, CivilianPool pool, ulong seed, string stableId) =>
+        named is not null ? ParseDefence(named.Defence) ?? Defence.Cower : CivilianDefence(pool.Defences, seed, stableId);
+
+    /// <summary>
+    /// What a person whose defence is <paramref name="defence"/> does when <paramref name="what"/>
+    /// happens, or null when they carry on. A fighter fights when hurt or when they see one of
+    /// their own killed; a shot they only hear doesn't start their fight (the law's own rule turns
+    /// MerSec). Everyone else takes their defence at once.
+    /// </summary>
+    public static Defence? Respond(Defence defence, Provocation what) =>
+        defence != Defence.Fight ? defence : what == Provocation.ShotHeard ? null : Defence.Fight;
+
+    /// <summary>
+    /// Whether an NPC's shot hits the runner: <see cref="HitChance"/> against a roll from a stream
+    /// seeded by the run, the shooter's key and the shot's number, so a replay hits the same
+    /// shots (CLAUDE.md 5.4).
+    /// </summary>
+    public static bool NpcShotHits(HitChanceTable t, ulong seed, string shooterKey, long shot, double distanceM,
+        bool moving, bool crouched) =>
+        SeededRandom.For(seed, shooterKey, $"shot:{shot}").NextDouble() < HitChance(t, distanceM, moving, crouched);
 
     /// <summary>A defence by its data name (fight, flee, cower, surrender), or null.</summary>
     public static Defence? ParseDefence(string name) => name switch

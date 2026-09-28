@@ -93,11 +93,13 @@ MATERIALS = {
                     emission_tex="led_lens_emission"),
     "led_amber": dict(color=(0.4, 0.22, 0.02), roughness=0.3, emission=(1.0, 0.62, 0.12), energy=5.0,
                       emission_tex="led_lens_emission"),
+    "led_cyan": dict(color=(0.03, 0.25, 0.3), roughness=0.3, emission=(0.2, 0.9, 1.0), energy=4.0,
+                     emission_tex="led_lens_emission"),
 }
 
 # Faces of these materials get UVs fitted to their own rectangle (0..1 across the face, read
 # upright from outside) instead of world UVs: a screen, a label, a lens, a whole crate face.
-FITTED = {"terminal_screen", "mersec_label", "led_red", "led_amber", "crate", "crate_stencil"}
+FITTED = {"terminal_screen", "mersec_label", "led_red", "led_amber", "led_cyan", "crate", "crate_stencil"}
 
 
 def _fmt(c):
@@ -918,6 +920,76 @@ def item_pouch(coll, reg):
     return [body, collision(coll, "Pouch", [((-0.17, -0.12, 0), (0.17, 0.12, 0.14))])]
 
 
+def kestrel(coll, reg):
+    """The Kestrel 10mm, the runner's pistol, as a first-person viewmodel (openspec/changes/
+    hub-combat, design section 8): a squared slide with stepped rear serrations and a cyan round
+    counter lens, a lighter frame and dust cover, an angled rubber grip, a trigger guard, sights
+    and a barrel stub. Full size; the barrel points +Y (Godot's forward). Origin: the web of the hand, where
+    the grip meets the frame. The muzzle is at (0, 0.155, 0.095), which kestrel.tscn's Muzzle
+    marks. No collision: it's only ever in the runner's hand."""
+    k = PropKit("Kestrel", coll, reg)
+    k.box((-0.017, -0.02, 0.075), (0.017, 0.14, 0.117), "gunmetal", bevel=0.004)           # slide
+    # The slide's rear: 11 mm segments alternately full width and 1.5 mm narrower, the serrations.
+    # Neighbours only touch at an edge, and parallel end faces stay over 1 cm apart (CLAUDE.md 7.2).
+    for i in range(5):
+        w = 0.017 if i % 2 == 0 else 0.0155
+        y = -0.075 + i * 0.011
+        k.box((-w, y, 0.075), (w, y + 0.011, 0.117), "gunmetal", bevel=0.0)
+    k.cyl((0.0, 0.04, 0.1185), 0.0045, 0.003, "z", "led_cyan", segments=8)                # round counter
+    k.box((-0.0155, -0.06, 0.045), (0.0155, 0.12, 0.075), "gunmetal_light", bevel=0.003)   # frame
+    k.box((-0.013, 0.12, 0.052), (0.013, 0.138, 0.072), "gunmetal", bevel=0.002)           # dust cover
+    k.cyl((0.0, 0.147, 0.095), 0.0095, 0.018, "y", "gunmetal", segments=10)                # barrel stub
+    k.box((-0.0035, 0.118, 0.117), (0.0035, 0.132, 0.126), "gunmetal", bevel=0.0)          # front sight
+    for sx in (-1, 1):                                                                    # rear sight
+        x0, x1 = sorted((sx * 0.004, sx * 0.012))
+        k.box((x0, -0.07, 0.117), (x1, -0.058, 0.128), "gunmetal", bevel=0.0)
+    grip = [(sx * 0.016, y, z) for sx in (-1, 1) for y, z in ((-0.058, 0.045), (-0.012, 0.045),
+                                                              (-0.036, -0.075), (-0.086, -0.068))]
+    k.hull(grip, "rubber", bevel=0.004)
+    k.hull([(sx * 0.0165, y, z) for sx in (-1, 1) for y, z in ((-0.037, -0.075), (-0.087, -0.068),
+                                                               (-0.084, -0.08), (-0.036, -0.087))],
+           "gunmetal", bevel=0.002)                                                        # magazine base
+    k.box((-0.004, 0.0, 0.012), (0.004, 0.006, 0.045), "gunmetal", bevel=0.0)              # trigger
+    k.box((-0.006, -0.008, 0.004), (0.006, 0.05, 0.01), "gunmetal_light", bevel=0.0)       # guard, bottom
+    k.box((-0.006, 0.044, 0.01), (0.006, 0.05, 0.045), "gunmetal_light", bevel=0.0)        # guard, front
+    return [k.finish("Kestrel")]
+
+
+def baton(coll, reg):
+    """Tank's baton, in his hand when he fights (openspec/changes/hub-combat): a steel shaft with a
+    ribbed rubber grip, a flared butt and a rounded tip. Origin: the web of the hand at the grip's
+    front end; the shaft points +Y, as the Kestrel's barrel does, so NPC hands hold every weapon
+    the same way (gen_npc_scenes.gd's Grip). No collision."""
+    k = PropKit("Baton", coll, reg)
+    k.cyl((0.0, 0.26, 0.0), 0.016, 0.5, "y", "gunmetal", segments=10)                     # shaft
+    k.cyl((0.0, 0.515, 0.0), 0.0175, 0.012, "y", "gunmetal_light", segments=10)            # tip cap
+    k.cyl((0.0, -0.045, 0.0), 0.02, 0.11, "y", "rubber", segments=10)                      # grip
+    k.cyl((0.0, -0.106, 0.0), 0.026, 0.012, "y", "rubber", segments=10)                    # butt
+    return [k.finish("Baton")]
+
+
+def scattergun(coll, reg):
+    """Kessler's scattergun, from under his counter (openspec/changes/hub-combat): a sawn-off pump
+    gun, a squared receiver, the barrel over its magazine tube, a pump, a pistol grip and a stub
+    of stock. Origin: the web of the hand where the grip meets the receiver; the barrel points +Y.
+    No collision."""
+    k = PropKit("Scattergun", coll, reg)
+    k.box((-0.022, -0.05, 0.0), (0.022, 0.16, 0.07), "gunmetal", bevel=0.004)             # receiver
+    k.cyl((0.0, 0.34, 0.052), 0.013, 0.36, "y", "gunmetal", segments=10)                  # barrel
+    k.cyl((0.0, 0.31, 0.02), 0.011, 0.3, "y", "gunmetal_light", segments=10)              # magazine tube
+    k.cyl((0.0, 0.26, 0.02), 0.021, 0.13, "y", "gun_wood", segments=10)                   # pump
+    k.box((-0.003, 0.03, 0.07), (0.003, 0.15, 0.078), "gunmetal", bevel=0.0)              # rib
+    grip = [(sx * 0.016, y, z) for sx in (-1, 1) for y, z in ((-0.05, 0.0), (-0.005, 0.0),
+                                                              (-0.035, -0.1), (-0.08, -0.095))]
+    k.hull(grip, "gun_wood", bevel=0.004)
+    k.hull([(sx * 0.018, y, z) for sx in (-1, 1) for y, z in ((-0.05, 0.065), (-0.05, 0.005),
+                                                              (-0.16, 0.035), (-0.16, 0.075))],
+           "gun_wood", bevel=0.004)                                                         # stock stub
+    k.box((-0.004, 0.02, -0.03), (0.004, 0.026, 0.0), "gunmetal", bevel=0.0)              # trigger
+    k.box((-0.006, 0.0, -0.04), (0.006, 0.06, -0.034), "gunmetal_light", bevel=0.0)       # guard
+    return [k.finish("Scattergun")]
+
+
 STATIC, DYNAMIC = 2, 3   # Godot's meshes/light_baking: static lightmaps, or lit by probes
 # name -> (builder, light baking). Moving and vanishing props are dynamic, so no stale bake.
 PROPS = {
@@ -935,6 +1007,9 @@ PROPS = {
     "gate": (gate, STATIC),
     "grate": (grate, STATIC),
     "item_pouch": (item_pouch, DYNAMIC),
+    "kestrel": (kestrel, DYNAMIC),
+    "baton": (baton, DYNAMIC),
+    "scattergun": (scattergun, DYNAMIC),
 }
 
 

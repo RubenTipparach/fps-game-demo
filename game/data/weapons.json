@@ -3,13 +3,17 @@
 // 2). Keyed by the "weapon" id in items.json. Damage per hit, before zones and resistances;
 // "pellets" hits per shot; "burst" shots per trigger pull, "burst_gap_s" between bursts;
 // "magazine" 0 for a melee weapon, which uses "reach_m"; "noise_m" how far a shot is heard.
-// "scene" names the Godot scene that fires it, for the weapons built so far.
+// "scene" names the Godot scene that fires it, for the weapons built so far. "fire_sound" and
+// "reload_sound" name sounds in game/audio/sfx (variants _1, _2 ... are picked at random);
+// "hand_model" is what an NPC holds it by. MerSec's service pistol is drawn with the Kestrel's
+// model: the same frame, issued.
 {
   "weapons": {
     "stun_baton": {"name": "Stun baton", "damage": 35, "type": "shock", "rate_per_s": 1.2, "reach_m": 1.6, "noise_m": 3},
     "combat_knife": {"name": "Combat knife", "damage": 40, "type": "blunt", "rate_per_s": 1.6, "reach_m": 1.4, "noise_m": 2},
     "kestrel": {"name": "Kestrel 10mm", "damage": 22, "type": "ballistic", "rate_per_s": 3.0, "magazine": 12, "reload_s": 1.4,
-                "spread_deg": 2.0, "noise_m": 20, "ammo": "ammo_10mm", "scene": "res://scenes/undercity/weapons/kestrel.tscn"},
+                "spread_deg": 2.0, "noise_m": 20, "ammo": "ammo_10mm", "scene": "res://scenes/undercity/weapons/kestrel.tscn",
+                "fire_sound": "kestrel_fire", "reload_sound": "kestrel_reload"},
     "whisper": {"name": "Whisper 10mm", "damage": 18, "type": "ballistic", "rate_per_s": 2.5, "magazine": 10, "reload_s": 1.6,
                 "spread_deg": 1.5, "noise_m": 5, "ammo": "ammo_10mm"},
     "sandman": {"name": "Sandman dart pistol", "damage": 5, "type": "tranq", "rate_per_s": 1.0, "magazine": 4, "reload_s": 2.0,
@@ -17,9 +21,13 @@
     "rattler": {"name": "Rattler SMG", "damage": 12, "type": "ballistic", "rate_per_s": 10.0, "magazine": 30, "reload_s": 2.0,
                 "spread_deg": 4.5, "noise_m": 25, "ammo": "ammo_10mm"},
     "scattergun": {"name": "Scattergun", "damage": 9, "pellets": 8, "type": "ballistic", "rate_per_s": 1.1, "magazine": 6,
-                   "reload_s": 3.0, "spread_deg": 5.0, "noise_m": 30, "ammo": "ammo_shells"},
+                   "reload_s": 3.0, "spread_deg": 5.0, "noise_m": 30, "ammo": "ammo_shells", "fire_sound": "shotgun_fire",
+                   "reload_sound": "shotgun_pump", "hand_model": "res://models/undercity/props/scattergun.glb"},
     "mersec_pistol": {"name": "MerSec service pistol", "damage": 18, "type": "ballistic", "rate_per_s": 3.0, "burst": 3,
-                      "burst_gap_s": 1.5, "magazine": 12, "reload_s": 1.6, "spread_deg": 3.0, "noise_m": 20, "npc_only": true},
-    "tank_baton": {"name": "Tank's baton", "damage": 18, "type": "blunt", "rate_per_s": 0.833, "reach_m": 1.6, "noise_m": 4, "npc_only": true}
+                      "burst_gap_s": 1.5, "magazine": 12, "reload_s": 1.6, "spread_deg": 3.0, "noise_m": 20, "npc_only": true,
+                      "fire_sound": "mersec_pistol_fire", "reload_sound": "kestrel_reload",
+                      "hand_model": "res://models/undercity/props/kestrel.glb"},
+    "tank_baton": {"name": "Tank's baton", "damage": 18, "type": "blunt", "rate_per_s": 0.833, "reach_m": 1.6, "noise_m": 4, "npc_only": true,
+                   "fire_sound": "baton_swing", "hand_model": "res://models/undercity/props/baton.glb"}
   }
 }

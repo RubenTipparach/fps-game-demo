@@ -14,6 +14,7 @@ Conventions: a node's forward is -Z, the side the player uses. Collision layers 
 World; NPCs on Enemy, so the player bumps into them; small pickups and the bed on Pickup, which the
 interactor's ray hits and the player's body doesn't. Areas sit on no layer and watch the Player.
 """
+import math
 import os
 import sys
 
@@ -55,15 +56,39 @@ def player():
            material_override=s.ext_res("Material", "res://materials/underwater.tres"))
     s.node("Interactor", "Node", ".", script=script(s, "Player/Interactor.cs"))
     s.node("Water", "Node", ".", script=script(s, "Player/PlayerWater.cs"))
+    # draws the belt's firearm into the WeaponManager and feeds it (openspec/changes/hub-combat)
+    s.node("Weapons", "Node", ".", script=script(s, "Player/WeaponAdapter.cs"))
     s.save(out("player.tscn"))
+
+
+NPC_RADIUS_M = 0.35
+NPC_HEIGHT_M = 1.8
+
+
+def kerb_floor_angle():
+    """The steepest contact a person's capsule still stands on, radians: where the capsule's
+    rounded bottom meets the edge of a kerb as high as the level's paving (city_plan.PAVED_Z),
+    plus 3 degrees. The navmesh runs over kerbs; without this a fleeing person stops at the first
+    one, its edge a wall to CharacterBody3D's default 45 degrees (openspec/changes/hub-combat)."""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "levels"))
+    from city_plan import PAVED_Z  # noqa: E402  (the one source of the kerb height)
+    return math.acos((NPC_RADIUS_M - PAVED_Z) / NPC_RADIUS_M) + math.radians(3)
 
 
 def npc():
     """A person: the model is chosen from data/npcs.json when the level wires it."""
     s = Scene("Npc", "CharacterBody3D")
-    s.nodes[0][3].update(collision_layer=ENEMY, collision_mask=WORLD, script=script(s, "Entities/NpcActor.cs"))
-    s.node("CollisionShape3D", "CollisionShape3D", ".", position=v3(0, 0.9, 0),
-           shape=s.sub_res("CapsuleShape3D", radius=0.35, height=1.8))
+    s.nodes[0][3].update(collision_layer=ENEMY, collision_mask=WORLD, script=script(s, "Entities/NpcActor.cs"),
+                         floor_max_angle=round(kerb_floor_angle(), 4), floor_snap_length=0.2)
+    s.node("CollisionShape3D", "CollisionShape3D", ".", position=v3(0, NPC_HEIGHT_M / 2, 0),
+           shape=s.sub_res("CapsuleShape3D", radius=NPC_RADIUS_M, height=NPC_HEIGHT_M))
+    # how they flee and close in, on the level's baked navmesh (openspec/changes/hub-combat). The
+    # navmesh lies 0.3 m above the street (level_common.add_navigation's cells), and the agent
+    # measures in 3D, so the path is lowered to the feet; a waypoint then counts as reached within
+    # 0.35 m, and a sprinter (0.09 m a physics tick) turns late enough not to clip the corner the
+    # path bends around
+    s.node("Nav", "NavigationAgent3D", ".", radius=NPC_RADIUS_M, height=NPC_HEIGHT_M, path_height_offset=0.3,
+           path_desired_distance=0.35, target_desired_distance=0.8, avoidance_enabled=False)
     s.save(out("npc.tscn"))
 
 
@@ -159,7 +184,7 @@ def ladder():
 
 
 def splash():
-    """Water thrown up where something falls in (Splash.cs frees it once it has played). One
+    """Water thrown up where something falls in (ParticleBurst.cs frees it once it has played). One
     shot of droplets thrown up and out, falling back under gravity; the thrower sets how many."""
     s = Scene("Splash", "GPUParticles3D")
     drops = s.sub_res("ParticleProcessMaterial", direction=v3(0, 1, 0), spread=38.0,
@@ -167,10 +192,45 @@ def splash():
                       scale_min=0.5, scale_max=1.3, emission_shape=1, emission_sphere_radius=0.35)
     look = s.sub_res("StandardMaterial3D", transparency=1, shading_mode=1, vertex_color_use_as_albedo=True,
                      albedo_color=hexcolor("#a9c9c6", 0.7), billboard_mode=3, billboard_keep_scale=True)
-    s.nodes[0][3].update(script=script(s, "Player/Splash.cs"), emitting=False, amount=48, lifetime=0.9,
+    s.nodes[0][3].update(script=script(s, "Player/ParticleBurst.cs"), emitting=False, amount=48, lifetime=0.9,
                          one_shot=True, explosiveness=0.92, cast_shadow=0, process_material=drops,
                          draw_pass_1=s.sub_res("QuadMesh", size=v2(0.09, 0.09), material=look))
     s.save(out("splash.tscn"))
+
+
+def kestrel():
+    """The Kestrel 10mm in the runner's hand (openspec/changes/hub-combat, design section 8):
+    Brushfire's Weapon with the prop kit's model, its muzzle and flash. WeaponAdapter sets its
+    numbers from data/weapons.json when it is drawn; the scene holds only its parts. Viewmodel
+    space, as Brushfire's weapons (WeaponManager draws them at 1/4 scale): the model is full size,
+    its barrel along -Z, and the muzzle sits where the model's barrel ends
+    (build_undercity_props.kestrel: (0, 0.155, 0.095) in Blender, (0, 0.095, -0.155) here)."""
+    s = Scene("Kestrel", "Node3D")
+    s.nodes[0][3].update(script=s.ext_res("Script", "res://scripts/Player/Weapon.cs"), WeaponId="kestrel",
+                         DisplayName="Kestrel 10mm", Slot=0, Owned=True)
+    at = (0.15, -0.19, -0.34)
+    s.instance("Model", PROPS + "kestrel.glb", ".", position=v3(*at))
+    muzzle = s.node("Muzzle", "Marker3D", ".", position=v3(at[0], at[1] + 0.095, at[2] - 0.155))
+    s.node("Flash", "MeshInstance3D", muzzle, cast_shadow=0, gi_mode=2,
+           mesh=s.sub_res("QuadMesh", size=v2(0.14, 0.14)),
+           material_override=s.ext_res("Material", "res://materials/fx/muzzle_flash.tres"))
+    os.makedirs(out("weapons"), exist_ok=True)
+    s.save(out("weapons/kestrel.tscn"))
+
+
+def blood():
+    """Blood where a shot hits a person (ParticleBurst.cs plays it along the hit's normal and frees
+    it). A short spray of dark drops that falls away under gravity."""
+    s = Scene("Blood", "GPUParticles3D")
+    drops = s.sub_res("ParticleProcessMaterial", direction=v3(0, 1, 0), spread=35.0,
+                      initial_velocity_min=1.0, initial_velocity_max=3.0, gravity=v3(0, -9.8, 0),
+                      scale_min=0.6, scale_max=1.4, emission_shape=1, emission_sphere_radius=0.04)
+    look = s.sub_res("StandardMaterial3D", transparency=1, shading_mode=1, vertex_color_use_as_albedo=True,
+                     albedo_color=hexcolor("#5a0a0c", 0.9), billboard_mode=3, billboard_keep_scale=True)
+    s.nodes[0][3].update(script=script(s, "Player/ParticleBurst.cs"), emitting=False, amount=24, lifetime=0.6,
+                         one_shot=True, explosiveness=0.95, cast_shadow=0, process_material=drops,
+                         draw_pass_1=s.sub_res("QuadMesh", size=v2(0.035, 0.035), material=look))
+    s.save(out("blood.tscn"))
 
 
 def main():
@@ -187,6 +247,8 @@ def main():
     bed()
     ladder()
     splash()
+    kestrel()
+    blood()
     print("wrote", len(os.listdir(os.path.join(GAME, "scenes", "undercity"))), "scenes to game/scenes/undercity")
 
 

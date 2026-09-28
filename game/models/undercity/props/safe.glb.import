@@ -196,6 +196,10 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/led_amber.tres"
 },
+"led_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_cyan.tres"
+},
 "led_red": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/led_red.tres"

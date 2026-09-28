@@ -1,7 +1,8 @@
 // The Undercity HUD (hud.tscn), after the approved F11 mockup: the compass, the objective, the
 // vitals with the disguise chip, the belt, the weapon line, the feed, barks, the law alert, and
 // the crosshair with its prompt and hold bar; and, after the approved D8 mockup, the AIR bar
-// under the vitals while breath isn't full.
+// under the vitals while breath isn't full. For hub-combat: the D3 weapon panel's loaded and
+// reserve rounds and "RELOADING", Brushfire's hit marker on the crosshair, and the death fade.
 //
 // It lives in the UI layer as a thin view: health, the belt, the drawn weapon, quests and the
 // feed come from the game state's own values and events; the prompt, hold, disguise, bark and
@@ -46,6 +47,9 @@ public partial class UndercityHud : Control, IWired
     /// <summary>Seconds a law alert stays unless the level clears it first.</summary>
     [Export] public double AlertS { get; set; } = 6.0;
 
+    /// <summary>Seconds the hit marker shows for a hit; a kill shows it twice as long.</summary>
+    [Export] public double HitMarkerS { get; set; } = 0.15;
+
     private Services? _services;
     private Control _compass = null!;
     private CompassStrip _strip = null!;
@@ -65,6 +69,13 @@ public partial class UndercityHud : Control, IWired
     private Label _chipSub = null!;
     private BeltSlotView[] _belt = Array.Empty<BeltSlotView>();
     private Label _weapon = null!;
+    private Label _loaded = null!;
+    private Label _reserve = null!;
+    private Control _hitMarker = null!;
+    private Control _fade = null!;
+    private double _hitMarkerLeftS;
+    private double _fadeS;
+    private double _fadeTotalS;
     private PanelContainer _air = null!;
     private Label _airLabel = null!;
     private ProgressBar _airBar = null!;
@@ -95,6 +106,12 @@ public partial class UndercityHud : Control, IWired
         _chipSub = GetNode<Label>("%ChipSub");
         _belt = GetNode<Control>("%Belt").GetChildren().OfType<BeltSlotView>().ToArray();
         _weapon = GetNode<Label>("%Weapon");
+        _loaded = GetNode<Label>("%Loaded");
+        _reserve = GetNode<Label>("%Reserve");
+        _hitMarker = GetNode<Control>("%HitMarker");
+        _fade = GetNode<Control>("%Fade");
+        _hitMarker.Visible = false;
+        _fade.Visible = false;
         _air = GetNode<PanelContainer>("%Air");
         _airLabel = GetNode<Label>("%AirLabel");
         _airBar = GetNode<ProgressBar>("%AirBar");
@@ -112,6 +129,8 @@ public partial class UndercityHud : Control, IWired
         var s = services.State;
         s.Feed += OnFeed;
         s.LoadoutChanged += RefreshKit;
+        s.ReloadChanged += RefreshKit;
+        s.Magazines.Changed += RefreshKit;
         s.Inventory.Changed += RefreshKit;
         s.Health.Changed += RefreshHealth;
         s.Character.Changed += RefreshHealth;
@@ -131,6 +150,8 @@ public partial class UndercityHud : Control, IWired
         var s = _services.State;
         s.Feed -= OnFeed;
         s.LoadoutChanged -= RefreshKit;
+        s.ReloadChanged -= RefreshKit;
+        s.Magazines.Changed -= RefreshKit;
         s.Inventory.Changed -= RefreshKit;
         s.Health.Changed -= RefreshHealth;
         s.Character.Changed -= RefreshHealth;
@@ -160,7 +181,33 @@ public partial class UndercityHud : Control, IWired
         {
             _alert.Visible = false;
         }
+        if (_hitMarkerLeftS > 0 && (_hitMarkerLeftS -= delta) <= 0)
+        {
+            _hitMarker.Visible = false;
+        }
+        if (_fade.Visible)
+        {
+            _fadeS += delta;
+            _fade.Modulate = new Color(1, 1, 1, (float)Math.Clamp(_fadeTotalS > 0 ? _fadeS / _fadeTotalS : 1, 0, 1));
+        }
         RefreshAir(delta);
+    }
+
+    /// <summary>The hit marker on the crosshair, in the danger colour for a kill.</summary>
+    public void ShowHitMarker(bool killed)
+    {
+        _hitMarker.Visible = true;
+        _hitMarker.Modulate = killed ? GetThemeColor("danger", "Palette") : Colors.White;
+        _hitMarkerLeftS = killed ? HitMarkerS * 2 : HitMarkerS;
+    }
+
+    /// <summary>Fades the screen to black over <paramref name="seconds"/>.</summary>
+    public void FadeToBlack(double seconds)
+    {
+        _fade.Visible = true;
+        _fade.Modulate = new Color(1, 1, 1, 0);
+        _fadeS = 0;
+        _fadeTotalS = seconds;
     }
 
     // Breath (mockup D8): shown while it isn't full, red below breath_low_fraction, and faded out
@@ -312,13 +359,25 @@ public partial class UndercityHud : Control, IWired
         }
         if (s.Drawn is { } drawn)
         {
-            _weapon.Text = $"{s.Data.Items.Get(drawn).Name.ToUpperInvariant()} · DRAWN";
-            _weapon.AddThemeColorOverride("font_color", GetThemeColor("text", "Palette"));
+            var how = s.Reloading ? "RELOADING" : "DRAWN";
+            _weapon.Text = $"{s.Data.Items.Get(drawn).Name.ToUpperInvariant()} · {how}";
+            _weapon.AddThemeColorOverride("font_color", GetThemeColor(s.Reloading ? "accent" : "text", "Palette"));
         }
         else
         {
             _weapon.Text = "HOLSTERED";
             _weapon.AddThemeColorOverride("font_color", GetThemeColor("text_dim", "Palette"));
+        }
+        // Loaded / reserve, as mockup D3 draws it ("12 / 36"); blank for a melee weapon or none.
+        if (s.Rounds is { } r)
+        {
+            _loaded.Text = UiText.Invariant($"{r.Loaded}");
+            _reserve.Text = UiText.Invariant($"/ {r.Reserve}");
+        }
+        else
+        {
+            _loaded.Text = "";
+            _reserve.Text = "";
         }
     }
 }

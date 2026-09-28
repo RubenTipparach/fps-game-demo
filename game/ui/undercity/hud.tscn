@@ -373,6 +373,56 @@ offset_bottom = 1.0
 mouse_filter = 2
 theme_type_variation = &"CrossTick"
 
+[node name="HitMarker" type="Control" parent="Frame/Crosshair"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+mouse_filter = 2
+
+[node name="HitNE" type="Panel" parent="Frame/Crosshair/HitMarker"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = -16.0
+offset_right = 12.0
+offset_bottom = -6.0
+rotation = 0.785398
+pivot_offset = Vector2(1, 5)
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="HitNW" type="Panel" parent="Frame/Crosshair/HitMarker"]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -16.0
+offset_right = -10.0
+offset_bottom = -6.0
+rotation = -0.785398
+pivot_offset = Vector2(1, 5)
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="HitSE" type="Panel" parent="Frame/Crosshair/HitMarker"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 12.0
+offset_bottom = 16.0
+rotation = -0.785398
+pivot_offset = Vector2(1, 5)
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
+[node name="HitSW" type="Panel" parent="Frame/Crosshair/HitMarker"]
+layout_mode = 0
+offset_left = -12.0
+offset_top = 6.0
+offset_right = -10.0
+offset_bottom = 16.0
+rotation = 0.785398
+pivot_offset = Vector2(1, 5)
+mouse_filter = 2
+theme_type_variation = &"CrossTick"
+
 [node name="Prompt" type="Label" parent="Frame"]
 unique_name_in_owner = true
 visible = false
@@ -618,8 +668,8 @@ layout_mode = 2
 
 [node name="WeaponPanel" type="PanelContainer" parent="Frame"]
 clip_contents = true
-custom_minimum_size = Vector2(372, 52)
-custom_maximum_size = Vector2(372, 52)
+custom_minimum_size = Vector2(372, 120)
+custom_maximum_size = Vector2(372, 120)
 propagate_maximum_size = true
 layout_mode = 1
 anchors_preset = 3
@@ -628,7 +678,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -420.0
-offset_top = -100.0
+offset_top = -168.0
 offset_right = -48.0
 offset_bottom = -48.0
 grow_horizontal = 0
@@ -636,7 +686,37 @@ grow_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"HudPanel"
 
-[node name="Weapon" type="Label" parent="Frame/WeaponPanel"]
+[node name="WeaponRows" type="VBoxContainer" parent="Frame/WeaponPanel"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="RoundsRow" type="HBoxContainer" parent="Frame/WeaponPanel/WeaponRows"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 2
+
+[node name="Loaded" type="Label" parent="Frame/WeaponPanel/WeaponRows/RoundsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 0)
+layout_mode = 2
+theme_type_variation = &"HudBig"
+text = "12"
+horizontal_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Reserve" type="Label" parent="Frame/WeaponPanel/WeaponRows/RoundsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"HudMono"
+text = "/ 36"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Weapon" type="Label" parent="Frame/WeaponPanel/WeaponRows"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HudCaps"
@@ -667,3 +747,15 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_constants/separation = 4
 alignment = 2
+
+[node name="Fade" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Blackout"

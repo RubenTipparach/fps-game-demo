@@ -59,6 +59,15 @@ public sealed class WeaponDef
     /// <summary>True for a weapon only NPCs carry.</summary>
     public bool NpcOnly { get; init; }
 
+    /// <summary>The sound of a shot or a swing (game/audio/sfx, without the variant number), or null.</summary>
+    public string? FireSound { get; init; }
+
+    /// <summary>The sound of a reload, or null.</summary>
+    public string? ReloadSound { get; init; }
+
+    /// <summary>The model an NPC holds it by (a res:// .glb), or null when nothing is drawn in their hand.</summary>
+    public string? HandModel { get; init; }
+
     /// <summary>True for a weapon that swings rather than shoots.</summary>
     public bool Melee => Magazine == 0;
 }
@@ -171,6 +180,9 @@ public sealed class HitChanceTable
     /// <summary>Taken off while the runner crouches.</summary>
     public required double Crouched { get; init; }
 
+    /// <summary>The runner counts as moving above this speed, m/s.</summary>
+    public required double MovingMps { get; init; }
+
     /// <summary>The least chance.</summary>
     public required double Min { get; init; }
 
@@ -186,6 +198,12 @@ public sealed class FightTable
 
     /// <summary>And backs off inside this range, metres.</summary>
     public required double BackOffM { get; init; }
+
+    /// <summary>A fighter sees the runner in a clear line within this range, metres.</summary>
+    public required double SightM { get; init; }
+
+    /// <summary>A fighter who can't see the runner keeps after them this long after the last shot or hit, seconds.</summary>
+    public required double PursueS { get; init; }
 }
 
 /// <summary>data/combat.json "reputation": what violence costs with the victim's faction.</summary>
@@ -228,6 +246,15 @@ public sealed class CombatTable : IValidated
     /// <summary>The screen fades to black over this long when the runner dies, seconds.</summary>
     public required double DeathFadeS { get; init; }
 
+    /// <summary>How fast a fighter closes in, running, m/s.</summary>
+    public required double RunMps { get; init; }
+
+    /// <summary>How fast a person flees, sprinting, m/s.</summary>
+    public required double SprintMps { get; init; }
+
+    /// <summary>The shove a killing shot gives the body's chest along the shot, newton-seconds.</summary>
+    public required double DeathPushNs { get; init; }
+
     /// <inheritdoc/>
     public void Validate(ICollection<string> errors)
     {
@@ -257,14 +284,25 @@ public sealed class CombatTable : IValidated
         {
             errors.Add("hit_chance: min and max must be 0 to 1 with min under max, and the penalties never negative");
         }
-        if (!(Fight.BackOffM > 0 && Fight.BackOffM < Fight.CloseToM))
+        if (!double.IsFinite(h.MovingMps) || h.MovingMps < 0)
         {
-            errors.Add("fight: back_off_m must be above 0 and below close_to_m");
+            errors.Add("hit_chance.moving_mps must be a finite speed, zero or more");
         }
+        if (!(Fight.BackOffM > 0 && Fight.BackOffM < Fight.CloseToM && Fight.CloseToM <= Fight.SightM))
+        {
+            errors.Add("fight: back_off_m must be above 0 and below close_to_m, and close_to_m no more than sight_m");
+        }
+        Positive("fight.pursue_s", Fight.PursueS);
         Positive("flee_m", FleeM);
         Positive("cower_s", CowerS);
         Positive("surrender_radius_m", SurrenderRadiusM);
         Positive("death_fade_s", DeathFadeS);
+        Positive("run_mps", RunMps);
+        Positive("sprint_mps", SprintMps);
+        if (!double.IsFinite(DeathPushNs) || DeathPushNs < 0)
+        {
+            errors.Add("death_push_ns must be a finite number, zero or more");
+        }
         if (Reputation.Assault > 0 || Reputation.Murder > 0)
         {
             errors.Add("reputation: assault and murder cost reputation (zero or less)");

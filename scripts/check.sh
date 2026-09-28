@@ -48,6 +48,9 @@ if [[ $FAST == 0 ]]; then
   step "Water: falling in, swimming, breath, ladders, mantling, floating bodies (swim_test.tscn)"
   (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
       res://scenes/undercity/tests/swim_test.tscn 2>&1 | grep -E "FAIL|swim_test\] [0-9]")
+  step "Combat: the Kestrel, damage by the rule, fleeing and cowering, MerSec, death (combat_test.tscn)"
+  (cd game && flock /tmp/undercity-godot.lock timeout 900 godot --headless --path . \
+      res://scenes/undercity/tests/combat_test.tscn 2>&1 | grep -E "FAIL|combat_test\] [0-9]")
 
   step "Design maps and page"
   python3 tools/levels/render_map.py

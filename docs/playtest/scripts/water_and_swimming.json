@@ -2,6 +2,7 @@
  "steps": [
   {"log": "water and swimming (openspec/changes/water-and-swimming): fall in by the Tin Bridge, swim to a ladder and climb out, dive to the drowned locker, a body floating, the ship's boarding ladder (run with --write-movie)"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"render_scale": 0.67},
   {"wait": 20},
   {"teleport": [190.4, 0.2, 66], "yaw": -90, "pitch": -12},
   {"wait": 15},

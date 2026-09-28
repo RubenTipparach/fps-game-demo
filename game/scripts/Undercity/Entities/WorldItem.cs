@@ -58,7 +58,7 @@ public partial class WorldItem : Node3D, IWired, IInteractable, IStable
         var inWater = water.SurfaceAt(p) is { } surface && p.Y < surface;
         if (inWater && _fallMps > (float)water.Table.ItemSinkMps + 0.5f)
         {
-            Splash.At(this, new Vector3(p.X, water.SurfaceAt(p)!.Value, p.Z), 0.15f);    // fell in from above
+            ParticleBurst.Splash(this, new Vector3(p.X, water.SurfaceAt(p)!.Value, p.Z), 0.15f);    // fell in from above
         }
         _fallMps = inWater ? (float)water.Table.ItemSinkMps
             : _fallMps + (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble() * dt;

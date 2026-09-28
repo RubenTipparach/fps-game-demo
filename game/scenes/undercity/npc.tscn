@@ -10,7 +10,17 @@ height = 1.8
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_NpcActor")
+floor_max_angle = 1.0149
+floor_snap_length = 0.2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0.0, 0.9, 0.0)
 shape = SubResource("CapsuleShape3D_2")
+
+[node name="Nav" type="NavigationAgent3D" parent="."]
+radius = 0.35
+height = 1.8
+path_height_offset = 0.3
+path_desired_distance = 0.35
+target_desired_distance = 0.8
+avoidance_enabled = false

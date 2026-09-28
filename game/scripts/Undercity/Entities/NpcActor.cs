@@ -1,18 +1,23 @@
 // A person in a level: a named NPC or a civilian. Stands, or walks a patrol, plays idle, walk and
 // talk, greets the runner, and opens its dialog tree on use. Its faction and intelligence decide
-// how the disguise rule judges the runner in front of it. Its body is a generated NPC scene
-// (game/scenes/undercity/npcs/<model>.tscn) that plays the shared animation library and falls
-// as a ragdoll when it collapses.
+// how the disguise rule judges the runner in front of it. It can be shot: the core's damage rule
+// decides what a hit does, and its NpcCombat fights, flees, cowers or surrenders. Its body is a
+// generated NPC scene (game/scenes/undercity/npcs/<model>.tscn) that plays the shared animation
+// library and falls as a ragdoll when it collapses.
 //
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): who it is comes from
 // data/npcs.json, what it says from its dialog tree, which clip plays for each state from
-// data/npc_bodies.json, and every judgement from the core.
+// data/npc_bodies.json, and every judgement and every hit from the core. Its status and health
+// are kept under its target key (a named NPC's id, a civilian's stable id; openspec/changes/
+// hub-combat, design section 9).
 
 #nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Brushfire;
 using Godot;
+using Undercity.Core.Combat;
 using Undercity.Core.Data;
 using Undercity.Core.Dialog;
 using Undercity.Core.Perception;
@@ -21,7 +26,7 @@ using Undercity.Core.World;
 namespace Undercity.Client;
 
 /// <summary>An NPC or civilian.</summary>
-public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
+public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable, IDamageable, IHitEffect
 {
     /// <summary>Walking speed on a patrol, m/s (the character walk cycles are authored at 1.4 m/s).</summary>
     [Export] public float WalkSpeed = 1.4f;
@@ -48,6 +53,11 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
     private DialogTree? _tree;
     private AnimationPlayer? _anim;
     private NpcRagdoll? _ragdoll;
+    private NpcTarget? _target;
+    private NpcCombat? _combat;
+    private Node3D? _held;
+    private Vector3 _heldMuzzle;
+    private double _oneShotS;
     private string _idle = "idle";
     private readonly List<Vector3> _patrol = new();
     private int _patrolIndex;
@@ -67,6 +77,15 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
     /// <summary>Their faction id.</summary>
     public string Faction => _def?.Faction ?? "residents";
 
+    /// <summary>
+    /// The key their status and health are kept under in the world: a named NPC's id, which
+    /// dialog and quests read, or a civilian's own stable id.
+    /// </summary>
+    public string TargetKey => _target?.Key ?? StableId;
+
+    /// <summary>How they fight, flee, cower or surrender; null until wired.</summary>
+    public NpcCombat? Combat => _combat;
+
     /// <summary>Their intelligence, 1 to 5.</summary>
     public int Intelligence => _def?.Intelligence ?? 1;
 
@@ -82,7 +101,10 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
     /// <summary>True when this NPC is hostile to the runner.</summary>
     public bool Hostile => Status == NpcStatus.Hostile;
 
-    private NpcStatus Status => _s is null || _def is null ? NpcStatus.Alive : _s.State.World.Npc(_def.Id);
+    private NpcStatus Status => _s is null || _target is null ? NpcStatus.Alive : _s.State.World.Npc(_target.Key);
+
+    /// <inheritdoc/>
+    public bool IsDead => !Alive;
 
     private Vector3 Eye => GlobalPosition + Vector3.Up * 1.6f;
 
@@ -99,7 +121,12 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         }
         _tree = data.Dialogs[_def?.Dialog ?? data.Npcs.Civilians.Dialog];
         _idle = _def?.Idle ?? "idle";
+        _target = _def is null ? NpcTarget.Civilian(data.Npcs.Civilians, StableId, Faction, DisplayName) : NpcTarget.For(_def);
         LoadModel(ModelId(data));
+        var weapon = _def?.Weapon is { } wid ? data.Weapons.Find(wid) : null;
+        _held = Hold(weapon);
+        _combat = new NpcCombat(this, services, CombatRules.DefenceOf(_def, data.Npcs.Civilians, services.State.World.Seed, StableId),
+            weapon, GetNodeOrNull<NavigationAgent3D>("Nav"), _held);
         ParsePatrol(Entity.Meta(this, "patrol"), Entity.Meta(this, "patrol_start", "0"));
         if (Status is NpcStatus.Gone or NpcStatus.Dead)
         {
@@ -140,10 +167,13 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         }
     }
 
-    /// <summary>Plays the clip data/npc_bodies.json gives a state, once the ragdoll's joints are ready.</summary>
-    private void Play(string state)
+    /// <summary>
+    /// Plays the clip data/npc_bodies.json gives a state, once the ragdoll's joints are ready. A
+    /// clip started with <see cref="PlayOnce"/> plays to its end first.
+    /// </summary>
+    internal void Play(string state)
     {
-        if (_anim is null || _s is null || _ragdoll is { Prepared: false } || _ragdoll is { Collapsed: true })
+        if (_oneShotS > 0 || _anim is null || _s is null || _ragdoll is { Prepared: false } || _ragdoll is { Collapsed: true })
         {
             return;
         }
@@ -158,6 +188,59 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
             _anim.Play(clip, bodies.BlendS);
         }
     }
+
+    /// <summary>
+    /// Plays a state's clip from its start (a shot, a flinch, a swing), even if it is playing.
+    /// Returns its length in seconds, or 0 when it can't play.
+    /// </summary>
+    internal double PlayOnce(string state)
+    {
+        if (_anim is null || _s is null || _ragdoll is { Prepared: false } || _ragdoll is { Collapsed: true })
+        {
+            return 0;
+        }
+        var bodies = _s.Data.NpcBodies;
+        if (bodies.Clip(state) is not { } clip || !_anim.HasAnimation(clip))
+        {
+            return 0;
+        }
+        _anim.Play(clip, bodies.BlendS * 0.5);
+        _anim.Seek(0, true);
+        _oneShotS = _anim.GetAnimation(clip).Length;
+        return _oneShotS;
+    }
+
+    /// <summary>
+    /// Puts a weapon's hand model in their right hand (the NPC scene's RightHand/Grip), hidden until
+    /// they fight. Null when the weapon has none or the body has no hand attachment.
+    /// </summary>
+    private Node3D? Hold(WeaponDef? weapon)
+    {
+        if (weapon?.HandModel is not { } path || GetNodeOrNull("Model") is not { } model)
+        {
+            return null;
+        }
+        var grip = model.FindChild("Grip", true, false) as Node3D;
+        if (grip is null || !ResourceLoader.Exists(path))
+        {
+            GD.PushWarning($"[Undercity] {StableId}: can't hold {path} (no RightHand/Grip, or no model)");
+            return null;
+        }
+        var held = GD.Load<PackedScene>(path).Instantiate<Node3D>();
+        held.Name = "Held";
+        grip.AddChild(held);
+        // The muzzle: the model's front end (its -Z extent), near its top, where every hand
+        // model's barrel runs (tools/blender/build_undercity_props.py).
+        var box = held.GetChildren().OfType<MeshInstance3D>().Select(m => m.Transform * m.GetAabb())
+            .Aggregate(default(Aabb?), (a, b) => a is { } x ? x.Merge(b) : b);
+        _heldMuzzle = box is { } bb ? new Vector3(0, bb.End.Y - 0.03f, bb.Position.Z) : new Vector3(0, 0.1f, -0.2f);
+        return held;
+    }
+
+    /// <summary>Where their shots come from: the held weapon's muzzle, or chest height in front of them.</summary>
+    public Vector3 Muzzle => _held is { } h
+        ? h.GlobalTransform * _heldMuzzle
+        : GlobalPosition + Vector3.Up * 1.35f - GlobalBasis.Z * 0.4f;
 
     /// <summary>True once the body has collapsed (dead or knocked out).</summary>
     public bool Collapsed => _ragdoll?.Collapsed ?? false;
@@ -209,15 +292,22 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
             return;
         }
         var dt = (float)delta;
+        _oneShotS -= delta;
         var v = Velocity;
         v.Y = IsOnFloor() ? 0 : v.Y - Gravity * dt;
         var player = _s.Level.Player;
         var toPlayer = player.GlobalPosition - GlobalPosition;
         toPlayer.Y = 0;
-        if (_talking || Status == NpcStatus.Hostile)
+        if (!_talking && _combat is { Active: true })
+        {
+            var h = _combat.Step(delta);
+            v.X = h.X;
+            v.Z = h.Z;
+        }
+        else if (_talking || Status == NpcStatus.Hostile)
         {
             v.X = v.Z = 0;
-            Face(toPlayer, dt);
+            FaceToward(toPlayer, dt);
             Play(_talking ? "talk" : "hostile");
         }
         else if (_patrol.Count > 0)
@@ -240,7 +330,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
                 var dir = to.Normalized();
                 v.X = dir.X * WalkSpeed;
                 v.Z = dir.Z * WalkSpeed;
-                Face(dir, dt);
+                FaceToward(dir, dt);
                 Play("walk");
             }
         }
@@ -251,11 +341,16 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         }
         Velocity = v;
         MoveAndSlide();
-        Greet(toPlayer.Length(), delta);
+        if (_combat is not { Active: true })
+        {
+            Greet(toPlayer.Length(), delta);
+        }
     }
 
-    private void Face(Vector3 dir, float dt)
+    /// <summary>Turns them toward <paramref name="dir"/> (flattened), smoothly.</summary>
+    internal void FaceToward(Vector3 dir, float dt)
     {
+        dir.Y = 0;
         if (dir.LengthSquared() < 0.0001f)
         {
             return;
@@ -296,7 +391,13 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         {
             return false;
         }
-        var query = PhysicsRayQueryParameters3D.Create(Eye, eye, Brushfire.Layers.World);
+        return ClearLine(eye);
+    }
+
+    /// <summary>True when nothing of the level stands between their eyes and <paramref name="to"/>.</summary>
+    public bool ClearLine(Vector3 to)
+    {
+        var query = PhysicsRayQueryParameters3D.Create(Eye, to, Brushfire.Layers.World);
         query.Exclude = new Godot.Collections.Array<Rid> { GetRid() };
         return GetWorld3D().DirectSpaceState.IntersectRay(query).Count == 0;
     }
@@ -332,10 +433,10 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         switch (what)
         {
             case "hostile":
-                _s!.State.World.SetNpc(_def?.Id ?? StableId, NpcStatus.Hostile);
+                _s!.State.World.SetNpc(TargetKey, NpcStatus.Hostile);
                 break;
             case "calm":
-                _s!.State.World.SetNpc(_def?.Id ?? StableId, NpcStatus.Alive);
+                _s!.State.World.SetNpc(TargetKey, NpcStatus.Alive);
                 break;
             case "flee" or "gone":
                 Hide();
@@ -349,6 +450,51 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         CollisionLayer = 0;
     }
 
+    // ------------------------------------------------------------------ hurting
+
+    /// <inheritdoc/>
+    public void TakeDamage(DamageInfo info)
+    {
+        if (_s is null || _target is null || !Alive || info.WeaponId is null || _s.Data.Weapons.Find(info.WeaponId) is not { } weapon)
+        {
+            return;
+        }
+        // The zone from the hit's height on the standing body (design section 3), and the core's
+        // damage rule once per round or pellet that hit, stopping at the one that kills.
+        var zone = CombatRules.ZoneAt(_s.Data.Combat.Zones, info.Point.Y - GlobalPosition.Y);
+        var hit = default(NpcHit);
+        for (var i = 0; i < Math.Max(1, info.Hits) && !hit.Killed; i++)
+        {
+            hit = _s.State.HurtNpc(_target, weapon, zone);
+        }
+        var from = info.Source?.GlobalPosition ?? _s.Level.Player.GlobalPosition;
+        if (info.Source is PlayerController)
+        {
+            _s.Screens.ShowHitMarker(hit.Killed);
+        }
+        if (hit.Killed)
+        {
+            _talking = false;
+            var along = info.Direction.LengthSquared() > 0 ? info.Direction.Normalized() : -GlobalBasis.Z;
+            Collapse(along * (float)_s.Data.Combat.DeathPushNs);
+            _s.Level.Killed(this, from);
+            return;
+        }
+        _combat?.Hurt(zone, from);
+    }
+
+    /// <inheritdoc/>
+    public void ShowHit(Vector3 point, Vector3 normal) => ParticleBurst.Play(this, ParticleBurst.BloodScene, point, 0.5f, normal);
+
+    /// <summary>Something that may set them off: a shot heard, a friend killed in view.</summary>
+    public void Provoke(Provocation what, Vector3 from)
+    {
+        if (Alive && Visible && !Collapsed)
+        {
+            _combat?.Provoke(what, from);
+        }
+    }
+
     // ------------------------------------------------------------------ talking
 
     /// <inheritdoc/>
@@ -358,7 +504,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         {
             return Interaction.None;
         }
-        return Status == NpcStatus.Hostile
+        return Status == NpcStatus.Hostile || _combat is { Active: true }
             ? new Interaction($"{DisplayName} won't talk", false)
             : new Interaction($"Talk to {DisplayName}", true);
     }

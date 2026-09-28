@@ -147,6 +147,15 @@ public sealed class GameState
     /// <summary>Raised when a weapon is drawn or holstered.</summary>
     public event Action? LoadoutChanged;
 
+    /// <summary>Seconds left of the reload under way, or 0.</summary>
+    public double ReloadLeftS { get; private set; }
+
+    /// <summary>True while the drawn firearm is being reloaded: it can't fire.</summary>
+    public bool Reloading => ReloadLeftS > 0;
+
+    /// <summary>Raised when a reload starts, ends or is cut short.</summary>
+    public event Action? ReloadChanged;
+
     /// <summary>
     /// Uses belt slot <paramref name="slot"/> (0-9, keys 1 to 0): a weapon is drawn, or holstered
     /// if it's already out; a consumable is used. The one belt rule, for the keys and the HUD alike.
@@ -170,6 +179,7 @@ public sealed class GameState
                 Say("Not while swimming.");
                 return BeltResult.Refused;
             }
+            CancelReload();
             Drawn = id;
             DrawnS = 0;
             LoadoutChanged?.Invoke();
@@ -186,6 +196,7 @@ public sealed class GameState
         {
             return;
         }
+        CancelReload();
         Drawn = null;
         DrawnS = 0;
         LoadoutChanged?.Invoke();
@@ -241,6 +252,15 @@ public sealed class GameState
             }
         }
         Law.Tick(dt);
+        if (ReloadLeftS > 0)
+        {
+            ReloadLeftS = Math.Max(0, ReloadLeftS - dt);
+            if (ReloadLeftS == 0)
+            {
+                ReloadDrawn();
+                ReloadChanged?.Invoke();
+            }
+        }
         if (Drawn is not null)
         {
             DrawnS += dt;
@@ -260,11 +280,46 @@ public sealed class GameState
 
     /// <summary>
     /// Fires the drawn weapon once: a round leaves the magazine (a melee weapon swings). Returns
-    /// false with nothing drawn, or nothing loaded (a dry click).
+    /// false with nothing drawn, nothing loaded (a dry click), or a reload under way.
     /// </summary>
-    public bool FireDrawn() => Drawn is { } id && DrawnWeapon is { } w && !Dead && Magazines.Fire(id, w);
+    public bool FireDrawn() => Drawn is { } id && DrawnWeapon is { } w && !Dead && !Reloading && Magazines.Fire(id, w);
 
-    /// <summary>Reloads the drawn firearm from the pack. Returns the rounds loaded; out of rounds, the feed says so.</summary>
+    /// <summary>
+    /// Starts reloading the drawn firearm: the weapon's reload time passes (<see cref="Tick"/>),
+    /// then the rounds move (<see cref="ReloadDrawn"/>). Refused with nothing drawn, a melee
+    /// weapon, a reload already under way or a full magazine; with no rounds in the pack, the feed
+    /// says so. Drawing or holstering cuts a reload short, and nothing moves.
+    /// </summary>
+    public bool StartReload()
+    {
+        if (Reloading || Dead || Drawn is not { } id || DrawnWeapon is not { Melee: false, Ammo: { } ammo } w
+            || Magazines.Loaded(id, w) >= w.Magazine)
+        {
+            return false;
+        }
+        if (Inventory.Pack.Count(ammo) == 0)
+        {
+            Say("No rounds.");
+            return false;
+        }
+        ReloadLeftS = w.ReloadS;
+        ReloadChanged?.Invoke();
+        return true;
+    }
+
+    private void CancelReload()
+    {
+        if (ReloadLeftS > 0)
+        {
+            ReloadLeftS = 0;
+            ReloadChanged?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Moves rounds from the pack into the drawn firearm now: what a finished reload does.
+    /// Returns the rounds loaded; out of rounds, the feed says so.
+    /// </summary>
     public int ReloadDrawn()
     {
         if (Drawn is not { } id || DrawnWeapon is not { Melee: false } w)

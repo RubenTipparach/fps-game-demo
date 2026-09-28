@@ -119,6 +119,47 @@ public class MagazineTests
     }
 
     [Fact]
+    public void A_reload_takes_the_weapons_reload_time_and_the_rounds_move_at_its_end()
+    {
+        var s = Drawn(24);
+        Empty(s);
+        Assert.True(s.StartReload());
+        s.Tick(1.3);
+        Assert.True(s.Reloading, "the Kestrel's reload is 1.4 s");
+        Assert.Equal((0, 24), s.Rounds);
+        Assert.False(s.FireDrawn(), "nothing fires while reloading");
+        s.Tick(0.2);
+        Assert.False(s.Reloading);
+        Assert.Equal((12, 12), s.Rounds);
+    }
+
+    [Fact]
+    public void Holstering_cuts_a_reload_short_and_nothing_moves()
+    {
+        var s = Drawn(24);
+        Empty(s);
+        s.StartReload();
+        s.Holster();
+        Assert.False(s.Reloading);
+        s.Tick(2);
+        s.UseBelt(s.Inventory.Belt.ToList().IndexOf("pistol"));
+        Assert.Equal((0, 24), s.Rounds);
+    }
+
+    [Fact]
+    public void A_full_magazine_or_an_empty_pack_starts_no_reload()
+    {
+        var full = Drawn(24);
+        Assert.False(full.StartReload(), "a full magazine");
+        var dry = Drawn(0);
+        Empty(dry);
+        var said = new List<string>();
+        dry.Feed += said.Add;
+        Assert.False(dry.StartReload(), "no rounds in the pack");
+        Assert.Contains("No rounds.", said);
+    }
+
+    [Fact]
     public void A_melee_weapon_swings_without_rounds()
     {
         var s = TestData.NewGame();

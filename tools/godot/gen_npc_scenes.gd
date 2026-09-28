@@ -14,6 +14,12 @@
 # body per listed bone, capsules along the bone, cone joints except hinged knees and elbows.
 # The joints are rebuilt at the rest pose at runtime by NpcRagdoll, and the collision
 # exceptions between neighbouring bodies are added there too, because neither can be saved.
+#
+# Each scene also has a RightHand bone attachment with a Grip node, where NpcActor puts the
+# weapon they fight with (openspec/changes/hub-combat). Every hand model has its origin at the web
+# of the hand and its barrel (or shaft) along -Z, so one Grip holds them all. Grip's transform is
+# worked out from the body's own pose in UAL's Pistol_Aim_Neutral: at that pose the barrel points
+# along the body's facing, level, from the palm.
 extends SceneTree
 
 const BODIES_DIR := "res://models/characters"
@@ -24,6 +30,10 @@ const RAGDOLL_SCRIPT := "res://scripts/Undercity/Entities/NpcRagdoll.cs"
 # Brushfire's physics layers (game/scripts/Core/Damage.cs, Layers): World 1, Debris 32.
 const WORLD := 1
 const DEBRIS := 32
+## The pose Grip is fitted in, and how far along the hand bone (wrist to fingers) the palm is, m.
+const AIM_CLIP := "Pistol_Aim_Neutral"
+const PALM_M := 0.07
+const HAND := "RightHand"
 
 var _failed := false
 
@@ -107,7 +117,7 @@ func line(key: String, value) -> String:
 
 ## Writes the scene as text: the glb as an instance, and only the nodes this adds. (Packing an
 ## instanced glb from a script embeds the whole body instead of inheriting it.)
-func write_scene(id: String, glb: String, skel_path: String, bodies: Array, profile: Dictionary) -> bool:
+func write_scene(id: String, glb: String, skel_path: String, bodies: Array, profile: Dictionary, grip: Transform3D) -> bool:
 	var libs := {}
 	for lib_name in LIBRARIES:
 		var path: String = LIBRARIES[lib_name]
@@ -149,6 +159,10 @@ func write_scene(id: String, glb: String, skel_path: String, bodies: Array, prof
 		# The capsule's Y onto the body's Z.
 		t += line("transform", Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO))
 		t += 'shape = SubResource("Capsule_%s")\n\n' % b["bone"]
+	t += '[node name="%s" type="BoneAttachment3D" parent="%s"]\n' % [HAND, skel_path]
+	t += line("bone_name", HAND) + "\n"
+	t += '[node name="Grip" type="Node3D" parent="%s/%s"]\n' % [skel_path, HAND]
+	t += line("transform", grip) + "\n"
 	t += '[node name="Anim" type="AnimationPlayer" parent="."]\n'
 	for lib_name in lib_ids:
 		t += 'libraries/%s = ExtResource("%s")\n' % [lib_name, lib_ids[lib_name]]
@@ -180,9 +194,51 @@ func generate(glb: String, profile: Dictionary) -> void:
 		if not d.is_empty():
 			bodies.append(d)
 	var skel_path := str(root.get_path_to(sk))
+	var grip := grip_transform(root, sk, id)
 	root.free()
-	if bodies.size() == profile["bodies"].size() and write_scene(id, glb, skel_path, bodies, profile):
+	if _failed:
+		return
+	if bodies.size() == profile["bodies"].size() and write_scene(id, glb, skel_path, bodies, profile, grip):
 		print("[gen_npc_scenes] %s: ragdoll of %d bodies under %s" % [id, bodies.size(), skel_path])
+
+
+## Grip, relative to the hand bone: in the aim pose, the palm, with -Z along the body's facing
+## (the bodies face +Z) and +Y up.
+func grip_transform(root: Node, sk: Skeleton3D, id: String) -> Transform3D:
+	var lib = load(LIBRARIES[""])
+	var hand := sk.find_bone(HAND)
+	if not lib is AnimationLibrary or not lib.has_animation(AIM_CLIP) or hand < 0:
+		fail("%s: can't fit the grip (no %s in %s, or no %s bone)" % [id, AIM_CLIP, LIBRARIES[""], HAND])
+		return Transform3D.IDENTITY
+	var anim: Animation = lib.get_animation(AIM_CLIP)
+	var t := anim.length
+	for i in anim.get_track_count():
+		var bone := sk.find_bone(str(anim.track_get_path(i).get_concatenated_subnames()))
+		if bone < 0:
+			continue
+		match anim.track_get_type(i):
+			Animation.TYPE_ROTATION_3D:
+				sk.set_bone_pose_rotation(bone, anim.rotation_track_interpolate(i, t))
+			Animation.TYPE_POSITION_3D:
+				sk.set_bone_pose_position(bone, anim.position_track_interpolate(i, t))
+	# A skeleton outside the tree doesn't update its global poses, so the hand's is composed from
+	# the local poses up its chain.
+	var in_skeleton := Transform3D.IDENTITY
+	var b := hand
+	while b >= 0:
+		in_skeleton = sk.get_bone_pose(b) * in_skeleton
+		b = sk.get_bone_parent(b)
+	# The skeleton's place in the body: the nodes between it and the root.
+	var to_root := Transform3D.IDENTITY
+	var n: Node = sk
+	while n != root:
+		to_root = (n as Node3D).transform * to_root
+		n = n.get_parent()
+	var hand_pose: Transform3D = to_root * in_skeleton
+	var palm: Vector3 = hand_pose * Vector3(0, PALM_M, 0)
+	var aim := Transform3D(Basis(Vector3(-1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1)), palm)
+	sk.reset_bone_poses()
+	return (hand_pose.affine_inverse() * aim).orthonormalized()
 
 
 func fail(msg: String) -> void:

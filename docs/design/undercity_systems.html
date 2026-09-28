@@ -337,11 +337,12 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
   </div>
   <div class="status-row">
     <span class="chip built">Built: the hub and its systems, playable</span>
-    <span class="chip built">Built: Undercity.Core, 85 tests</span>
+    <span class="chip built">Built: Undercity.Core, 173 tests</span>
     <span class="chip built">Built: title, pause with saves, options</span>
+    <span class="chip built">Built: water and swimming; the Kestrel fires</span>
     <span class="chip enforced">Enforced: level geometry spec</span>
     <span class="chip proposed">Proposed: the Drains, the Yard, combat, augmentations</span>
-    <span class="chip proposed">Proposed after playtest 2: water, skyline, faces, crowd, the Kestrel</span>
+    <span class="chip proposed">Proposed after playtest 2: skyline, faces, crowd</span>
   </div>
 </header>
 
@@ -381,9 +382,11 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
       <h3>Status <small>what is real today</small></h3>
       <div class="scroll"><table class="tbl"><tbody>
         <tr><td><span class="chip built">Built</span></td><td>Low Harbor, the hub: built in Blender from its layout in eight sectors, with every NPC, door, container, terminal and exit placed. See <code>docs/playtest/undercity_hub.md</code>.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, the NPC body table, with 91 tests. The Godot layer only wires it to scenes.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, the NPC body table, with 173 tests. The Godot layer only wires it to scenes.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The HUD, the wrist-deck (Inventory, Skills, Journal), the dialog and terminal screens, the title screen, the pause menu with saves, and options, from the approved mockups.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The NPC bodies: 22 generated in Blender with MPFB2 from CC0 MakeHuman assets, sharing one CC0 animation library (UAL) and falling as Jolt ragdolls that come to rest. Adopted on the owner's conditional answer (H1 to H3); the look is judged in the hub.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Water, swimming and ways out (F14): the runner floats, swims, dives and can drown; 17 ladders and the ship's boarding ladders lead out, every point of water within 25 m of swimming of one. See <code>docs/validation/2026-09-28-water-and-swimming.md</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>The Kestrel fires (F18): everyone can be shot by the one damage rule, people fight, flee, cower or surrender, gunfire turns MerSec, and death fades to the newest save. See <code>docs/validation/2026-09-28-hub-combat.md</code>.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
       </tbody></table></div>
@@ -3391,7 +3394,7 @@ SHED</title></path>
 <section id="hubcombat">
   <div class="sh"><span class="key">F18</span><h2>The Kestrel fires</h2><span class="spec">openspec/changes/hub-combat</span></div>
   <p class="intro">Owner, 2026-09-28: "I wish I had a gun in the main hub to actually do stuff." The runner already carries the Kestrel on belt key 2, but it's a prop: nothing fires it, and NPCs can't be hurt. This is the hub's slice of F10, landing first: the Kestrel fires from the pack's ammo, everyone can be shot, those who can defend themselves do, gunfire is a crime, and the runner can die. The HUD readout ("12 / 36") is already in the approved D3 mockup.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (I1, I2, I15) · second</span></div>
+  <div class="controls"><span class="chip built">Built (I1: second)</span><span class="chip enforced">Checked: combat_test 23 of 23, 173 core tests</span></div>
   <div class="sub">
     <h3>Weapons in the hub <small>data/weapons.json; numbers from F10</small></h3>
     <div class="scroll"><table class="tbl">
@@ -3416,6 +3419,7 @@ SHED</title></path>
         <tr><td>Civilians (31)</td><td class="n">60</td><td>flee 70 % (25 m along the navmesh, then cower) / cower 30 %</td><td class="n">3 / 2</td></tr>
       </tbody></table></div>
     <p class="note">A shot heard by MerSec turns them hostile with no warning. Hurting a faction's member costs 15 reputation, and killing one costs 50. A dead quest giver fails their quests and closes their shop. Health regenerates only to 25 %. At 0 the screen fades and the newest save loads.</p>
+    <p class="note">Found in building: a reload takes its time in the core, and a dry pull starts one. A fighter who only hears a shot holds; the law turns MerSec. A hostile fighter goes after the runner while they see them (40 m) or for 20 s after the last shot or hit, so the whole precinct doesn't cross the hub. People flee at a sprint (5.5 m/s), fighters close at a run (3.5 m/s). MerSec draw the Kestrel's model; Tank has a baton and Kessler a scattergun, held in a grip fitted from the pistol-aim pose. People bleed where Brushfire's robots spark.</p>
   </div>
 </section>
 
