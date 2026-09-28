@@ -1,9 +1,11 @@
 # Level Geometry Specification
 
 ## Purpose
-What every generated level's geometry guarantees today: no two surfaces z-fight, and frame
-props stand proud of the openings they sit in. Each requirement here is enforced by the level
-generators, which refuse to write a level that breaks it.
+What every generated level's geometry guarantees today: no two surfaces z-fight, frame props
+stand proud of the openings they sit in, every room is carved, and every person the level
+places stands clear of it. Each requirement here is enforced by the level generators, which
+refuse to write a level that breaks it; the last is also checked in the built level by the
+placement test, with the game's own colliders.
 
 ## Requirements
 
@@ -34,3 +36,54 @@ be registered with the z-fighting check as props.
 #### Scenario: A doorway frame in a 3.2 x 3.3 m opening
 - **WHEN** the doorway frame is placed in a carved 3.2 x 3.3 m opening
 - **THEN** its clear opening is 3.0 x 3.2 m and the check passes
+
+### Requirement: Every room is carved
+Every room and doorway an enterable building declares SHALL be carved out of the building's
+block. The city plan generator (`tools/levels/city_plan.py`, `check_rooms_carved`) SHALL
+refuse a plan in which a room's or a door's interior box has no cutter. A building's sign
+SHALL displace only the window recesses in its zone, never a room, a door, a parapet or a
+landing.
+
+Pinned by `check_rooms_carved`: the committed hub plans clean, and the plan with the old sign
+rule (every cutter in the sign's zone dropped) exits naming the three rooms it left solid (the
+Tsang Shrine's hall, the garage's bay and the MerSec checkpoint's room), recorded in
+`docs/validation/2026-09-28-npc-placement.md`.
+
+#### Scenario: A sign in front of a hall
+- **WHEN** a building's sign zone overlaps the cutter of the room behind it
+- **THEN** the room is carved, and only the window recesses in the zone are left out
+
+### Requirement: People stand clear of the level
+Every person a level places SHALL stand clear of it, measured with the collider the game gives
+them: the NPC scene's capsule (`scenes/undercity/npc.tscn`, 0.35 x 1.8 m) for every NPC,
+civilian and patrol stop, and the player scene's cylinder (`scenes/undercity/player.tscn`,
+0.4 x 1.8 m) at every spawn point. Standing clear means the body overlaps no world collider
+and no other person, the floor is within 0.05 m of its feet, and outdoors it stands on level
+ground. A patrol SHALL walk from stop to stop without its capsule crossing a building, a
+fixture, a prop or a solid. The city plan generator (`check_standing_room`) SHALL refuse a
+layout that breaks this for the solids the plan describes (detail boxes, stall parts, Skyway
+pillars, fixture and prop footprints, walls, building shells, curbs), reading both colliders
+from their scenes; the placement test (`scenes/undercity/tests/placement_test.tscn`) SHALL
+check every placement in the built level against the real physics.
+
+Pinned by `check_standing_room`, which passes on the committed hub and on the old layout names
+23 faults (Tank inside the Rusty Anchor's bar counter among them), and by the placement test:
+96 of 96 placements pass on the committed hub, and the level before this fix fails 11,
+recorded in `docs/validation/2026-09-28-npc-placement.md`.
+
+#### Scenario: An NPC inside a counter
+- **WHEN** the layout stands an NPC where their capsule overlaps a bar counter
+- **THEN** the plan exits naming the NPC, the counter and how far in they stand, and nothing
+  is built
+
+#### Scenario: A vendor behind a stall
+- **WHEN** a civilian stands in a stall's vendor space, between its counter and its back
+- **THEN** the check passes
+
+#### Scenario: A spawn point inside a prop
+- **WHEN** a spawn marker in the built level puts the player's cylinder inside a container
+- **THEN** the placement test prints FAIL naming the spawn and the container, and exits 1
+
+#### Scenario: A patrol through a building
+- **WHEN** a patrol leg, swept by the NPC's capsule, crosses a building or a pillar
+- **THEN** the plan exits naming the patrol, the leg and what it runs through

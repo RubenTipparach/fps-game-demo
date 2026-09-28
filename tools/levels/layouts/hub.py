@@ -242,8 +242,12 @@ MAP = {
 
     "patrols": [
         {"who": "MerSec pair: Lantern Row, Market Street, the market, Kiln Street",
+         # every leg clear of buildings, stalls and the Skyway's pillars for an NPC's capsule
+         # (city_plan.check_standing_room); the pair walks straight from stop to stop
          "closed": True, "pts": [(40, 39), (118, 37), (120, 72), (146, 96), (156, 118), (166, 148),
-                                 (158, 130), (150, 112), (100, 110), (84, 96), (60, 80), (56, 44)]},
+                                 (158, 130), (156.5, 120.5), (150, 112), (126.5, 116.6), (100, 110), (84, 96),
+                                 (86.7, 86), (85.5, 80.5), (79.5, 78.5), (64.5, 69), (56, 61.5), (56.5, 44),
+                                 (56, 42.5)]},
     ],
 
     "enemies": [

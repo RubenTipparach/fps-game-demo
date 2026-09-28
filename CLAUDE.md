@@ -367,6 +367,23 @@ Two surfaces must never share a plane while overlapping and facing the same way.
 - **Sky openings** use `sky_*` materials (`shaders/sky_surface.gdshader`). Aim the baked
   spotlight from the sky's `moon_direction`.
 
+### 7.4 People stand clear of the level
+
+The owner, 2026-09-28: "npcs should have colliders on them, like capsule colliders for checking
+where they are in the city, and so you should perform tests on that to ensure people are placed
+properly." (`openspec/specs/level-geometry`, "People stand clear of the level".)
+
+- **Every placement is tested with the body's own collider:** the NPC scene's capsule for NPCs,
+  civilians and patrol stops, the player scene's cylinder at spawns. Never a hand-typed size.
+- **The plan checks it first.** `city_plan.py` refuses a layout whose people overlap a detail,
+  a stall part, a pillar, a fixture or prop footprint, a wall or a building, stand on a curb
+  edge, or walk a patrol leg through any of those. A solid that isn't an axis-aligned box
+  registers its footprint with `Plan.solid(...)` where it is built.
+- **The built level is checked with real physics.** `scenes/undercity/tests/placement_test.tscn`
+  loads the sector glbs and tests every placement against the colliders. Run it after every
+  level rebuild; `scripts/check.sh` does.
+- **Every room is carved.** `city_plan.py` refuses a plan in which a room or a door has no cutter.
+
 ## 8. UI work
 
 - **Mockup first.** Get the owner's approval of a mockup before implementing any new screen,
@@ -404,6 +421,7 @@ Before claiming anything is done, run what applies:
 | Specs | `openspec validate --all` |
 | Dash check | Section 4 |
 | Z-fighting | Every level generator asserts it |
+| People placement | `city_plan.py` asserts it; `placement_test.tscn` in the built level (7.4) |
 | Design maps and page | `python3 tools/levels/render_map.py && python3 tools/design/build_page.py` |
 | Scripted playtests and screenshots | `BRUSHFIRE_AUTOTEST=script.json` |
 

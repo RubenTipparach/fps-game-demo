@@ -860,7 +860,7 @@ WASH</title></path>
 <circle cx="810.0" cy="306.0" r="2.6" fill="#ff5b4f"/>
 <path class="cone" d="M1470.0,474.0 L1448.3,555.1 L1439.9,552.4 L1431.9,548.8 L1424.3,544.4 L1417.1,539.3 L1410.6,533.4 L1404.7,526.9 L1399.6,519.7 L1395.2,512.1 L1391.6,504.1 L1388.9,495.7 Z"><title>Depot yard camera</title></path>
 <circle cx="1470.0" cy="474.0" r="2.6" fill="#ff5b4f"/>
-<path class="patrol" d="M276.0,270.0 L744.0,258.0 L756.0,468.0 L912.0,612.0 L972.0,744.0 L1032.0,924.0 L984.0,816.0 L936.0,708.0 L636.0,696.0 L540.0,612.0 L396.0,516.0 L372.0,300.0 L276.0,270.0"><title>Patrol: MerSec pair: Lantern Row, Market Street, the market, Kiln Street</title></path>
+<path class="patrol" d="M276.0,270.0 L744.0,258.0 L756.0,468.0 L912.0,612.0 L972.0,744.0 L1032.0,924.0 L984.0,816.0 L975.0,759.0 L936.0,708.0 L795.0,735.6 L636.0,696.0 L540.0,612.0 L556.2,552.0 L549.0,519.0 L513.0,507.0 L423.0,450.0 L372.0,405.0 L375.0,300.0 L372.0,291.0 L276.0,270.0"><title>Patrol: MerSec pair: Lantern Row, Market Street, the market, Kiln Street</title></path>
 <g class="enemy" data-enemy="0"><title>Officer Dace (MerSec, I3)</title><path d="M1057.8,966.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
 </g>
 <g class="enemy" data-enemy="1"><title>MerSec trooper (I2)</title><path d="M1039.8,996.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>

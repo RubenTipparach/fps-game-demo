@@ -24,11 +24,11 @@ Entry keys:
 The design is openspec/changes/sump-market-hub (sections 2 to 7).
 """
 
-from .hub import viaduct_y
+from .hub import MAP, viaduct_y
 
-# The MerSec pair's beat (hub.py "patrols"), as the patrol prop: "x,y;x,y;...".
-_BEAT = [(40, 39), (118, 37), (120, 72), (146, 96), (156, 118), (166, 148),
-         (158, 130), (150, 112), (100, 110), (84, 96), (60, 80), (56, 44)]
+# The MerSec pair's beat, from the layout's patrol route (hub.py "patrols", which the design map
+# draws), as the patrol prop: "x,y;x,y;...".
+_BEAT = next(p["pts"] for p in MAP["patrols"] if p["who"].startswith("MerSec pair"))
 PATROL = ";".join(f"{x:g},{y:g}" for x, y in _BEAT)
 
 
@@ -50,7 +50,9 @@ _BARRED = _lock(3, pick=False)
 
 NPCS = [
     _npc("silk", (108.5, 51), 270),
-    _npc("tank", (97.8, 55), 270),
+    # behind the bar, beside the back-room door (100, 53): the strip between the counter (x 98.8)
+    # and the wall (99.9) is 1.1 m wide, room for his 0.7 m capsule
+    _npc("tank", (99.3, 55.5), 270),
     _npc("mags", (90, 51), 180),
     _npc("kessler", (138, 55.2), 0),
     _npc("doc_vo", (160, 49.5), 0),
@@ -60,12 +62,12 @@ NPCS = [
     _npc("petra", (227, 108), 270),
     _npc("dace", (169, 155.5), 0),
     _npc("mersec_gate", (168, 161), 0),
-    _npc("mersec_station", (120, 31), 180),
+    _npc("mersec_station", (120, 30.4), 180),
     _npc("mersec_desk", (228, 132.2), 270),
     _npc("mersec_patrol_a", (40, 39), 90, patrol=PATROL, patrol_start=0),
     _npc("mersec_patrol_b", (146, 96), 135, patrol=PATROL, patrol_start=3),
     _npc("skiv", (50, 146), 270),
-    _npc("jax", (181.5, 119.5), 270),
+    _npc("jax", (181.7, 119.2), 270),
     _npc("lin", (90, 141), 90),
     _npc("oracle", (142.4, 100), 90),
 ]
@@ -74,11 +76,11 @@ NPCS = [
 _CIVS = [
     (20, 41, 90), (70, 40.5, 270), (100, 39.5, 180), (125, 38, 0), (150, 39, 90), (180, 40, 270),
     (119, 50, 180), (120, 65, 0),
-    (95, 80, 135), (100, 92, 45), (112, 90, 270), (125, 85, 180), (135, 95, 90), (145, 85, 225),
+    (95, 80, 135), (100, 92.5, 45), (112, 89.4, 270), (125, 85, 180), (135, 95, 90), (145, 85, 225),
     (150, 105, 315), (115, 110, 0), (100, 108, 90),
     (83, 57, 90), (90, 64.5, 0), (75, 68, 45),
-    (170, 90, 180), (176, 103, 0),
-    (60, 97, 90), (40, 101, 270),
+    (170, 89.4, 180), (176, 103, 0),
+    (60, 97.6, 90), (40, 101, 270),
     (32, 145, 45),
     (156, 122, 200), (170, 129.5, 270),
     (110, 142, 180),
@@ -93,7 +95,7 @@ SPAWNS = [
     {"kind": "spawn", "id": "storm_drain", "at": (40, 152.5), "facing_deg": 0, "props": {}},
     {"kind": "spawn", "id": "outfall", "at": (189, 98.5), "facing_deg": 270, "props": {}},
     {"kind": "spawn", "id": "checkpoint", "at": (170, 165), "facing_deg": 0, "props": {}},
-    {"kind": "spawn", "id": "freight_tunnel", "at": (125, 162), "facing_deg": 0, "props": {}},
+    {"kind": "spawn", "id": "freight_tunnel", "at": (125.6, 163), "facing_deg": 0, "props": {}},
     {"kind": "spawn", "id": "lift_bottom", "at": (130, 107), "facing_deg": 90, "props": {}},
     {"kind": "spawn", "id": "lift_top", "at": (123.5, viaduct_y(123.5) - 1.5), "facing_deg": 270,
      "z": "service_deck", "props": {}},

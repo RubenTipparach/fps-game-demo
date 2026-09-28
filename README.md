@@ -261,6 +261,18 @@ godot --headless --path game -s res://../tools/godot/gen_npc_scenes.gd    # -> g
 godot --headless --path game res://scenes/undercity/tests/ragdoll_test.tscn  # the ragdoll check
 ```
 
+### Where people stand
+
+Every NPC, civilian, patrol stop and spawn point is checked with the collider the game gives it
+(CLAUDE.md 7.4): `city_plan.py` refuses a layout that puts someone inside a counter, a stall, a
+pillar, a wall or a building, on a curb edge, or on a patrol leg through any of those, and the
+placement test loads the built hub and checks every placement against the real physics.
+
+```
+python3 tools/levels/city_plan.py hub --stats                                   # the layout checks
+godot --headless --path game res://scenes/undercity/tests/placement_test.tscn  # the built level
+```
+
 `BRUSHFIRE_AUTOTEST=script.json godot --path game` runs a scripted playtest and screenshot
 pass (`scripts/Core/AutoTest.cs`). `{"debug_draw": 1}` switches to unshaded, which is handy for
 checking generated geometry before spending time on a bake.

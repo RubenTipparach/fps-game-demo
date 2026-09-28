@@ -78,6 +78,14 @@ WALL_LAMP_EVERY = 16.0
 WALL_LAMP_Z = 3.3     # plate 3.1-3.5 m: above shop fronts (3.05), below the string course (3.55)
 DOOR_H = 2.4          # interior doors; openings 2.5 m wide or more get WIDE_DOOR_H
 WIDE_DOOR_H = 3.0
+PILLAR_BASE_HALF_M = 1.2  # a viaduct pillar's base, half its side
+# Layout shape classes a person may stand inside: neon strips hang on walls, and the dark
+# features (culverts, the outfall, tunnel portals) are hollow. A stall's footprint holds its
+# vendor's space, so stalls register their counter, back and posts as solids instead.
+WALK_THROUGH_CLASSES = ("fix-neon", "fix-dark", "stall")
+STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is underfoot, not in the way
+NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
+PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
 
 # Light colours (linear-ish RGB) and settings: (color, energy, range_m, corona material, corona size)
 LIGHTS = {
@@ -135,6 +143,27 @@ FINISH = {
 }
 BLADE_WORDS = ["BAR", "HOTEL", "RAMEN", "SAKE", "PAWN", "NOODLE", "LIQUOR", "CLUB", "TATTOO", "CYBER", "SUSHI",
                "OPEN", "DINER", "DOLL", "LUCKY", "JADE", "KARAOKE", "BOOKS", "REPAIR", "PHO"]
+
+
+def scene_collider(path):
+    """A body's collider as (radius, height) in metres, read from the scene the game spawns
+    (tools/godot/gen_undercity_scenes.py writes them: a capsule for an NPC, a cylinder for the
+    player), so the placement check can't drift from the game."""
+    with open(path) as f:
+        text_ = f.read()
+    starts = [i for i in (text_.find('[sub_resource type="CapsuleShape3D"'), text_.find('[sub_resource type="CylinderShape3D"'))
+              if i >= 0]
+    if not starts:
+        raise SystemExit(f"{path}: no capsule or cylinder collider; the placement check needs the body's size")
+    block = text_[min(starts):].split("\n\n", 1)[0]
+    values = dict(line.split(" = ", 1) for line in block.splitlines()[1:] if " = " in line)
+    try:
+        radius, height = float(values["radius"]), float(values["height"])
+    except (KeyError, ValueError):
+        raise SystemExit(f"{path}: the collider needs a radius and a height, found {values}")
+    if not (math.isfinite(radius) and math.isfinite(height) and 0 < 2 * radius <= height):
+        raise SystemExit(f"{path}: a collider of r {radius} m, h {height} m isn't a standing body")
+    return radius, height
 
 
 def r4(v):
@@ -216,14 +245,18 @@ def edge_box(P, s0, s1, o0, o1, z0, z1, mat, skip=()):
     return hexa([P(s0, o0), P(s1, o0), P(s1, o1), P(s0, o1)], z0, z1, mat, skip)
 
 
+def obox_corners(cx, cy, ux, uy, half_u, half_v):
+    """The four corners of a rectangle centred on (cx, cy) whose local u axis is (ux, uy)."""
+    vx, vy = -uy, ux
+    return [(cx - ux * half_u - vx * half_v, cy - uy * half_u - vy * half_v),
+            (cx + ux * half_u - vx * half_v, cy + uy * half_u - vy * half_v),
+            (cx + ux * half_u + vx * half_v, cy + uy * half_u + vy * half_v),
+            (cx - ux * half_u + vx * half_v, cy - uy * half_u + vy * half_v)]
+
+
 def obox(cx, cy, ux, uy, half_u, half_v, z0, z1, mat, skip=()):
     """Box centred on (cx, cy) whose local u axis is (ux, uy); v is u turned 90 degrees."""
-    vx, vy = -uy, ux
-    c = [(cx - ux * half_u - vx * half_v, cy - uy * half_u - vy * half_v),
-         (cx + ux * half_u - vx * half_v, cy + uy * half_u - vy * half_v),
-         (cx + ux * half_u + vx * half_v, cy + uy * half_u + vy * half_v),
-         (cx - ux * half_u + vx * half_v, cy - uy * half_u + vy * half_v)]
-    return hexa(c, z0, z1, mat, skip)
+    return hexa(obox_corners(cx, cy, ux, uy, half_u, half_v), z0, z1, mat, skip)
 
 
 def beam(a, b, width, thick, mat):
@@ -275,6 +308,7 @@ class Plan:
         self.order = []
         self.lights = 0
         self.zboxes = {}          # z-fighting groups: name -> {"airs": [], "details": []}
+        self.solids = []          # (label, footprint, z0, z1): solids that aren't boxes
         self.entity_list = entities or []
         self.districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
         self.probes = []          # reflection probe boxes for the scene generator
@@ -323,6 +357,11 @@ class Plan:
 
     def zgroup(self, name):
         return self.zboxes.setdefault(name, {"airs": [], "details": []})
+
+    def solid(self, corners, z0, z1, label):
+        """Register a solid that isn't an axis-aligned box (a stall's counter, a pillar) by its
+        footprint corners and height, for the standing-room check."""
+        self.solids.append((label, Polygon(corners), z0, z1))
 
     def zdetail(self, group, lo, hi, label):
         """Register an axis-aligned box (layout coordinates) for the z-fighting check."""
@@ -1227,10 +1266,14 @@ class City:
         if name and b.get("label", True) is not False:
             sign = self.sign_spot(b, pg, ext_doors, st, h)
         ext_door_pts = [dd[6] for dd in ext_doors]
+        # The parapet, landings, rooms and doors are structure; only the facade's own recesses
+        # (windows) make way for a sign. (Dropping every cutter in the sign's zone once left the
+        # Tsang Shrine's hall uncarved: a solid block with Sister Lin standing inside it.)
+        structure = len(cutters)
         edges = self.facade(sector, pg, 0.0, h, st, rng, bid, cutters, rooms=bool(rooms), doors=ext_door_pts, bid=bid,
                             allow=("windows",) if rooms else ("windows", "front"))
         if sign:
-            cutters[:] = [c for c in cutters if not self.cutter_hits(c, sign["zone"])]
+            cutters[structure:] = [c for c in cutters[structure:] if not self.cutter_hits(c, sign["zone"])]
         if not rooms and not ext_doors:
             # an entrance: a lit, recessed doorway on the longest street front
             fronts = [e for e in edges if e[6] == "street"]
@@ -1562,12 +1605,17 @@ class City:
         def L(u, v):
             return (cx + ux * u + vx * v, cy + uy * u + vy * v)
         hw, hd = sw / 2, sh / 2
-        prims.append(hexa([L(-hw, hd - 0.7), L(hw, hd - 0.7), L(hw, hd), L(-hw, hd)], z, z + 1.0,
-                          ["crate", "diamond_plate", "crate", "crate", "crate", "crate"], skip=[0]))
-        prims.append(hexa([L(-hw, -hd), L(hw, -hd), L(hw, -hd + 0.45), L(-hw, -hd + 0.45)], z, z + 1.5, "crate", skip=[0]))
+        # the counter at the front, the back shelf, and the vendor's space between them
+        counter = [L(-hw, hd - 0.7), L(hw, hd - 0.7), L(hw, hd), L(-hw, hd)]
+        prims.append(hexa(counter, z, z + 1.0, ["crate", "diamond_plate", "crate", "crate", "crate", "crate"], skip=[0]))
+        P.solid(counter, z, z + 1.0, "stall counter")
+        back = [L(-hw, -hd), L(hw, -hd), L(hw, -hd + 0.45), L(-hw, -hd + 0.45)]
+        prims.append(hexa(back, z, z + 1.5, "crate", skip=[0]))
+        P.solid(back, z, z + 1.5, "stall back")
         for pu, pv in ((-hw + 0.05, -hd + 0.05), (hw - 0.05, -hd + 0.05), (-hw + 0.05, hd - 0.05), (hw - 0.05, hd - 0.05)):
             px, py = L(pu, pv)
             prims.append(obox(px, py, ux, uy, 0.04, 0.04, z, z + 2.45, "gunmetal", skip=[0]))
+            P.solid(obox_corners(px, py, ux, uy, 0.04, 0.04), z, z + 2.45, "stall post")
         c4 = [L(-hw - 0.15, -hd - 0.15), L(hw + 0.15, -hd - 0.15), L(hw + 0.15, hd + 0.45), L(-hw - 0.15, hd + 0.45)]
         prims.append(hexa_pts([(*c4[0], z + 2.6), (*c4[1], z + 2.6), (*c4[2], z + 2.3), (*c4[3], z + 2.3),
                                (*c4[0], z + 2.66), (*c4[1], z + 2.66), (*c4[2], z + 2.36), (*c4[3], z + 2.36)], "awning"))
@@ -1963,7 +2011,8 @@ class City:
             z0 = bed if bed is not None else self.ground_level(x, y) - 0.15
             prims = P.obj("skyway", "walk", x, y, col="col")
             base_top = (self.waters[0]["surface"] + 0.8) if bed is not None else z0 + 0.15 + 0.9
-            prims.append(obox(x, y, ux, uy, 1.2, 1.2, z0, base_top, "stone_blocks"))
+            prims.append(obox(x, y, ux, uy, PILLAR_BASE_HALF_M, PILLAR_BASE_HALF_M, z0, base_top, "stone_blocks"))
+            P.solid(obox_corners(x, y, ux, uy, PILLAR_BASE_HALF_M, PILLAR_BASE_HALF_M), z0, c0, "Skyway pillar")
             prims.append(obox(x, y, ux, uy, 1.02, 1.02, base_top, base_top + 0.3, "concrete"))
             prims.append(obox(x, y, ux, uy, 0.8, 0.8, base_top + 0.3, c0 - 0.7, "concrete", skip=[0, 1]))
             prims.append(obox(x, y, ux, uy, 1.02, 1.02, c0 - 0.7, c0 - 0.4, "concrete"))
@@ -2499,6 +2548,151 @@ class City:
         for name, grp in sorted(self.P.zboxes.items()):
             detailing.assert_no_zfighting(f"{self.m['id']}:{name}", grp["airs"], grp["details"])
 
+    def check_rooms_carved(self):
+        """Every room and doorway of an enterable building is carved out of its block: each
+        interior box has its cutter. (A sign once took the cutters in its zone with it, and left
+        the Tsang Shrine's hall, the garage's bay and the checkpoint's room solid.)"""
+        problems = []
+        for sec in self.P.order:
+            for obj in self.P.sectors[sec]["objects"].values():
+                for pr in obj["prims"]:
+                    if pr.get("t") != "bool" or not pr.get("interior"):
+                        continue
+                    cut = set()
+                    for c in pr["cutters"]:
+                        if c.get("t") == "hexa":
+                            xs, ys = [q[0] for q in c["p"]], [q[1] for q in c["p"]]
+                            cut.add((round(min(xs), 2), round(min(ys), 2), round(max(xs), 2), round(max(ys), 2)))
+                    for lo, hi in pr["interior"]["boxes"]:
+                        # interior boxes are the airs grown by 0.02 m, in (x, y, up)
+                        key = (round(lo[0] + 0.02, 2), round(lo[1] + 0.02, 2), round(hi[0] - 0.02, 2), round(hi[1] - 0.02, 2))
+                        if key not in cut:
+                            problems.append(f"{pr['interior']['object']}: the room or door at x {key[0]}-{key[2]}, "
+                                            f"y {key[1]}-{key[3]} has no cutter, so it stays solid")
+        if problems:
+            raise SystemExit(f"{self.m['id']}: {len(problems)} rooms aren't carved:\n  " + "\n  ".join(problems))
+
+    def standing_spots(self):
+        """Where the level stands a person: every NPC and civilian, every stop on a patrol and
+        every spawn point, as (label, x, y, z, place, body). place is "indoors", "outdoors" or
+        "raised" (an explicit z: a roof or the service deck, checked against details only, since
+        it stands above walls and shells); body is "npc" or "player", whose collider it takes."""
+        spots = []
+        for e in self.entities_in:
+            if e["kind"] not in ("npc", "civ", "spawn"):
+                continue
+            x, y = e["at"][0], e["at"][1]
+            place = "raised" if e.get("z") is not None else ("indoors" if self.in_room(x, y) else "outdoors")
+            body = "player" if e["kind"] == "spawn" else "npc"
+            spots.append((f"{e['kind']}:{e['id']}", x, y, self.entity_z(e), place, body))
+            patrol = e.get("props", {}).get("patrol")
+            for i, stop in enumerate(patrol.split(";") if patrol else []):
+                px, py = (float(v) for v in stop.split(","))
+                pz = self.entity_z({"kind": e["kind"], "id": e["id"], "at": (px, py)})
+                spots.append((f"{e['kind']}:{e['id']} patrol stop {i}", px, py, pz,
+                              "indoors" if self.in_room(px, py) else "outdoors", body))
+        return spots
+
+    def standing_room(self):
+        """What a standing spot is checked against, built once per plan: the detail boxes, the
+        footprints of the layout's fixtures and props, the rooms' air and the colliders' sizes."""
+        if getattr(self, "_standing", None) is None:
+            details = []
+            for grp in self.P.zboxes.values():
+                for lo, hi, label in grp["details"]:
+                    # stored as (x, up, y), for the z-fighting check
+                    details.append((label, min(lo[0], hi[0]), min(lo[2], hi[2]), min(lo[1], hi[1]),
+                                    max(lo[0], hi[0]), max(lo[2], hi[2]), max(lo[1], hi[1])))
+            footprints = [(f"{fx[-1]} prop", RM.shape_geom(fx)) for fx in self.m.get("props", [])
+                          if fx[-1] not in WALK_THROUGH_CLASSES]
+            footprints += [(f"{b['id']} {fx[-1]}", RM.shape_geom(fx)) for b in self.m["buildings"]
+                           for fx in b.get("fixtures", []) if fx[-1] not in WALK_THROUGH_CLASSES]
+            air = unary_union([box(a.x[0], a.z[0], a.x[1], a.z[1])
+                               for grp in self.P.zboxes.values() for a in grp["airs"]]).buffer(1e-6)
+            self._standing = {"details": details, "footprints": footprints, "air": air,
+                              "bodies": {"npc": scene_collider(NPC_SCENE), "player": scene_collider(PLAYER_SCENE)}}
+        return self._standing
+
+    def standing_problems(self, label, x, y, z, place, body):
+        """Why a person of this body can't stand here, or [] when they can (see check_standing_room)."""
+        room = self.standing_room()
+        radius, height = room["bodies"][body]
+        foot = Point(x, y).buffer(radius, quad_segs=16)
+        problems = []
+
+        def into(fp):
+            return radius - fp.distance(Point(x, y))
+        for name, x0, y0, z0, x1, y1, z1 in room["details"]:
+            if z1 <= z + STANDING_STEP_M or z0 >= z + height:
+                continue    # underfoot, or overhead
+            gap = math.hypot(max(x0 - x, 0.0, x - x1), max(y0 - y, 0.0, y - y1)) - radius
+            if gap < 0:
+                problems.append(f"{label} at ({x:g}, {y:g}) is {-gap:.2f} m inside a {name} "
+                                f"(x {x0:.2f}-{x1:.2f}, y {y0:.2f}-{y1:.2f}, z {z0:.2f}-{z1:.2f})")
+        for name, fp, z0, z1 in self.P.solids:
+            if z1 > z + STANDING_STEP_M and z0 < z + height and foot.intersects(fp):
+                problems.append(f"{label} at ({x:g}, {y:g}) stands in a {name} ({into(fp):.2f} m into it)")
+        if place == "raised":
+            return problems
+        for name, fp in room["footprints"]:
+            if foot.intersects(fp):
+                problems.append(f"{label} at ({x:g}, {y:g}) stands in a {name} ({into(fp):.2f} m into it)")
+        if place == "indoors":
+            if not room["air"].contains(foot):
+                problems.append(f"{label} at ({x:g}, {y:g}) reaches into a wall: "
+                                f"{foot.difference(room['air']).area:.3f} m2 of its footprint is outside the rooms")
+            return problems
+        if foot.intersects(self.B):
+            problems.append(f"{label} at ({x:g}, {y:g}) is {into(self.B):.2f} m inside a building")
+        # level ground: a person astride a curb or a stair edge has a foot in it
+        ring = [(x + radius * math.cos(a * math.pi / 4), y + radius * math.sin(a * math.pi / 4)) for a in range(8)]
+        levels = [self.ground_level(px, py) for px, py in ring + [(x, y)]]
+        if max(levels) - min(levels) > STANDING_STEP_M:
+            problems.append(f"{label} at ({x:g}, {y:g}) stands on an edge: the ground under it runs "
+                            f"{min(levels):.2f}-{max(levels):.2f} m")
+        return problems
+
+    def patrol_leg_problems(self):
+        """A patrol walks straight from stop to stop: each leg, swept by the NPC's footprint,
+        stays out of buildings, fixtures, props and solids at street level."""
+        room = self.standing_room()
+        radius, height = room["bodies"]["npc"]
+        problems = []
+        for e in self.entities_in:
+            patrol = e.get("props", {}).get("patrol")
+            if not patrol:
+                continue
+            stops = [tuple(float(v) for v in stop.split(",")) for stop in patrol.split(";")]
+            for i, a in enumerate(stops):
+                b = stops[(i + 1) % len(stops)]
+                sweep = LineString([a, b]).buffer(radius, quad_segs=8)
+                hits = [name for name, fp in room["footprints"] if sweep.intersects(fp)]
+                hits += [name for name, fp, z0, z1 in self.P.solids
+                         if z1 > STANDING_STEP_M + PAVED_Z and z0 < height and sweep.intersects(fp)]
+                if sweep.intersects(self.B):
+                    hits.append("building")
+                if hits:
+                    problems.append(f"{e['kind']}:{e['id']} patrol leg {i} ({a[0]:g}, {a[1]:g}) to ({b[0]:g}, {b[1]:g}) "
+                                    f"runs through: {', '.join(sorted(set(hits)))}")
+        return problems
+
+    def check_standing_room(self):
+        """Every person stands clear of the level (openspec/specs/level-geometry, "People stand
+        clear of the level"). The body is the collider the game gives it, read from the scene
+        (scene_collider(): npc.tscn for NPCs, player.tscn at spawn points), so the check and the
+        game agree on how big a person is. At each standing spot the body must not overlap a
+        registered detail box (a counter, a table, a trim) anywhere in its height, a registered
+        solid (a stall's counter, a Skyway pillar), or the footprint of a fixture or prop;
+        indoors it must stay inside the rooms' air; outdoors it must stay out of every building
+        and stand on level ground. Each patrol leg must stay clear too. What the plan doesn't
+        describe as a box or a footprint (lamps, railings, stairs) is the in-engine placement
+        test's job (game/scenes/undercity/tests/placement_test.tscn), which uses the real colliders."""
+        problems = [p for spot in self.standing_spots() for p in self.standing_problems(*spot)]
+        problems += self.patrol_leg_problems()
+        if problems:
+            raise SystemExit(f"{self.m['id']}: {len(problems)} placements put a person inside the level:\n  "
+                             + "\n  ".join(problems))
+
     def build(self):
         self.foundation()
         self.plan_lots()
@@ -2528,6 +2722,8 @@ class City:
         self.boundary()
         self.place_entities()
         self.check_zfighting()
+        self.check_rooms_carved()
+        self.check_standing_room()
         return self.P
 
     def pit_railings(self):
