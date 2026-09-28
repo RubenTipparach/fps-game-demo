@@ -62,6 +62,23 @@ the standard for level maps:
 Taken: all of it, drawn by `tools/levels/render_map.py` from each level's layout module. No
 Prague geography, names or art are used.
 
+## 3a. Portrait lighting (owner, 2026-09-28)
+
+The owner sent Digital Camera magazine's poster "Lighting Guide: master pro portrait lighting
+with these 24 essential studio set-ups" (digitalcameraworld.com) and pointed at its COLOURED
+GELS set-up, for lighting faces in conversation. The set-ups `openspec/changes/character-lighting`
+takes the shape of:
+
+- **LOOP:** one softbox high and to the side, so the nose's shadow loops towards the corner of
+  the mouth.
+- **KEY WITH A CLOSE SOFTBOX:** the key a couple of feet away, for soft shadows.
+- **LOOP WITH A RIM LIGHT:** a hard light behind the subject, catching the edge of the hair.
+- **COLOURED GELS:** "A softbox with a red gel creates a glow from the right. A strobe with a
+  blue gel lights the background. A strobe with a purple gel adds an accent."
+
+We take the arrangement (a soft key, a coloured rim, a coloured accent), not the poster's text or
+images.
+
 ## 4. Systems borrowed by shape
 
 | From | Shape | Where in Undercity |

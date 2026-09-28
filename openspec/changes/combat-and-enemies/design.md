@@ -7,6 +7,9 @@ combat is a fallback that costs you. Undercity keeps combat short and dangerous:
 hard, health doesn't regenerate, and the tools that avoid fights (gas, EMP, darts, takedowns)
 are cheap. What makes combat "technical" is that each archetype has a known weakness.
 
+`hub-combat` builds sections 2 (without the stun pool, tranq, gas and EMP), 4 and 7 first, in
+the hub, with the numbers below (owner, 2026-09-28). This change builds the rest on top of it.
+
 ## Goals / Non-Goals
 
 **Goals:**

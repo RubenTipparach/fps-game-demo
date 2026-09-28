@@ -512,6 +512,7 @@ Before claiming anything is done, run what applies:
   - the 80.lv "Five Pillars of Immersive Sims";
   - the owner's inventory references: Deus Ex, Human Revolution and Peripeteia;
   - the Mankind Divided hub map standard;
+  - the owner's portrait lighting reference (coloured gels, for faces in conversation);
   - the systems borrowed from Thief, Hitman and System Shock 2.
 
 Two rules for using references:

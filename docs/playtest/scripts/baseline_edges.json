@@ -1,0 +1,22 @@
+{"out": "/tmp/undercity_baseline", "god": true,
+ "steps": [
+  {"log": "baseline for the hub's edges, the Bay and faces (measurement only)"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"wait": 20},
+  {"teleport": [130.0, 0.3, 95.0], "yaw": 0, "pitch": 12},
+  {"wait": 10},
+  {"shot": "01_skyline_north_from_market.png"},
+  {"teleport": [188.0, 0.3, 120.0], "yaw": -90, "pitch": 10},
+  {"wait": 10},
+  {"shot": "02_skyline_east_over_the_cut.png"},
+  {"teleport": [60.0, 0.3, 150.0], "yaw": 180, "pitch": 12},
+  {"wait": 10},
+  {"log": "south view skipped: that spot faces a wall"},
+  {"teleport": [190.5, 0.3, 125.0], "yaw": -90, "pitch": -35},
+  {"wait": 10},
+  {"shot": "04_the_cut_from_the_quay.png"},
+  {"teleport": [203.0, -1.0, 120.0], "yaw": 90, "pitch": 20},
+  {"wait": 90},
+  {"shot": "05_fallen_in_the_cut.png"},
+  {"quit": true}
+ ]}

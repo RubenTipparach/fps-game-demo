@@ -312,6 +312,11 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
   <a href="#hud"><b>F11</b>HUD</a>
   <a href="#menus"><b>F12</b>Title, pause</a>
   <a href="#architecture"><b>F13</b>Architecture</a>
+  <a href="#water"><b>F14</b>Water</a>
+  <a href="#skyline"><b>F15</b>Skyline</a>
+  <a href="#faces"><b>F16</b>Faces, gels</a>
+  <a href="#crowd"><b>F17</b>Crowd</a>
+  <a href="#hubcombat"><b>F18</b>The Kestrel</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -336,6 +341,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
     <span class="chip built">Built: title, pause with saves, options</span>
     <span class="chip enforced">Enforced: level geometry spec</span>
     <span class="chip proposed">Proposed: the Drains, the Yard, combat, augmentations</span>
+    <span class="chip proposed">Proposed after playtest 2: water, skyline, faces, crowd, the Kestrel</span>
   </div>
 </header>
 
@@ -2825,6 +2831,7 @@ SHED</title></path>
 <section id="combat">
   <div class="sh"><span class="key">F10</span><h2>Enemies you outsmart</h2><span class="spec">openspec/changes/combat-and-enemies</span></div>
   <p class="intro">Combat is short, dangerous and optional. Health doesn't regenerate. Every archetype lists at least two counters that aren't "shoot it more", and each counter is hinted in the world before you need it.</p>
+  <p class="note">Owner, 2026-09-28: the hub's part (the Kestrel, damage, everyone can be shot, defences, the health floor and death) moved to F18, <code>hub-combat</code>, which lands first. This section keeps non-lethal tools, EMP, takedowns and the archetypes.</p>
   <div class="arch" id="arch"></div>
   <div class="sub">
     <h3>Player weapons</h3>
@@ -3104,7 +3111,12 @@ SHED</title></path>
         <tr><td><code>world-interaction</code></td><td>use, locks, devices, terminals, containers, travel, persistence</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>dialog-and-social</code></td><td>trees, checks, hostile talk, parley, factions</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
-        <tr><td><code>combat-and-enemies</code></td><td>damage, non-lethal, takedowns, archetypes</td><td class="n">7</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>hub-combat</code></td><td>the Kestrel, damage, everyone can be shot, defences, crime, death</td><td class="n">8</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>water-and-swimming</code></td><td>water volumes, swimming, breath, ways out, floating and sinking</td><td class="n">6 + 2</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>hub-skyline</code></td><td>the towers around the hub, coverage, rendering, the map inset</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, the body pool</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>scrap-kings-yard</code></td><td>the Yard, M2, S1, S2</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -3115,13 +3127,273 @@ SHED</title></path>
   </div>
 </section>
 
+<!-- ========================================================= F14 -->
+<section id="water">
+  <div class="sh"><span class="key">F14</span><h2>Water, swimming and ways out</h2><span class="spec">openspec/changes/water-and-swimming</span></div>
+  <p class="intro">Owner, 2026-09-28: "Falling into the Bay there's no water physics, swimming, and no way to get back out." Today the water is a flat, opaque surface with no collider. A fall sinks you to the bed, 4.5 m under a quay you can't jump to. The fix is one set of rules for every water body, the Drains' bypass included: wade, swim, hold your breath, and always have a way out within 25 m.</p>
+  <div class="controls"><span class="chip proposed">Proposed · survey I3 to I6</span></div>
+  <div class="sub">
+    <h3>The Cut in section <small>measured heights; 60 px = 1 m</small></h3>
+    <div class="diagram" role="img" aria-label="Section through the Cut's quay showing the water, the bed, the jump height, a ladder and a boat ledge">
+      <svg viewBox="0 0 1600 520">
+        <rect width="1600" height="520" fill="#070b10"/>
+        <rect x="0" y="140" width="1600" height="380" fill="#0a0f14"/>
+        <path d="M0 140 H520 V410 H0 Z" fill="#26303a"/>
+        <path d="M1080 140 H1600 V410 H1080 Z" fill="#26303a"/>
+        <rect x="520" y="272" width="560" height="138" fill="#0b2327" opacity=".95"/>
+        <rect x="520" y="272" width="560" height="4" fill="#35e0ff" opacity=".7"/>
+        <rect x="520" y="410" width="560" height="14" fill="#1b232b"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="18" fill="#8a9bab">
+          <text x="20" y="130">street / quay top · 0.0 m</text>
+          <text x="1100" y="266" text-anchor="start">surface · -2.2 m</text>
+          <text x="1100" y="448">bed · -4.5 m</text>
+        </g>
+        <g>
+          <circle cx="760" cy="262" r="16" fill="#dfe7ee"/><rect x="746" y="278" width="28" height="70" rx="10" fill="#8a9bab"/>
+          <path d="M700 198 H820" stroke="#ff9e2e" stroke-width="3" stroke-dasharray="10 8"/>
+          <text x="830" y="204" font-family="IBM Plex Mono, monospace" font-size="17" fill="#ff9e2e">best jump reach: 1.24 m (1.99 m tucked)</text>
+          <path d="M790 172 L790 142" stroke="#e0453a" stroke-width="3"/><text x="800" y="166" font-family="IBM Plex Mono, monospace" font-size="17" fill="#e0453a">quay 2.2 m above the water: out of reach</text>
+        </g>
+        <g stroke="#cfdde4" stroke-width="5">
+          <path d="M530 300 V80 M556 300 V80"/>
+          <path d="M530 280 H556 M530 250 H556 M530 220 H556 M530 190 H556 M530 160 H556 M530 130 H556 M530 100 H556"/>
+          <path d="M530 80 Q543 60 556 80" fill="none"/>
+        </g>
+        <text x="570" y="96" font-family="IBM Plex Mono, monospace" font-size="17" fill="#35e0ff">ladder: 2.4 m/s, hoops 1.0 m above the quay</text>
+        <path d="M940 242 H1060 V272 H940 Z" fill="#6b5a3a"/>
+        <text x="900" y="232" font-family="IBM Plex Mono, monospace" font-size="17" fill="#8fd6a0">boat deck 0.5 m up: mantle 0.2-1.0 m</text>
+        <g font-family="Barlow Condensed, sans-serif" font-size="22" fill="#dfe7ee" letter-spacing="1">
+          <text x="600" y="480">Every point of the surface within 25 m of a way out (8 s at 3 m/s)</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="sub">
+    <h3>Tuning <small>data/water.json</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Knob</th><th class="n">Value</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Wading</td><td class="n">0.1-1.2 m deep</td><td>0.6 x ground speed, no sprint, wading noise 8 m (already in perception.json)</td></tr>
+        <tr><td>Swim speed / dive / rise</td><td class="n">3.0 / 2.4 / 2.0 m/s</td><td>along the look direction; a ±20° dead zone at the surface</td></tr>
+        <tr><td>Floating</td><td class="n">eyes 0.15 m up</td><td>spring 18/s², damping 7/s: settles without bobbing</td></tr>
+        <tr><td>Breath</td><td class="n">45 s</td><td>the Drains' bypass number; refills in 3 s; then 8 damage/s</td></tr>
+        <tr><td>Ladders</td><td class="n">every 30 m</td><td>3 m clear of bridges, boats and pillars; a 1.2 m gap in the railing</td></tr>
+        <tr><td>Bodies and items</td><td class="n">x1.15 buoyancy</td><td>ragdolls float face down; dropped items sink at 0.6 m/s and can be picked up on the bed</td></tr>
+      </tbody></table></div>
+  </div>
+  <div class="sub">
+    <h3>D8 · The breath meter <small>new HUD element; shown only while breath isn't full</small></h3>
+    <div class="diagram" role="img" aria-label="Breath meter mockup under the health panel, full, draining and low">
+      <svg viewBox="0 0 1600 300">
+        <rect width="1600" height="300" fill="#0a0f14"/>
+        <g font-family="IBM Plex Mono, monospace">
+          <g transform="translate(40 40)">
+            <rect width="420" height="100" fill="#05080a" opacity=".75" stroke="#1f2c37"/>
+            <text x="20" y="46" font-size="36" font-weight="600" fill="#dfe7ee">100 <tspan font-size="18" fill="#6b7f92">/ 100</tspan></text>
+            <rect x="20" y="66" width="380" height="8" fill="#1f2c37"/><rect x="20" y="66" width="380" height="8" fill="#5fd38a"/>
+            <text x="0" y="140" font-size="16" fill="#6b7f92">DRY OR BREATH FULL: HIDDEN</text>
+          </g>
+          <g transform="translate(580 40)">
+            <rect width="420" height="100" fill="#05080a" opacity=".75" stroke="#1f2c37"/>
+            <text x="20" y="46" font-size="36" font-weight="600" fill="#dfe7ee">100 <tspan font-size="18" fill="#6b7f92">/ 100</tspan></text>
+            <rect x="20" y="66" width="380" height="8" fill="#1f2c37"/><rect x="20" y="66" width="380" height="8" fill="#5fd38a"/>
+            <rect x="0" y="108" width="420" height="30" fill="#05080a" opacity=".75" stroke="#1f2c37"/>
+            <text x="20" y="129" font-size="14" letter-spacing="2" fill="#35e0ff">AIR</text>
+            <rect x="70" y="119" width="330" height="8" fill="#1f2c37"/><rect x="70" y="119" width="198" height="8" fill="#35e0ff"/>
+            <text x="0" y="170" font-size="16" fill="#6b7f92">UNDER WATER: DRAINING</text>
+          </g>
+          <g transform="translate(1120 40)">
+            <rect width="420" height="100" fill="#05080a" opacity=".75" stroke="#1f2c37"/>
+            <text x="20" y="46" font-size="36" font-weight="600" fill="#dfe7ee">64 <tspan font-size="18" fill="#6b7f92">/ 100</tspan></text>
+            <rect x="20" y="66" width="380" height="8" fill="#1f2c37"/><rect x="20" y="66" width="243" height="8" fill="#5fd38a"/>
+            <rect x="0" y="108" width="420" height="30" fill="#05080a" opacity=".75" stroke="#e0453a"/>
+            <text x="20" y="129" font-size="14" letter-spacing="2" fill="#e0453a">AIR</text>
+            <rect x="70" y="119" width="330" height="8" fill="#1f2c37"/><rect x="70" y="119" width="40" height="8" fill="#e0453a"/>
+            <text x="0" y="170" font-size="16" fill="#6b7f92">BELOW 25 %: RED; AT 0: 8 DAMAGE/S</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F15 -->
+<section id="skyline">
+  <div class="sh"><span class="key">F15</span><h2>Meridian's towers</h2><span class="spec">openspec/changes/hub-skyline</span></div>
+  <p class="intro">Owner, 2026-09-28: "There should be mega skyscrapers surrounding our little slum area." Nothing in the hub stands above the 40 m foundation wall, and past the rooftops there is empty, fogged sky. The skyline puts the Halcyon Spire (440 m) and a ring of named megastructures around Low Harbor. They render unshaded, with lit windows and their own darker haze, so they read as towers, not fog ghosts.</p>
+  <div class="controls"><span class="chip proposed">Proposed · survey I7, I8</span></div>
+  <div class="sub">
+    <h3>Plan <small>layout metres; the hub is the lit rectangle; heights in metres</small></h3>
+    <div class="diagram" role="img" aria-label="Plan of the hub surrounded by the named towers of the skyline">
+      <svg viewBox="-140 -150 520 460">
+        <rect x="-140" y="-150" width="520" height="460" fill="#070b10"/>
+        <g stroke="#1f2c37" stroke-width=".6">
+          <path d="M120 85 L120 -150 M120 85 L320 -30 M120 85 L380 85 M120 85 L320 200 M120 85 L120 290 M120 85 L-80 200 M120 85 L-140 85 M120 85 L-80 -30"/>
+        </g>
+        <rect x="0" y="0" width="240" height="170" fill="#16202a" stroke="#f2b33d" stroke-width="1.2"/>
+        <text x="120" y="92" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="14" fill="#f2b33d" letter-spacing="2">LOW HARBOR</text>
+        <path d="M-40 107 L280 131" stroke="#8a9bab" stroke-width="5" opacity=".35"/>
+        <g fill="#2a3440" stroke="#8a9bab" stroke-width=".8">
+          <rect x="120" y="-110" width="100" height="80" fill="#3a2a4a" stroke="#b78cff"/>
+          <rect x="-5" y="-95" width="90" height="70"/>
+          <rect x="-80" y="0" width="40" height="120"/>
+          <rect x="-95" y="125" width="50" height="50"/>
+          <rect x="0" y="230" width="20" height="20"/><rect x="28" y="240" width="20" height="20"/><rect x="8" y="262" width="20" height="20"/>
+          <rect x="90" y="220" width="60" height="40"/>
+          <rect x="260" y="130" width="80" height="80"/>
+          <rect x="270" y="10" width="60" height="60"/>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="8.5" fill="#dfe7ee">
+          <text x="170" y="-72" text-anchor="middle">HALCYON SPIRE · 440</text>
+          <text x="40" y="-58" text-anchor="middle">CASTELLAN ARCOLOGY · 260</text>
+          <text x="-60" y="-6" text-anchor="middle">KOSEI STACKS · 150</text>
+          <text x="-70" y="120" text-anchor="middle">HARROW · 230</text>
+          <text x="24" y="296" text-anchor="middle">THE PYLONS · 190-260</text>
+          <text x="120" y="272" text-anchor="middle">SABLE MUTUAL · 320</text>
+          <text x="300" y="222" text-anchor="middle">PIER NINE · 210</text>
+          <text x="300" y="4" text-anchor="middle">WATER AUTHORITY · 180</text>
+        </g>
+      </svg>
+    </div>
+    <p class="note">Every 30° sector seen from the centre holds a tower rising 25° or more; the plan refuses a skyline that leaves a gap. The far ring (about 20 silhouettes, 400-900 m out) and about 4 fillers for the near ring's gaps are placed at build time within these rules.</p>
+  </div>
+  <div class="sub">
+    <h3>How it renders <small>measured problem, then the fix</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Today</th><th>Skyline</th></tr></thead>
+      <tbody>
+        <tr><td>Far plane 400 m</td><td>1,500 m (reversed depth keeps the precision)</td></tr>
+        <tr><td>Fog 0.011: 11 % left at 200 m, fading to a colour lighter than the sky</td><td>Towers ignore the scene fog; their own haze (0.0018/m) fades toward #151733, darker than the horizon</td></tr>
+        <tr><td>Nothing above 40 m</td><td>Unshaded towers: procedural lit windows (warm, cool, a touch of neon), neon crowns, red beacons blinking every 1.6 s</td></tr>
+        <tr><td>The Skyway ends 4 m past the edge</td><td>It carries on 200 m into the city, as scenery</td></tr>
+        <tr><td>Budget</td><td>At most 30,000 triangles, 6 draw calls, no shadows, no collision, no lightmap</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- ========================================================= F16 -->
+<section id="faces">
+  <div class="sh"><span class="key">F16</span><h2>Faces, skin and coloured gels</h2><span class="spec">openspec/changes/character-lighting</span></div>
+  <p class="intro">Owner, 2026-09-28: faces are too dark in conversation, skin needs normal maps, and the runner needs a light source; coloured gels suit cyberpunk. Measured: Tank's face at the bar is 23 of 255 luma, while Lin under the shrine's lights is 161. Faces read only where the level happens to light them. The fix is new lights that touch only characters: the wrist-deck's glow, and a key and two gels when a conversation opens. It follows the owner's reference (Digital Camera's lighting guide: LOOP, KEY WITH A CLOSE SOFTBOX, COLOURED GELS).</p>
+  <div class="controls"><span class="chip proposed">Proposed · survey I9 to I12</span></div>
+  <div class="sub">
+    <h3>The conversation rig, from above <small>angles around the speaker's head, 0° toward the camera</small></h3>
+    <div class="diagram" role="img" aria-label="Top view of the conversation lighting rig: warm key, magenta rim gel, blue accent gel and the wrist light">
+      <svg viewBox="0 0 1600 560">
+        <rect width="1600" height="560" fill="#070b10"/>
+        <circle cx="800" cy="250" r="46" fill="#c8a98f"/><path d="M800 204 L812 190 L788 190 Z" fill="#c8a98f"/>
+        <text x="800" y="256" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16" fill="#070b10">SPEAKER</text>
+        <rect x="770" y="470" width="60" height="44" fill="#3a4a55"/><text x="800" y="540" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16" fill="#8a9bab">RUNNER (camera)</text>
+        <circle cx="742" cy="440" r="14" fill="#9fe8ff"/><text x="560" y="446" font-family="IBM Plex Mono, monospace" font-size="16" fill="#9fe8ff">wrist glow · fill</text>
+        <path d="M742 440 L790 290" stroke="#9fe8ff" stroke-width="2" stroke-dasharray="6 6"/>
+        <rect x="1040" y="380" width="70" height="40" rx="6" fill="#ffe2c4" transform="rotate(-40 1075 400)"/>
+        <text x="1120" y="440" font-family="IBM Plex Mono, monospace" font-size="16" fill="#ffe2c4">KEY 40°, 30° up, 1.4 m, soft</text>
+        <path d="M1060 380 L840 270" stroke="#ffe2c4" stroke-width="2"/>
+        <circle cx="560" cy="70" r="18" fill="#ff3fa8"/><text x="330" y="60" font-family="IBM Plex Mono, monospace" font-size="16" fill="#ff3fa8">RIM GEL 140° (district)</text>
+        <path d="M570 84 L770 220" stroke="#ff3fa8" stroke-width="2"/>
+        <circle cx="1040" cy="80" r="14" fill="#4a6bff"/><text x="1070" y="76" font-family="IBM Plex Mono, monospace" font-size="16" fill="#4a6bff">ACCENT GEL -150°</text>
+        <path d="M1030 94 L830 218" stroke="#4a6bff" stroke-width="2"/>
+      </svg>
+    </div>
+    <p class="note">Characters layer only. The rig ramps in and out over 0.3 s, and the key sits on the side where the level's nearby lights are stronger, so the face agrees with its scene.</p>
+  </div>
+  <div class="sub">
+    <h3>Measured and targeted <small>mean Rec. 709 luma of the face box, 0-255</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Face</th><th class="n">Today</th><th>Target in conversation</th></tr></thead>
+      <tbody>
+        <tr><td>Tank at the Anchor's bar</td><td class="n">23</td><td rowspan="4">95-150; lit side 2-4 x the shadow side; a gel rim beside the head; the rest of the frame within 2 %</td></tr>
+        <tr><td>Silk, Lantern Row at night</td><td class="n">60</td></tr>
+        <tr><td>Petra, the depot at night</td><td class="n">112</td></tr>
+        <tr><td>Sister Lin, the shrine hall</td><td class="n">161</td></tr>
+      </tbody></table></div>
+    <p class="note">Skin gains a normal map derived from its CC0 texture's own pores and creases, a roughness mask shared by every body (oilier T-zone), subsurface scattering in skin mode and the MakeHuman specular (F0 0.028). Gels by district: Lantern Row magenta/cyan, Sump Market cyan/magenta, Tin Stacks amber/blue, Kiln ember/blue, Drydock sodium/violet.</p>
+  </div>
+  <div class="sub">
+    <h3>D9 · Conversation framing <small>optional; today the view just freezes</small></h3>
+    <div class="diagram" role="img" aria-label="Two conversation frames: today's 67 degree view and a 48 degree framing with the face above the dialog band">
+      <svg viewBox="0 0 1600 480">
+        <rect width="1600" height="480" fill="#0a0f14"/>
+        <g transform="translate(40 30)">
+          <rect width="720" height="405" fill="#161c23" stroke="#1f2c37"/>
+          <circle cx="360" cy="200" r="22" fill="#6a5448"/><rect x="330" y="222" width="60" height="70" rx="12" fill="#2a3440"/>
+          <rect y="259" width="720" height="146" fill="#060a0e" opacity=".94"/>
+          <text x="40" y="300" font-family="Barlow Condensed, sans-serif" font-size="20" fill="#dfe7ee">TANK  <tspan fill="#6b7f92" font-size="14">THE ANCHOR'S BOUNCER</tspan></text>
+          <text x="40" y="330" font-family="Barlow Condensed, sans-serif" font-size="17" fill="#dfe7ee">Back room's private.</text>
+          <text x="0" y="440" font-family="IBM Plex Mono, monospace" font-size="16" fill="#6b7f92">TODAY: 67°, VIEW FROZEN, FACE SMALL AND DARK</text>
+        </g>
+        <g transform="translate(840 30)">
+          <rect width="720" height="405" fill="#161c23" stroke="#1f2c37"/>
+          <circle cx="360" cy="132" r="44" fill="#c8a98f"/><path d="M404 132 A44 44 0 0 1 360 176" stroke="#ff3fa8" stroke-width="5" fill="none"/>
+          <rect x="300" y="176" width="120" height="100" rx="20" fill="#2a3440"/>
+          <rect y="259" width="720" height="146" fill="#060a0e" opacity=".94"/>
+          <text x="40" y="300" font-family="Barlow Condensed, sans-serif" font-size="20" fill="#dfe7ee">TANK  <tspan fill="#6b7f92" font-size="14">THE ANCHOR'S BOUNCER</tspan></text>
+          <text x="40" y="330" font-family="Barlow Condensed, sans-serif" font-size="17" fill="#dfe7ee">Back room's private.</text>
+          <text x="0" y="440" font-family="IBM Plex Mono, monospace" font-size="16" fill="#6b7f92">PROPOSED: 48° OVER 0.4 S, FACE 34 % FROM THE TOP, KEY AND GELS</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= F17 -->
+<section id="crowd">
+  <div class="sh"><span class="key">F17</span><h2>The crowd</h2><span class="spec">openspec/changes/crowd-variety</span></div>
+  <p class="intro">Owner, 2026-09-28: "would be cool to have some variety in NPCs too." Today 31 civilians share 6 bodies (about 5 twins each), the 5 troopers share one face, and everyone plays the same idle. The plan: 18 civilian bodies and 3 trooper bodies, plus runtime variety picked by one rule in the core, so a save reproduces the crowd.</p>
+  <div class="controls"><span class="chip proposed">Proposed · survey I13, I14</span></div>
+  <div class="sub">
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Varies</th><th>How</th></tr></thead>
+      <tbody>
+        <tr><td>Body</td><td>18 civilian bodies covering every CC0 age band, ethnicity and sex, with the unused hair (afro, bob, braid, long) and casual suits; 3 MerSec faces under one kit</td></tr>
+        <tr><td>Outfit colour</td><td>8 named palettes (hue and saturation) on the outfit material; skin, hair and eyes never recoloured</td></tr>
+        <tr><td>Accessories</td><td>0-2 per civilian on bones: umbrellas in the rain (35 % outdoors), caps, beanies, fedoras, headphones, AR visors, respirators, bags, briefcases, lit cigarettes, glowing implants, an illuminated prosthetic arm</td></tr>
+        <tr><td>Height</td><td>x0.95-1.05</td></tr>
+        <tr><td>Idle</td><td>by role: phone, smoke, lean, look around, sit, kneel and fix, or two neighbours talking to each other</td></tr>
+        <tr><td>The rule</td><td>no two civilians within 15 m share body and palette; no body more than 3 times; tested on the hub's placements with seeds 1-100</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- ========================================================= F18 -->
+<section id="hubcombat">
+  <div class="sh"><span class="key">F18</span><h2>The Kestrel fires</h2><span class="spec">openspec/changes/hub-combat</span></div>
+  <p class="intro">Owner, 2026-09-28: "I wish I had a gun in the main hub to actually do stuff." The runner already carries the Kestrel on belt key 2, but it's a prop: nothing fires it, and NPCs can't be hurt. This is the hub's slice of F10, landing first: the Kestrel fires from the pack's ammo, everyone can be shot, those who can defend themselves do, gunfire is a crime, and the runner can die. The HUD readout ("12 / 36") is already in the approved D3 mockup.</p>
+  <div class="controls"><span class="chip proposed">Proposed · survey I1, I2, I15</span></div>
+  <div class="sub">
+    <h3>Weapons in the hub <small>data/weapons.json; numbers from F10</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Weapon</th><th>Who</th><th class="n">Damage</th><th class="n">Rate</th><th class="n">Magazine</th><th class="n">Noise</th></tr></thead>
+      <tbody>
+        <tr><td>Kestrel 10mm</td><td>runner</td><td class="n">22</td><td class="n">3/s</td><td class="n">12, 1.4 s reload</td><td class="n">20 m</td></tr>
+        <tr><td>Service pistol</td><td>MerSec, Dace</td><td class="n">18</td><td class="n">bursts of 3</td><td class="n">12</td><td class="n">20 m</td></tr>
+        <tr><td>Baton</td><td>Tank</td><td class="n">18</td><td class="n">1 / 1.2 s</td><td class="n">melee</td><td class="n">4 m</td></tr>
+        <tr><td>Scattergun, under the counter</td><td>Kessler</td><td class="n">9 x 8</td><td class="n">1 / 0.9 s</td><td class="n">6</td><td class="n">30 m</td></tr>
+      </tbody></table></div>
+  </div>
+  <div class="sub">
+    <h3>Who does what when shots are fired</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>NPC</th><th class="n">Health</th><th>Defence</th><th class="n">Kestrel shots (torso / head)</th></tr></thead>
+      <tbody>
+        <tr><td>MerSec troopers, Dace</td><td class="n">120, ballistic 35 %</td><td>fight: close to 18 m, fire bursts</td><td class="n">9 / 5</td></tr>
+        <tr><td>Tank</td><td class="n">150, ballistic 15 %</td><td>fight with his baton</td><td class="n">9 / 5</td></tr>
+        <tr><td>Kessler</td><td class="n">80</td><td>fight with the scattergun</td><td class="n">4 / 2</td></tr>
+        <tr><td>Silk</td><td class="n">90</td><td>surrender</td><td class="n">5 / 3</td></tr>
+        <tr><td>Other named NPCs</td><td class="n">50-90</td><td>flee or cower</td><td class="n">3-5 / 2-3</td></tr>
+        <tr><td>Civilians (31)</td><td class="n">60</td><td>flee 70 % (25 m along the navmesh, then cower) / cower 30 %</td><td class="n">3 / 2</td></tr>
+      </tbody></table></div>
+    <p class="note">A shot heard by MerSec turns them hostile with no warning. Hurting a faction's member costs 15 reputation, and killing one costs 50. A dead quest giver fails their quests and closes their shop. Health regenerates only to 25 %. At 0 the screen fades and the newest save loads.</p>
+  </div>
+</section>
+
 <!-- ========================================================= questions -->
 <section id="questions">
   <div class="sh"><span class="key">?</span><h2>Open questions</h2><span class="spec">owner survey</span></div>
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag y">I1 to I15 playtest 2 (open)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (open)</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>
