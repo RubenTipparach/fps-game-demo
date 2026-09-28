@@ -97,8 +97,20 @@ dock gate channel. The hub has 17 ladders.
 ## Rebuild and bake
 
 `build_undercity.py` rebuilt the hub's sectors (38 s). The navmesh was baked again (4,786
-polygons). The lightmaps are being baked again for every sector; until they land, the rebuilt
-sectors show their old lightmaps, which no longer fit the changed meshes.
+polygons), and every sector's lightmap with it, in one batch of 70 minutes on lavapipe:
+
+| Sector | Bake | Changed |
+|---|---|---|
+| streets | 383 s | yes: ladders, railing gaps, landings |
+| lantern_row | 1,463 s | yes |
+| sump_market | 355 s | no (byte for byte) |
+| drydock | 373 s | yes: the ship's boarding ladders |
+| kiln | 379 s | no |
+| tin_stacks | 826 s | no |
+| spire_foundations | 136 s | no |
+| skyway | 182 s | no |
+
+The five sectors whose meshes didn't change baked to the same files.
 
 ## Captures
 
