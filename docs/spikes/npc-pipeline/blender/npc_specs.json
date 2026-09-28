@@ -1,0 +1,50 @@
+{
+  "_doc": "NPC specs for build_npcs.py. Asset paths are MPFB fragments (dir/file) resolved by AssetService.find_asset_absolute_path. Only CC0 makehuman_system_assets are used. Macro values are MPFB's 0-1 sliders (age 0.5 = 25 y, 1.0 = 90 y).",
+  "seed": 20260927,
+  "atlas_px": 1024,
+  "rig": "game_engine",
+  "decimate": {"shoes01": 0.4, "shoes02": 0.4, "shoes03": 0.35, "shoes04": 0.4, "shoes05": 0.4, "shoes06": 0.4,
+               "bob01": 0.45, "ponytail01": 0.6},
+  "npcs": [
+    {
+      "id": "bouncer",
+      "phenotype": {"gender": 1.0, "age": 0.62, "muscle": 0.9, "weight": 0.85, "height": 0.66, "proportions": 0.7,
+                    "cupsize": 0.5, "firmness": 0.5, "race": {"african": 0.8, "caucasian": 0.1, "asian": 0.1}},
+      "skin": "middleage_african_male/middleage_african_male.mhmat",
+      "eye_material": "materials/brown.mhmat",
+      "eyebrows": "eyebrow009/eyebrow009.mhclo",
+      "eyelashes": "eyelashes02/eyelashes02.mhclo",
+      "hair": "short04/short04.mhclo",
+      "proxy": "male1591/male1591.proxy",
+      "clothes": ["male_worksuit01/male_worksuit01.mhclo", "shoes03/shoes03.mhclo"]
+    },
+    {
+      "id": "coat_woman",
+      "phenotype": {"gender": 0.0, "age": 0.52, "muscle": 0.45, "weight": 0.25, "height": 0.58, "proportions": 0.8,
+                    "cupsize": 0.45, "firmness": 0.6, "race": {"african": 0.0, "caucasian": 0.7, "asian": 0.3}},
+      "skin": "young_caucasian_female/young_caucasian_female.mhmat",
+      "eye_material": "materials/green.mhmat",
+      "eyebrows": "eyebrow006/eyebrow006.mhclo",
+      "eyelashes": "eyelashes03/eyelashes03.mhclo",
+      "hair": "ponytail01/ponytail01.mhclo",
+      "proxy": "female1605/female1605.proxy",
+      "clothes": ["female_elegantsuit01/female_elegantsuit01.mhclo", "shoes04/shoes04.mhclo"]
+    },
+    {
+      "id": "old_civilian",
+      "phenotype": {"gender": 0.9, "age": 0.87, "muscle": 0.3, "weight": 0.65, "height": 0.5, "proportions": 0.5,
+                    "cupsize": 0.5, "firmness": 0.5, "race": {"african": 0.0, "caucasian": 0.1, "asian": 0.9}},
+      "skin": "old_asian_male/old_asian_male.mhmat",
+      "eye_material": "materials/grey.mhmat",
+      "eyebrows": "eyebrow003/eyebrow003.mhclo",
+      "eyelashes": "eyelashes01/eyelashes01.mhclo",
+      "hair": "short02/short02.mhclo",
+      "proxy": "male1591/male1591.proxy",
+      "clothes": ["male_casualsuit05/male_casualsuit05.mhclo", "shoes01/shoes01.mhclo", "fedora01/fedora01.mhclo"]
+    },
+    {
+      "id": "random_civilian",
+      "random_seed": 1234
+    }
+  ]
+}

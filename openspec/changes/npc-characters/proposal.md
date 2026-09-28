@@ -30,13 +30,15 @@ Hand-keying all of that per character doesn't scale to the Drains and the Yard.
   same animations
   ([Godot docs](https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/retargeting_3d_skeletons.html)).
 - **One animation library.** Quaternius' Universal Animation Library
-  ([CC0](https://quaternius.com/packs/universalanimationlibrary.html)) has 120+ clips on a
-  humanoid rig built for retargeting: locomotion, sitting, combat and guns, deaths and emotes.
-  It becomes `AnimationLibrary` resources that every NPC shares. Clips it lacks, such as cower,
-  hands up and talk gestures, are added in Blender on the same rig.
-- **Ragdolls.** Each NPC scene has a `PhysicalBoneSimulator3D` with one `PhysicalBone3D` per
-  major bone (capsules, joint limits), generated from a humanoid ragdoll profile. Death and
-  knockout hand the body to physics. It settles, then freezes.
+  ([CC0](https://quaternius.com/packs/universalanimationlibrary.html)) is a humanoid rig built
+  for retargeting. Its CC0 Standard download holds 46 clips (measured; an earlier draft said
+  120+): locomotion, crouching, sitting and talking, pistol and melee, hits and a death. It
+  becomes one `AnimationLibrary` that every NPC shares. Clips it lacks, first surrender and
+  cower, then rifle holds, are keyed in Blender on the same rig.
+- **Ragdolls.** Each NPC scene has a `PhysicalBoneSimulator3D` with 20 capsules and joint
+  limits, generated from a humanoid ragdoll profile, on the Jolt physics the project already
+  uses (GodotPhysics3D exploded in the measurement). Death and knockout hand the body to
+  physics; after 3 s it freezes in its pose.
 - **The segmented characters retire.** `build_characters.py` and its models stay only until the
   new bodies land, then go.
 
@@ -58,4 +60,6 @@ None. The segmented characters were never specified as a requirement.
 - `game/scenes/undercity/npc.tscn` gains the ragdoll and the humanoid skeleton.
 - The combat-and-enemies change consumes all of this (its task 4.1).
 - The design is measured before it's settled: see `design.md`, which records what was tried in
-  this container, with numbers.
+  this container, with numbers. The measurement's scripts are in `docs/spikes/npc-pipeline/`.
+- `tools/deps/character_packs.json` (new) is the allowlist of packs the build may take assets
+  from, since the asset files carry no licence lines of their own.
