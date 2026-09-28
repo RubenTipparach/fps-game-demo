@@ -40,6 +40,18 @@ public sealed class NpcDef
 
     /// <summary>True for MerSec troopers who enforce the hub's law.</summary>
     public bool Law { get; init; }
+
+    /// <summary>Health when unhurt (openspec/changes/hub-combat).</summary>
+    public required double Health { get; init; }
+
+    /// <summary>Resistance by damage type, percent (capped by combat.json).</summary>
+    public IReadOnlyDictionary<string, double> ResistPct { get; init; } = new Dictionary<string, double>();
+
+    /// <summary>What they do when violence starts: fight, flee, cower or surrender.</summary>
+    public required string Defence { get; init; }
+
+    /// <summary>The weapon they fight with (data/weapons.json), or null.</summary>
+    public string? Weapon { get; init; }
 }
 
 /// <summary>The civilian pool: models, and lines chosen with a seeded stream per civilian.</summary>
@@ -56,6 +68,15 @@ public sealed class CivilianPool
 
     /// <summary>Rumours: hints about routes.</summary>
     public required IReadOnlyList<string> Rumours { get; init; }
+
+    /// <summary>A civilian's health when unhurt (openspec/changes/hub-combat).</summary>
+    public required double Health { get; init; }
+
+    /// <summary>A civilian's resistance by damage type, percent.</summary>
+    public IReadOnlyDictionary<string, double> ResistPct { get; init; } = new Dictionary<string, double>();
+
+    /// <summary>The defences civilians take, with their weights (flee 70, cower 30).</summary>
+    public required IReadOnlyDictionary<string, int> Defences { get; init; }
 }
 
 /// <summary>data/npcs.json.</summary>
@@ -84,6 +105,38 @@ public sealed class NpcTable : IValidated
         if (Civilians.SmallTalk.Count == 0 || Civilians.Rumours.Count == 0 || Civilians.Models.Count == 0)
         {
             errors.Add("civilians need models, small_talk and rumours");
+        }
+        void Body(string where, double health, IReadOnlyDictionary<string, double> resist)
+        {
+            if (!double.IsFinite(health) || health <= 0)
+            {
+                errors.Add($"{where}.health must be a finite number above zero");
+            }
+            foreach (var (type, pct) in resist)
+            {
+                if (!Combat.WeaponDef.DamageTypes.Contains(type) || !double.IsFinite(pct) || pct < 0 || pct > 100)
+                {
+                    errors.Add($"{where}.resist_pct.{type}: a damage type ({string.Join(", ", Combat.WeaponDef.DamageTypes)}) and 0 to 100");
+                }
+            }
+        }
+        foreach (var n in Npcs)
+        {
+            Body($"npcs.{n.Id}", n.Health, n.ResistPct);
+            if (Combat.CombatRules.ParseDefence(n.Defence) is not { } d)
+            {
+                errors.Add($"npcs.{n.Id}.defence '{n.Defence}' must be fight, flee, cower or surrender");
+            }
+            else if (d == Combat.Defence.Fight && n.Weapon is null)
+            {
+                errors.Add($"npcs.{n.Id}: a fighter needs a weapon");
+            }
+        }
+        Body("civilians", Civilians.Health, Civilians.ResistPct);
+        if (Civilians.Defences.Count == 0 || Civilians.Defences.Any(p => Combat.CombatRules.ParseDefence(p.Key) is null or Combat.Defence.Fight || p.Value < 0)
+            || Civilians.Defences.Values.Sum() <= 0)
+        {
+            errors.Add("civilians.defences: weights for flee, cower or surrender (civilians are unarmed), summing above zero");
         }
     }
 }

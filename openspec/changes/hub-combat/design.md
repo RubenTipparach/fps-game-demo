@@ -159,6 +159,23 @@ live in `data/combat.json`.
 - **The HUD:** the approved D3 weapon panel shows loaded / reserve and "RELOADING". Brushfire's
   hit marker goes on the Undercity crosshair: a small change within an approved design.
 
+### 9. Found in building the core
+
+- **One definition per weapon.** `data/weapons.json` holds every weapon an item names, with
+  `combat-and-enemies`' numbers, and the two only NPCs carry (the service pistol, Tank's baton).
+  The Scattergun is both an item and Kessler's weapon, so it has one set of numbers: this
+  design's (a 3.0 s reload, 5°), not the per-shell reload in `combat-and-enemies`' table.
+- **Assault is counted once per person.** Hurting someone the first time costs the assault
+  reputation; shooting them again doesn't cost it again. Killing them costs the murder
+  reputation on top.
+- **A dead vendor's shop closes with them**: the shop is their conversation, and the dead can't
+  be talked to. Nothing more is needed.
+- **The civilian bug's fix is the key.** `Combat.NpcTarget` keeps a named NPC under their id
+  (dialog and quests read it) and a civilian under their stable id. The core test "Killing one
+  civilian leaves the others alive" pins it; the Godot side uses the same key.
+- **Saves** are version 3: the rounds loaded in each firearm. Older saves load every firearm
+  full. The world's memory gains NPC health and who has been hurt.
+
 ## Walkthrough
 
 1. The runner draws the Kestrel (key 2) in the Sump Market. A trooper 20 m away sees it:

@@ -5,6 +5,7 @@
 // It lives in the core because these actions cross systems, and each cross-system rule must
 // exist once (CLAUDE.md 5.1). The Godot layer calls these methods; it never reimplements them.
 
+using Undercity.Core.Combat;
 using Undercity.Core.Data;
 using Undercity.Core.Dialog;
 using Undercity.Core.Economy;
@@ -37,6 +38,7 @@ public sealed class GameState
         Reputation = new Reputation(data.Factions);
         World = new WorldState { Seed = seed };
         Law = new LawWatch(data.Perception.Law);
+        Magazines = new Magazines();
         Character.LeveledUp += level =>
         {
             Health.SetMax(Character.MaxHealth);
@@ -98,6 +100,15 @@ public sealed class GameState
 
     /// <summary>MerSec's patience in the hub.</summary>
     public LawWatch Law { get; }
+
+    /// <summary>The rounds loaded in each firearm.</summary>
+    public Magazines Magazines { get; }
+
+    /// <summary>True once the runner has died; nothing heals them, and the engine loads a save.</summary>
+    public bool Dead { get; private set; }
+
+    /// <summary>Raised once, when the runner dies.</summary>
+    public event Action? Died;
 
     /// <summary>Raises with a line for the message feed.</summary>
     public event Action<string>? Feed;
@@ -206,8 +217,13 @@ public sealed class GameState
         {
             return;
         }
+        if (Dead)
+        {
+            return;
+        }
         Health.Tick(dt);
         Health.Lose(Breath.Tick(dt, Water == WaterContact.Submerged));
+        CheckDeath();
         Stamina.Tick(dt, Water);
         for (var i = _heals.Count - 1; i >= 0; i--)
         {
@@ -230,6 +246,109 @@ public sealed class GameState
             DrawnS += dt;
         }
         World.PlayTimeS += dt;
+    }
+
+    // ------------------------------------------------------------------ weapons and violence
+
+    /// <summary>The drawn weapon's definition, or null when nothing is drawn.</summary>
+    public WeaponDef? DrawnWeapon => Drawn is { } id && Data.Items.Get(id).Weapon is { } w ? Data.Weapons.Find(w) : null;
+
+    /// <summary>What the drawn firearm holds and what the pack holds for it: the HUD's "12 / 24".</summary>
+    public (int Loaded, int Reserve)? Rounds => Drawn is { } id && DrawnWeapon is { Melee: false } w
+        ? (Magazines.Loaded(id, w), w.Ammo is null ? 0 : Inventory.Pack.Count(w.Ammo))
+        : null;
+
+    /// <summary>
+    /// Fires the drawn weapon once: a round leaves the magazine (a melee weapon swings). Returns
+    /// false with nothing drawn, or nothing loaded (a dry click).
+    /// </summary>
+    public bool FireDrawn() => Drawn is { } id && DrawnWeapon is { } w && !Dead && Magazines.Fire(id, w);
+
+    /// <summary>Reloads the drawn firearm from the pack. Returns the rounds loaded; out of rounds, the feed says so.</summary>
+    public int ReloadDrawn()
+    {
+        if (Drawn is not { } id || DrawnWeapon is not { Melee: false } w)
+        {
+            return 0;
+        }
+        var took = Magazines.Reload(id, w, Inventory.Pack);
+        if (took == 0 && Magazines.Loaded(id, w) < w.Magazine)
+        {
+            Say("No rounds.");
+        }
+        return took;
+    }
+
+    /// <summary>A named NPC or a civilian's health now.</summary>
+    public double NpcHealth(NpcTarget target) =>
+        World.NpcHealth.TryGetValue(target.Key, out var h) ? h : target.MaxHealth;
+
+    /// <summary>
+    /// The runner hits an NPC with <paramref name="weapon"/> in <paramref name="zone"/>: the damage
+    /// rule, then what violence costs. The first hurt is assault and killing is murder, each costing
+    /// reputation with the victim's faction (combat.json); a named NPC's death fails the quests they
+    /// give. The one rule for hurting a person.
+    /// </summary>
+    public NpcHit HurtNpc(NpcTarget target, WeaponDef weapon, HitZone zone)
+    {
+        if (World.Npc(target.Key) == NpcStatus.Dead)
+        {
+            return new NpcHit(0, 0, false);
+        }
+        var resist = target.ResistPct.TryGetValue(weapon.Type, out var r) ? r : 0;
+        var damage = CombatRules.Damage(Data.Combat, weapon, zone, resist, targetIsPlayer: false, Character.Mult("headshot_mult"));
+        var left = NpcHealth(target) - damage;
+        World.NpcHealth[target.Key] = Math.Max(0, left);
+        var cost = Data.Combat.Reputation;
+        if (World.Hurt.Add(target.Key))
+        {
+            Reputation.Change(target.Faction, cost.Assault);
+        }
+        if (left > 0)
+        {
+            return new NpcHit(damage, left, false);
+        }
+        World.SetNpc(target.Key, NpcStatus.Dead);
+        Reputation.Change(target.Faction, cost.Murder);
+        Say($"{target.Name} is dead.");
+        if (target.NpcId is { } npc)
+        {
+            foreach (var q in Data.Quests.Quests.Where(q => q.Giver == npc))
+            {
+                Quests.Fail(q.Id);
+            }
+        }
+        return new NpcHit(damage, left, true);
+    }
+
+    /// <summary>
+    /// An NPC's <paramref name="weapon"/> hits the runner in <paramref name="zone"/>: the same damage
+    /// rule, with the runner's worn armour against its type (capped for the runner). Returns the
+    /// damage; at no health left, the runner dies.
+    /// </summary>
+    public double TakeHit(WeaponDef weapon, HitZone zone = HitZone.Torso)
+    {
+        if (Dead)
+        {
+            return 0;
+        }
+        var cap = Data.Combat.ResistCapPct.Player;
+        var damage = CombatRules.Damage(Data.Combat, weapon, zone, Inventory.ResistPct(weapon.Type, cap), targetIsPlayer: true);
+        Health.Lose(damage);
+        CheckDeath();
+        return damage;
+    }
+
+    private void CheckDeath()
+    {
+        if (Dead || !Health.Empty)
+        {
+            return;
+        }
+        Dead = true;
+        Holster();
+        Say("You died.");
+        Died?.Invoke();
     }
 
     // ------------------------------------------------------------------ checks
@@ -527,6 +646,7 @@ public sealed class GameState
         Health = Health.Value,
         Breath = Breath.Value,
         Stamina = Stamina.Value,
+        Magazines = Magazines.Save(),
         Quests = Quests.Save(),
         Reputation = Reputation.Save(),
         World = World,
@@ -551,6 +671,8 @@ public sealed class GameState
         // Version 1 saves predate water: they load with full breath and stamina.
         s.Breath.Set(save.Breath ?? s.Breath.Max);
         s.Stamina.Set(save.Stamina ?? s.Stamina.Max);
+        // Version 2 saves predate magazines: every firearm loads full.
+        repairs.AddRange(s.Magazines.Load(save.Magazines, data.Items, data.Weapons));
         repairs.AddRange(s.Quests.Load(save.Quests));
         s.Reputation.Load(save.Reputation);
         s.World = save.World;
@@ -580,8 +702,8 @@ public enum BeltResult
 /// <summary>A saved run (user://saves/&lt;slot&gt;.json).</summary>
 public sealed class SaveGame
 {
-    /// <summary>The version this build writes. Version 2 added breath and stamina.</summary>
-    public const int CurrentVersion = 2;
+    /// <summary>The version this build writes. Version 2 added breath and stamina; 3, the rounds loaded in each firearm.</summary>
+    public const int CurrentVersion = 3;
 
     /// <summary>The save's version.</summary>
     public int Version { get; set; } = CurrentVersion;
@@ -600,6 +722,9 @@ public sealed class SaveGame
 
     /// <summary>Stamina left; absent in version 1 saves (full).</summary>
     public double? Stamina { get; set; }
+
+    /// <summary>Rounds loaded by weapon item; absent before version 3 (every firearm full).</summary>
+    public SortedDictionary<string, int>? Magazines { get; set; }
 
     /// <summary>The journal.</summary>
     public QuestSave Quests { get; set; } = new();

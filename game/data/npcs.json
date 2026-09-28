@@ -1,29 +1,32 @@
-// Named NPCs and the civilian pool (openspec/changes/sump-market-hub, design section 2).
+// Named NPCs and the civilian pool (openspec/changes/sump-market-hub, design section 2), with
+// their health, resistances, defence and weapon (openspec/changes/hub-combat, design section 4).
 {
   "npcs": [
-    {"id": "silk", "name": "Silk", "role": "the fixer", "faction": "residents", "intelligence": 3, "dialog": "silk", "model": "silk", "idle": "idle"},
-    {"id": "tank", "name": "Tank", "role": "the Anchor's bouncer", "faction": "residents", "intelligence": 2, "dialog": "tank", "model": "tank", "idle": "guard"},
-    {"id": "mags", "name": "Mags", "role": "bartender", "faction": "residents", "intelligence": 2, "dialog": "mags", "model": "mags", "idle": "idle"},
-    {"id": "kessler", "name": "Kessler", "role": "pawnbroker", "faction": "residents", "intelligence": 3, "dialog": "kessler", "model": "kessler", "idle": "idle"},
-    {"id": "doc_vo", "name": "Doc Vo", "role": "street doctor", "faction": "residents", "intelligence": 3, "dialog": "doc_vo", "model": "doc_vo", "idle": "idle"},
-    {"id": "nguyen", "name": "Nguyen", "role": "noodle vendor", "faction": "residents", "intelligence": 1, "dialog": "nguyen", "model": "nguyen", "idle": "idle"},
-    {"id": "rivet", "name": "Rivet", "role": "scavenger and fence", "faction": "residents", "intelligence": 2, "dialog": "rivet", "model": "rivet", "idle": "idle"},
-    {"id": "mouse", "name": "Mouse", "role": "street kid", "faction": "residents", "intelligence": 1, "dialog": "mouse", "model": "mouse", "idle": "idle"},
-    {"id": "petra", "name": "Petra", "role": "sanitation worker", "faction": "sanitation", "intelligence": 2, "dialog": "petra", "model": "petra", "idle": "idle"},
-    {"id": "dace", "name": "Officer Dace", "role": "MerSec sergeant", "faction": "mersec", "intelligence": 3, "dialog": "dace", "model": "dace", "idle": "guard", "law": true},
-    {"id": "skiv", "name": "Skiv", "role": "Drain Rats scout", "faction": "drain_rats", "intelligence": 1, "dialog": "skiv", "model": "skiv", "idle": "idle"},
-    {"id": "jax", "name": "Jax", "role": "Scrap Kings recruiter", "faction": "scrap_kings", "intelligence": 2, "dialog": "jax", "model": "jax", "idle": "idle"},
-    {"id": "lin", "name": "Sister Lin", "role": "shrine keeper", "faction": "residents", "intelligence": 2, "dialog": "lin", "model": "lin", "idle": "idle"},
-    {"id": "oracle", "name": "The Oracle", "role": "data broker", "faction": "residents", "intelligence": 3, "dialog": "oracle", "model": "civ_f", "idle": "idle"},
-    {"id": "mersec_station", "name": "MerSec trooper", "role": "station guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
-    {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
-    {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
-    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true},
-    {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true}
+    {"id": "silk", "name": "Silk", "role": "the fixer", "faction": "residents", "intelligence": 3, "dialog": "silk", "model": "silk", "idle": "idle", "health": 90, "resist_pct": {"ballistic": 10}, "defence": "surrender"},
+    {"id": "tank", "name": "Tank", "role": "the Anchor's bouncer", "faction": "residents", "intelligence": 2, "dialog": "tank", "model": "tank", "idle": "guard", "health": 150, "resist_pct": {"ballistic": 15}, "defence": "fight", "weapon": "tank_baton"},
+    {"id": "mags", "name": "Mags", "role": "bartender", "faction": "residents", "intelligence": 2, "dialog": "mags", "model": "mags", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "kessler", "name": "Kessler", "role": "pawnbroker", "faction": "residents", "intelligence": 3, "dialog": "kessler", "model": "kessler", "idle": "idle", "health": 80, "defence": "fight", "weapon": "scattergun"},
+    {"id": "doc_vo", "name": "Doc Vo", "role": "street doctor", "faction": "residents", "intelligence": 3, "dialog": "doc_vo", "model": "doc_vo", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "nguyen", "name": "Nguyen", "role": "noodle vendor", "faction": "residents", "intelligence": 1, "dialog": "nguyen", "model": "nguyen", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "rivet", "name": "Rivet", "role": "scavenger and fence", "faction": "residents", "intelligence": 2, "dialog": "rivet", "model": "rivet", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "mouse", "name": "Mouse", "role": "street kid", "faction": "residents", "intelligence": 1, "dialog": "mouse", "model": "mouse", "idle": "idle", "health": 50, "defence": "flee"},
+    {"id": "petra", "name": "Petra", "role": "sanitation worker", "faction": "sanitation", "intelligence": 2, "dialog": "petra", "model": "petra", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "dace", "name": "Officer Dace", "role": "MerSec sergeant", "faction": "mersec", "intelligence": 3, "dialog": "dace", "model": "dace", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "skiv", "name": "Skiv", "role": "Drain Rats scout", "faction": "drain_rats", "intelligence": 1, "dialog": "skiv", "model": "skiv", "idle": "idle", "health": 90, "defence": "flee"},
+    {"id": "jax", "name": "Jax", "role": "Scrap Kings recruiter", "faction": "scrap_kings", "intelligence": 2, "dialog": "jax", "model": "jax", "idle": "idle", "health": 90, "defence": "flee"},
+    {"id": "lin", "name": "Sister Lin", "role": "shrine keeper", "faction": "residents", "intelligence": 2, "dialog": "lin", "model": "lin", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "oracle", "name": "The Oracle", "role": "data broker", "faction": "residents", "intelligence": 3, "dialog": "oracle", "model": "civ_f", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "mersec_station", "name": "MerSec trooper", "role": "station guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"}
   ],
   "civilians": {
     "dialog": "civilian",
     "models": ["civ_a", "civ_b", "civ_c", "civ_d", "civ_e", "civ_f"],
+    "health": 60,
+    "defences": {"flee": 70, "cower": 30},
     "small_talk": [
       "Rain hasn't stopped since the Spire went up. Forty years, give or take.",
       "Skyway's running late again. Not that it stops down here.",

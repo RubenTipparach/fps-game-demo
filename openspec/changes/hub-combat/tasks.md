@@ -2,31 +2,33 @@
 
 ## 1. Data
 
-- [ ] 1.1 `data/weapons.json` (the Kestrel, the service pistol, the baton, the scattergun),
+- [x] 1.1 `data/weapons.json` (the Kestrel, the service pistol, the baton, the scattergun),
   `data/combat.json` (zones, caps, hit chance, flee and cower numbers), and `health`, `resist`,
   `defence`, `weapon` in `data/npcs.json` with the `civilian` profile. Loaders, validation and
   cross-checks (item weapon ids, NPC weapon ids).
 
 ## 2. Core
 
-- [ ] 2.1 `Combat/Damage.cs`: `Resolve(hit, target)` with zones, resistances and caps. The
-  stun pool, tranq, gas and EMP stay in `combat-and-enemies`.
-- [ ] 2.2 `Kit/Magazine.cs`: loaded rounds per weapon, reload from the pack (whole or not at
+- [x] 2.1 `Combat/CombatRules.cs`: the damage rule with zones, resistances and caps, the zone
+  bands, the NPCs' hit chance and a civilian's defence; `GameState.HurtNpc` and `TakeHit` apply
+  it. The stun pool, tranq, gas and EMP stay in `combat-and-enemies`.
+- [x] 2.2 `Kit/Magazine.cs`: loaded rounds per weapon, reload from the pack (whole or not at
   all), saved.
-- [ ] 2.3 NPC health, damage and death in `WorldState`, keyed by stable id (fixes the civilian
-  status bug; its regression test fails before the fix).
-- [ ] 2.4 `Law.ShotFired`, faction reputation for assault and murder, quests failed and shops
+- [x] 2.3 NPC health, damage and death in `WorldState`, keyed by `Combat.NpcTarget` (a named
+  NPC's id, a civilian's stable id): the core half of the civilian status fix, with its
+  regression test. The Godot half (`NpcActor` using the same key) is 4.3.
+- [x] 2.4 `Law.ShotFired`, faction reputation for assault and murder, quests failed and shops
   closed by a death.
-- [ ] 2.5 The player's health: damage, armour, the 25 % floor (`FloorPool`), death.
+- [x] 2.5 The player's health: damage, armour, the 25 % floor (`FloorPool`), death.
 
 ## 3. Tests
 
-- [ ] 3.1 The damage scenarios, the caps, and the zone bands.
-- [ ] 3.2 Magazine and reload cases, including a partial reload and an empty pack.
-- [ ] 3.3 The law and reputation rules; a dead giver fails their quests and closes the shop.
-- [ ] 3.4 Every NPC in the data has health and a defence; every armed one has a weapon in
+- [x] 3.1 The damage scenarios, the caps, and the zone bands.
+- [x] 3.2 Magazine and reload cases, including a partial reload and an empty pack.
+- [x] 3.3 The law and reputation rules; a dead giver fails their quests and closes the shop.
+- [x] 3.4 Every NPC in the data has health and a defence; every armed one has a weapon in
   `weapons.json`.
-- [ ] 3.5 The health floor scenarios.
+- [x] 3.5 The health floor scenarios.
 
 ## 4. Godot
 

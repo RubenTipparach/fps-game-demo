@@ -53,8 +53,17 @@ public sealed class WorldState
     /// <summary>Per-level memory by level id.</summary>
     public SortedDictionary<string, LevelState> Levels { get; set; } = new(StringComparer.Ordinal);
 
-    /// <summary>NPC status by NPC id (absent means alive).</summary>
+    /// <summary>
+    /// NPC status by key (absent means alive): a named NPC's id, or a civilian's stable id
+    /// (Combat.NpcTarget).
+    /// </summary>
     public SortedDictionary<string, NpcStatus> Npcs { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>The health of NPCs who have been hurt, by the same key (absent means unhurt).</summary>
+    public SortedDictionary<string, double> NpcHealth { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>NPCs the runner has hurt, by the same key: hurting someone again isn't a second assault.</summary>
+    public SortedSet<string> Hurt { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>Items sold since the last restock, by vendor then item.</summary>
     public SortedDictionary<string, SortedDictionary<string, int>> Sold { get; set; } = new(StringComparer.Ordinal);

@@ -91,6 +91,12 @@ public sealed class GameData
     /// <summary>data/water.json.</summary>
     public required Vitals.WaterTable Water { get; init; }
 
+    /// <summary>data/weapons.json.</summary>
+    public required Combat.WeaponTable Weapons { get; init; }
+
+    /// <summary>data/combat.json.</summary>
+    public required Combat.CombatTable Combat { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -134,6 +140,8 @@ public sealed class GameData
             Saves = JsonData.Load<SavesTable>(source, "saves.json"),
             NpcBodies = JsonData.Load<NpcBodyTable>(source, "npc_bodies.json"),
             Water = JsonData.Load<Vitals.WaterTable>(source, "water.json"),
+            Weapons = JsonData.Load<Combat.WeaponTable>(source, "weapons.json"),
+            Combat = JsonData.Load<Combat.CombatTable>(source, "combat.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,
@@ -192,6 +200,25 @@ public sealed class GameData
             {
                 errors.Add($"npcs.{n.Id}: unknown dialog '{n.Dialog}'");
             }
+        }
+        foreach (var n in Npcs.Npcs.Where(n => n.Weapon is not null && Weapons.Find(n.Weapon) is null))
+        {
+            errors.Add($"npcs.{n.Id}: unknown weapon '{n.Weapon}'");
+        }
+        foreach (var i in Items.Items.Where(i => i.Weapon is not null))
+        {
+            if (Weapons.Find(i.Weapon!) is not { } w)
+            {
+                errors.Add($"items.{i.Id}: unknown weapon '{i.Weapon}'");
+            }
+            else if (w.NpcOnly)
+            {
+                errors.Add($"items.{i.Id}: '{i.Weapon}' is a weapon only NPCs carry");
+            }
+        }
+        foreach (var (id, w) in Weapons.Weapons)
+        {
+            Item(w.Ammo, $"weapons.{id}.ammo");
         }
         foreach (var n in Npcs.Npcs.Where(n => NpcBodies.Clip(n.Idle) is null))
         {
