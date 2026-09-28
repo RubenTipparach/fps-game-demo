@@ -1,4 +1,4 @@
-// The UI as gameplay code sees it: open a conversation, a terminal or the deck, and drive the
+// The UI as gameplay code sees it: open a conversation, a terminal, the deck or the pause menu, and drive the
 // HUD's prompt, hold timer and disguise chip. The HUD reads everything else (health, belt,
 // feed, quests) from the game state's own events.
 //
@@ -42,8 +42,14 @@ public sealed record DisguiseView(string Faction, Judgement Judgement, string Ob
 /// <summary>The UI.</summary>
 public interface IScreens
 {
-    /// <summary>True while a screen that takes the mouse is open (dialog, terminal, deck).</summary>
+    /// <summary>True while a screen that takes the mouse is open (dialog, terminal, deck, pause, options).</summary>
     bool Blocking { get; }
+
+    /// <summary>True while a conversation is open.</summary>
+    bool InConversation { get; }
+
+    /// <summary>Opens the pause menu (mockup D6); the game pauses under it.</summary>
+    void OpenPause();
 
     /// <summary>Opens a conversation. The screen drives the session until it's over, then closes.</summary>
     void OpenDialog(DialogSession session, SpeakerView speaker);

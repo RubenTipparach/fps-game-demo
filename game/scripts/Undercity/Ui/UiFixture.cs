@@ -16,6 +16,32 @@ using Undercity.Core.World;
 
 namespace Undercity.Client;
 
+/// <summary>An application that only records what the menus asked of it.</summary>
+public sealed class StubShell : IShell
+{
+    /// <summary>What was asked, in order: "new_game", "load:quick", "to_title", "quit".</summary>
+    public List<string> Calls { get; } = new();
+
+    /// <inheritdoc/>
+    public Brushfire.GameSettings Settings { get; } = new();
+
+    /// <inheritdoc/>
+    public void NewGame() => Calls.Add("new_game");
+
+    /// <inheritdoc/>
+    public bool Load(string slot)
+    {
+        Calls.Add("load:" + slot);
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public void ToTitle() => Calls.Add("to_title");
+
+    /// <inheritdoc/>
+    public void Quit() => Calls.Add("quit");
+}
+
 /// <summary>A level with no scene: it records drops and is never witnessed.</summary>
 public sealed class StubLevelHost : ILevelHost
 {
@@ -59,6 +85,19 @@ public sealed class StubLevelHost : ILevelHost
         witness = "";
         return false;
     }
+
+    /// <summary>The refusal <see cref="SaveRefusal"/> reports, so a check can show the greyed save buttons.</summary>
+    public string Refusal { get; set; } = "";
+
+    /// <inheritdoc/>
+    public string SaveRefusal() => Refusal;
+
+    /// <inheritdoc/>
+    public bool TrySave(string slot, out string reason)
+    {
+        reason = Refusal;
+        return reason.Length == 0;
+    }
 }
 
 /// <summary>Builds the services and the staged state for the UI checks.</summary>
@@ -73,7 +112,28 @@ public static class UiFixture
         var data = GameData.Load(new GodotDataSource());
         var state = GameState.NewGame(data, Seed);
         var saves = new SaveStore(ProjectSettings.GlobalizePath("user://ui_check_saves"));
-        return new Services(state, new StubLevelHost(data.Levels["hub"]), screens, saves);
+        return new Services(state, new StubLevelHost(data.Levels["hub"]), screens, saves, new StubShell());
+    }
+
+    /// <summary>
+    /// Fills the check's save folder like the D6 mockup: a quicksave 2 minutes old, the autosave
+    /// 21 minutes old and slot 1 an hour old, the other slots empty.
+    /// </summary>
+    public static void StageSaves(Services services)
+    {
+        var folder = ProjectSettings.GlobalizePath("user://ui_check_saves");
+        foreach (var f in System.IO.Directory.GetFiles(folder, "*.json"))
+        {
+            System.IO.File.Delete(f);
+        }
+        var now = System.DateTime.UtcNow;
+        foreach (var (slot, playS, ageMin) in new[] { ("quick", 6000.0, 2), ("auto", 4860.0, 21), ("slot_1", 2280.0, 64) })
+        {
+            var save = services.State.Save();
+            save.World = new WorldState { Seed = Seed, CurrentLevel = "hub", PlayTimeS = playS };
+            services.Saves.Write(slot, save);
+            System.IO.File.SetLastWriteTimeUtc(System.IO.Path.Combine(folder, slot + ".json"), now.AddMinutes(-ageMin));
+        }
     }
 
     /// <summary>

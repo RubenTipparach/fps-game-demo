@@ -17,6 +17,7 @@ namespace Brushfire;
 ///         {"goto": "hub:tank", "distance": m} (stand facing a stable entity) | {"talk": "tank"}
 ///         {"setup": {"credits": n, "items": ["id:n"], "wear": ["id"], "flags": [..], "skills": {"persuasion": 2},
 ///                    "quests": [..], "health": n}} | {"state": true} (log the run)
+///         {"click": "SaveHere"} (press a button by node name: title, pause, save rows by slot)
 /// </summary>
 public partial class AutoTest : Node
 {
@@ -146,6 +147,18 @@ public partial class AutoTest : Node
             await Frames(2);
             Input.ParseInputEvent(new InputEventKey { Keycode = code, PhysicalKeycode = code, Pressed = false });
             await Frames(2);
+        }
+        if (step.TryGetValue("click", out var click))
+        {
+            // Presses a button by node name anywhere in the current scene: menus, the pause screen, save rows.
+            var button = GetTree().CurrentScene?.FindChild(click.AsString(), true, false) as BaseButton;
+            if (button == null)
+                GD.PrintErr($"[AutoTest] no button named '{click}'");
+            else if (button.Disabled)
+                GD.Print($"[AutoTest] '{click}' is disabled");
+            else
+                button.EmitSignal(BaseButton.SignalName.Pressed);
+            await Frames(4);
         }
         if (level == null || state == null)
             return;

@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/SaveListView.cs" id="2_script"]
+[ext_resource type="PackedScene" path="res://ui/undercity/save_row.tscn" id="3_row"]
+
+[node name="SaveList" type="VBoxContainer"]
+custom_minimum_size = Vector2(768, 254)
+custom_maximum_size = Vector2(768, 254)
+propagate_maximum_size = true
+clip_contents = true
+offset_right = 768.0
+offset_bottom = 254.0
+theme = ExtResource("1_theme")
+theme_override_constants/separation = 6
+script = ExtResource("2_script")
+RowScene = ExtResource("3_row")

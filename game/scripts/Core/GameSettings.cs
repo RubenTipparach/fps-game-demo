@@ -2,10 +2,22 @@ using Godot;
 
 namespace Brushfire;
 
+/// <summary>A slider's range: the options screens read it here so both menus agree.</summary>
+public readonly record struct SettingRange(double Min, double Max, double Step);
+
 /// <summary>User options persisted to user://settings.cfg.</summary>
 public class GameSettings
 {
     const string Path = "user://settings.cfg";
+
+    /// <summary>Mouse sensitivity's slider range (a multiplier).</summary>
+    public static readonly SettingRange MouseSensitivityRange = new(0.1, 4.0, 0.05);
+    /// <summary>Controller sensitivity's slider range (a multiplier).</summary>
+    public static readonly SettingRange GamepadSensitivityRange = new(0.2, 3.0, 0.05);
+    /// <summary>Field of view's slider range, horizontal degrees.</summary>
+    public static readonly SettingRange FovRange = new(80, 130, 1);
+    /// <summary>Every volume slider's range (linear).</summary>
+    public static readonly SettingRange VolumeRange = new(0, 1, 0.01);
 
     public float MouseSensitivity = 1.0f;   // multiplier on 0.1 degrees per mouse count
     public float GamepadSensitivity = 1.0f;

@@ -1,0 +1,235 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/PauseScreen.cs" id="2_pause"]
+[ext_resource type="PackedScene" path="res://ui/undercity/save_list.tscn" id="3_list"]
+
+[node name="Pause" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_pause")
+
+[node name="Scrim" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"Scrim"
+
+[node name="Frame" type="PanelContainer" parent="."]
+clip_contents = true
+custom_minimum_size = Vector2(1320, 720)
+custom_maximum_size = Vector2(1320, 720)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -660.0
+offset_top = -360.0
+offset_right = 660.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DeckFrame"
+
+[node name="Screen" type="PanelContainer" parent="Frame"]
+layout_mode = 2
+theme_type_variation = &"DeckScreen"
+
+[node name="Body" type="HBoxContainer" parent="Frame/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="Menu" type="VBoxContainer" parent="Frame/Screen/Body"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Top" type="Control" parent="Frame/Screen/Body/Menu"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="ResumeItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "RESUME"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SaveItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "SAVE"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LoadItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "LOAD"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="OptionsItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "OPTIONS"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="QuitTitleItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "QUIT TO TITLE"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="QuitGameItem" type="Button" parent="Frame/Screen/Body/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_type_variation = &"MenuItem"
+text = "QUIT GAME"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Divider" type="Panel" parent="Frame/Screen/Body"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_type_variation = &"Rule"
+
+[node name="Info" type="VBoxContainer" parent="Frame/Screen/Body"]
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="LocationHdr" type="Label" parent="Frame/Screen/Body/Info"]
+layout_mode = 2
+theme_type_variation = &"SectionHdr"
+text = "LOCATION"
+
+[node name="Place" type="Label" parent="Frame/Screen/Body/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 2
+theme_type_variation = &"PlaceTitle"
+text = "Low Harbor"
+clip_text = true
+text_overrun_behavior = 3
+uppercase = true
+
+[node name="PlaceLine" type="Label" parent="Frame/Screen/Body/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 2
+theme_type_variation = &"MonoLine"
+text = "1 h 42 m · 612 cr"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ObjectiveHdr" type="Label" parent="Frame/Screen/Body/Info"]
+layout_mode = 2
+theme_type_variation = &"SectionHdr"
+text = "OBJECTIVE"
+
+[node name="QuestTitle" type="Label" parent="Frame/Screen/Body/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 2
+theme_type_variation = &"QuestHdr"
+text = "Rat Trap"
+clip_text = true
+text_overrun_behavior = 3
+uppercase = true
+
+[node name="ObjectiveText" type="Label" parent="Frame/Screen/Body/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(768, 72)
+custom_maximum_size = Vector2(768, 72)
+clip_contents = true
+layout_mode = 2
+theme_type_variation = &"ObjectiveLine"
+text = "Get into the Drains: the storm drain in the Pit."
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+max_lines_visible = 2
+
+[node name="SavesHdr" type="Label" parent="Frame/Screen/Body/Info"]
+layout_mode = 2
+theme_type_variation = &"SectionHdr"
+text = "SAVES"
+
+[node name="SaveList" parent="Frame/Screen/Body/Info" instance=ExtResource("3_list")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="Frame/Screen/Body/Info"]
+custom_minimum_size = Vector2(768, 52)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="SaveHere" type="Button" parent="Frame/Screen/Body/Info/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "SAVE HERE"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Overwrite" type="Button" parent="Frame/Screen/Body/Info/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "OVERWRITE"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LoadSlot" type="Button" parent="Frame/Screen/Body/Info/Actions"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "LOAD"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Status" type="Label" parent="Frame/Screen/Body/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 2
+theme_type_variation = &"ReasonLabel"
+clip_text = true
+text_overrun_behavior = 3

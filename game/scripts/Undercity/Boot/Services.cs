@@ -20,7 +20,8 @@ public interface IWired
 /// <param name="Level">The level being played.</param>
 /// <param name="Screens">The UI: dialog, terminal, deck and HUD.</param>
 /// <param name="Saves">The save slots.</param>
-public sealed record Services(GameState State, ILevelHost Level, IScreens Screens, SaveStore Saves)
+/// <param name="Shell">The application: new game, load, the title screen, quit, options.</param>
+public sealed record Services(GameState State, ILevelHost Level, IScreens Screens, SaveStore Saves, IShell Shell)
 {
     /// <summary>The data tables.</summary>
     public GameData Data => State.Data;

@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/Undercity/Ui/UiSizeTest.cs" id="1_test"]
 [ext_resource type="PackedScene" path="res://ui/undercity/screens.tscn" id="2_screens"]
+[ext_resource type="PackedScene" path="res://ui/undercity/title.tscn" id="3_title"]
 
 [node name="UiSizeTest" type="Node"]
 script = ExtResource("1_test")
 ScreensScene = ExtResource("2_screens")
+TitleScene = ExtResource("3_title")

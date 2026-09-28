@@ -82,6 +82,9 @@ public sealed class GameData
     /// <summary>data/npcs.json.</summary>
     public required NpcTable Npcs { get; init; }
 
+    /// <summary>data/saves.json.</summary>
+    public required SavesTable Saves { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -122,6 +125,7 @@ public sealed class GameData
             Quests = JsonData.Load<QuestTable>(source, "quests.json"),
             Perception = JsonData.Load<PerceptionTable>(source, "perception.json"),
             Npcs = JsonData.Load<NpcTable>(source, "npcs.json"),
+            Saves = JsonData.Load<SavesTable>(source, "saves.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,

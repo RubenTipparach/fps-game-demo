@@ -1,0 +1,76 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/SaveRowView.cs" id="2_script"]
+
+[node name="SaveRow" type="Button"]
+custom_minimum_size = Vector2(768, 46)
+custom_maximum_size = Vector2(768, 46)
+clip_contents = true
+offset_right = 768.0
+offset_bottom = 46.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_theme")
+theme_type_variation = &"SaveRow"
+clip_text = true
+text_overrun_behavior = 3
+script = ExtResource("2_script")
+
+[node name="Columns" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_right = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Slot" type="Label" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"SaveRowSlot"
+text = "slot 1"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Place" type="Label" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(290, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"SaveRowText"
+text = "Low Harbor"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Time" type="Label" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"SaveRowText"
+text = "1 h 42 m"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Written" type="Label" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+mouse_filter = 2
+theme_type_variation = &"SaveRowText"
+text = "21:12"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3

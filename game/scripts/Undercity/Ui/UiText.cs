@@ -34,6 +34,28 @@ public static class UiText
         label.CustomMinimumSize = new Vector2(Mathf.Min(Mathf.Ceil(width) + 2, maxPx), label.CustomMinimumSize.Y);
     }
 
+    /// <summary>A level's title from the level index, such as "Low Harbor"; "" for an unknown id.</summary>
+    public static string Place(GameData data, string levelId) => data.LevelIndex.Find(levelId)?.Title ?? "";
+
+    /// <summary>Play time as the save lists show it: "1 h 42 m".</summary>
+    public static string PlayTime(double seconds)
+    {
+        var minutes = (long)Math.Floor(Math.Max(0, seconds) / 60);
+        return Invariant($"{minutes / 60} h {minutes % 60:00} m");
+    }
+
+    /// <summary>A save slot's name as the lists show it: "quick", "auto", "slot 1".</summary>
+    public static string Slot(string slot) => slot.Replace('_', ' ');
+
+    /// <summary>When a save was written, in local time: "21:12" today, "26 Sep" before.</summary>
+    public static string Written(DateTime writtenUtc, DateTime nowUtc)
+    {
+        var local = writtenUtc.ToLocalTime();
+        return local.Date == nowUtc.ToLocalTime().Date
+            ? local.ToString("HH:mm", CultureInfo.InvariantCulture)
+            : local.ToString("d MMM", CultureInfo.InvariantCulture);
+    }
+
     /// <summary>Formats with the invariant culture.</summary>
     public static string Invariant(FormattableString s) => s.ToString(CultureInfo.InvariantCulture);
 }

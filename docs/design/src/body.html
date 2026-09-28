@@ -64,7 +64,8 @@
   </div>
   <div class="status-row">
     <span class="chip built">Built: the hub and its systems, playable</span>
-    <span class="chip built">Built: Undercity.Core, 73 tests</span>
+    <span class="chip built">Built: Undercity.Core, 85 tests</span>
+    <span class="chip built">Built: title, pause with saves, options</span>
     <span class="chip enforced">Enforced: level geometry spec</span>
     <span class="chip proposed">Proposed: the Drains, the Yard, combat, augmentations</span>
   </div>
@@ -106,8 +107,8 @@
       <h3>Status <small>what is real today</small></h3>
       <div class="scroll"><table class="tbl"><tbody>
         <tr><td><span class="chip built">Built</span></td><td>Low Harbor, the hub: built in Blender from its layout in eight sectors, with every NPC, door, container, terminal and exit placed. See <code>docs/playtest/undercity_hub.md</code>.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests and saves, with 73 tests. The Godot layer only wires it to scenes.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td>The HUD, the wrist-deck (Inventory, Skills, Journal) and the dialog and terminal screens, from the approved mockups.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, with 85 tests. The Godot layer only wires it to scenes.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>The HUD, the wrist-deck (Inventory, Skills, Journal), the dialog and terminal screens, the title screen, the pause menu with saves, and options, from the approved mockups.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals. Every generator refuses a level that fails it.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
       </tbody></table></div>
@@ -670,9 +671,9 @@
 
 <!-- ========================================================= F12 -->
 <section id="menus">
-  <div class="sh"><span class="key">F12</span><h2>Title and pause</h2><span class="spec">openspec/changes/title-and-pause</span></div>
-  <p class="intro">Owner G1: mock up both. The title screen names five things and says nothing else. The pause menu is the wrist-deck again, with saves beside where you are, and options are one row per setting: a label and a control. No keyboard hints, per CLAUDE.md 8.</p>
-  <div class="controls"><span class="chip mock">Mockups · awaiting approval (D5, D6, D7)</span></div>
+  <div class="sh"><span class="key">F12</span><h2>Title and pause</h2><span class="spec">openspec/specs/title-and-pause</span></div>
+  <p class="intro">Owner G1: mock up both. The title screen names five things and says nothing else. The pause menu is the wrist-deck again, with saves beside where you are, and options are one row per setting: a label and a control. No keyboard hints, per CLAUDE.md 8. Approved on 2026-09-27 and built: the title is the game's first screen, Esc opens the pause menu, and the captures are in <code>docs/screenshots/undercity_ui/</code> and <code>docs/screenshots/title_and_pause/</code>.</p>
+  <div class="controls"><span class="chip built">Approved (D5, D6, D7) · built</span></div>
   <h3>D5 · Title</h3>
   <div class="hud" role="img" aria-label="Title screen mockup">
     <svg viewBox="0 0 1600 900">
@@ -865,6 +866,7 @@
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>scrap-kings-yard</code></td><td>the Yard, M2, S1, S2</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>specs/level-geometry</code></td><td>no z-fighting, frame reveals</td><td class="n">2</td><td><span class="chip enforced">Enforced</span></td></tr>
+        <tr><td><code>specs/title-and-pause</code></td><td>title, save list, the save rule, quitting, one objective, panel sizes</td><td class="n">6</td><td><span class="chip built">Built</span></td></tr>
       </tbody></table></div>
   </div>
 </section>
@@ -875,7 +877,7 @@
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D4 mockups</span><span class="tag y">G1 to G3 next slice</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>

@@ -31,7 +31,8 @@ public sealed class Session
     /// <summary>The save slots, in user://saves.</summary>
     public SaveStore Saves { get; }
 
-    private static SaveStore OpenSaves() => new(ProjectSettings.GlobalizePath("user://saves"));
+    /// <summary>The save folder, user://saves.</summary>
+    public static SaveStore OpenSaves() => new(ProjectSettings.GlobalizePath("user://saves"));
 
     /// <summary>A new run with <paramref name="seed"/>, starting in the hub.</summary>
     public static Session NewGame(ulong seed)

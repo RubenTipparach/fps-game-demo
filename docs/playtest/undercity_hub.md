@@ -5,8 +5,9 @@ Yard come next. Their exits are in the hub, but they tell you they're not in thi
 
 ## Running it
 
-- **In the editor.** Open `game/` in Godot 4.7 (.NET), then press Play. The project launches
-  straight into a new game in the hub. To load a quicksave, press F9.
+- **In the editor.** Open `game/` in Godot 4.7 (.NET), then press Play. The game opens on the
+  title screen: Continue loads your newest save, New game starts in capsule 12. Opening
+  `levels/undercity/hub/hub.tscn` and pressing F6 skips the title and starts a new game.
 - **From a terminal:**
 
   ```sh
@@ -27,8 +28,8 @@ Yard come next. Their exits are in the hub, but they tell you they're not in thi
 | E | Use: talk, open, search, read, take, travel. Hold it for locks (the timer stands in for the minigames, owner decision B2). |
 | 1 to 0 | Belt slots: draw or holster a weapon, use a medkit or stim |
 | Tab | The deck: Inventory, Skills, Journal (F1 to F3 switch tabs) |
-| Esc | Close a screen; otherwise free the mouse (click to take it back) |
-| F5, F9 | Quicksave, quickload |
+| Esc | Close a screen; otherwise the pause menu (the game stops under it) |
+| F5, F9 | Quicksave, quickload (no saving in a conversation or while a hostile can see you) |
 | F | Flashlight |
 
 In the deck:
@@ -78,6 +79,10 @@ In the deck:
    - the drowned locker under the Tin Bridge;
    - the shrine's offering box (Lockpicking 2).
 10. **Sleep** in capsule 12. It heals you and saves.
+11. **The pause menu.** Esc. Save into slot 1 to 3 (or over the quicksave), load any slot, or
+    open Options. Draw your pistol in front of MerSec twice first: with a hostile watching, the
+    save buttons grey out and say why. Quit to title asks once if your last save is more than
+    5 minutes old.
 
 ## What isn't in this build
 
@@ -85,8 +90,9 @@ In the deck:
   watch you. Combat comes with `openspec/changes/combat-and-enemies`.
 - **The lockpicking and hacking minigames.** A held timer stands in for both until mockups E1 and
   E2 are approved.
-- **Missing screens.** There's no title screen, pause menu, trade screen, stash screen, map, notes
-  or conversation log, because none of them has an approved mockup yet.
+- **Missing screens.** There's no trade screen, stash screen, map, notes or conversation log,
+  because none of them has an approved mockup yet. The title screen, the pause menu and options
+  are in (mockups D5 to D7).
 - **Lighting and missions.** The hub's lighting isn't baked in this build unless the validation
   record says so, and the Drains and the Yard aren't built.
 

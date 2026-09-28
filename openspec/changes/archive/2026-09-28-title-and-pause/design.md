@@ -50,6 +50,35 @@ They read and write Brushfire's `GameSettings`, so the settings file keeps its f
 - The main scene becomes `ui/undercity/title.tscn`. A level opened directly (F6 in the editor)
   still starts a new game, as today.
 
+### 5. As built (after the owner approved D5, D6 and D7 on 2026-09-27: "Approve")
+
+- **The numbers are data:** `data/saves.json` holds `named_slots` (3), `quit_warn_after_s`
+  (300) and `hostile_watch_m` (25). `SavesTable` validates them on load.
+- **One save rule.** `SaveRules.CanSave(situation, out reason)` in the core. The level gathers
+  the facts (a conversation is open; a hostile NPC can see the runner within
+  `hostile_watch_m`) in `ILevelHost.SaveRefusal()`, and `TrySave` asks the same method before
+  writing. The quicksave key and the pause menu both go through `TrySave`, so the greyed button
+  and the refusal can't disagree (CLAUDE.md 5.1). The game's own autosaves (a level change, the
+  capsule bed) aren't player saves and skip the rule.
+- **Slots.** The player may write quick and the named slots, never auto: the game rewrites it
+  at the next door.
+- **Place is the level's title** ("Low Harbor"). A save holds the level, not the district, so
+  the save rows show the level. The mockup's district names were illustrative.
+- **Both quits ask.** Quit game loses unsaved play the same way Quit to title does, so it asks
+  by the same rule. The button relabels to "QUIT ANYWAY" and the status line names the age of
+  the newest save; a second press quits.
+- **Options has a Back button.** The title screen is used with the mouse, and Esc is not
+  named anywhere (CLAUDE.md 8), so Back is the one visible way out. It is the only addition to
+  D7.
+- **The objective rule moved into the core** as `QuestLog.Current()`; the HUD and the pause menu
+  both call it.
+- **The title's backdrop** is the approved mockup's city, exported from the design page to
+  `ui/undercity/title_backdrop.svg`. A baked still of the hub can replace it later without
+  touching the scene's structure.
+- **Wiring.** The Game autoload implements `IShell` (new game, load, title, quit, settings)
+  and hands it to the title screen and each level as they enter the tree. It subscribes in
+  `_EnterTree`, because at startup the main scene enters the tree before any `_Ready`.
+
 ## Risks / Trade-offs
 
 - **Pausing the tree freezes the HUD's feed timers too.** That's intended: nothing happens while

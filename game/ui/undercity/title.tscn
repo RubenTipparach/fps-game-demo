@@ -1,0 +1,217 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/TitleScreen.cs" id="2_title"]
+[ext_resource type="Texture2D" path="res://ui/undercity/title_backdrop.svg" id="3_backdrop"]
+[ext_resource type="PackedScene" path="res://ui/undercity/save_list.tscn" id="4_list"]
+[ext_resource type="PackedScene" path="res://ui/undercity/options.tscn" id="5_options"]
+
+[node name="Title" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_title")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_backdrop")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Word" type="Label" parent="."]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 118.0
+offset_right = 1126.0
+offset_bottom = 288.0
+theme_type_variation = &"TitleWord"
+text = "UNDERCITY"
+vertical_alignment = 2
+
+[node name="Sub" type="Label" parent="."]
+layout_mode = 0
+offset_left = 137.0
+offset_top = 284.0
+offset_right = 937.0
+offset_bottom = 324.0
+theme_type_variation = &"TitleSub"
+text = "MERIDIAN  ·  LOW HARBOR"
+
+[node name="Menu" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 454.0
+offset_right = 765.0
+offset_bottom = 814.0
+theme_override_constants/separation = 2
+
+[node name="ContinueItem" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 70)
+layout_mode = 2
+theme_type_variation = &"TitleItem"
+text = "CONTINUE"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ContinueLine" type="Label" parent="Menu/ContinueItem"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 272.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"MonoLine"
+text = "auto · Low Harbor · 1 h 42 m"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="NewGameItem" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 70)
+layout_mode = 2
+theme_type_variation = &"TitleItem"
+text = "NEW GAME"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LoadItem" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 70)
+layout_mode = 2
+theme_type_variation = &"TitleItem"
+text = "LOAD"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="OptionsItem" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 70)
+layout_mode = 2
+theme_type_variation = &"TitleItem"
+text = "OPTIONS"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="QuitItem" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 70)
+layout_mode = 2
+theme_type_variation = &"TitleItem"
+text = "QUIT"
+alignment = 0
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Version" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 132.0
+offset_top = -76.0
+offset_right = 432.0
+offset_bottom = -52.0
+grow_vertical = 0
+theme_type_variation = &"MonoSmall"
+text = "slice 1"
+
+[node name="LoadPanel" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Scrim" type="Panel" parent="LoadPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"Scrim"
+
+[node name="Frame" type="PanelContainer" parent="LoadPanel"]
+clip_contents = true
+custom_minimum_size = Vector2(880, 470)
+custom_maximum_size = Vector2(880, 470)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -235.0
+offset_right = 440.0
+offset_bottom = 235.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DeckFrame"
+
+[node name="Screen" type="PanelContainer" parent="LoadPanel/Frame"]
+layout_mode = 2
+theme_type_variation = &"DeckScreen"
+
+[node name="Body" type="VBoxContainer" parent="LoadPanel/Frame/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Hdr" type="Label" parent="LoadPanel/Frame/Screen/Body"]
+layout_mode = 2
+theme_type_variation = &"SectionHdr"
+text = "LOAD"
+
+[node name="SaveList" parent="LoadPanel/Frame/Screen/Body" instance=ExtResource("4_list")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="LoadPanel/Frame/Screen/Body"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="LoadSlot" type="Button" parent="LoadPanel/Frame/Screen/Body/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "LOAD"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LoadBack" type="Button" parent="LoadPanel/Frame/Screen/Body/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "BACK"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Options" parent="." instance=ExtResource("5_options")]
+unique_name_in_owner = true
+layout_mode = 1

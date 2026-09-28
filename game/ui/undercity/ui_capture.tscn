@@ -3,10 +3,12 @@
 [ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/Undercity/Ui/UiCapture.cs" id="2_capture"]
 [ext_resource type="PackedScene" path="res://ui/undercity/screens.tscn" id="3_screens"]
+[ext_resource type="PackedScene" path="res://ui/undercity/title.tscn" id="4_title"]
 
 [node name="UiCapture" type="Node"]
 script = ExtResource("2_capture")
 ScreensScene = ExtResource("3_screens")
+TitleScene = ExtResource("4_title")
 OutDir = "../docs/screenshots/undercity_ui"
 
 [node name="Backdrop" type="ColorRect" parent="."]

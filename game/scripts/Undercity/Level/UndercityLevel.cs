@@ -46,7 +46,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
 
     private Session? _session;
     private Action<string>? _travel;
-    private Func<string, bool>? _load;
+    private IShell? _shell;
     private Services? _services;
     private Node? _screensNode;
     private PlayerController? _player;
@@ -58,13 +58,13 @@ public partial class UndercityLevel : Node3D, ILevelHost
 
     /// <summary>
     /// Called by the composition root as the level enters the tree, before _Ready: the run, how to
-    /// change level, and how to load a save.
+    /// change level, and the application (loading, the title screen, options).
     /// </summary>
-    public void Begin(Session session, Action<string> travel, Func<string, bool> load)
+    public void Begin(Session session, Action<string> travel, IShell shell)
     {
         _session = session;
         _travel = travel;
-        _load = load;
+        _shell = shell;
     }
 
     private GameState State => _session!.State;
@@ -130,7 +130,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
         AddChild(_screensNode);
         var screens = (IScreens)_screensNode;
 
-        _services = new Services(State, this, screens, _session.Saves);
+        _services = new Services(State, this, screens, _session.Saves, _shell!);
         foreach (var n in Descendants(this))
         {
             if (n is IStable s)
@@ -147,7 +147,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
         State.HostAction += OnHost;
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
-        _session.Save("auto");
+        _session.Save(SavesTable.Auto);
     }
 
     public override void _ExitTree()
@@ -240,21 +240,14 @@ public partial class UndercityLevel : Node3D, ILevelHost
         }
         if (e.IsActionPressed("quicksave"))
         {
-            _session!.Save("quick");
-            State.Say("Quicksaved.");
+            State.Say(TrySave(SavesTable.Quick, out var reason) ? "Quicksaved." : reason);
         }
         else if (e.IsActionPressed("quickload"))
         {
-            if (!_load!("quick"))
+            if (!_shell!.Load(SavesTable.Quick))
             {
                 State.Say("No quicksave.");
             }
-        }
-        else if (e.IsActionPressed("pause") && !Screens.Blocking)
-        {
-            Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Captured
-                ? Input.MouseModeEnum.Visible
-                : Input.MouseModeEnum.Captured;
         }
         else if (e is InputEventMouseButton { Pressed: true } && !Screens.Blocking && Input.MouseMode != Input.MouseModeEnum.Captured)
         {
@@ -339,12 +332,31 @@ public partial class UndercityLevel : Node3D, ILevelHost
         }
         State.World.CurrentLevel = exit.Target;
         State.World.Spawn = exit.Spawn;
-        _session!.Save("auto");
+        _session!.Save(SavesTable.Auto);
         _travel!(exit.Target);
     }
 
-    /// <summary>Saves to a slot now (the capsule bed, quicksave).</summary>
+    /// <summary>Saves to a slot now, without the save rule: the game's own autosaves (a level change, the capsule bed).</summary>
     public void SaveTo(string slot) => _session!.Save(slot);
+
+    /// <inheritdoc/>
+    public string SaveRefusal()
+    {
+        var hostile = Seer(n => n.Hostile, (float)State.Data.Saves.HostileWatchM) is not null;
+        return SaveRules.CanSave(new SaveSituation(Screens.InConversation, hostile), out var reason) ? "" : reason;
+    }
+
+    /// <inheritdoc/>
+    public bool TrySave(string slot, out string reason)
+    {
+        reason = SaveRefusal();
+        if (reason.Length > 0)
+        {
+            return false;
+        }
+        _session!.Save(slot);
+        return true;
+    }
 
     // ------------------------------------------------------------------ who sees the runner
 

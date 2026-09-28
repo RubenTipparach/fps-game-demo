@@ -42,6 +42,11 @@ public sealed class ObjectiveDef
     public bool Hidden { get; init; }
 }
 
+/// <summary>The quest being followed and its next objective.</summary>
+/// <param name="Quest">The quest.</param>
+/// <param name="Objective">Its next visible objective not yet done, or null.</param>
+public sealed record CurrentObjective(QuestDef Quest, ObjectiveDef? Objective);
+
 /// <summary>One quest.</summary>
 public sealed class QuestDef
 {
@@ -146,6 +151,22 @@ public sealed class QuestLog
 
     /// <summary>Active quests, in table order.</summary>
     public IEnumerable<QuestDef> Active => _table.Quests.Where(q => State(q.Id) == QuestState.Active);
+
+    /// <summary>
+    /// The objective the HUD and the pause menu show: the first active quest in table order, and
+    /// its first visible objective not yet done (null when every visible one is done). Null when
+    /// no quest is active.
+    /// </summary>
+    public CurrentObjective? Current()
+    {
+        var quest = Active.FirstOrDefault();
+        if (quest is null)
+        {
+            return null;
+        }
+        var objective = quest.Objectives.FirstOrDefault(o => IsVisible(quest.Id, o) && !IsDone($"{quest.Id}/{o.Id}"));
+        return new CurrentObjective(quest, objective);
+    }
 
     /// <summary>Finished quests (done or failed), in table order.</summary>
     public IEnumerable<QuestDef> Finished => _table.Quests.Where(q => State(q.Id) is QuestState.Done or QuestState.Failed);

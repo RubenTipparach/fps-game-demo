@@ -486,6 +486,7 @@ public sealed class GameState
 
     // ------------------------------------------------------------------ saves
 
+
     /// <summary>The saved form of this run.</summary>
     public SaveGame Save() => new()
     {

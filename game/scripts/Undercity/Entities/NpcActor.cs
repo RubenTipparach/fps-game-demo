@@ -75,6 +75,9 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
     /// <summary>True unless knocked out, dead or gone.</summary>
     public bool Alive => Status is NpcStatus.Alive or NpcStatus.Hostile;
 
+    /// <summary>True when this NPC is hostile to the runner.</summary>
+    public bool Hostile => Status == NpcStatus.Hostile;
+
     private NpcStatus Status => _s is null || _def is null ? NpcStatus.Alive : _s.State.World.Npc(_def.Id);
 
     private Vector3 Eye => GlobalPosition + Vector3.Up * 1.6f;

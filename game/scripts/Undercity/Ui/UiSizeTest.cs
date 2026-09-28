@@ -22,6 +22,9 @@ public partial class UiSizeTest : Node
     /// <summary>The UI under test.</summary>
     [Export] public PackedScene ScreensScene { get; set; } = null!;
 
+    /// <summary>The title screen, checked on its own.</summary>
+    [Export] public PackedScene TitleScene { get; set; } = null!;
+
     private static readonly string Overlong = string.Concat(Enumerable.Repeat("An overlong runtime string that must never resize a panel ", 8));
 
     private Screens _screens = null!;
@@ -66,6 +69,36 @@ public partial class UiSizeTest : Node
             services.State.Talk(services.Data.Dialogs["tank"], new Undercity.Core.Dialog.Speaker("hub:tank", "tank")),
             new SpeakerView("Tank", "The Anchor's bouncer", null)));
         await Check("terminal", () => _screens.OpenTerminal("hub:capsule_terminal", UiFixture.BusyTerminal(services.Data)));
+        UiFixture.StageSaves(services);
+        var pause = _screens.GetNode<PauseScreen>("%Pause");
+        var options = _screens.GetNode<OptionsScreen>("%Options");
+        await Check("pause", _screens.OpenPause);
+        await Check("pause/load", () =>
+        {
+            _screens.OpenPause();
+            pause.GetNode<Button>("%LoadItem").EmitSignal(BaseButton.SignalName.Pressed);
+        });
+        for (var page = 0; page < 3; page++)
+        {
+            var p = page;
+            await Check($"options/{p}", () =>
+            {
+                _screens.OpenPause();
+                pause.GetNode<Button>("%OptionsItem").EmitSignal(BaseButton.SignalName.Pressed);
+                options.ShowPage(p);
+            });
+        }
+
+        _screens.Visible = false;
+        var title = TitleScene.Instantiate<TitleScreen>();
+        title.Begin(new StubShell(), services.Saves, services.Data);
+        AddChild(title);
+        await Check("title", () => { }, title, title.Refresh);
+        await Check("title/load", () => title.GetNode<Button>("%LoadItem").EmitSignal(BaseButton.SignalName.Pressed), title, () =>
+        {
+            title.GetNode<Control>("%LoadPanel").Visible = false;
+            title.Refresh();
+        });
 
         GD.Print($"[ui_size_test] {_pass} passed, {_fail} failed");
         GetTree().Quit(_fail > 0 ? 1 : 0);
@@ -77,24 +110,30 @@ public partial class UiSizeTest : Node
         tile?.EmitSignal(BaseButton.SignalName.Pressed);
     }
 
-    private async Task Check(string screen, Action open)
+    /// <summary>
+    /// Opens a screen under <paramref name="root"/> (the UI layer by default), fills every visible
+    /// label and button with an overlong string, and checks the panels kept their size. Then
+    /// closes it: <paramref name="reset"/> when given, else the UI layer's CloseAll.
+    /// </summary>
+    private async Task Check(string screen, Action open, Node? root = null, Action? reset = null)
     {
+        root ??= _screens;
         open();
         await Frames(3);
-        var panels = UiFixture.Descendants(_screens).OfType<Control>().Where(c => c.IsVisibleInTree() && IsPanel(c)).ToList();
+        var panels = UiFixture.Descendants(root).OfType<Control>().Where(c => c.IsVisibleInTree() && IsPanel(c)).ToList();
         var before = panels.ToDictionary(p => p, p => p.Size);
-        foreach (var label in UiFixture.Descendants(_screens).OfType<Label>().Where(l => l.IsVisibleInTree()))
+        foreach (var label in UiFixture.Descendants(root).OfType<Label>().Where(l => l.IsVisibleInTree()))
         {
             label.Text = Overlong;
         }
-        foreach (var button in UiFixture.Descendants(_screens).OfType<Button>().Where(b => b.IsVisibleInTree()))
+        foreach (var button in UiFixture.Descendants(root).OfType<Button>().Where(b => b.IsVisibleInTree()))
         {
             button.Text = Overlong;
         }
         await Frames(2);
         foreach (var p in panels.Where(IsInstanceValid))
         {
-            var path = _screens.GetPathTo(p);
+            var path = root.GetPathTo(p);
             var pinned = IsPinned(p);
             var ok = p.Size == before[p] && (!pinned || p.Size == p.CustomMinimumSize);
             if (ok)
@@ -108,7 +147,14 @@ public partial class UiSizeTest : Node
                 GD.PrintErr($"FAIL {screen} {path}: was {Fmt(before[p])}, now {Fmt(p.Size)}" + (pinned ? $", pinned {Fmt(p.CustomMinimumSize)}" : ""));
             }
         }
-        _screens.CloseAll();
+        if (reset is null)
+        {
+            _screens.CloseAll();
+        }
+        else
+        {
+            reset();
+        }
         await Frames(1);
     }
 

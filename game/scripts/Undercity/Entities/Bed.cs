@@ -4,6 +4,7 @@
 
 #nullable enable
 using Godot;
+using Undercity.Core;
 
 namespace Undercity.Client;
 
@@ -31,7 +32,7 @@ public partial class Bed : Node3D, IWired, IInteractable, IStable
         _s.State.Rest();
         if (_s.Level is UndercityLevel level)
         {
-            level.SaveTo("auto");
+            level.SaveTo(SavesTable.Auto);
             _s.State.Say("Saved.");
         }
     }

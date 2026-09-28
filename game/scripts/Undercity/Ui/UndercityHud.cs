@@ -256,12 +256,10 @@ public partial class UndercityHud : Control, IWired
         {
             return;
         }
-        var log = _services.State.Quests;
-        var quest = log.Active.FirstOrDefault();
-        var objective = quest?.Objectives.FirstOrDefault(o => log.IsVisible(quest.Id, o) && !log.IsDone($"{quest.Id}/{o.Id}"));
-        _questTitle.Text = quest?.Title ?? "";
-        _objectiveText.Text = objective?.Text ?? "";
-        _objective.Visible = quest is not null;
+        var current = _services.State.Quests.Current();
+        _questTitle.Text = current?.Quest.Title ?? "";
+        _objectiveText.Text = current?.Objective?.Text ?? "";
+        _objective.Visible = current is not null;
     }
 
     private void RefreshKit()

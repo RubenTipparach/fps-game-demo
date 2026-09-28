@@ -2,7 +2,8 @@
 
 ## Why
 
-The owner, 2026-09-27 (survey G1): mock up the title screen and the pause menu now. The hub
+The owner, 2026-09-27 (survey G1): mock up the title screen and the pause menu now. Then, on
+the mockups (survey D5, D6, D7): "Approve". The hub
 playtest starts straight in a new game. F5 and F9 save and load, and Esc only frees the mouse.
 Nobody but the owner can playtest like that.
 
@@ -33,5 +34,5 @@ None.
   `undercity_theme.tres`.
 - `SaveStore` gains named slots. Its temp-file-and-rename writing stays.
 - The project's main scene becomes the title screen. It's the hub today.
-- The mockups are on the design page (F12). Building waits for their approval: survey rows D5,
-  D6 and D7.
+- The mockups are on the design page (F12). They were approved on 2026-09-27 (survey D5, D6
+  and D7), and building started the same day.

@@ -55,4 +55,13 @@ public interface ILevelHost
     /// within their sight range, facing the player, with a clear line.
     /// </summary>
     bool CrimeWitnessed(out string witness);
+
+    /// <summary>
+    /// Why the runner can't save right now (the one save rule, <see cref="Undercity.Core.SaveRules.CanSave"/>),
+    /// or empty when a save is allowed. The pause menu greys its save buttons with this.
+    /// </summary>
+    string SaveRefusal();
+
+    /// <summary>Saves the run to a slot unless the save rule refuses. Returns false with the reason.</summary>
+    bool TrySave(string slot, out string reason);
 }

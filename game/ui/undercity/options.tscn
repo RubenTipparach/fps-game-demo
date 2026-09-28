@@ -1,0 +1,379 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/OptionsScreen.cs" id="2_options"]
+
+[node name="Options" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_options")
+
+[node name="Scrim" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"Scrim"
+
+[node name="Frame" type="PanelContainer" parent="."]
+clip_contents = true
+custom_minimum_size = Vector2(1320, 760)
+custom_maximum_size = Vector2(1320, 760)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -660.0
+offset_top = -380.0
+offset_right = 660.0
+offset_bottom = 380.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DeckFrame"
+
+[node name="Screen" type="PanelContainer" parent="Frame"]
+layout_mode = 2
+theme_type_variation = &"DeckScreen"
+
+[node name="Body" type="VBoxContainer" parent="Frame/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="Tabs" type="PanelContainer" parent="Frame/Screen/Body"]
+layout_mode = 2
+theme_type_variation = &"TabsBar"
+
+[node name="TabRow" type="HBoxContainer" parent="Frame/Screen/Body/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ControlsTab" type="Button" parent="Frame/Screen/Body/Tabs/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 44)
+layout_mode = 2
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+text = "CONTROLS"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="VideoTab" type="Button" parent="Frame/Screen/Body/Tabs/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 44)
+layout_mode = 2
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+text = "VIDEO"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="AudioTab" type="Button" parent="Frame/Screen/Body/Tabs/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 44)
+layout_mode = 2
+theme_type_variation = &"DeckTab"
+toggle_mode = true
+text = "AUDIO"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ControlsPage" type="VBoxContainer" parent="Frame/Screen/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 540)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="MouseSensitivityRow" type="HBoxContainer" parent="Frame/Screen/Body/ControlsPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/ControlsPage/MouseSensitivityRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Mouse sensitivity"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="MouseSensitivity" type="HSlider" parent="Frame/Screen/Body/ControlsPage/MouseSensitivityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="MouseSensitivityValue" type="Label" parent="Frame/Screen/Body/ControlsPage/MouseSensitivityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="InvertLookRow" type="HBoxContainer" parent="Frame/Screen/Body/ControlsPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/ControlsPage/InvertLookRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Invert look"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="InvertLook" type="CheckButton" parent="Frame/Screen/Body/ControlsPage/InvertLookRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="FovRow" type="HBoxContainer" parent="Frame/Screen/Body/ControlsPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/ControlsPage/FovRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Field of view"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Fov" type="HSlider" parent="Frame/Screen/Body/ControlsPage/FovRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="FovValue" type="Label" parent="Frame/Screen/Body/ControlsPage/FovRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HeadBobRow" type="HBoxContainer" parent="Frame/Screen/Body/ControlsPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/ControlsPage/HeadBobRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Head bob"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HeadBob" type="CheckButton" parent="Frame/Screen/Body/ControlsPage/HeadBobRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="PadSensitivityRow" type="HBoxContainer" parent="Frame/Screen/Body/ControlsPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/ControlsPage/PadSensitivityRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Controller sensitivity"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="PadSensitivity" type="HSlider" parent="Frame/Screen/Body/ControlsPage/PadSensitivityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="PadSensitivityValue" type="Label" parent="Frame/Screen/Body/ControlsPage/PadSensitivityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="VideoPage" type="VBoxContainer" parent="Frame/Screen/Body"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 540)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Frame/Screen/Body/VideoPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/VideoPage/FullscreenRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Fullscreen"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Fullscreen" type="CheckButton" parent="Frame/Screen/Body/VideoPage/FullscreenRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="RetroFilteringRow" type="HBoxContainer" parent="Frame/Screen/Body/VideoPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/VideoPage/RetroFilteringRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Retro filtering"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="RetroFiltering" type="CheckButton" parent="Frame/Screen/Body/VideoPage/RetroFilteringRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="AudioPage" type="VBoxContainer" parent="Frame/Screen/Body"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 540)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="MasterVolumeRow" type="HBoxContainer" parent="Frame/Screen/Body/AudioPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/AudioPage/MasterVolumeRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Master volume"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="MasterVolume" type="HSlider" parent="Frame/Screen/Body/AudioPage/MasterVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="MasterVolumeValue" type="Label" parent="Frame/Screen/Body/AudioPage/MasterVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="MusicVolumeRow" type="HBoxContainer" parent="Frame/Screen/Body/AudioPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/AudioPage/MusicVolumeRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Music volume"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="MusicVolume" type="HSlider" parent="Frame/Screen/Body/AudioPage/MusicVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="MusicVolumeValue" type="Label" parent="Frame/Screen/Body/AudioPage/MusicVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="EffectsVolumeRow" type="HBoxContainer" parent="Frame/Screen/Body/AudioPage"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Label" type="Label" parent="Frame/Screen/Body/AudioPage/EffectsVolumeRow"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionLabel"
+text = "Effects volume"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="EffectsVolume" type="HSlider" parent="Frame/Screen/Body/AudioPage/EffectsVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 32)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="EffectsVolumeValue" type="Label" parent="Frame/Screen/Body/AudioPage/EffectsVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"OptionValue"
+text = "1.00"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Footer" type="HBoxContainer" parent="Frame/Screen/Body"]
+layout_mode = 2
+alignment = 2
+
+[node name="OptionsBack" type="Button" parent="Frame/Screen/Body/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(196, 52)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "BACK"
+clip_text = true
+text_overrun_behavior = 3

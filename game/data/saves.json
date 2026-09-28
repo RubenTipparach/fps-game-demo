@@ -1,0 +1,9 @@
+// Saving, the save slots and the pause menu (openspec/specs/title-and-pause).
+{
+  // slot_1 to slot_3, beside quick and auto.
+  "named_slots": 3,
+  // Quit to title asks once when the newest save is older than this.
+  "quit_warn_after_s": 300,
+  // A hostile that can see the runner within this range refuses a save.
+  "hostile_watch_m": 25
+}

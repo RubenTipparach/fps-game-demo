@@ -23,6 +23,9 @@ public partial class UiCapture : Node
     /// <summary>The UI to capture.</summary>
     [Export] public PackedScene ScreensScene { get; set; } = null!;
 
+    /// <summary>The title screen, captured last over its own backdrop.</summary>
+    [Export] public PackedScene TitleScene { get; set; } = null!;
+
     /// <summary>Where the PNGs go, relative to the project folder.</summary>
     [Export] public string OutDir { get; set; } = "../docs/screenshots/undercity_ui";
 
@@ -74,6 +77,36 @@ public partial class UiCapture : Node
         await Shot(dir, "terminal");
         _screens.OpenTerminal("hub:capsule_terminal", UiFixture.BusyTerminal(services.Data));
         await Shot(dir, "terminal_actions");
+
+        // Title and pause (mockups D5-D7), with saves like the D6 mockup's.
+        _screens.CloseAll();
+        UiFixture.StageSaves(services);
+        var pause = _screens.GetNode<PauseScreen>("%Pause");
+        _screens.OpenPause();
+        await Shot(dir, "pause");
+        pause.GetNode<Button>("%LoadItem").EmitSignal(BaseButton.SignalName.Pressed);
+        await Shot(dir, "pause_load");
+        _screens.CloseAll();
+        ((StubLevelHost)services.Level).Refusal = "Not while hostiles can see you.";
+        _screens.OpenPause();
+        await Shot(dir, "pause_refused");
+        ((StubLevelHost)services.Level).Refusal = "";
+        pause.GetNode<Button>("%OptionsItem").EmitSignal(BaseButton.SignalName.Pressed);
+        var options = _screens.GetNode<OptionsScreen>("%Options");
+        foreach (var (page, name) in new[] { (0, "options_controls"), (1, "options_video"), (2, "options_audio") })
+        {
+            options.ShowPage(page);
+            await Shot(dir, name);
+        }
+        _screens.CloseAll();
+
+        _screens.Visible = false;
+        var title = TitleScene.Instantiate<TitleScreen>();
+        title.Begin(new StubShell(), services.Saves, services.Data);
+        AddChild(title);
+        await Shot(dir, "title");
+        title.GetNode<Button>("%LoadItem").EmitSignal(BaseButton.SignalName.Pressed);
+        await Shot(dir, "title_load");
         GetTree().Quit();
     }
 
