@@ -5,7 +5,7 @@ SHA-256 check of every pack, unpacking a verified pack, and telling whether a fi
 a file of a pack. It lives in tools/deps, beside the list it reads, and is plain Python with
 no Blender import, because the NPC builds (tools/blender/build_npcs.py, build_npc_clips.py)
 import it inside Blender to resolve every asset against the same packs the fetch verified
-(openspec/changes/npc-characters, design section 2). One implementation of the pin.
+(openspec/changes/archive/2026-09-28-npc-characters, design section 2). One implementation of the pin.
 
 The cache is $UNDERCITY_DEPS, or ~/.cache/undercity/deps when that is unset. It must not be
 inside the repository: the packs are 340 MB, and one of them is a GPL tool that never ships.

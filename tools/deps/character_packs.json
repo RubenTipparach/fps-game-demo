@@ -1,5 +1,5 @@
 {
-  "_comment": "The allowlist of packs the NPC body build may read (openspec/changes/npc-characters, design section 2). Each pack is pinned by the SHA-256 of its download. tools/deps/fetch_character_tools.py fetches them into a cache outside the repository and refuses a pack whose hash differs; tools/blender/build_npcs.py and build_npc_clips.py resolve every asset they read against these packs only. The GPL tool never ships: only its output does, and its authors claim nothing over output.",
+  "_comment": "The allowlist of packs the NPC body build may read (openspec/changes/archive/2026-09-28-npc-characters, design section 2). Each pack is pinned by the SHA-256 of its download. tools/deps/fetch_character_tools.py fetches them into a cache outside the repository and refuses a pack whose hash differs; tools/blender/build_npcs.py and build_npc_clips.py resolve every asset they read against these packs only. The GPL tool never ships: only its output does, and its authors claim nothing over output.",
   "packs": [
     {
       "id": "mpfb",

@@ -1,7 +1,7 @@
 // An NPC's ragdoll (the "Ragdoll" node that tools/godot/gen_npc_scenes.gd puts under each body's
 // skeleton): it readies the joints at the rest pose, keeps neighbouring bodies from colliding,
 // and on a death or knockout simulates for the data's settle time, then freezes the body in the
-// pose it reached (openspec/changes/npc-characters, design section 7).
+// pose it reached (openspec/changes/archive/2026-09-28-npc-characters, design section 7).
 //
 // It lives in the Godot layer because it only drives the physics engine: whether an NPC dies is
 // the game's rule, and how long a body settles is data (data/npc_bodies.json, ragdoll.settle_s).

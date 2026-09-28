@@ -1,5 +1,5 @@
 // The NPC body table: clips for every state an NPC can be in, and a ragdoll that settles in the
-// time the spec gives (openspec/changes/npc-characters).
+// time the spec gives (openspec/changes/archive/2026-09-28-npc-characters).
 
 using Undercity.Core.Data;
 using Undercity.Core.World;

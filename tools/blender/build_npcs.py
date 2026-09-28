@@ -1,6 +1,6 @@
 """Undercity NPC bodies: MPFB 2 humans made game-ready, one glb per body, from tools/blender/npcs.json.
 
-It owns the NPC body models (openspec/changes/npc-characters, design sections 1-4 and 8). Every
+It owns the NPC body models (openspec/changes/archive/2026-09-28-npc-characters, design sections 1-4 and 8). Every
 row of the table becomes game/models/characters/<id>.glb:
   - a human built by MPFB's own services (HumanService, RandomizationService for civilians), with
     the game_engine rig (53 bones), a low-poly proxy body, eyes, brows, lashes, hair and the CC0

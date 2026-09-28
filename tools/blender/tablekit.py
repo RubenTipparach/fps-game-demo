@@ -5,7 +5,7 @@ keys, lists, objects that refuse unknown keys, and maps, each failing with the p
 offending field (CLAUDE.md 5.6: an unknown key is an error, authored data fails loudly). It lives
 in tools/blender as plain Python with no bpy, so a table can be checked without Blender. It was
 split out of the retired segmented-character table's loader (character_data.py) when the
-generated NPC bodies replaced those characters (openspec/changes/npc-characters, task 5.4).
+generated NPC bodies replaced those characters (openspec/changes/archive/2026-09-28-npc-characters, task 5.4).
 """
 import copy
 import math

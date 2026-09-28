@@ -1,6 +1,6 @@
 """Undercity's own NPC clips, keyed on the Universal Animation Library's rig: Surrender and Cower.
 
-It owns game/animations/undercity_clips.glb (openspec/changes/npc-characters, design section 6,
+It owns game/animations/undercity_clips.glb (openspec/changes/archive/2026-09-28-npc-characters, design section 6,
 task 3.2): the clips UAL Standard lacks that combat-and-enemies needs, authored from
 tools/blender/npc_clips.json. The glb holds UAL's own armature (imported from the pinned pack,
 same bone names and rest pose), one tiny triangle skinned to it so Godot builds a Skeleton3D,

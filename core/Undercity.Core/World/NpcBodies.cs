@@ -1,6 +1,6 @@
 // How NPC bodies move and fall (data/npc_bodies.json): which clip of the shared animation library
 // plays for each NPC state, the cross-fade, and the ragdoll profile the NPC scene generator
-// builds (openspec/changes/npc-characters, design sections 6 and 7).
+// builds (openspec/changes/archive/2026-09-28-npc-characters, design sections 6 and 7).
 //
 // It lives in the core because it is tuning in a data file, and every data file loads, validates
 // and cross-checks here (CLAUDE.md 5.5, 5.6): a state an NPC names but the table lacks, or a

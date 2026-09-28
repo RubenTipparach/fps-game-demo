@@ -1,6 +1,6 @@
 # Spike: the NPC body pipeline (measurement, 2026-09-27/28)
 
-The measurement behind `openspec/changes/npc-characters`. It checked whether MPFB2 can generate
+The measurement behind `openspec/changes/archive/2026-09-28-npc-characters`. It checked whether MPFB2 can generate
 game-ready NPC bodies headless in Blender, whether one CC0 animation library drives all of them
 in Godot, and whether their ragdolls fall and settle. **It is reference only and part of no
 build** (CLAUDE.md 5.6, "a reference checkout is never part of a build"). The change's tasks

@@ -50,8 +50,11 @@ lavapipe Vulkan driver after a long rendered session, which points at the driver
 established either way on real hardware.
 
 The video `docs/screenshots/npc_bodies/npc_motion.mp4` comes from
-`docs/playtest/scripts/npc_motion.json`, written with `--write-movie` at 30 fps: a MerSec patrol
-walking, Tank talking, and a civilian falling to rest.
+`docs/playtest/scripts/npc_motion.json`, written with `--write-movie` at 30 fps (358 frames,
+11.9 s, encoded to H.264 at 1280 x 720): a MerSec patrol walking toward the camera, Tank talking
+under the dialog, and a civilian crumpling and coming to rest within half a second. That run
+rendered for 20 minutes and quit with exit 0, so the quit segfault above doesn't happen every
+time.
 
 ## What the checks establish
 
@@ -65,7 +68,7 @@ walking, Tank talking, and a civilian falling to rest.
 ## What they don't establish
 
 - **Frame cost.** Lavapipe doesn't measure it. The hub now draws 25 skinned bodies of 10-16k
-  triangles where the segmented figures had about a tenth of that; this needs a GPU (task 5.2).
+  triangles where the segmented figures had about a tenth of that; this needs a GPU (`combat-and-enemies` task 5.1).
 - **Death in play.** No weapon fires yet, so only the test harness's `kill` step collapses a
   body. Combat (`combat-and-enemies`) is what will.
 - **Clothes at extreme poses.** The authored gear is tested against the body; the CC0 clothes

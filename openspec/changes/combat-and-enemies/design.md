@@ -134,15 +134,15 @@ Each counter is taught in the world before it's needed. The level changes list w
   - Hurting without killing is a crime too.
 - **Knockouts.** A knocked-out NPC is `Unconscious`. They wake after 120 s unless moved. Dragging
   and hiding bodies is Stealth's job (perception-and-disguise, bodies).
-- **Bodies.** Deaths and knockouts hand the body to a ragdoll (npc-characters, design section 4).
+- **Bodies.** Deaths and knockouts hand the body to a ragdoll (`openspec/specs/npc-characters`; npc-characters design section 7).
   The ragdoll settles within 3 s, then freezes, so a body costs nothing after it lands.
 
 ## Risks / Trade-offs
 
 - **Brushfire's enemies are arena monsters.** Undercity needs humanoids that act, talk, sleep
   and fall. Their bodies are the npc-characters change: generated humans on Godot's humanoid
-  profile, a shared animation library and ragdolls. That replaces the segmented rigs of decision
-  C1, which stay in the hub only until the new characters land.
+  profile, a shared animation library and ragdolls. They replaced the segmented rigs of decision
+  C1 in the hub on 2026-09-28 (`openspec/specs/npc-characters`).
 - **Shooting quest givers can dead-end the story.**
   - Every mission keeps a route that doesn't need a given NPC alive, and each design lists it.
   - The journal says which quest failed and why.

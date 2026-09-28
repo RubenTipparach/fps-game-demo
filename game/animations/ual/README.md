@@ -1,7 +1,7 @@
 # Universal Animation Library, Standard (Quaternius)
 
 `ual_standard.glb` is the shared animation library every Undercity NPC plays
-(openspec/changes/npc-characters, design section 6). It is borrowed as is (CLAUDE.md 5.6,
+(openspec/changes/archive/2026-09-28-npc-characters, design section 6). It is borrowed as is (CLAUDE.md 5.6,
 provenance):
 
 | | |

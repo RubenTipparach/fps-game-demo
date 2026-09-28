@@ -243,7 +243,7 @@ BRUSHFIRE_BATCH="res://levels/csg/level_csg.tscn:csg,nav,lightmap;res://levels/t
 
 ### Undercity's NPC bodies
 
-Every NPC body is generated from `tools/blender/npcs.json` (openspec/changes/npc-characters).
+Every NPC body is generated from `tools/blender/npcs.json` (openspec/changes/archive/2026-09-28-npc-characters).
 The packs it draws on stay outside the repository, pinned by SHA-256 in
 `tools/deps/character_packs.json`. MPFB2 and the CC0 assets download; the pinned UAL build is no
 longer offered (its page now serves a newer, different file), so copy a verified

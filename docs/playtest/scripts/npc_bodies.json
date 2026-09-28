@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_npc_bodies", "god": true,
  "steps": [
-  {"log": "the generated NPC bodies in the hub (openspec/changes/npc-characters, task 2.1 and 5.3)"},
+  {"log": "the generated NPC bodies in the hub (openspec/changes/archive/2026-09-28-npc-characters, task 2.1 and 5.3)"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"wait": 20},
   {"goto": "hub:tank", "distance": 2.4, "pitch": -4},

@@ -1,6 +1,6 @@
 # Writes the NPC bone maps and the retarget import options of every NPC body glb and every shared
 # animation library, so each body and each clip lands on Godot's SkeletonProfileHumanoid
-# (openspec/changes/npc-characters, design section 5).
+# (openspec/changes/archive/2026-09-28-npc-characters, design section 5).
 #
 #   godot --headless --path game --import                                  # first sight of new glbs
 #   godot --headless --path game -s res://../tools/godot/setup_npc_import.gd

@@ -1,6 +1,6 @@
 """Stills of the Undercity NPC bodies, rendered from the exported glbs.
 
-It owns the pictures that show the generated bodies (openspec/changes/npc-characters): every
+It owns the pictures that show the generated bodies (openspec/changes/archive/2026-09-28-npc-characters): every
 body of tools/blender/npcs.json front on in rows with its id under it, the three faction outfits
 close up from three-quarters, and the same outfits at the stress pose the build checks gear
 against, and a strip of the Surrender and Cower clips. It imports the committed

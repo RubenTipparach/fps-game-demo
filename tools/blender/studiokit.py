@@ -5,7 +5,7 @@ cool blue fill, a rim; CLAUDE.md 7.3), flat materials, floor planes, text labels
 camera, playing one clip at a frame, and writing a still. It lives in tools/blender beside the
 builds it pictures. It was split out of the retired segmented-character renderer
 (render_characters.py) when the generated NPC bodies replaced those characters
-(openspec/changes/npc-characters, task 5.4).
+(openspec/changes/archive/2026-09-28-npc-characters, task 5.4).
 """
 import math
 import os

@@ -1,4 +1,4 @@
-// How NPC bodies move and fall (openspec/changes/npc-characters, design sections 6 and 7).
+// How NPC bodies move and fall (openspec/changes/archive/2026-09-28-npc-characters, design sections 6 and 7).
 // Clip names are those of the shared libraries in game/animations: UAL Standard (no prefix, the
 // "_Loop" suffix stripped by the import) and our own clips (the "undercity/" library).
 {

@@ -1,6 +1,6 @@
 // The ragdoll check (scenes/undercity/tests/ragdoll_test.tscn): stands every generated NPC scene on a
 // 0.45 m step with its back to the edge, collapses it with a shove to the chest, and checks the
-// spec (openspec/changes/npc-characters, "Deaths and knockouts are ragdolls that come to rest"):
+// spec (openspec/changes/archive/2026-09-28-npc-characters, "Deaths and knockouts are ragdolls that come to rest"):
 // the body falls off the step without exploding, and it is frozen once data/npc_bodies.json's
 // settle time is up. Prints PASS or FAIL per body and quits with 1 on any failure.
 //

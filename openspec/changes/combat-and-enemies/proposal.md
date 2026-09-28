@@ -51,7 +51,8 @@ None.
 - `Undercity.Core/Combat`, `data/weapons.json`, `data/enemies.json`.
 - Brushfire's weapon and enemy code stays for the reference maps. Undercity NPCs use the core
   through `npc.tscn`.
-- Their bodies come from `openspec/changes/npc-characters`:
+- Their bodies are built (`openspec/specs/npc-characters`; design in the archived change
+  `2026-09-28-npc-characters`):
   - generated characters, rigged to Godot's humanoid profile;
   - a shared animation library;
   - ragdolls for deaths and knockouts.

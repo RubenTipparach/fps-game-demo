@@ -46,7 +46,8 @@
 - [x] 5.1 Every named NPC and the civilian seeds. Outfits as the owner decides (H3).
 - [x] 5.2 Moved to `combat-and-enemies` (its task 5.1): frame time needs a GPU, and combat puts
   the most bodies on screen.
-- [ ] 5.3 Video: idle, talk, walk and a death to rest, on three bodies (CLAUDE.md 9).
+- [x] 5.3 Video: idle, talk, walk and a death to rest, on three bodies (CLAUDE.md 9).
+  `docs/screenshots/npc_bodies/npc_motion.mp4`, 11.9 s.
 - [x] 5.4 Retire `tools/blender/build_characters.py` and the segmented models.
-- [ ] 5.5 Move the requirements into `openspec/specs/npc-characters` with their checks, and
+- [x] 5.5 Move the requirements into `openspec/specs/npc-characters` with their checks, and
   archive the change.

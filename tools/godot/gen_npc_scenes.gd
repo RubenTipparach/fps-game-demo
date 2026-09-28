@@ -1,7 +1,7 @@
 # Generates one NPC scene per body glb: game/scenes/undercity/npcs/<id>.tscn, an inherited scene
 # of game/models/characters/<id>.glb with the ragdoll (a PhysicalBoneSimulator3D of capsules and
 # joints, from data/npc_bodies.json) and an AnimationPlayer holding the shared libraries
-# (openspec/changes/npc-characters, design sections 6 and 7).
+# (openspec/changes/archive/2026-09-28-npc-characters, design sections 6 and 7).
 #
 #   godot --headless --path game -s res://../tools/godot/gen_npc_scenes.gd
 #
