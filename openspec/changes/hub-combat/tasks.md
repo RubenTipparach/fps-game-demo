@@ -40,7 +40,7 @@
 - [ ] 4.4 Defences: fight (ranged, melee), flee, cower and surrender on a `NavigationAgent3D`,
   with the UAL clips listed in the design.
 - [ ] 4.5 The HUD's loaded / reserve readout, "RELOADING", and the hit marker on the crosshair.
-- [ ] 4.6 Death: fade, "You died.", load the newest save (survey I15).
+- [ ] 4.6 Death: fade, "You died.", load the newest save (owner I15).
 
 ## 5. Checks and captures
 

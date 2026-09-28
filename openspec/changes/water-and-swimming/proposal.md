@@ -17,6 +17,11 @@ What happens today, measured:
 - The one ladder, at the outfall, is decoration: 4 cm rungs that the step-up rule can't stand on.
 - From under the surface nothing looks or sounds different: `docs/screenshots/water_and_swimming/baseline_fallen_in_the_cut.png`.
 
+The owner answered the survey on 2026-09-28: the recommendations for I3 to I6 accepted, and to
+I3 (drowning) they added "swimming consumes stamina but slowly". So drowning is on, the exits
+are as designed, the drowned locker moves under water (I5), the breath meter D8 is approved
+(I6), and swimming tires you. I1 puts this change first.
+
 Swimming was a non-goal of the Drains (a scripted 35 s swim with a breath bar). A hub with a
 canal down its middle makes it a system: the same rules serve the Cut, the dry dock and the
 Drains' flooded bypass.
@@ -30,6 +35,9 @@ Drains' flooded bypass.
   and noise come from `data/water.json`.
 - **Breath.** 45 s under water, the Drains' number, then 8 damage a second. Breath refills in
   3 s at the surface. One rule in the core, shared with the Drains' bypass.
+- **Stamina for swimming** (owner, I3): 100 points, draining 0.8 a second while swimming, so a
+  runner can swim about 125 s before tiring. Tired, they swim at half speed. It refills in
+  about 8 s out of deep water. Heavier breathing warns you; it adds no meter.
 - **Ways out.** Climbable ladders on every quay, no more than 25 m of swimming from anywhere,
   and a mantle onto any ledge up to 1.0 m above the water: boat decks, the outfall ledge. The
   outfall's decorative ladder becomes a real one.
@@ -38,8 +46,9 @@ Drains' flooded bypass.
 - **Seeing and hearing water.** A water shader (depth colour, scrolling normals, rain ripples,
   refraction, both faces drawn), an underwater fog and tint, and muffled sound below the
   surface.
-- **A breath meter on the HUD**, shown only while it isn't full. It is new UI, so it waits for
-  the owner's approval of mockup D8 (survey I6).
+- **A breath meter on the HUD**, shown only while it isn't full: mockup D8, approved (survey I6).
+- **The drowned locker moves under water** (survey I5), to the bed under the Tin Bridge, as its
+  map note always said.
 - **People stay out of the water.** "People stand clear of the level" (level geometry) grows a
   clause: no standing spot or patrol leg in water.
 

@@ -36,6 +36,20 @@ included.
 - **WHEN** a player with no breath left surfaces for 3 s
 - **THEN** their breath is full again
 
+### Requirement: Swimming tires the swimmer
+Swimming SHALL drain stamina at `swim_stamina_per_s` (0.8) from `stamina_max` (100), and a
+swimmer with none left SHALL move at `tired_speed_factor` (0.5) of their swimming speeds.
+Stamina SHALL refill at `stamina_regen_per_s` (12) while wading or dry. Drowning, not stamina,
+does damage.
+
+#### Scenario: A long swim
+- **WHEN** the runner swims without stopping for 130 s
+- **THEN** their stamina is 0, they swim at 1.4-1.6 m/s, and their health is unchanged by it
+
+#### Scenario: A rest on the quay
+- **WHEN** a tired runner climbs out and stands on the quay for 9 s
+- **THEN** their stamina is full again
+
 ### Requirement: Ladders and ledges lead out of the water
 A ladder SHALL be climbable at 2.4 m/s by facing it and moving forward, and SHALL put the player
 on the floor at its top. A ledge whose top is 0.2-1.0 m above the water surface, within 0.6 m in

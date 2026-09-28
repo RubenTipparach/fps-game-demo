@@ -20,7 +20,7 @@
 - [ ] 3.3 `conversation_rig.tscn`, placed and ramped by the dialog screen; the motivated key
   side; district gels.
 - [ ] 3.4 Tune the energies until all five conversations meet the targets.
-- [ ] 3.5 The framing, only if mockup D9 is approved (survey I11).
+- [ ] 3.5 The framing, as approved in mockup D9 (owner I11).
 
 ## 4. Records
 

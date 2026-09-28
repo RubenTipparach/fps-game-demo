@@ -14,6 +14,7 @@
   material in the import presets.
 - [ ] 2.2 The player camera's far plane to 1,500 m; the skyline sector in `hub.tscn` with no
   LightmapGI.
+- [ ] 2.3 The Spire's two searchlights (owner I8): additive beam shader and sweep.
 
 ## 3. Map
 

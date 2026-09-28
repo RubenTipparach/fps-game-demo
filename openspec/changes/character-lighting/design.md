@@ -166,11 +166,11 @@ The check:
 The energies above are starting values; the task that builds the rig tunes them to the targets
 on these captures.
 
-### 6. Optional: framing the conversation (mockup D9)
+### 6. Framing the conversation (mockup D9, approved by the owner, survey I11)
 
 On opening, the field of view narrows from 67° to 48° over 0.4 s, and the pitch recentres so the
 face sits 34 % from the top, above the dialog band. It returns on close. The camera doesn't
-move. It changes an approved screen's behaviour, so it waits for mockup D9 and survey I11.
+move.
 
 ### 7. Data
 
@@ -208,10 +208,7 @@ role):
 - **Gels can look garish.** The energies are data, and the captures show them to the owner
   before anything is archived.
 
-## Open Questions
+## Owner decisions (survey, 2026-09-28)
 
-For the owner, in the survey:
-- I9: the wrist light (always on, a toggle, or the flashlight only);
-- I10: the gel rig (key and two gels, or a key alone);
-- I11: the conversation framing (mockup D9);
-- I12: skin normals from the CC0 detail, plus the roughness mask and subsurface scattering.
+All recommendations accepted: I9, the wrist glow always on; I10, the key and two gels; I11,
+mockup D9 approved; I12, the skin as designed. I1 builds this third.

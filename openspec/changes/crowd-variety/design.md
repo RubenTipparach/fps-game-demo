@@ -128,8 +128,9 @@ Lantern Row: resident; Drydock and Kiln: dockhand), or a `role` prop in `hub_ent
 - **More bodies, more memory.** About 14 MB of glb and textures on disk. At runtime only the
   bodies in use load, at most 18 civilians at once in the hub.
 
-## Open Questions
+## Owner decisions (survey, 2026-09-28)
 
-For the owner, in the survey:
-- I13: the scale (18 bodies and runtime variation; more bodies; or runtime only);
-- I14: cyber-mod accessories.
+- I13: 18 civilian bodies, 3 MerSec faces and the runtime variation, as designed
+  (recommendation accepted).
+- I14: cyber-mod accessories on civilians (recommendation accepted).
+- I1 builds this fifth.

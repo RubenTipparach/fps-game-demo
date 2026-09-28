@@ -27,8 +27,7 @@ The baseline stills from the market and the Cut show rooftops, then empty, fogge
 
 **Non-Goals**
 - Towers you can enter. The Upper City is a later level.
-- Flying traffic and animated crowds in windows. The survey offers searchlights and an ad blimp
-  (I8).
+- Flying traffic, an ad blimp, and animated crowds in windows.
 
 ## Decisions
 
@@ -104,6 +103,14 @@ collision, in the skyline sector.
 - The rain stays over the hub; the haze stands in for distant rain.
 - Meshes merge per material and per ring, 6 draw calls at most.
 
+### 3a. Searchlights (owner, survey I8)
+
+Two beams rise from the Halcyon Spire's crown at 420 m. Each is a long open cone, 3° wide and
+900 m long, with an additive unshaded shader. The shader fades along the beam and with the
+viewing angle, so a beam seen end-on doesn't blow out. They sweep in slow, opposite circles
+(periods of 47 s and 61 s, so they rarely line up), tilted 20-35° from vertical. They cost two
+draw calls, and cast no light: they are sky decoration.
+
 ### 4. The map
 
 `render_map.py` draws a locator inset in the legend panel, "Low Harbor in Meridian". It shows
@@ -130,9 +137,8 @@ outside it.
 - **The label says the foundation wall carries "400 m of tower above".** The Spire at 440 m
   total, 400 m above the wall, keeps that true.
 
-## Open Questions
+## Owner decisions (survey, 2026-09-28)
 
-For the owner, in the survey:
-- I7: how to render (all meshes with their own haze, recommended; or a painted panorama for
-  the far ring);
-- I8: the scale and extras (searchlights, an ad blimp).
+- I7: all towers as meshes with their own haze (recommendation accepted).
+- I8: the scale as designed, plus searchlights (recommendation accepted): section 3a.
+- I1 builds this fourth.

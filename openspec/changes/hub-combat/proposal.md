@@ -19,10 +19,14 @@ It is a prop, though. Measured in the code:
 - **A bug waits for the first death.** A killed civilian's status is written under the id
   "civ", so the level still counts them as alive.
 
+The owner answered on 2026-09-28: I1 and I2 accepted (build this second, after water; the Kestrel
+fires in the hub, everyone can be shot, gunfire is a crime, MerSec fight back), and I15 accepted
+(death reloads the newest save, no death screen).
+
 The owner decided on 2026-09-27 (survey G2) that combat comes with the Drains. This change takes
 the part of `combat-and-enemies` that the hub needs and lands it first. Everything that needs the
 Drains' enemies stays in `combat-and-enemies`: non-lethal tools, EMP, takedowns and the
-archetypes. The survey asks the owner to confirm the new order (I1, I2).
+archetypes. The owner confirmed the new order (I1, I2).
 
 ## What Changes
 

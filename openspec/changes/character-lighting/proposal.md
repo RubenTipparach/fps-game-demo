@@ -54,9 +54,11 @@ Why:
   They light characters only and ramp out when the conversation ends.
 - **Targets that a check measures.** In conversation, a face's mean luma is 95-150, its lit side
   is 2-4 times its shadow side, and the gel rim shows. The world's luma stays within 2 %.
-- **Optional: a conversation framing** that narrows the view onto the speaker's face above the
-  dialog band. It is new camera behaviour for an approved screen, so it waits for mockup D9
-  (survey I11).
+- **A conversation framing** that narrows the view onto the speaker's face above the dialog
+  band: mockup D9, approved (survey I11).
+
+The owner answered on 2026-09-28: I9 to I12 accepted as recommended (the wrist glow always on,
+the key and two gels, the D9 framing, the skin as designed). I1 builds this third.
 
 ## Capabilities
 

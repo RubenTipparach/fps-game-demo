@@ -3131,7 +3131,7 @@ SHED</title></path>
 <section id="water">
   <div class="sh"><span class="key">F14</span><h2>Water, swimming and ways out</h2><span class="spec">openspec/changes/water-and-swimming</span></div>
   <p class="intro">Owner, 2026-09-28: "Falling into the Bay there's no water physics, swimming, and no way to get back out." Today the water is a flat, opaque surface with no collider. A fall sinks you to the bed, 4.5 m under a quay you can't jump to. The fix is one set of rules for every water body, the Drains' bypass included: wade, swim, hold your breath, and always have a way out within 25 m.</p>
-  <div class="controls"><span class="chip proposed">Proposed · survey I3 to I6</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (I3 to I6) · building first</span></div>
   <div class="sub">
     <h3>The Cut in section <small>measured heights; 60 px = 1 m</small></h3>
     <div class="diagram" role="img" aria-label="Section through the Cut's quay showing the water, the bed, the jump height, a ladder and a boat ledge">
@@ -3177,12 +3177,13 @@ SHED</title></path>
         <tr><td>Swim speed / dive / rise</td><td class="n">3.0 / 2.4 / 2.0 m/s</td><td>along the look direction; a ±20° dead zone at the surface</td></tr>
         <tr><td>Floating</td><td class="n">eyes 0.15 m up</td><td>spring 18/s², damping 7/s: settles without bobbing</td></tr>
         <tr><td>Breath</td><td class="n">45 s</td><td>the Drains' bypass number; refills in 3 s; then 8 damage/s</td></tr>
+        <tr><td>Stamina (owner, I3)</td><td class="n">100, -0.8/s</td><td>"swimming consumes stamina but slowly": 125 s of swimming, then half speed; refills in about 8 s out of deep water; heavier breathing below 25 %, no meter</td></tr>
         <tr><td>Ladders</td><td class="n">every 30 m</td><td>3 m clear of bridges, boats and pillars; a 1.2 m gap in the railing</td></tr>
         <tr><td>Bodies and items</td><td class="n">x1.15 buoyancy</td><td>ragdolls float face down; dropped items sink at 0.6 m/s and can be picked up on the bed</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">
-    <h3>D8 · The breath meter <small>new HUD element; shown only while breath isn't full</small></h3>
+    <h3>D8 · The breath meter <small>approved (I6); shown only while breath isn't full</small></h3>
     <div class="diagram" role="img" aria-label="Breath meter mockup under the health panel, full, draining and low">
       <svg viewBox="0 0 1600 300">
         <rect width="1600" height="300" fill="#0a0f14"/>
@@ -3221,7 +3222,7 @@ SHED</title></path>
 <section id="skyline">
   <div class="sh"><span class="key">F15</span><h2>Meridian's towers</h2><span class="spec">openspec/changes/hub-skyline</span></div>
   <p class="intro">Owner, 2026-09-28: "There should be mega skyscrapers surrounding our little slum area." Nothing in the hub stands above the 40 m foundation wall, and past the rooftops there is empty, fogged sky. The skyline puts the Halcyon Spire (440 m) and a ring of named megastructures around Low Harbor. They render unshaded, with lit windows and their own darker haze, so they read as towers, not fog ghosts.</p>
-  <div class="controls"><span class="chip proposed">Proposed · survey I7, I8</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (I7, I8, with searchlights) · fourth</span></div>
   <div class="sub">
     <h3>Plan <small>layout metres; the hub is the lit rectangle; heights in metres</small></h3>
     <div class="diagram" role="img" aria-label="Plan of the hub surrounded by the named towers of the skyline">
@@ -3266,6 +3267,7 @@ SHED</title></path>
         <tr><td>Fog 0.011: 11 % left at 200 m, fading to a colour lighter than the sky</td><td>Towers ignore the scene fog; their own haze (0.0018/m) fades toward #151733, darker than the horizon</td></tr>
         <tr><td>Nothing above 40 m</td><td>Unshaded towers: procedural lit windows (warm, cool, a touch of neon), neon crowns, red beacons blinking every 1.6 s</td></tr>
         <tr><td>The Skyway ends 4 m past the edge</td><td>It carries on 200 m into the city, as scenery</td></tr>
+        <tr><td>A still sky</td><td>Two searchlights sweep from the Spire's crown (owner, I8): additive beams, periods of 47 s and 61 s</td></tr>
         <tr><td>Budget</td><td>At most 30,000 triangles, 6 draw calls, no shadows, no collision, no lightmap</td></tr>
       </tbody></table></div>
   </div>
@@ -3275,7 +3277,7 @@ SHED</title></path>
 <section id="faces">
   <div class="sh"><span class="key">F16</span><h2>Faces, skin and coloured gels</h2><span class="spec">openspec/changes/character-lighting</span></div>
   <p class="intro">Owner, 2026-09-28: faces are too dark in conversation, skin needs normal maps, and the runner needs a light source; coloured gels suit cyberpunk. Measured: Tank's face at the bar is 23 of 255 luma, while Lin under the shrine's lights is 161. Faces read only where the level happens to light them. The fix is new lights that touch only characters: the wrist-deck's glow, and a key and two gels when a conversation opens. It follows the owner's reference (Digital Camera's lighting guide: LOOP, KEY WITH A CLOSE SOFTBOX, COLOURED GELS).</p>
-  <div class="controls"><span class="chip proposed">Proposed · survey I9 to I12</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (I9 to I12) · third</span></div>
   <div class="sub">
     <h3>The conversation rig, from above <small>angles around the speaker's head, 0° toward the camera</small></h3>
     <div class="diagram" role="img" aria-label="Top view of the conversation lighting rig: warm key, magenta rim gel, blue accent gel and the wrist light">
@@ -3310,7 +3312,7 @@ SHED</title></path>
     <p class="note">Skin gains a normal map derived from its CC0 texture's own pores and creases, a roughness mask shared by every body (oilier T-zone), subsurface scattering in skin mode and the MakeHuman specular (F0 0.028). Gels by district: Lantern Row magenta/cyan, Sump Market cyan/magenta, Tin Stacks amber/blue, Kiln ember/blue, Drydock sodium/violet.</p>
   </div>
   <div class="sub">
-    <h3>D9 · Conversation framing <small>optional; today the view just freezes</small></h3>
+    <h3>D9 · Conversation framing <small>approved (I11); today the view just freezes</small></h3>
     <div class="diagram" role="img" aria-label="Two conversation frames: today's 67 degree view and a 48 degree framing with the face above the dialog band">
       <svg viewBox="0 0 1600 480">
         <rect width="1600" height="480" fill="#0a0f14"/>
@@ -3340,7 +3342,7 @@ SHED</title></path>
 <section id="crowd">
   <div class="sh"><span class="key">F17</span><h2>The crowd</h2><span class="spec">openspec/changes/crowd-variety</span></div>
   <p class="intro">Owner, 2026-09-28: "would be cool to have some variety in NPCs too." Today 31 civilians share 6 bodies (about 5 twins each), the 5 troopers share one face, and everyone plays the same idle. The plan: 18 civilian bodies and 3 trooper bodies, plus runtime variety picked by one rule in the core, so a save reproduces the crowd.</p>
-  <div class="controls"><span class="chip proposed">Proposed · survey I13, I14</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (I13, I14) · fifth</span></div>
   <div class="sub">
     <div class="scroll"><table class="tbl">
       <thead><tr><th>Varies</th><th>How</th></tr></thead>
@@ -3359,7 +3361,7 @@ SHED</title></path>
 <section id="hubcombat">
   <div class="sh"><span class="key">F18</span><h2>The Kestrel fires</h2><span class="spec">openspec/changes/hub-combat</span></div>
   <p class="intro">Owner, 2026-09-28: "I wish I had a gun in the main hub to actually do stuff." The runner already carries the Kestrel on belt key 2, but it's a prop: nothing fires it, and NPCs can't be hurt. This is the hub's slice of F10, landing first: the Kestrel fires from the pack's ammo, everyone can be shot, those who can defend themselves do, gunfire is a crime, and the runner can die. The HUD readout ("12 / 36") is already in the approved D3 mockup.</p>
-  <div class="controls"><span class="chip proposed">Proposed · survey I1, I2, I15</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (I1, I2, I15) · second</span></div>
   <div class="sub">
     <h3>Weapons in the hub <small>data/weapons.json; numbers from F10</small></h3>
     <div class="scroll"><table class="tbl">
@@ -3393,7 +3395,7 @@ SHED</title></path>
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag y">I1 to I15 playtest 2 (open)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (open)</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>

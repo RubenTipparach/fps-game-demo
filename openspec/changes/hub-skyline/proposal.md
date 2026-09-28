@@ -38,6 +38,7 @@ Spire". Nothing in the level shows the city it is the bottom of. Measured:
   - the camera's far plane goes from 400 m to 1,500 m.
 - **A rule a check enforces:** from the hub's centre, every 30° of the horizon holds a tower
   rising at least 25° above it. No empty sky in any direction.
+- **Searchlights** (owner, survey I8): two beams sweeping from the Halcyon Spire's crown.
 - **The map shows it:** a locator inset in the legend draws Low Harbor inside the ring, with the
   named towers.
 

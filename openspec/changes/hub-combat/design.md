@@ -181,10 +181,10 @@ live in `data/combat.json`.
 - **Brushfire's code predates the rules** (CLAUDE.md 13). The two seams (`IAmmoSource` and the
   HUD null checks) are the only changes inside it.
 
-## Open Questions
+## Owner decisions (survey, 2026-09-28)
 
-For the owner, in the survey:
-- I1: the build order;
-- I2: the Kestrel fires in the hub now, shooting is a crime, and MerSec fight back (this revises
-  G2);
-- I15: death reloads the newest save, with no death screen.
+- I1: built second, after `water-and-swimming` (recommendation accepted).
+- I2: the Kestrel fires in the hub now, everyone can be shot, gunfire is a crime and MerSec fight
+  back, as designed. This revises G2 (recommendation accepted).
+- I15: death fades out and loads the newest save, with no death screen (recommendation
+  accepted).

@@ -8,6 +8,8 @@
   health rule; saved with the game. Tests for the two breath scenarios and the edges (zero
   refill time refused by validation, damage never below the death rule).
 - [ ] 1.3 The belt refuses to draw while swimming (core rule, with a test).
+- [ ] 1.4 `Undercity.Core/Vitals/Stamina.cs` (owner I3): drains while swimming, refills out of
+  deep water, tired speed factor; saved. Tests for both stamina scenarios.
 
 ## 2. Layout and plan
 
@@ -17,6 +19,7 @@
 - [ ] 2.3 The exit rule: sample every surface on a 1 m grid; refuse a plan with any point more
   than 25 m from an exit. Regression: a canal with its ladders removed fails, naming the point.
 - [ ] 2.4 `check_standing_room` keeps people and patrol legs out of water.
+- [ ] 2.5 The drowned locker moves to the bed under the Tin Bridge (owner I5).
 
 ## 3. Godot
 
@@ -28,7 +31,8 @@
 - [ ] 3.5 Buoyancy for ragdoll bones; items sink to the bed.
 - [ ] 3.6 `shaders/water.gdshader`, Material Maker ripple and normal textures, the underwater
   tint and fog, the low-pass on the world bus, splash particles and sounds.
-- [ ] 3.7 The breath meter, once mockup D8 is approved (survey I6).
+- [ ] 3.7 The breath meter, as approved in mockup D8 (owner I6); heavier breathing and slower
+  strokes below 25 % stamina.
 
 ## 4. Checks and captures
 

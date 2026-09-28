@@ -85,6 +85,20 @@ player's health rule. From full health (100) that is 12.5 s more, or 57.5 s in a
 It is the Drains' bypass number: the Drains design gave that bypass a 45 s breath bar for a
 35 s swim, and it now reads the same data. A save keeps the current breath.
 
+### 3a. Stamina (owner, survey I3: "swimming consumes stamina but slowly")
+
+`Undercity.Core/Vitals/Stamina.cs` is a pool of `stamina_max` (100). It is used only by
+swimming; sprinting on land is unchanged.
+
+| When | Stamina |
+|---|---|
+| Swimming, at the surface or under it | drains `swim_stamina_per_s` (0.8): 125 s from full, about 375 m at 3 m/s, twice the Cut's length |
+| Wading or dry | refills `stamina_regen_per_s` (12): full in about 8 s |
+| Empty | swim, dive and rise speeds x `tired_speed_factor` (0.5); no damage, since drowning is the danger |
+
+Below 25 %, the runner's breathing gets heavier and the strokes slower. That is the warning;
+there is no meter, and the approved D8 shows air only. A save keeps the current stamina.
+
 ### 4. Ways out
 
 | Exit | Rule |
@@ -131,7 +145,7 @@ side; the gate channel is covered by the dock's ladders.
 about 8 m of visibility) cover the view. The world audio bus goes through a low-pass filter
 (800 Hz); the UI bus doesn't.
 
-**The breath meter** (new UI, mockup D8): a thin cyan AIR bar under the health bar, shown only
+**The breath meter** (mockup D8, approved by the owner, survey I6): a thin cyan AIR bar under the health bar, shown only
 while breath isn't full. It turns red below 25 %, and fades 1 s after it refills.
 
 ### 7. Data
@@ -146,6 +160,7 @@ while breath isn't full. It turns red below 25 %, and fades 1 s after it refills
   "float_eye_above_m": 0.15, "float_stiffness_per_s2": 18.0, "float_damping_per_s": 7.0,
   "entry_keep_fraction": 0.3,
   "breath_s": 45.0, "breath_refill_s": 3.0, "drown_damage_per_s": 8.0,
+  "stamina_max": 100.0, "swim_stamina_per_s": 0.8, "stamina_regen_per_s": 12.0, "tired_speed_factor": 0.5,
   "mantle_reach_m": 0.6, "mantle_min_rise_m": 0.2, "mantle_max_rise_m": 1.0, "mantle_time_s": 0.45,
   "ladder_speed_mps": 2.4, "ladder_facing_dot": 0.3, "ladder_push_off_mps": 3.0, "ladder_top_step_m": 0.7,
   "body_buoyancy_ratio": 1.15, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
@@ -178,10 +193,12 @@ kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `LADDER_CLEAR_M` 3, `RAIL
 - **Brushfire's controller predates the rules** (CLAUDE.md 13). The swim motor is new code
   beside it, so the controller only gains the hand-off.
 
-## Open Questions
+## Owner decisions (survey, 2026-09-28)
 
-For the owner, in the survey:
-- I3: drowning on or off in the hub;
-- I4: exits (ladders and mantling, or more);
-- I5: move the drowned locker under water, as its map note says;
-- I6: approve the breath meter mockup D8.
+- I1: this change is built first.
+- I3: drowning on (recommendation accepted), and "swimming consumes stamina but slowly":
+  section 3a.
+- I4: the exits as designed (recommendation accepted).
+- I5: the drowned locker moves to the bed under the Tin Bridge (recommendation accepted). Its
+  lock (tier 1) and loot (the Whisper and 10 rounds) are unchanged.
+- I6: mockup D8 approved (recommendation accepted).
