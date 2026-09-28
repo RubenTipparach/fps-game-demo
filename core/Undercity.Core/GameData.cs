@@ -97,6 +97,9 @@ public sealed class GameData
     /// <summary>data/combat.json.</summary>
     public required Combat.CombatTable Combat { get; init; }
 
+    /// <summary>data/character_lighting.json.</summary>
+    public required CharacterLightingTable CharacterLighting { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -142,6 +145,7 @@ public sealed class GameData
             Water = JsonData.Load<Vitals.WaterTable>(source, "water.json"),
             Weapons = JsonData.Load<Combat.WeaponTable>(source, "weapons.json"),
             Combat = JsonData.Load<Combat.CombatTable>(source, "combat.json"),
+            CharacterLighting = JsonData.Load<CharacterLightingTable>(source, "character_lighting.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,
