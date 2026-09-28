@@ -93,8 +93,8 @@ In the deck:
 - **Missing screens.** There's no trade screen, stash screen, map, notes or conversation log,
   because none of them has an approved mockup yet. The title screen, the pause menu and options
   are in (mockups D5 to D7).
-- **Lighting and missions.** The hub's lighting isn't baked in this build unless the validation
-  record says so, and the Drains and the Yard aren't built.
+- **Missions.** The Drains and the Yard aren't built. The hub's lighting is baked, all eight
+  sectors (stills in `docs/screenshots/hub_lit/`).
 
 ## Exporting
 
