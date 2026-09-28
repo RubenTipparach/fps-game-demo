@@ -65,6 +65,11 @@ public partial class PlayerController : CharacterBody3D, IDamageable
     public Vector3 LookDirection => -Basis.FromEuler(new Vector3(_pitch, _yaw, 0)).Z;
     /// <summary>Eye position at the current physics tick (use for hitscan origin).</summary>
     public Vector3 EyePosition => GlobalPosition + Vector3.Up * _eyeHeight;
+    /// <summary>
+    /// Moves the body instead of the ground and air rules while it applies (swimming, ladders).
+    /// Null where there is nothing but ground and air.
+    /// </summary>
+    public IMovementOverride Movement { get; set; }
 
     CollisionShape3D _shapeNode;
     CylinderShape3D _shape;
@@ -185,6 +190,16 @@ public partial class PlayerController : CharacterBody3D, IDamageable
             return;
         }
 
+        if (Movement != null && Movement.Drive(this, dt))
+        {
+            _sprinting = false;
+            _coyote = 0f;
+            _wasOnFloor = false;
+            _snappedStairsLastFrame = false;
+            _prevVelY = Velocity.Y;
+            return;
+        }
+
         UpdateCrouch(dt);
 
         Vector2 input = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
@@ -194,10 +209,11 @@ public partial class PlayerController : CharacterBody3D, IDamageable
         Vector3 wishDir = wishAmount > 0.001f ? wish.Normalized() : Vector3.Zero;
 
         bool onFloor = IsOnFloor() || _snappedStairsLastFrame;
-        _sprinting = Input.IsActionPressed("sprint") && !_crouched && input.Y < -0.3f && onFloor
-                     || (_sprinting && !onFloor && Input.IsActionPressed("sprint"));
+        bool sprintAllowed = Movement?.SprintAllowed ?? true;
+        _sprinting = sprintAllowed && (Input.IsActionPressed("sprint") && !_crouched && input.Y < -0.3f && onFloor
+                     || (_sprinting && !onFloor && Input.IsActionPressed("sprint")));
         float targetSpeed = _crouched ? CrouchSpeed : (_sprinting ? SprintSpeed : WalkSpeed);
-        float wishSpeed = targetSpeed * wishAmount;
+        float wishSpeed = targetSpeed * wishAmount * (Movement?.GroundSpeedFactor ?? 1f);
 
         _coyote = onFloor ? CoyoteTime : _coyote - dt;
         // Pressing jump buffers it; holding it re-jumps the moment you land (auto bunny hop).

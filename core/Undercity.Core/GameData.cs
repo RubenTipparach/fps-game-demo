@@ -88,6 +88,9 @@ public sealed class GameData
     /// <summary>data/npc_bodies.json.</summary>
     public required NpcBodyTable NpcBodies { get; init; }
 
+    /// <summary>data/water.json.</summary>
+    public required Vitals.WaterTable Water { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -130,6 +133,7 @@ public sealed class GameData
             Npcs = JsonData.Load<NpcTable>(source, "npcs.json"),
             Saves = JsonData.Load<SavesTable>(source, "saves.json"),
             NpcBodies = JsonData.Load<NpcBodyTable>(source, "npc_bodies.json"),
+            Water = JsonData.Load<Vitals.WaterTable>(source, "water.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,

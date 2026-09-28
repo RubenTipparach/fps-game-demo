@@ -35,18 +35,20 @@ The plan (JSON):
 """
 import argparse
 import contextlib
+import heapq
 import importlib
 import json
 import math
 import os
 import random
+import re
 import sys
 
 import shapely
 from shapely import affinity
 from shapely.geometry import LineString, MultiLineString, Point, Polygon, box
 from shapely.geometry.polygon import orient
-from shapely.ops import split, unary_union
+from shapely.ops import nearest_points, split, unary_union
 from shapely.prepared import prep
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -79,6 +81,23 @@ WALL_LAMP_Z = 3.3     # plate 3.1-3.5 m: above shop fronts (3.05), below the str
 DOOR_H = 2.4          # interior doors; openings 2.5 m wide or more get WIDE_DOOR_H
 WIDE_DOOR_H = 3.0
 PILLAR_BASE_HALF_M = 1.2  # a viaduct pillar's base, half its side
+# Ways out of the water (openspec/changes/water-and-swimming, design section 4). How a ladder
+# or a ledge is climbed is the game's (data/water.json); where they are is level construction.
+LADDER_EVERY_M = 30.0   # a quay ladder every this many metres of open quay
+EXIT_REACH_M = 25.0     # every point of water is this close to a way out, in a straight swim
+EXIT_GRID_M = 1.0       # the exit rule samples each water surface on this grid
+LADDER_CLEAR_M = 3.0    # no quay ladder this close to a bridge deck, a boat or a pillar
+LADDER_SPACING_M = 10.0  # nor this close to another ladder
+LADDER_W_M = 0.6        # between the stiles' centres
+LADDER_STAND_OFF_M = 0.15  # the stiles' outer faces stand this far off the wall (a climber holds here)
+LADDER_UNDER_M = 0.6    # a ladder reaches this far under the surface
+LADDER_HOOP_M = 1.0     # its grab hoops rise this far above the quay
+LADDER_HOOP_REACH_M = 0.5  # and come down this far in from the edge
+RUNG_EVERY_M = 0.3
+RAIL_GAP_M = 1.2        # the quay railing's opening at a ladder
+LADDER_LAND_MAX_M = 2.0  # a climber steps off a ladder at most this far in from the edge
+SHIP_DECK_ABOVE_M = 3.4  # a derelict ship's deck above its water's surface
+WATER_JSON = os.path.join(ROOT, "game", "data", "water.json")
 # Layout shape classes a person may stand inside: neon strips hang on walls, and the dark
 # features (culverts, the outfall, tunnel portals) are hollow. A stall's footprint holds its
 # vendor's space, so stalls register their counter, back and posts as solids instead.
@@ -86,6 +105,7 @@ WALK_THROUGH_CLASSES = ("fix-neon", "fix-dark", "stall")
 STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is underfoot, not in the way
 NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
 PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
+PLAYER_SCRIPT = os.path.join(ROOT, "game", "scripts", "Player", "PlayerController.cs")
 
 # Light colours (linear-ish RGB) and settings: (color, energy, range_m, corona material, corona size)
 LIGHTS = {
@@ -164,6 +184,33 @@ def scene_collider(path):
     if not (math.isfinite(radius) and math.isfinite(height) and 0 < 2 * radius <= height):
         raise SystemExit(f"{path}: a collider of r {radius} m, h {height} m isn't a standing body")
     return radius, height
+
+
+def player_step_m():
+    """The highest step the player walks up, metres: the player scene's MaxStepHeight, or the
+    controller's default for it, read from the files the game runs."""
+    with open(PLAYER_SCENE) as f:
+        m = re.search(r"^MaxStepHeight = ([0-9.]+)", f.read(), re.M)
+    if not m:
+        with open(PLAYER_SCRIPT) as f:
+            m = re.search(r"public float MaxStepHeight = ([0-9.]+)f;", f.read())
+    if not m:
+        raise SystemExit(f"{PLAYER_SCRIPT}: no MaxStepHeight; the ladder landings need the player's step")
+    return float(m.group(1))
+
+
+def water_data():
+    """The game's own data/water.json, so the plan and the game can't disagree about how a
+    swimmer climbs out."""
+    with open(WATER_JSON) as f:
+        # the game's data files allow whole-line // comments (Undercity.Core JsonData)
+        return json.loads("".join(line for line in f if not line.lstrip().startswith("//")))
+
+
+def mantle_rise():
+    """The ledge heights above a water surface a swimmer can climb onto, (min, max) metres."""
+    w = water_data()
+    return w["mantle_min_rise_m"], w["mantle_max_rise_m"]
 
 
 def r4(v):
@@ -457,7 +504,7 @@ class City:
         for w in bodies:
             g = RM.water_geom(w).difference(taken)
             taken = taken.union(RM.water_geom(w))
-            self.waters.append({"g": g, "surface": w.get("surface_m", -2.2), "bed": w.get("bed_m", -4.5)})
+            self.waters.append({"id": w["id"], "g": g, "surface": w.get("surface_m", -2.2), "bed": w.get("bed_m", -4.5)})
         self.named = [b for b in m.get("buildings", [])]
         self.viaduct = next((e for e in m.get("elevated", []) if e["kind"] == "viaduct"), None)
         self.walkways = [e for e in m.get("elevated", []) if e["kind"] == "walkway" and "z_m" in e]
@@ -476,6 +523,7 @@ class City:
         self.closed_ends = []    # walkway ends against a wall (no stairs)
         self.facades = []       # (sector, A, t, n, length, z_top, occupied spans) for wall lamps
         self.stair_boxes = []   # pit stair treads (floor lookups)
+        self.ladders = []       # ways out of the water: {"id", "water", "at", "foot", "n", "top", "bottom"}
 
     # geometry lookups ------------------------------------------------------
     def walk_z(self, wk, x, y):
@@ -505,12 +553,16 @@ class City:
             (x0, y0, _), (x1, y1, z1) = tb
             if x0 <= x <= x1 and y0 <= y <= y1:
                 return z1
-        if self.bridge_u.contains(pt):
+        if getattr(self, "_ground_p", None) is None:
+            # prepared once the bridges exist; the water and the Pit never change
+            self._ground_p = (prep(self.bridge_u), [(prep(w["g"]), w["bed"]) for w in self.waters], prep(self.PIT))
+        bridge_p, waters_p, pit_p = self._ground_p
+        if bridge_p.contains(pt):
             return STREET_Z
-        for w in self.waters:
-            if w["g"].contains(pt):
-                return w["bed"]
-        if self.PIT.contains(pt):
+        for wp, bed in waters_p:
+            if wp.contains(pt):
+                return bed
+        if pit_p.contains(pt):
             return self.pit_floor
         if self.paved_p.contains(pt):
             return PAVED_Z
@@ -1399,7 +1451,7 @@ class City:
         top = ring_xy(pg.exterior.coords)
         mid = ring_xy(affinity.scale(pg, 0.97, 0.97, origin=c).exterior.coords)
         bot = ring_xy(affinity.scale(pg, 0.72, 0.85, origin=c).exterior.coords)
-        deck = s + 3.4
+        deck = s + SHIP_DECK_ABOVE_M
         prims.append({"t": "loft", "rings": [bot, mid, top], "z": [r4(s - 2.0), r4(s + 0.4), r4(deck)],
                       "mat": {"top": "diamond_plate", "bottom": "rust_metal", "side": "rust_metal"}})
         x0, y0, x1, y1 = pg.bounds
@@ -1424,6 +1476,19 @@ class City:
         prims.append(cyl(c.x, fy, deck, 0.9, 7.5, "rust_metal", seg=14))
         prims.append(cyl(c.x, fy, deck + 7.5, 0.95, 0.5, "hazard_stripes", seg=14))
         b["_h"] = None
+        # boarding ladders over the side, so a swimmer in the basin can climb onto the deck
+        # (2 m from the quay, a jump ashore): the deck is clear of the deckhouse and the funnel
+        clutter = house.union(Point(c.x, fy).buffer(0.9)).buffer(0.1)
+        hull = prep(pg)
+
+        def boardable(x, y, n):
+            if not self.W_p.contains(Point(x - n[0] * 0.4, y - n[1] * 0.4)):
+                return False
+            return all(hull.contains(Point(x + n[0] * d, y + n[1] * d)) and not clutter.contains(Point(x + n[0] * d, y + n[1] * d))
+                       for d in (0.4, LADDER_HOOP_REACH_M + 0.1, 1.2))
+        runs = self.edge_runs(pg, boardable, inward=True)
+        for i, sp in enumerate(sorted(self.spread_ladders(runs), key=lambda sp: (round(sp["at"][1], 2), round(sp["at"][0], 2))), 1):
+            self.ladder(f"{w['id']}_hull_{i}", w, sp["at"][0], sp["at"][1], sp["n"], water_data()["ladder_top_step_m"], deck, deck)
 
     # fixtures and props (from the layout's shapes) -----------------------------------
     def fixture(self, sector, fx, room_building, owner):
@@ -1787,11 +1852,12 @@ class City:
                 by = y0 + 0.2 + (y1 - y0 - 0.4) * q / 6
                 prims.append(box_prim((xq + 0.09, by - 0.03, s + 0.3), (xq + 0.14, by + 0.03, QUAY_Z - 0.35), "rust_metal"))
             prims.append(box_prim((xq + 0.16, y0 - 0.6, s + 0.1), (xq + 1.4, y1 + 0.6, s + 0.22), "diamond_plate"))
-            for ly in (y1 + 0.7, y1 + 1.1):
-                prims.append(box_prim((xq + 0.16, ly - 0.03, s + 0.22), (xq + 0.22, ly + 0.03, QUAY_Z + 1.0), "rust_metal"))
-            for q in range(int((QUAY_Z - s) / 0.3)):
-                rz = s + 0.5 + q * 0.3
-                prims.append(box_prim((xq + 0.17, y1 + 0.73, rz), (xq + 0.21, y1 + 1.07, rz + 0.04), "rust_metal"))
+            # the ladder up from the ledge's end to the quay walk (land is west of the quay line)
+            ly = y1 + 0.9 + LADDER_W_M / 2
+            landing = self.ladder_landing(xq, ly, (-1.0, 0.0))
+            if landing is None:
+                raise SystemExit(f"{self.m['id']}: the outfall's ladder at ({xq:g}, {ly:g}) has nowhere to step off at the top")
+            self.ladder(f"{w['id']}_outfall", w, xq, ly, (-1.0, 0.0), *landing)
             self.outfall = (xq, y0, y1)
             return
         # a tunnel portal at the map edge
@@ -2302,19 +2368,28 @@ class City:
             line = LineString(o["pts"])
             side = 1
             d = 7.0
-            while d < line.length - 2:
-                p = line.interpolate(d)
-                q = line.interpolate(min(d + 0.5, line.length))
+            def spot(dd, s):
+                """The lamp's place dd along the street on side s, and the way its arm reaches."""
+                p = line.interpolate(dd)
+                q = line.interpolate(min(dd + 0.5, line.length))
                 t = unit(q.x - p.x, q.y - p.y)
                 n = (-t[1], t[0])
+                return p.x + n[0] * s * (o["w"] / 2 + 0.9), p.y + n[1] * s * (o["w"] / 2 + 0.9), -n[0] * s, -n[1] * s
+            while d < line.length - 2:
                 for s in (side, -side):
-                    x, y = p.x + n[0] * s * (o["w"] / 2 + 0.9), p.y + n[1] * s * (o["w"] / 2 + 0.9)
+                    x, y, ax, ay = spot(d, s)
+                    # a lamp at a ladder's top steps along the street, out of the climber's way
+                    for shift in (2.5, -2.5):
+                        if any(math.dist((x, y), ld["at"]) < 2.0 for ld in self.ladders) and 0 < d + shift < line.length:
+                            x, y, ax, ay = spot(d + shift, s)
                     pt = Point(x, y)
                     if not self.paved_p.contains(pt) or self.B.distance(pt) < 0.5 or self.near_lamp(x, y, 7.0):
                         continue
                     if any(math.dist((x, y), pp) < 2.0 for pp in pillars) or self.bridge_u.distance(pt) < 1.0:
                         continue
-                    self.lamp_post(x, y, -n[0] * s, -n[1] * s)
+                    if any(math.dist((x, y), ld["at"]) < 2.0 for ld in self.ladders):
+                        continue
+                    self.lamp_post(x, y, ax, ay)
                     break
                 side = -side
                 d += LAMP_EVERY
@@ -2610,6 +2685,7 @@ class City:
             air = unary_union([box(a.x[0], a.z[0], a.x[1], a.z[1])
                                for grp in self.P.zboxes.values() for a in grp["airs"]]).buffer(1e-6)
             self._standing = {"details": details, "footprints": footprints, "air": air,
+                              "water": self.W.difference(self.bridge_u.buffer(0.05)),   # a bridge deck is walked on
                               "bodies": {"npc": scene_collider(NPC_SCENE), "player": scene_collider(PLAYER_SCENE)}}
         return self._standing
 
@@ -2644,6 +2720,9 @@ class City:
             return problems
         if foot.intersects(self.B):
             problems.append(f"{label} at ({x:g}, {y:g}) is {into(self.B):.2f} m inside a building")
+        if foot.intersects(room["water"]):
+            wid = next((w["id"] for w in self.waters if foot.intersects(w["g"])), "water")
+            problems.append(f"{label} at ({x:g}, {y:g}) stands in the water of {wid} ({into(room['water']):.2f} m into it)")
         # level ground: a person astride a curb or a stair edge has a foot in it
         ring = [(x + radius * math.cos(a * math.pi / 4), y + radius * math.sin(a * math.pi / 4)) for a in range(8)]
         levels = [self.ground_level(px, py) for px, py in ring + [(x, y)]]
@@ -2654,7 +2733,7 @@ class City:
 
     def patrol_leg_problems(self):
         """A patrol walks straight from stop to stop: each leg, swept by the NPC's footprint,
-        stays out of buildings, fixtures, props and solids at street level."""
+        stays out of buildings, fixtures, props, solids at street level and water."""
         room = self.standing_room()
         radius, height = room["bodies"]["npc"]
         problems = []
@@ -2671,6 +2750,8 @@ class City:
                          if z1 > STANDING_STEP_M + PAVED_Z and z0 < height and sweep.intersects(fp)]
                 if sweep.intersects(self.B):
                     hits.append("building")
+                if sweep.intersects(room["water"]):
+                    hits.append("water")
                 if hits:
                     problems.append(f"{e['kind']}:{e['id']} patrol leg {i} ({a[0]:g}, {a[1]:g}) to ({b[0]:g}, {b[1]:g}) "
                                     f"runs through: {', '.join(sorted(set(hits)))}")
@@ -2684,7 +2765,8 @@ class City:
         registered detail box (a counter, a table, a trim) anywhere in its height, a registered
         solid (a stall's counter, a Skyway pillar), or the footprint of a fixture or prop;
         indoors it must stay inside the rooms' air; outdoors it must stay out of every building
-        and stand on level ground. Each patrol leg must stay clear too. What the plan doesn't
+        and all water (bridge decks aside), and stand on level ground. Each patrol leg must stay
+        clear too. What the plan doesn't
         describe as a box or a footprint (lamps, railings, stairs) is the in-engine placement
         test's job (game/scenes/undercity/tests/placement_test.tscn), which uses the real colliders."""
         problems = [p for spot in self.standing_spots() for p in self.standing_problems(*spot)]
@@ -2709,6 +2791,7 @@ class City:
         self.water()
         self.bridge_geometry()
         self.pit_railings()
+        self.plan_ladders()
         self.quay_railings()
         self.named_buildings()
         self.lot_buildings()
@@ -2723,6 +2806,7 @@ class City:
         self.place_entities()
         self.check_zfighting()
         self.check_rooms_carved()
+        self.check_exits()
         self.check_standing_room()
         return self.P
 
@@ -2770,7 +2854,8 @@ class City:
                 self.railing("streets", A, Bq, n, z, "gunmetal", inset=0.12)
 
     def quay_railings(self):
-        """Railings along canal edges where a walk meets the water (not at bridges or the outfall)."""
+        """Railings along canal edges where a walk meets the water (not at bridges or the
+        outfall), open RAIL_GAP_M wide at each ladder."""
         for w in self.waters:
             for pg in polys(w["g"]):
                 pg = oriented(pg)
@@ -2789,12 +2874,276 @@ class City:
                         pt = Point(mx, my)
                         if self.W_p.contains(pt) or self.B_p.contains(pt):
                             continue
-                        if self.bridge_u.buffer(1.0).intersects(LineString([A, Bq])):
+                        piece = LineString([A, Bq])
+                        if self.bridge_u.buffer(1.0).intersects(piece):
                             continue
-                        if self.outfall_zone.intersects(LineString([A, Bq])):
+                        if self.outfall_zone.intersects(piece):
                             continue
                         z = self.ground_level(mx, my)
-                        self.railing("streets", A, Bq, n, z, "gunmetal", inset=0.12)
+                        # the pieces left either side of each ladder's opening
+                        spans = [(0.0, s1 - s0)]
+                        for ld in self.ladders:
+                            if piece.distance(Point(ld["at"])) > 0.05:
+                                continue
+                            u = piece.project(Point(ld["at"]))
+                            g0, g1 = u - RAIL_GAP_M / 2, u + RAIL_GAP_M / 2
+                            spans = [part for u0, u1 in spans
+                                     for part in ((u0, min(u1, g0)), (max(u0, g1), u1)) if part[1] - part[0] > 0.4]
+                        for u0, u1 in spans:
+                            self.railing("streets", (A[0] + t[0] * u0, A[1] + t[1] * u0),
+                                         (A[0] + t[0] * u1, A[1] + t[1] * u1), n, z, "gunmetal", inset=0.12)
+
+    # ways out of the water (openspec/changes/water-and-swimming, design section 4) ------------------
+    def water_pillars(self):
+        """The footprints of the Skyway pillars that stand in water."""
+        if not self.viaduct:
+            return []
+        out = []
+        for pl in RM.viaduct_pillars(self.viaduct):
+            a = math.radians(pl["angle_deg"])
+            fp = Polygon(obox_corners(pl["x"], pl["y"], math.cos(a), math.sin(a), PILLAR_BASE_HALF_M, PILLAR_BASE_HALF_M))
+            if fp.intersects(self.W):
+                out.append(fp)
+        return out
+
+    def ladder_landing(self, x, y, n):
+        """Where a climber steps off a ladder at (x, y) on a quay edge whose land lies towards n:
+        (step_in_m, top_m, floor_m), or None when there is nowhere. The landing is the first spot
+        from data/water.json's ladder_top_step_m to LADDER_LAND_MAX_M in from the edge where a
+        standing player (their collider, from player.tscn) is on level ground, with open paving
+        (no water, building or pit) all the way, and no rise on the way more than a step above it.
+        top_m is the highest ground crossed (a kerb along the quay), which the climb clears."""
+        if getattr(self, "_player_r", None) is None:
+            self._player_r, _ = scene_collider(PLAYER_SCENE)
+            self._step_min = water_data()["ladder_top_step_m"]
+            self._player_step = player_step_m()
+            self._landings = {}
+        key = (round(x, 3), round(y, 3), round(n[0], 4), round(n[1], 4))
+        if key not in self._landings:
+            self._landings[key] = self._find_landing(x, y, n)
+        return self._landings[key]
+
+    def _find_landing(self, x, y, n):
+        r = self._player_r
+        t = (-n[1], n[0])
+
+        def ground(d, u=0.0):
+            px, py = x + n[0] * d + t[0] * u, y + n[1] * d + t[1] * u
+            if not (0.5 < px < self.P.W - 0.5 and 0.5 < py < self.P.H - 0.5):
+                return None
+            pt = Point(px, py)
+            if self.W_p.contains(pt) or self.B_p.contains(pt) or self.PIT.contains(pt):
+                return None
+            return self.ground_level(px, py)
+        top = -math.inf
+        sampled = 0.0
+        land = self._step_min
+        while land <= LADDER_LAND_MAX_M + 1e-9:
+            # the way in, every 0.2 m to the landing's far side, across the player's width
+            while sampled + 0.2 <= land + r + 1e-9:
+                sampled += 0.2
+                zs = [ground(sampled, u) for u in (-r, 0.0, r)]
+                if None in zs:
+                    return None
+                top = max(top, *zs)
+            ring = [ground(land + r * math.cos(a * math.pi / 4), r * math.sin(a * math.pi / 4)) for a in range(8)]
+            if None not in ring and max(ring) - min(ring) <= STANDING_STEP_M:
+                top = max(top, *ring)
+                return (round(land, 3), top, ring[0]) if top - ring[0] <= self._player_step else None
+            land += 0.1
+        return None
+
+    def quay_open(self, x, y, n):
+        """True when the quay at (x, y) on a water edge, whose land lies towards n, has somewhere
+        for a climber to step off a ladder (ladder_landing())."""
+        return self.ladder_landing(x, y, n) is not None
+
+    def edge_runs(self, pg, open_at, inward=False):
+        """The stretches of pg's rings where open_at(x, y, n) holds, sampled every 0.5 m: runs of
+        {"at", "n", "d" (metres along the run), "ok" (a ladder may stand here)}. n points from
+        the water to the climb-out side: out of pg (a quay), or into it with inward (a hull)."""
+        runs = []
+        pg = oriented(pg)
+        for ring in [pg.exterior] + list(pg.interiors):
+            run = []
+            for a, b in self.ring_edges(pg, ring.coords):
+                L = math.dist(a, b)
+                t = unit(b[0] - a[0], b[1] - a[1])
+                n = self.outward(pg, a, b)
+                if inward:
+                    n = (-n[0], -n[1])
+                for q in range(int(L / 0.5) + 1):
+                    sq = min(q * 0.5, L)
+                    x, y = a[0] + t[0] * sq, a[1] + t[1] * sq
+                    if not open_at(x, y, n):
+                        if run:
+                            runs.append(run)
+                        run = []
+                        continue
+                    d = run[-1]["d"] + math.dist(run[-1]["at"], (x, y)) if run else 0.0
+                    # a ladder needs its railing opening on one straight edge
+                    ok = (RAIL_GAP_M / 2 + 0.3 <= sq <= L - RAIL_GAP_M / 2 - 0.3
+                          and not self.ladder_keep_out.contains(Point(x, y)))
+                    run.append({"at": (x, y), "n": n, "d": d, "ok": ok})
+            if run:
+                runs.append(run)
+        return runs
+
+    def spread_ladders(self, runs):
+        """round(length / LADDER_EVERY_M) ladders per run (at least one), spread evenly, each moved
+        to the nearest spot a ladder may stand that is LADDER_SPACING_M from every other ladder."""
+        placed = []
+        for run in runs:
+            length = run[-1]["d"]
+            count = max(1, int(round(length / LADDER_EVERY_M)))
+            for k in range(count):
+                target = length * (k + 0.5) / count
+                spots = sorted((sp for sp in run if sp["ok"]
+                                and all(math.dist(sp["at"], o) >= LADDER_SPACING_M
+                                        for o in [p["at"] for p in placed] + [ld["at"] for ld in self.ladders])),
+                               key=lambda sp: abs(sp["d"] - target))
+                if spots:
+                    placed.append(spots[0])
+        return placed
+
+    def plan_ladders(self):
+        """Quay ladders: along each open stretch of quay (quay_open), spread by spread_ladders(),
+        at least LADDER_CLEAR_M from a bridge deck, a moored boat and a pillar, and clear of the
+        outfall (which has its own). A derelict ship hangs its own (ferry()). check_exits() then
+        proves they are enough."""
+        boats = [RM.shape_geom(fx) for fx in self.m.get("props", [])
+                 if fx[0] == "poly" and fx[-1] == "fix" and RM.shape_geom(fx).intersects(self.W)]
+        keep_out = unary_union([self.bridge_u, *boats, *self.water_pillars()]).buffer(LADDER_CLEAR_M)
+        self.ladder_keep_out = prep(keep_out.union(self.outfall_zone))
+        placed = []
+        for pg in polys(self.W):
+            placed += self.spread_ladders(self.edge_runs(pg, self.quay_open))
+        # stable ids: per water body, north to south, then west to east
+        by_water = {}
+        for sp in placed:
+            x, y = sp["at"]
+            w = next(wb for wb in self.waters if wb["g"].buffer(0.05).contains(Point(x - sp["n"][0] * 0.3, y - sp["n"][1] * 0.3)))
+            by_water.setdefault(w["id"], (w, []))[1].append(sp)
+        for wid in sorted(by_water):
+            w, sps = by_water[wid]
+            for i, sp in enumerate(sorted(sps, key=lambda sp: (round(sp["at"][1], 2), round(sp["at"][0], 2))), 1):
+                x, y = sp["at"]
+                self.ladder(f"{wid}_{i}", w, x, y, sp["n"], *self.ladder_landing(x, y, sp["n"]))
+
+    def ladder(self, lid, water, x, y, n, step_in, z_top, floor):
+        """A ladder at (x, y) on a quay's edge, climbing towards n (the land): two stiles standing
+        off the wall, from LADDER_UNDER_M under the water's surface, rungs every RUNG_EVERY_M up
+        to the top z_top, and two grab hoops over the coping, painted so a swimmer can find them.
+        The climb ends step_in metres in from the edge, on the floor at height floor
+        (ladder_landing()). It is visual only, since rungs would snag a swimmer; the ENT_ladder
+        entity (scenes/undercity/ladder.tscn, Ladder.cs) carries what the game climbs."""
+        P = self.P
+        t = (-n[1], n[0])
+        z0 = water["surface"] - LADDER_UNDER_M
+        hoop = z_top + LADDER_HOOP_M
+        prims = P.obj("streets", "ladders", x, y)
+
+        def at(u, v):
+            return x + t[0] * u + n[0] * v, y + t[1] * u + n[1] * v
+        for side in (-1, 1):
+            u = side * LADDER_W_M / 2
+            # the stile stands 0.09-0.15 m off the wall and runs up into the hoop
+            prims.append(obox(*at(u, 0.03 - LADDER_STAND_OFF_M), t[0], t[1], 0.03, 0.03, z0, hoop - 0.03, "rust_metal"))
+            # the hoop: over the coping, narrower than the stile and the post it joins
+            reach = LADDER_HOOP_REACH_M
+            prims.append(obox(*at(u, (reach + 0.02 - 0.14) / 2), n[0], n[1], (reach + 0.02 + 0.14) / 2, 0.025,
+                              hoop - 0.06, hoop, "hazard_stripes"))
+            prims.append(obox(*at(u, reach), t[0], t[1], 0.03, 0.03, z_top, hoop - 0.03, "hazard_stripes", skip=[0]))
+        rz = z0 + 0.15
+        while rz <= z_top - 0.1:
+            # rungs end inside the stiles, 1 cm inside their faces
+            prims.append(obox(*at(0, -0.12), t[0], t[1], LADDER_W_M / 2, 0.02, rz, rz + 0.04, "rust_metal"))
+            rz += RUNG_EVERY_M
+        facing = heading_of(n[0], n[1])
+        P.entity(P.district_sector(x, y), f"ENT_ladder_{lid}", x, y, z_top, facing,
+                 {"kind": "ladder", "id": lid, "water": water["id"], "top_m": r4(z_top), "bottom_m": r4(z0),
+                  "width_m": LADDER_W_M, "stand_off_m": LADDER_STAND_OFF_M, "step_in_m": r4(step_in),
+                  "floor_m": r4(floor), "facing_deg": r4(facing)})
+        self.ladders.append({"id": lid, "water": water["id"], "at": (x, y), "n": n, "top": z_top, "bottom": z0,
+                             "step_in": step_in, "floor": floor, "foot": (x - n[0] * 0.3, y - n[1] * 0.3)})
+
+    def low_quays(self):
+        """Quay points a swimmer climbs straight onto, without a ladder: open quay whose top is
+        within data/water.json's mantle rise of the water's surface. The hub has none (its quays
+        stand 2.2 m and more above the water), but a level with a low quay needs no ladder there."""
+        lo, hi = mantle_rise()
+        out = []
+        for w in self.waters:
+            for pg in polys(w["g"]):
+                for run in self.edge_runs(pg, self.quay_open):
+                    for sp in run:
+                        x, y = sp["at"]
+                        rise = self.ground_level(x + sp["n"][0] * 0.4, y + sp["n"][1] * 0.4) - w["surface"]
+                        if lo <= rise <= hi:
+                            out.append((x - sp["n"][0] * 0.3, y - sp["n"][1] * 0.3))
+        return out
+
+    def exit_problems(self, ladders=None):
+        """How far a swimmer is from a way out, from every point of every water surface on an
+        EXIT_GRID_M grid: the length of the shortest swim through the water, around hulls,
+        buildings and pillars, to a ladder's foot or a low quay (low_quays()). Returns one message
+        per water body with points farther than EXIT_REACH_M, naming its farthest point."""
+        ladders = self.ladders if ladders is None else ladders
+        blocked = unary_union([self.B, *self.water_pillars()])
+        swim = self.W.difference(blocked)
+        swim_p = prep(swim)
+        g = EXIT_GRID_M
+        x0, y0, x1, y1 = swim.bounds
+        cells = {}
+        for i in range(int(math.floor(x0 / g)), int(math.ceil(x1 / g)) + 1):
+            for j in range(int(math.floor(y0 / g)), int(math.ceil(y1 / g)) + 1):
+                if swim_p.contains(Point((i + 0.5) * g, (j + 0.5) * g)):
+                    cells[(i, j)] = math.inf
+        # each way out seeds the cells a short straight swim away
+        heap = []
+        for ex, ey in [ld["foot"] for ld in ladders] + self.low_quays():
+            ci, cj = int(math.floor(ex / g)), int(math.floor(ey / g))
+            for di in range(-2, 3):
+                for dj in range(-2, 3):
+                    key = (ci + di, cj + dj)
+                    if key not in cells:
+                        continue
+                    cx, cy = (key[0] + 0.5) * g, (key[1] + 0.5) * g
+                    d = math.dist((cx, cy), (ex, ey))
+                    if d < cells[key] and swim_p.contains(LineString([(cx, cy), (ex, ey)])):
+                        cells[key] = d
+                        heapq.heappush(heap, (d, key))
+        steps = [(di, dj, math.hypot(di, dj) * g) for di in (-1, 0, 1) for dj in (-1, 0, 1) if di or dj]
+        while heap:
+            d, (i, j) = heapq.heappop(heap)
+            if d > cells[(i, j)]:
+                continue
+            for di, dj, step in steps:
+                key = (i + di, j + dj)
+                if key not in cells or d + step >= cells[key]:
+                    continue
+                if di and dj and ((i + di, j) not in cells or (i, j + dj) not in cells):
+                    continue    # no cutting a corner of a pillar or a hull
+                cells[key] = d + step
+                heapq.heappush(heap, (d + step, key))
+        problems = []
+        for w in self.waters:
+            gp = prep(w["g"])
+            far = sorted(((d, (i + 0.5) * g, (j + 0.5) * g) for (i, j), d in cells.items()
+                          if d > EXIT_REACH_M and gp.contains(Point((i + 0.5) * g, (j + 0.5) * g))), reverse=True)
+            if far:
+                d, fx, fy = far[0]
+                how = "with no way out at all" if math.isinf(d) else f"{d:.1f} m from the nearest"
+                problems.append(f"{w['id']}: {len(far)} points of water are more than {EXIT_REACH_M:g} m of swimming "
+                                f"from a way out; the farthest is ({fx:g}, {fy:g}), {how}")
+        return problems
+
+    def check_exits(self):
+        """Falling in is never a soft lock (openspec/changes/water-and-swimming, "Every water body
+        has a way out"): exit_problems() finds nothing."""
+        problems = self.exit_problems()
+        if problems:
+            raise SystemExit(f"{self.m['id']}: water with no way out:\n  " + "\n  ".join(problems))
 
 
 def load(level_id):

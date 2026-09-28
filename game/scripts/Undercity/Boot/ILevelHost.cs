@@ -32,6 +32,9 @@ public interface ILevelHost
     /// <summary>The level's data (containers, doors, terminals, exits, zones, triggers).</summary>
     LevelDef Def { get; }
 
+    /// <summary>The level's water: where it is and how deep a body is in it.</summary>
+    LevelWater Water { get; }
+
     /// <summary>The player's body.</summary>
     Brushfire.PlayerController Player { get; }
 

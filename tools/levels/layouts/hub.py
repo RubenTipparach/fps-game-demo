@@ -63,10 +63,10 @@ MAP = {
     ],
 
     "water": [
-        {"name": "THE CUT", "label_at": (203.5, 112), "rot": 90, "surface_m": -2.2, "bed_m": -4.5,
+        {"id": "the_cut", "name": "THE CUT", "label_at": (203.5, 112), "rot": 90, "surface_m": -2.2, "bed_m": -4.5,
          "poly": [(194, 10), (213.5, 10), (214, 60), (213, 100), (214, 170), (193, 170), (192, 120), (193, 60)]},
-        {"name": "", "poly": [(223, 20), (239, 20), (239, 60), (223, 60)], "surface_m": -2.2, "bed_m": -6.0},  # dry dock basin
-        {"name": "", "poly": [(213, 36), (224, 36), (224, 44), (213, 44)], "surface_m": -2.2, "bed_m": -4.5},  # dock gate channel
+        {"id": "dry_dock", "name": "", "poly": [(223, 20), (239, 20), (239, 60), (223, 60)], "surface_m": -2.2, "bed_m": -6.0},  # dry dock basin
+        {"id": "dock_gate", "name": "", "poly": [(213, 36), (224, 36), (224, 44), (213, 44)], "surface_m": -2.2, "bed_m": -4.5},  # dock gate channel
     ],
 
     "districts": [
@@ -311,7 +311,7 @@ MAP = {
         # secrets
         {"n": 24, "cat": "secret", "at": (62, 18), "name": "Rooftop stash", "note": "neural chip; on the Golden Carp's roof"},
         {"n": 25, "cat": "secret", "at": (64, viaduct_y(64) - 2), "name": "Girder cache", "note": "end of the Skyway service deck"},
-        {"n": 26, "cat": "secret", "at": (208, 66.5), "name": "Drowned locker", "note": "under the Tin Bridge; swim"},
+        {"n": 26, "cat": "secret", "at": (203, 62.5), "name": "Drowned locker", "note": "on the bed under the Tin Bridge; dive"},
         {"n": 27, "cat": "secret", "at": (95.5, 136), "name": "Offering box", "note": "shrine; Lockpicking 2"},
         # restricted
         {"n": 28, "cat": "restricted", "at": (236, 110), "name": "Depot lockers", "note": "sanitation overalls; workers only"},

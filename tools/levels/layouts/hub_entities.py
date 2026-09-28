@@ -140,7 +140,8 @@ LOOT = [
      "data": {"noun": "stash", "items": ["neural_chip", "credit_chip:4"]}},
     {"kind": "loot", "id": "girder_cache", "at": (64, viaduct_y(64) - 2), "facing_deg": 90, "z": "service_deck",
      "props": {"model": "tool_box"}, "data": {"noun": "tool box", "items": ["data_shard", "stim", "ammo_10mm:12"]}},
-    {"kind": "loot", "id": "drowned_locker", "at": (214.8, 66), "facing_deg": 270, "props": {"model": "locker"},
+    # on the Cut's bed under the Tin Bridge (owner, survey I5): a dive, with 45 s of breath
+    {"kind": "loot", "id": "drowned_locker", "at": (203, 62.5), "z": -4.5, "facing_deg": 0, "props": {"model": "locker"},
      "data": {"noun": "locker", "items": ["whisper", "ammo_10mm:10"], "lock": _lock(1)}},
     {"kind": "loot", "id": "offering_box", "at": (95.5, 136.6), "facing_deg": 180, "props": {"model": "offering_box"},
      "data": {"noun": "offering box", "items": ["credit_chip:5"], "owner": "residents", "lock": _lock(2)}},

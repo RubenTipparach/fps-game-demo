@@ -49,6 +49,7 @@ def player():
            light_color=hexcolor("#fff1d6"), light_energy=4.0, light_bake_mode=0, shadow_enabled=True,
            spot_range=32.0, spot_angle=26.0, spot_angle_attenuation=0.6)
     s.node("Interactor", "Node", ".", script=script(s, "Player/Interactor.cs"))
+    s.node("Water", "Node", ".", script=script(s, "Player/PlayerWater.cs"))
     s.save(out("player.tscn"))
 
 
@@ -139,6 +140,19 @@ def bed():
     s.save(out("bed.tscn"))
 
 
+def ladder():
+    """A ladder out of the water. The level plan builds its stiles and rungs with the quay and
+    writes its size into the entity (tools/levels/city_plan.py ladder()); the scene holds the use
+    box over its top, where "Climb down" is offered: from the grab hoops (1 m above the floor, 0.5 m
+    in) to 0.3 m out over the water."""
+    s = Scene("Ladder", "Node3D")
+    s.nodes[0][3].update(script=script(s, "Entities/Ladder.cs"))
+    s.node("Body", "StaticBody3D", ".", collision_layer=PICKUP, collision_mask=0)
+    s.node("CollisionShape3D", "CollisionShape3D", "Body", position=v3(0, 0.4, -0.15),
+           shape=s.sub_res("BoxShape3D", size=v3(1.0, 1.2, 0.9)))
+    s.save(out("ladder.tscn"))
+
+
 def main():
     player()
     npc()
@@ -151,6 +165,7 @@ def main():
     world_item()
     areas()
     bed()
+    ladder()
     print("wrote", len(os.listdir(os.path.join(GAME, "scenes", "undercity"))), "scenes to game/scenes/undercity")
 
 

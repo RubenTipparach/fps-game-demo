@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/Player/PlayerController.cs" id="1_PlayerContro"]
 [ext_resource type="Script" path="res://scripts/Player/WeaponManager.cs" id="3_WeaponManage"]
 [ext_resource type="Script" path="res://scripts/Undercity/Player/Interactor.cs" id="4_Interactor"]
+[ext_resource type="Script" path="res://scripts/Undercity/Player/PlayerWater.cs" id="5_PlayerWater"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
 height = 1.8
@@ -43,3 +44,6 @@ spot_angle_attenuation = 0.6
 
 [node name="Interactor" type="Node" parent="."]
 script = ExtResource("4_Interactor")
+
+[node name="Water" type="Node" parent="."]
+script = ExtResource("5_PlayerWater")

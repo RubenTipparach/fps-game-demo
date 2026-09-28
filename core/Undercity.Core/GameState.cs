@@ -31,6 +31,8 @@ public sealed class GameState
         Character = new Character(data.Skills, data.Progression);
         Inventory = new Kit.Inventory(data.Items);
         Health = new FloorPool(Character.MaxHealth, data.Progression.HealthRegen);
+        Breath = new Breath(data.Water);
+        Stamina = new Stamina(data.Water);
         Quests = new QuestLog(data.Quests);
         Reputation = new Reputation(data.Factions);
         World = new WorldState { Seed = seed };
@@ -62,6 +64,28 @@ public sealed class GameState
 
     /// <summary>Health, regenerating only to its floor.</summary>
     public FloorPool Health { get; }
+
+    /// <summary>Breath under water (openspec/changes/water-and-swimming).</summary>
+    public Breath Breath { get; }
+
+    /// <summary>Stamina, used by swimming (owner, survey I3).</summary>
+    public Stamina Stamina { get; }
+
+    /// <summary>How much of the runner is in water, as the engine last reported it.</summary>
+    public WaterContact Water { get; private set; }
+
+    /// <summary>
+    /// The engine reports how much of the runner is in water. Starting to swim holsters a drawn
+    /// weapon: there are no weapons while swimming.
+    /// </summary>
+    public void SetWater(WaterContact contact)
+    {
+        Water = contact;
+        if (contact >= WaterContact.Swimming)
+        {
+            Holster();
+        }
+    }
 
     /// <summary>The journal.</summary>
     public QuestLog Quests { get; }
@@ -130,6 +154,11 @@ public sealed class GameState
                 Holster();
                 return BeltResult.Holstered;
             }
+            if (Water >= WaterContact.Swimming)
+            {
+                Say("Not while swimming.");
+                return BeltResult.Refused;
+            }
             Drawn = id;
             DrawnS = 0;
             LoadoutChanged?.Invoke();
@@ -170,7 +199,7 @@ public sealed class GameState
         Say("Rested.");
     }
 
-    /// <summary>Advances time: health regeneration, heals over time, the law's clock, play time.</summary>
+    /// <summary>Advances time: health regeneration, heals over time, breath and stamina, the law's clock, play time.</summary>
     public void Tick(double dt)
     {
         if (!double.IsFinite(dt) || dt <= 0)
@@ -178,6 +207,8 @@ public sealed class GameState
             return;
         }
         Health.Tick(dt);
+        Health.Lose(Breath.Tick(dt, Water == WaterContact.Submerged));
+        Stamina.Tick(dt, Water);
         for (var i = _heals.Count - 1; i >= 0; i--)
         {
             var (perS, left) = _heals[i];
@@ -494,6 +525,8 @@ public sealed class GameState
         Character = Character.Save(),
         Inventory = Inventory.Save(),
         Health = Health.Value,
+        Breath = Breath.Value,
+        Stamina = Stamina.Value,
         Quests = Quests.Save(),
         Reputation = Reputation.Save(),
         World = World,
@@ -515,6 +548,9 @@ public sealed class GameState
         s.Health.SetMax(s.Character.MaxHealth);
         repairs.AddRange(s.Inventory.Load(save.Inventory));
         s.Health.Set(save.Health);
+        // Version 1 saves predate water: they load with full breath and stamina.
+        s.Breath.Set(save.Breath ?? s.Breath.Max);
+        s.Stamina.Set(save.Stamina ?? s.Stamina.Max);
         repairs.AddRange(s.Quests.Load(save.Quests));
         s.Reputation.Load(save.Reputation);
         s.World = save.World;
@@ -544,8 +580,8 @@ public enum BeltResult
 /// <summary>A saved run (user://saves/&lt;slot&gt;.json).</summary>
 public sealed class SaveGame
 {
-    /// <summary>The version this build writes.</summary>
-    public const int CurrentVersion = 1;
+    /// <summary>The version this build writes. Version 2 added breath and stamina.</summary>
+    public const int CurrentVersion = 2;
 
     /// <summary>The save's version.</summary>
     public int Version { get; set; } = CurrentVersion;
@@ -558,6 +594,12 @@ public sealed class SaveGame
 
     /// <summary>Health.</summary>
     public double Health { get; set; }
+
+    /// <summary>Breath left, seconds; absent in version 1 saves (full).</summary>
+    public double? Breath { get; set; }
+
+    /// <summary>Stamina left; absent in version 1 saves (full).</summary>
+    public double? Stamina { get; set; }
 
     /// <summary>The journal.</summary>
     public QuestSave Quests { get; set; } = new();

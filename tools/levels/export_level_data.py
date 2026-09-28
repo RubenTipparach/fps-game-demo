@@ -23,9 +23,16 @@ NO_DATA = {"spawn", "npc", "civ", "bed", "stash"}
 
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
-    title = importlib.import_module(f"layouts.{level_id}").MAP["title"].title()
+    layout = importlib.import_module(f"layouts.{level_id}").MAP
+    title = layout["title"].title()
     out = {"id": level_id, "title": title, "spawns": [],
-           **{v: {} for v in KINDS.values()}, "npcs": {}}
+           **{v: {} for v in KINDS.values()}, "npcs": {}, "water": []}
+    # The layout's water bodies, for the core's water rule (openspec/changes/water-and-swimming).
+    for w in layout.get("water", []):
+        if "id" not in w:
+            raise SystemExit(f"{level_id}: a water body has no id")
+        out["water"].append({"id": w["id"], "surface_m": w["surface_m"], "bed_m": w["bed_m"],
+                             "poly": [[float(x), float(y)] for x, y in w["poly"]]})
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

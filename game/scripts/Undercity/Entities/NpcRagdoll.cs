@@ -8,6 +8,9 @@
 // Two things can't be saved in the generated scene, so they happen here: the joints must be
 // built while the skeleton is at rest (anatomical zero for the limits), and collision
 // exceptions are runtime-only. Both follow the measurement (docs/spikes/npc-pipeline).
+// A body that falls into water floats: each bone is pushed up in proportion to how much of it
+// is under the surface, and damped, and it isn't frozen while it's in the water
+// (openspec/changes/water-and-swimming, design section 5).
 
 #nullable enable
 using System.Collections.Generic;
@@ -20,6 +23,8 @@ namespace Undercity.Client;
 public partial class NpcRagdoll : PhysicalBoneSimulator3D
 {
     private readonly List<PhysicalBone3D> _bodies = new();
+    private readonly Dictionary<PhysicalBone3D, CollisionShape3D?> _shapes = new();
+    private LevelWater? _water;
 
     /// <summary>True once the joints are built at rest; the body may animate from then on.</summary>
     public bool Prepared { get; private set; }
@@ -37,6 +42,10 @@ public partial class NpcRagdoll : PhysicalBoneSimulator3D
     public override void _Ready()
     {
         _bodies.AddRange(GetChildren().OfType<PhysicalBone3D>());
+        foreach (var b in _bodies)
+        {
+            _shapes[b] = b.GetChildren().OfType<CollisionShape3D>().FirstOrDefault();
+        }
         AddExceptions();
         Prepare();
     }
@@ -100,22 +109,65 @@ public partial class NpcRagdoll : PhysicalBoneSimulator3D
     /// <summary>
     /// Hands the body to physics, and freezes it <paramref name="settleS"/> seconds later. A
     /// non-zero <paramref name="pushNs"/> (newton-seconds, world space) shoves the upper chest,
-    /// as a hit would.
+    /// as a hit would. Where the level has <paramref name="water"/>, the body floats in it.
     /// </summary>
-    public async void Collapse(double settleS, Vector3 pushNs = default)
+    public async void Collapse(double settleS, Vector3 pushNs = default, LevelWater? water = null)
     {
         if (Collapsed)
         {
             return;
         }
         Collapsed = true;
+        _water = water;
         PhysicalBonesStartSimulation();
         if (pushNs != Vector3.Zero && _bodies.FirstOrDefault(b => BoneName(b) == "UpperChest") is { } chest)
         {
             chest.ApplyCentralImpulse(pushNs);
         }
         await ToSignal(GetTree().CreateTimer(settleS, processAlways: false, processInPhysics: true), SceneTreeTimer.SignalName.Timeout);
+        if (!IsInstanceValid(this) || InWater())
+        {
+            return;     // a body in water floats on, damped, rather than freezing mid-rise
+        }
         Freeze();
+    }
+
+    /// <inheritdoc/>
+    public override void _PhysicsProcess(double delta)
+    {
+        if (!Collapsed || Frozen || _water is null)
+        {
+            return;
+        }
+        var t = _water.Table;
+        var g = (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble();
+        foreach (var b in _bodies)
+        {
+            var f = _water.SubmergedFraction(b.GlobalPosition, HalfHeight(b));
+            if (f <= 0)
+            {
+                continue;
+            }
+            b.ApplyCentralImpulse(Vector3.Up * ((float)t.BodyBuoyancyRatio * b.Mass * g * f * (float)delta));
+            b.LinearDamp = (float)t.BodyLinearDampPerS;
+            b.AngularDamp = (float)t.BodyAngularDampPerS;
+        }
+    }
+
+    private bool InWater() => _water is not null && _bodies.Any(b => _water.SubmergedFraction(b.GlobalPosition, HalfHeight(b)) > 0);
+
+    // How far a bone's collider reaches up and down from its centre, metres: a capsule's by how
+    // upright it lies, a sphere's radius, a box's largest half side.
+    private float HalfHeight(PhysicalBone3D b)
+    {
+        var node = _shapes.GetValueOrDefault(b);
+        return node?.Shape switch
+        {
+            CapsuleShape3D c => c.Radius + (c.Height / 2 - c.Radius) * Mathf.Abs(node.GlobalBasis.Y.Normalized().Y),
+            SphereShape3D sp => sp.Radius,
+            BoxShape3D bx => Mathf.Max(bx.Size.X, Mathf.Max(bx.Size.Y, bx.Size.Z)) / 2,
+            _ => 0.1f,
+        };
     }
 
     // Reads each simulated bone's pose from its body, stops the simulation, and writes the poses

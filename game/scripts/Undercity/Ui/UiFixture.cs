@@ -45,8 +45,12 @@ public sealed class StubShell : IShell
 /// <summary>A level with no scene: it records drops and is never witnessed.</summary>
 public sealed class StubLevelHost : ILevelHost
 {
-    /// <summary>A stub for <paramref name="def"/>.</summary>
-    public StubLevelHost(LevelDef def) => Def = def;
+    /// <summary>A stub for <paramref name="def"/>, with its water under <paramref name="table"/>.</summary>
+    public StubLevelHost(LevelDef def, Undercity.Core.Vitals.WaterTable table)
+    {
+        Def = def;
+        Water = new LevelWater(def.Water, table);
+    }
 
     /// <summary>What was dropped: item id and count.</summary>
     public List<(string Item, int Count)> Dropped { get; } = new();
@@ -56,6 +60,9 @@ public sealed class StubLevelHost : ILevelHost
 
     /// <inheritdoc/>
     public LevelDef Def { get; }
+
+    /// <inheritdoc/>
+    public LevelWater Water { get; }
 
     /// <summary>No body: the HUD's compass stays where it is.</summary>
     public Brushfire.PlayerController Player => null!;
@@ -112,7 +119,7 @@ public static class UiFixture
         var data = GameData.Load(new GodotDataSource());
         var state = GameState.NewGame(data, Seed);
         var saves = new SaveStore(ProjectSettings.GlobalizePath("user://ui_check_saves"));
-        return new Services(state, new StubLevelHost(data.Levels["hub"]), screens, saves, new StubShell());
+        return new Services(state, new StubLevelHost(data.Levels["hub"], data.Water), screens, saves, new StubShell());
     }
 
     /// <summary>

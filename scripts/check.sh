@@ -18,8 +18,9 @@ dotnet format core/Undercity.sln --verify-no-changes
 step "Build and test the core (warnings are errors)"
 dotnet test core/Undercity.sln --nologo -v quiet
 
-step "Level plans: z-fighting, carved rooms, people clear of the level (CLAUDE.md 7.2, 7.4)"
+step "Level plans: z-fighting, carved rooms, ways out of the water, people clear of the level (CLAUDE.md 7.2, 7.4)"
 python3 tools/levels/city_plan.py hub --stats >/dev/null
+python3 -m unittest discover -s tools/levels -p 'test_*.py'
 
 step "Generated level data is current"
 python3 tools/levels/export_level_data.py >/dev/null
@@ -41,6 +42,9 @@ if [[ $FAST == 0 ]]; then
   # pipefail carries Godot's exit code through the filter
   (cd game && flock /tmp/undercity-godot.lock timeout 900 godot --headless --path . \
       res://scenes/undercity/tests/placement_test.tscn 2>&1 | grep -E "FAIL|placement_test\] [0-9]")
+  step "Water: falling in, swimming, breath, ladders, mantling, floating bodies (swim_test.tscn)"
+  (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
+      res://scenes/undercity/tests/swim_test.tscn 2>&1 | grep -E "FAIL|swim_test\] [0-9]")
 
   step "Design maps and page"
   python3 tools/levels/render_map.py

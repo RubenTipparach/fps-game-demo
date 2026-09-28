@@ -177,7 +177,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         Velocity = Vector3.Zero;
         CollisionLayer = 0;
         CollisionMask = 0;
-        _ragdoll.Collapse(_s.Data.NpcBodies.Ragdoll.SettleS, pushNs);
+        _ragdoll.Collapse(_s.Data.NpcBodies.Ragdoll.SettleS, pushNs, _s.Level.Water);
     }
 
     private void ParsePatrol(string spec, string start)

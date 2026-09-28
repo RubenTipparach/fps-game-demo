@@ -51,6 +51,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
     private Node? _screensNode;
     private PlayerController? _player;
     private LevelDef? _def;
+    private LevelWater? _water;
     private readonly Dictionary<string, Node> _stable = new(StringComparer.Ordinal);
     private double _watchS;
     private bool _weaponSeenThisDraw;
@@ -78,6 +79,9 @@ public partial class UndercityLevel : Node3D, ILevelHost
 
     /// <inheritdoc/>
     public LevelDef Def => _def!;
+
+    /// <inheritdoc/>
+    public LevelWater Water => _water!;
 
     /// <inheritdoc/>
     public PlayerController Player => _player!;
@@ -119,6 +123,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
             return;
         }
         _def = _session.State.Data.Levels[LevelId];
+        _water = new LevelWater(_def.Water, _session.State.Data.Water);
         State.World.CurrentLevel = LevelId;
 
         _player = PlayerScene.Instantiate<PlayerController>();

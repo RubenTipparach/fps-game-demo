@@ -22,7 +22,8 @@ namespace Brushfire;
 /// </summary>
 public partial class AutoTest : Node
 {
-    public static bool Active { get; private set; }
+    /// <summary>True while a script drives the game: here, or the headless water test (Undercity's SwimTest).</summary>
+    public static bool Active { get; internal set; }
     public static bool God { get; private set; }
 
     string _out = "user://autotest";

@@ -1,5 +1,6 @@
 // An item on the floor: placed by the layout or dropped by the runner. Taking it picks up what
-// fits; the rest stays.
+// fits; the rest stays. A dropped item comes to rest on the floor under it: it falls through air
+// and sinks through water at data/water.json's item_sink_mps (openspec/changes/water-and-swimming).
 //
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): pickup and stacking are the core's.
 
@@ -17,6 +18,8 @@ public partial class WorldItem : Node3D, IWired, IInteractable, IStable
     private int _count;
     private string? _stolenFrom;
     private bool _placed;
+    private bool _resting;
+    private float _fallMps;
 
     /// <inheritdoc/>
     public string StableId => Entity.StableIdOf(this);
@@ -29,6 +32,7 @@ public partial class WorldItem : Node3D, IWired, IInteractable, IStable
         _placed = services.Level.Def.Items.TryGetValue(StableId, out var spec);
         (_item, _count) = GameState.ParseSpec(_placed ? spec! : Entity.Meta(this, "item"));
         _stolenFrom = HasMeta("stolen_from") ? Entity.Meta(this, "stolen_from") : null;
+        _resting = _placed;     // the layout puts its items where they lie
         if (!services.Data.Items.Exists(_item))
         {
             GD.PushError($"[Undercity] {StableId}: unknown item '{_item}'");
@@ -39,6 +43,31 @@ public partial class WorldItem : Node3D, IWired, IInteractable, IStable
         {
             QueueFree();
         }
+    }
+
+    /// <inheritdoc/>
+    public override void _PhysicsProcess(double delta)
+    {
+        if (_resting || _s is null)
+        {
+            return;
+        }
+        var dt = (float)delta;
+        var p = GlobalPosition;
+        var water = _s.Level.Water;
+        var inWater = water.SurfaceAt(p) is { } surface && p.Y < surface;
+        _fallMps = inWater ? (float)water.Table.ItemSinkMps
+            : _fallMps + (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble() * dt;
+        var step = _fallMps * dt;
+        var query = PhysicsRayQueryParameters3D.Create(p + Vector3.Up * 0.05f, p + Vector3.Down * (step + 0.02f), Brushfire.Layers.World);
+        var hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+        if (hit.Count > 0)
+        {
+            GlobalPosition = hit["position"].AsVector3();
+            _resting = true;
+            return;
+        }
+        GlobalPosition = p + Vector3.Down * step;
     }
 
     /// <inheritdoc/>

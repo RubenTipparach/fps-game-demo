@@ -243,6 +243,9 @@ public sealed class LevelDef : IValidated
     /// <summary>NPC placements by stable id: the NPC id (named) or "civ" (a civilian).</summary>
     public IReadOnlyDictionary<string, string> Npcs { get; init; } = new Dictionary<string, string>();
 
+    /// <summary>The level's water bodies, from its layout (openspec/changes/water-and-swimming).</summary>
+    public IReadOnlyList<WaterBody> Water { get; init; } = Array.Empty<WaterBody>();
+
     /// <inheritdoc/>
     public void Validate(ICollection<string> errors)
     {
@@ -251,6 +254,14 @@ public sealed class LevelDef : IValidated
         foreach (var dup in ids.GroupBy(i => i).Where(g => g.Count() > 1))
         {
             errors.Add($"levels.{Id}: stable id '{dup.Key}' is used twice");
+        }
+        foreach (var dup in Water.GroupBy(w => w.Id).Where(g => g.Count() > 1))
+        {
+            errors.Add($"levels.{Id}: water id '{dup.Key}' is used twice");
+        }
+        foreach (var w in Water)
+        {
+            w.Validate(Id, errors);
         }
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {

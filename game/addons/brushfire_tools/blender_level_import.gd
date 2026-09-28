@@ -49,6 +49,7 @@ const UNDERCITY := {
 	"zone": "res://scenes/undercity/zone.tscn",
 	"trigger": "res://scenes/undercity/trigger.tscn",
 	"bed": "res://scenes/undercity/bed.tscn",
+	"ladder": "res://scenes/undercity/ladder.tscn",
 }
 
 

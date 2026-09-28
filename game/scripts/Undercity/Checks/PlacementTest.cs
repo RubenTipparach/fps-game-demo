@@ -3,8 +3,10 @@
 // person with their own collider against the level's physics (openspec/specs/level-geometry,
 // "People stand clear of the level"). A person passes when their capsule, lifted just off the
 // floor, overlaps no world collider and no other person, and the floor is right under their feet.
-// Every stop on an NPC's patrol is tested the same way. Prints PASS or FAIL per person and quits
-// with 1 on any failure.
+// Every stop on an NPC's patrol is tested the same way. Every ladder out of the water is tested
+// with the player's collider: its foot at least 0.5 m under the surface, room to climb its whole
+// height, and room to stand on the floor at its top (openspec/changes/water-and-swimming). Prints
+// PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
 //
@@ -80,6 +82,7 @@ public partial class PlacementTest : Node3D
                 CheckNpc(npc);
             }
             CheckSpawns();
+            CheckLadders();
         }
         catch (Exception e)
         {
@@ -133,6 +136,78 @@ public partial class PlacementTest : Node3D
             Check($"{spawn.Name}", col.Shape, spawn.GlobalTransform, col.Transform, Array.Empty<Rid>(), Layers.World | Layers.Enemy);
         }
         player.Free();
+    }
+
+    /// <summary>How far under the water's surface a ladder's foot must reach, metres: a floating
+    /// swimmer's hands are there (openspec/changes/water-and-swimming, task 4.2).</summary>
+    private const float LadderUnderM = 0.5f;
+
+    // Each ladder, with the player's own collider: its foot under the water, the climb clear from
+    // a floating swimmer's feet to over the top, and the floor at the top where the climb ends.
+    private void CheckLadders()
+    {
+        var player = GD.Load<PackedScene>(PlayerScene).Instantiate<Node3D>();
+        var col = ColliderOf(player);
+        var radius = col.Shape is CylinderShape3D c ? c.Radius : 0.4f;
+        var data = Session.Data;
+        var level = LevelDir.TrimEnd('/').Split('/').Last();
+        var water = new LevelWater(data.Levels[level].Water, data.Water);
+        var ladders = GetTree().GetNodesInGroup("ladders").OfType<Ladder>().OrderBy(n => n.Name.ToString(), StringComparer.Ordinal).ToList();
+        if (ladders.Count == 0 && data.Levels[level].Water.Count > 0)
+        {
+            Fail($"{level} has water and no ladders");
+        }
+        foreach (var l in ladders)
+        {
+            var hold = l.HoldPoint(radius, 0);
+            if (water.SurfaceAt(hold) is not { } surface)
+            {
+                Fail($"{l.Name}: no water under the ladder");
+                continue;
+            }
+            _people++;
+            if (l.BottomM > surface - LadderUnderM)
+            {
+                Fail($"{l.Name}: its foot is at {l.BottomM:0.00} m, less than {LadderUnderM} m under the surface ({surface:0.00} m)");
+            }
+            else
+            {
+                GD.Print($"PASS [placement_test] {l.Name} reaches {surface - l.BottomM:0.00} m under the surface");
+            }
+            var eye = 1.62f;
+            for (var y = surface + (float)data.Water.FloatEyeAboveM - eye; y < l.TopM + 0.06f; y += 0.25f)
+            {
+                var feet = l.HoldPoint(radius, Math.Min(y, l.TopM + 0.05f));
+                if (!Clear($"{l.Name} climb at {feet.Y:0.00} m", col.Shape, new Transform3D(Basis.Identity, feet), col.Transform))
+                {
+                    break;
+                }
+            }
+            Clear($"{l.Name} step in over the top", col.Shape, new Transform3D(Basis.Identity,
+                new Vector3(l.Landing.X, l.TopM + 0.02f, l.Landing.Z)), col.Transform);
+            Check($"{l.Name} landing", col.Shape, new Transform3D(Basis.Identity, l.Landing), col.Transform, Array.Empty<Rid>(), Layers.World | Layers.Enemy);
+        }
+        player.Free();
+    }
+
+    // Overlap only: nothing in the level where the body is.
+    private bool Clear(string who, Shape3D shape, Transform3D feet, Transform3D shapeLocal)
+    {
+        _people++;
+        var q = new PhysicsShapeQueryParameters3D
+        {
+            Shape = shape,
+            Transform = feet * shapeLocal,
+            CollisionMask = Layers.World | Layers.Enemy,
+        };
+        var hits = GetWorld3D().DirectSpaceState.IntersectShape(q, 8).Select(h => h["collider"].As<Node>())
+            .Where(n => n is not null).Select(n => $"{n.GetParent()?.Name}/{n.Name}").Distinct(StringComparer.Ordinal).ToList();
+        if (hits.Count > 0)
+        {
+            Fail($"{who}: the body overlaps {string.Join(", ", hits)}");
+            return false;
+        }
+        return true;
     }
 
     private void Check(string who, Shape3D shape, Transform3D feet, Transform3D shapeLocal, Rid[] exclude, uint mask)
