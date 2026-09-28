@@ -1,0 +1,457 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/characters/jax.glb" id="1_body"]
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/NpcRagdoll.cs" id="2_ragdoll"]
+[ext_resource type="AnimationLibrary" path="res://animations/ual/ual_standard.glb" id="3_ual"]
+[ext_resource type="AnimationLibrary" path="res://animations/undercity_clips.glb" id="4_undercity"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Hips"]
+radius = 0.13
+height = 0.27
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Spine"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Chest"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_UpperChest"]
+radius = 0.14
+height = 0.35916692
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Neck"]
+radius = 0.05
+height = 0.11
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Head"]
+radius = 0.1
+height = 0.21000000000000002
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftShoulder"]
+radius = 0.045
+height = 0.17909087
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperArm"]
+radius = 0.055
+height = 0.26086652
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerArm"]
+radius = 0.045
+height = 0.28447896
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftHand"]
+radius = 0.04
+height = 0.11549361
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightShoulder"]
+radius = 0.045
+height = 0.17909087
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperArm"]
+radius = 0.055
+height = 0.26086652
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerArm"]
+radius = 0.045
+height = 0.28447896
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightHand"]
+radius = 0.04
+height = 0.11549361
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperLeg"]
+radius = 0.085
+height = 0.42386907
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerLeg"]
+radius = 0.065
+height = 0.47506985
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftFoot"]
+radius = 0.05
+height = 0.14886414
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperLeg"]
+radius = 0.085
+height = 0.42386907
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerLeg"]
+radius = 0.065
+height = 0.47506985
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightFoot"]
+radius = 0.05
+height = 0.14886414
+
+[node name="jax" instance=ExtResource("1_body")]
+
+[node name="Ragdoll" type="PhysicalBoneSimulator3D" parent="jax/GeneralSkeleton"]
+script = ExtResource("2_ragdoll")
+
+[node name="PB_Hips" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 0
+joint_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.046899498)
+body_offset = Transform3D(1, 0, 0, 0, 1.19147025e-07, -1, 0, 1, 1.19147025e-07, 0, 0.046899498, -5.5879354e-09)
+bone_name = "Hips"
+mass = 12.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_Hips"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Hips")
+
+[node name="PB_Spine" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.034666955)
+body_offset = Transform3D(1, 0, 0, 0, 5.37297e-08, -1, 0, 1, 5.37297e-08, 0, 0.034666955, -1.8626451e-09)
+bone_name = "Spine"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_Spine"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Spine")
+
+[node name="PB_Chest" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.031781495)
+body_offset = Transform3D(1, 0, 0, 0, 5.8607853e-08, -1, 0, 1, 5.8607853e-08, 0, 0.031781495, -1.8626451e-09)
+bone_name = "Chest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_Chest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Chest")
+
+[node name="PB_UpperChest" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.17958346)
+body_offset = Transform3D(1, 0, 0, 0, 0.050435036, -0.9987273, 0, 0.9987273, 0.050435036, 0, 0.1793549, -0.009057298)
+bone_name = "UpperChest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_UpperChest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_UpperChest")
+
+[node name="PB_Neck" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.0526193)
+body_offset = Transform3D(1, 0, 0, 0, -0.14635077, -0.9892328, 0, 0.9892328, -0.14635077, 0, 0.052052736, 0.007700875)
+bone_name = "Neck"
+mass = 1.0
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_Neck"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Neck")
+
+[node name="PB_Head" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.1)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.1, 0)
+bone_name = "Head"
+mass = 4.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Head")
+
+[node name="PB_LeftShoulder" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.089545436)
+body_offset = Transform3D(0.99979216, -0.0034561984, 0.020093292, 0.02038837, 0.1694829, -0.98532224, 0, 0.9855271, 0.16951813, -0.0017992626, 0.08823111, -0.0151795745)
+bone_name = "LeftShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftShoulder")
+
+[node name="PB_LeftUpperArm" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13043326)
+body_offset = Transform3D(1, 0, 2.8560892e-08, 2.8560892e-08, 0, -1, 0, 1, 0, -3.7252903e-09, 0.13043326, 0)
+bone_name = "LeftUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperArm")
+
+[node name="PB_LeftLowerArm" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.14223948)
+body_offset = Transform3D(1, 0, 0, 0, -2.9464053e-08, -1, 0, 1, -2.9464053e-08, 0, 0.14223948, 4.1909516e-09)
+bone_name = "LeftLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerArm")
+
+[node name="PB_LeftHand" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.057746805)
+body_offset = Transform3D(0.9969333, 0.0032552627, 0.078188345, 0.07825608, -0.041470002, -0.9960704, 0, 0.9991344, -0.04159757, -0.0045151273, 0.057519883, 0.0024021268)
+bone_name = "LeftHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftHand")
+
+[node name="PB_RightShoulder" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.089545436)
+body_offset = Transform3D(0.99979216, 0.0034561984, -0.020093292, -0.02038837, 0.1694829, -0.98532224, 0, 0.9855271, 0.16951813, 0.0017992626, 0.08823111, -0.0151795745)
+bone_name = "RightShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightShoulder")
+
+[node name="PB_RightUpperArm" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13043326)
+body_offset = Transform3D(1, 0, -2.8560892e-08, -2.8560892e-08, 0, -1, 0, 1, 0, 3.7252903e-09, 0.13043326, 0)
+bone_name = "RightUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperArm")
+
+[node name="PB_RightLowerArm" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.14223948)
+body_offset = Transform3D(1, 0, 0, 0, -2.9464053e-08, -1, 0, 1, -2.9464053e-08, 0, 0.14223948, 4.1909516e-09)
+bone_name = "RightLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerArm")
+
+[node name="PB_RightHand" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.057746805)
+body_offset = Transform3D(0.9969333, -0.0032552627, -0.078188345, -0.07825608, -0.041470002, -0.9960704, 0, 0.9991344, -0.04159757, 0.0045151273, 0.057519883, 0.0024021268)
+bone_name = "RightHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightHand")
+
+[node name="PB_LeftUpperLeg" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21193454)
+body_offset = Transform3D(1, -1.0620855e-15, 1.7577552e-08, 1.7577552e-08, 6.0422835e-08, -1, 0, 1, 6.0422835e-08, -3.7252903e-09, 0.21193454, -1.2805685e-08)
+bone_name = "LeftUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperLeg")
+
+[node name="PB_LeftLowerLeg" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(1.8626454e-09, -2.3283067e-10, 1, -7.4505815e-09, 1, 2.3283067e-10, -1, -7.4505815e-09, 1.8626451e-09, 0, 0, 0.23753493)
+body_offset = Transform3D(0.9997699, -0.0024598136, -0.02130821, -0.02144972, -0.11465173, -0.99317414, 0, 0.99340266, -0.114678115, 0.005061444, 0.23591354, 0.027240057)
+bone_name = "LeftLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerLeg")
+
+[node name="PB_LeftFoot" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07443207)
+body_offset = Transform3D(1, 0, 0, 0, -5.0049533e-08, -1, 0, 1, -5.0049533e-08, 0, 0.07443207, 3.7252903e-09)
+bone_name = "LeftFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_LeftFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftFoot")
+
+[node name="PB_RightUpperLeg" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21193454)
+body_offset = Transform3D(1, 1.0620855e-15, -1.7577552e-08, -1.7577552e-08, 6.0422835e-08, -1, 0, 1, 6.0422835e-08, 3.7252903e-09, 0.21193454, -1.2805685e-08)
+bone_name = "RightUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperLeg")
+
+[node name="PB_RightLowerLeg" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(-1.8626454e-09, 2.3283067e-10, 1, -7.4505815e-09, 1, -2.3283067e-10, -1, -7.4505815e-09, -1.8626451e-09, 0, 0, 0.23753493)
+body_offset = Transform3D(0.9997699, 0.0024598136, 0.02130821, 0.02144972, -0.11465173, -0.99317414, 0, 0.99340266, -0.114678115, -0.005061444, 0.23591354, 0.027240057)
+bone_name = "RightLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerLeg")
+
+[node name="PB_RightFoot" type="PhysicalBone3D" parent="jax/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07443207)
+body_offset = Transform3D(1, 0, 0, 0, -5.0049533e-08, -1, 0, 1, -5.0049533e-08, 0, 0.07443207, 3.7252903e-09)
+bone_name = "RightFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="jax/GeneralSkeleton/Ragdoll/PB_RightFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightFoot")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries/ = ExtResource("3_ual")
+libraries/undercity = ExtResource("4_undercity")

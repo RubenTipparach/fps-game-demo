@@ -1,9 +1,12 @@
 // A person in a level: a named NPC or a civilian. Stands, or walks a patrol, plays idle, walk and
 // talk, greets the runner, and opens its dialog tree on use. Its faction and intelligence decide
-// how the disguise rule judges the runner in front of it.
+// how the disguise rule judges the runner in front of it. Its body is a generated NPC scene
+// (game/scenes/undercity/npcs/<model>.tscn) that plays the shared animation library and falls
+// as a ragdoll when it collapses.
 //
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): who it is comes from
-// data/npcs.json, what it says from its dialog tree, and every judgement from the core.
+// data/npcs.json, what it says from its dialog tree, which clip plays for each state from
+// data/npc_bodies.json, and every judgement from the core.
 
 #nullable enable
 using System;
@@ -44,6 +47,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
     private NpcDef? _def;
     private DialogTree? _tree;
     private AnimationPlayer? _anim;
+    private NpcRagdoll? _ragdoll;
     private string _idle = "idle";
     private readonly List<Vector3> _patrol = new();
     private int _patrolIndex;
@@ -117,35 +121,63 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
 
     private void LoadModel(string modelId)
     {
-        var path = $"res://models/characters/{modelId}.glb";
+        var path = $"res://scenes/undercity/npcs/{modelId}.tscn";
         if (!ResourceLoader.Exists(path))
         {
-            GD.PushWarning($"[Undercity] {StableId}: no model {path}");
+            GD.PushWarning($"[Undercity] {StableId}: no NPC scene {path} (tools/godot/gen_npc_scenes.gd)");
             return;
         }
         var model = GD.Load<PackedScene>(path).Instantiate<Node3D>();
         model.Name = "Model";
-        // The characters face +Z; a node's forward is -Z.
+        // The bodies face +Z; a node's forward is -Z.
         model.RotationDegrees = new Vector3(0, 180, 0);
         AddChild(model);
-        _anim = model.FindChildren("*", "AnimationPlayer", true, false).OfType<AnimationPlayer>().FirstOrDefault();
-        if (_anim is null)
+        _anim = model.GetNodeOrNull<AnimationPlayer>("Anim");
+        _ragdoll = model.FindChildren("Ragdoll", "", true, false).OfType<NpcRagdoll>().FirstOrDefault();
+        if (_anim is null || _ragdoll is null)
         {
-            return;
-        }
-        // glTF has no loop flag; every character clip loops (tools/blender/build_characters.py).
-        foreach (var name in _anim.GetAnimationList())
-        {
-            _anim.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
+            GD.PushWarning($"[Undercity] {StableId}: {path} lacks its Anim or Ragdoll node; regenerate it");
         }
     }
 
-    private void Play(string clip)
+    /// <summary>Plays the clip data/npc_bodies.json gives a state, once the ragdoll's joints are ready.</summary>
+    private void Play(string state)
     {
-        if (_anim is not null && _anim.HasAnimation(clip) && _anim.CurrentAnimation != clip)
+        if (_anim is null || _s is null || _ragdoll is { Prepared: false } || _ragdoll is { Collapsed: true })
         {
-            _anim.Play(clip, 0.25);
+            return;
         }
+        var bodies = _s.Data.NpcBodies;
+        var clip = bodies.Clip(state) ?? bodies.Clip("idle");
+        if (clip is null || !_anim.HasAnimation(clip))
+        {
+            return;
+        }
+        if (_anim.CurrentAnimation != clip)
+        {
+            _anim.Play(clip, bodies.BlendS);
+        }
+    }
+
+    /// <summary>True once the body has collapsed (dead or knocked out).</summary>
+    public bool Collapsed => _ragdoll?.Collapsed ?? false;
+
+    /// <summary>
+    /// The body falls as a ragdoll and freezes after data/npc_bodies.json's settle time. The
+    /// caller records why (dead or knocked out) in the world; this only moves the body. A push
+    /// (newton-seconds, world space) shoves the chest, as a hit would.
+    /// </summary>
+    public void Collapse(Vector3 pushNs = default)
+    {
+        if (_ragdoll is null || _ragdoll.Collapsed || _s is null)
+        {
+            return;
+        }
+        _anim?.Stop(keepState: true);
+        Velocity = Vector3.Zero;
+        CollisionLayer = 0;
+        CollisionMask = 0;
+        _ragdoll.Collapse(_s.Data.NpcBodies.Ragdoll.SettleS, pushNs);
     }
 
     private void ParsePatrol(string spec, string start)
@@ -172,7 +204,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
 
     public override void _PhysicsProcess(double delta)
     {
-        if (_s is null || !Visible)
+        if (_s is null || !Visible || Collapsed)
         {
             return;
         }
@@ -186,7 +218,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable
         {
             v.X = v.Z = 0;
             Face(toPlayer, dt);
-            Play(_talking ? "talk" : "guard");
+            Play(_talking ? "talk" : "hostile");
         }
         else if (_patrol.Count > 0)
         {

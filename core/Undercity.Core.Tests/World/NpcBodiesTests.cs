@@ -62,6 +62,17 @@ public sealed class NpcBodiesTests
     }
 
     [Fact]
+    public void Every_npc_model_has_a_generated_scene()
+    {
+        var models = TestData.Data.Npcs.Npcs.Select(n => n.Model).Concat(TestData.Data.Npcs.Civilians.Models).Distinct();
+        foreach (var model in models)
+        {
+            var scene = Path.Combine(TestData.RepoRoot, "game", "scenes", "undercity", "npcs", model + ".tscn");
+            Assert.True(File.Exists(scene), $"'{model}' has no scene; run tools/godot/gen_npc_scenes.gd (README, Undercity's NPC bodies)");
+        }
+    }
+
+    [Fact]
     public void A_complete_table_loads()
     {
         Assert.Equal("Walk", Parse(Table(AllClips)).Clip("walk"));

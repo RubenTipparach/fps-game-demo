@@ -1,4 +1,4 @@
-// The ragdoll check (scenes/undercity/tests/ragdoll_test.tscn): stands each listed NPC scene on a
+// The ragdoll check (scenes/undercity/tests/ragdoll_test.tscn): stands every generated NPC scene on a
 // 0.45 m step with its back to the edge, collapses it with a shove to the chest, and checks the
 // spec (openspec/changes/npc-characters, "Deaths and knockouts are ragdolls that come to rest"):
 // the body falls off the step without exploding, and it is frozen once data/npc_bodies.json's
@@ -23,8 +23,11 @@ namespace Undercity.Client;
 /// <summary>The headless ragdoll check.</summary>
 public partial class RagdollTest : Node3D
 {
-    /// <summary>The NPC scenes to drop, one after another.</summary>
+    /// <summary>The NPC scenes to drop, one after another; empty drops every generated NPC scene.</summary>
     [Export] public string[] Bodies { get; set; } = Array.Empty<string>();
+
+    /// <summary>Where the generated NPC scenes are (tools/godot/gen_npc_scenes.gd).</summary>
+    private const string NpcScenes = "res://scenes/undercity/npcs";
 
     /// <summary>The step's top, metres.</summary>
     [Export] public float StepTopM { get; set; } = 0.45f;
@@ -43,6 +46,11 @@ public partial class RagdollTest : Node3D
         try
         {
             var data = GameData.Load(new GodotDataSource());
+            if (Bodies.Length == 0)
+            {
+                Bodies = DirAccess.GetFilesAt(NpcScenes).Where(f => f.EndsWith(".tscn", StringComparison.Ordinal))
+                    .Order(StringComparer.Ordinal).Select(f => $"{NpcScenes}/{f}").ToArray();
+            }
             foreach (var path in Bodies)
             {
                 await Drop(path, data.NpcBodies.Ragdoll.SettleS);

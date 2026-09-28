@@ -1,0 +1,68 @@
+{
+  "_comment": "Clips keyed on the Universal Animation Library's rig (tools/blender/build_npc_clips.py; openspec/changes/npc-characters, design section 6 and task 3.2), for the clips UAL Standard lacks. Directions are [left, front, up] (the body's left, its front, up), given in the rest frame of the frame bone and turned with it as posed. Rotations are degrees about an armature axis (X: positive bends forward; Y: positive tips a left-side bone down; Z: positive turns toward the body's left), applied after the bone's parent. A motion adds a sine of deg amplitude with a whole number of cycles per clip, so every clip loops seamlessly (its last frame equals its first). Clip names end in _Loop, as UAL's looping clips do: Godot's glTF import marks those looping and strips the suffix, so the game plays them as undercity/Surrender and undercity/Cower (data/npc_bodies.json).",
+  "source": {"pack": "universal_animation_library_standard",
+             "glb": "Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb", "armature": "Rig"},
+  "out": "game/animations/undercity_clips.glb",
+  "fps": 30,
+  "placeholder": {"_comment": "Godot builds a Skeleton3D only for bones a skin uses, so the glb carries one tiny triangle skinned to this bone.", "bone": "DEF-hips", "size_m": 0.002},
+  "clips": {
+    "Surrender_Loop": {
+      "length_s": 2.0,
+      "hips_offset_m": [0.0, 0.0, -0.01],
+      "plant_feet": true,
+      "knee_forward": 1.0,
+      "bones": [
+        {"bone": "DEF-spine.001", "rot": [{"axis": "X", "deg": -2.0}]},
+        {"bone": "DEF-spine.003", "rot": [{"axis": "X", "deg": -3.0}]},
+        {"bone": "DEF-neck", "rot": [{"axis": "X", "deg": 4.0}]},
+        {"bone": "DEF-head", "rot": [{"axis": "X", "deg": -6.0}]},
+        {"bone": "DEF-shoulder.L", "rot": [{"axis": "Y", "deg": -14.0}]},
+        {"bone": "DEF-shoulder.R", "rot": [{"axis": "Y", "deg": 14.0}]},
+        {"bone": "DEF-upper_arm.L", "frame": "DEF-spine.003", "aim": [0.8, 0.2, 0.3]},
+        {"bone": "DEF-upper_arm.R", "frame": "DEF-spine.003", "aim": [-0.8, 0.2, 0.3]},
+        {"bone": "DEF-forearm.L", "frame": "DEF-spine.003", "aim": [-0.2, 0.08, 1.0], "twist_deg": -75.0},
+        {"bone": "DEF-forearm.R", "frame": "DEF-spine.003", "aim": [0.2, 0.08, 1.0], "twist_deg": 75.0},
+        {"bone": "DEF-hand.L", "frame": "DEF-spine.003", "aim": [-0.05, -0.05, 1.0], "twist_deg": -90.0},
+        {"bone": "DEF-hand.R", "frame": "DEF-spine.003", "aim": [0.05, -0.05, 1.0], "twist_deg": 90.0}
+      ],
+      "motions": [
+        {"bone": "DEF-spine.002", "axis": "X", "deg": 1.2, "cycles": 1, "phase_deg": 0.0},
+        {"bone": "DEF-spine.003", "axis": "X", "deg": 1.0, "cycles": 1, "phase_deg": 30.0},
+        {"bone": "DEF-hips", "axis": "Y", "deg": 0.8, "cycles": 1, "phase_deg": 90.0},
+        {"bone": "DEF-head", "axis": "X", "deg": -1.0, "cycles": 1, "phase_deg": 60.0},
+        {"bone": "DEF-shoulder.L", "axis": "Y", "deg": -1.5, "cycles": 1, "phase_deg": 20.0},
+        {"bone": "DEF-shoulder.R", "axis": "Y", "deg": 1.5, "cycles": 1, "phase_deg": 20.0}
+      ]
+    },
+    "Cower_Loop": {
+      "length_s": 2.0,
+      "hips_offset_m": [0.0, -0.1, -0.44],
+      "plant_feet": true,
+      "knee_forward": 1.0,
+      "bones": [
+        {"bone": "DEF-hips", "rot": [{"axis": "X", "deg": 16.0}]},
+        {"bone": "DEF-spine.001", "rot": [{"axis": "X", "deg": 8.0}]},
+        {"bone": "DEF-spine.002", "rot": [{"axis": "X", "deg": 8.0}]},
+        {"bone": "DEF-spine.003", "rot": [{"axis": "X", "deg": 6.0}]},
+        {"bone": "DEF-neck", "rot": [{"axis": "X", "deg": 18.0}]},
+        {"bone": "DEF-head", "rot": [{"axis": "X", "deg": 22.0}]},
+        {"bone": "DEF-shoulder.L", "rot": [{"axis": "Y", "deg": -12.0}, {"axis": "Z", "deg": -10.0}]},
+        {"bone": "DEF-shoulder.R", "rot": [{"axis": "Y", "deg": 12.0}, {"axis": "Z", "deg": 10.0}]},
+        {"bone": "DEF-upper_arm.L", "frame": "DEF-spine.003", "aim": [0.45, 0.38, 0.82]},
+        {"bone": "DEF-upper_arm.R", "frame": "DEF-spine.003", "aim": [-0.45, 0.38, 0.82]},
+        {"bone": "DEF-forearm.L", "frame": "DEF-spine.003", "aim": [-0.9, 0.1, 0.42], "twist_deg": -30.0},
+        {"bone": "DEF-forearm.R", "frame": "DEF-spine.003", "aim": [0.9, 0.1, 0.5], "twist_deg": 30.0},
+        {"bone": "DEF-hand.L", "frame": "DEF-spine.003", "aim": [-0.85, -0.1, 0.1], "twist_deg": -30.0},
+        {"bone": "DEF-hand.R", "frame": "DEF-spine.003", "aim": [0.85, -0.1, 0.1], "twist_deg": 30.0}
+      ],
+      "motions": [
+        {"bone": "DEF-spine.003", "axis": "X", "deg": 0.8, "cycles": 12, "phase_deg": 0.0},
+        {"bone": "DEF-spine.002", "axis": "Z", "deg": 0.6, "cycles": 18, "phase_deg": 40.0},
+        {"bone": "DEF-head", "axis": "X", "deg": 1.0, "cycles": 12, "phase_deg": 90.0},
+        {"bone": "DEF-shoulder.L", "axis": "Y", "deg": 1.2, "cycles": 18, "phase_deg": 0.0},
+        {"bone": "DEF-shoulder.R", "axis": "Y", "deg": -1.2, "cycles": 18, "phase_deg": 120.0},
+        {"bone": "DEF-spine.001", "axis": "X", "deg": 1.5, "cycles": 1, "phase_deg": 0.0}
+      ]
+    }
+  }
+}

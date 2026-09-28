@@ -1,0 +1,457 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/characters/petra.glb" id="1_body"]
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/NpcRagdoll.cs" id="2_ragdoll"]
+[ext_resource type="AnimationLibrary" path="res://animations/ual/ual_standard.glb" id="3_ual"]
+[ext_resource type="AnimationLibrary" path="res://animations/undercity_clips.glb" id="4_undercity"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Hips"]
+radius = 0.13
+height = 0.27
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Spine"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Chest"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_UpperChest"]
+radius = 0.14
+height = 0.3191766
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Neck"]
+radius = 0.05
+height = 0.12131786
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Head"]
+radius = 0.1
+height = 0.21000000000000002
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftShoulder"]
+radius = 0.045
+height = 0.1428575
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperArm"]
+radius = 0.055
+height = 0.26244473
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerArm"]
+radius = 0.045
+height = 0.23506957
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftHand"]
+radius = 0.04
+height = 0.101480916
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightShoulder"]
+radius = 0.045
+height = 0.1428575
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperArm"]
+radius = 0.055
+height = 0.26244473
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerArm"]
+radius = 0.045
+height = 0.23506957
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightHand"]
+radius = 0.04
+height = 0.101480916
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperLeg"]
+radius = 0.085
+height = 0.43620473
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerLeg"]
+radius = 0.065
+height = 0.4134675
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftFoot"]
+radius = 0.05
+height = 0.13706093
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperLeg"]
+radius = 0.085
+height = 0.43620473
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerLeg"]
+radius = 0.065
+height = 0.4134675
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightFoot"]
+radius = 0.05
+height = 0.13706093
+
+[node name="petra" instance=ExtResource("1_body")]
+
+[node name="Ragdoll" type="PhysicalBoneSimulator3D" parent="petra/GeneralSkeleton"]
+script = ExtResource("2_ragdoll")
+
+[node name="PB_Hips" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 0
+joint_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.04484409)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.04484409, 0)
+bone_name = "Hips"
+mass = 12.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_Hips"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Hips")
+
+[node name="PB_Spine" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.036369205)
+body_offset = Transform3D(1, 0, 0, 0, 1.2803724e-07, -1, 0, 1, 1.2803724e-07, 0, 0.036369205, -4.656613e-09)
+bone_name = "Spine"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_Spine"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Spine")
+
+[node name="PB_Chest" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.04953053)
+body_offset = Transform3D(1, 0, 0, 0, 0.19044873, -0.98169714, 0, 0.98169714, 0.19044873, 0, 0.04862398, -0.009433026)
+bone_name = "Chest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_Chest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Chest")
+
+[node name="PB_UpperChest" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.1595883)
+body_offset = Transform3D(1, 0, 0, 0, 0.058289822, -0.99829966, 0, 0.99829966, 0.058289822, 0, 0.15931696, -0.009302374)
+bone_name = "UpperChest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_UpperChest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_UpperChest")
+
+[node name="PB_Neck" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.06065893)
+body_offset = Transform3D(1, 0, 0, 0, -1.1515071e-07, -1, 0, 1, -1.1515071e-07, 0, 0.06065893, 6.9849193e-09)
+bone_name = "Neck"
+mass = 1.0
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_Neck"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Neck")
+
+[node name="PB_Head" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.1)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.1, 0)
+bone_name = "Head"
+mass = 4.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Head")
+
+[node name="PB_LeftShoulder" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07142875)
+body_offset = Transform3D(0.99974734, -0.002433556, 0.022346368, 0.022478487, 0.1082342, -0.9938712, 0, 0.9941224, 0.10826155, -0.0015961733, 0.07099098, -0.0077329874)
+bone_name = "LeftShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftShoulder")
+
+[node name="PB_LeftUpperArm" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13122237)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.13122237, 0)
+bone_name = "LeftUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperArm")
+
+[node name="PB_LeftLowerArm" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.11753479)
+body_offset = Transform3D(1, 0, 0, 0, 9.904755e-08, -1, 0, 1, 9.904755e-08, 0, 0.11753479, -1.1641532e-08)
+bone_name = "LeftLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerArm")
+
+[node name="PB_LeftHand" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.050740458)
+body_offset = Transform3D(0.99355346, 0.0052117133, 0.113244966, 0.11336483, -0.045676563, -0.9925029, 0, 0.99894273, -0.04597293, -0.0057461015, 0.050360054, 0.0023326874)
+bone_name = "LeftHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftHand")
+
+[node name="PB_RightShoulder" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07142875)
+body_offset = Transform3D(0.99974734, 0.002433556, -0.022346368, -0.022478487, 0.1082342, -0.9938712, 0, 0.9941224, 0.10826155, 0.0015961733, 0.07099098, -0.0077329874)
+bone_name = "RightShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightShoulder")
+
+[node name="PB_RightUpperArm" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13122237)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.13122237, 0)
+bone_name = "RightUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperArm")
+
+[node name="PB_RightLowerArm" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.11753479)
+body_offset = Transform3D(1, 0, 0, 0, 9.904755e-08, -1, 0, 1, 9.904755e-08, 0, 0.11753479, -1.1641532e-08)
+bone_name = "RightLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerArm")
+
+[node name="PB_RightHand" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.050740458)
+body_offset = Transform3D(0.99355346, -0.0052117133, -0.113244966, -0.11336483, -0.045676563, -0.9925029, 0, 0.99894273, -0.04597293, 0.0057461015, 0.050360054, 0.0023326874)
+bone_name = "RightHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightHand")
+
+[node name="PB_LeftUpperLeg" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21810237)
+body_offset = Transform3D(1, 5.4701695e-16, 1.7080467e-08, 1.7080467e-08, -3.2025877e-08, -1, 0, 1, -3.2025877e-08, -3.7252903e-09, 0.21810237, 6.9849193e-09)
+bone_name = "LeftUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperLeg")
+
+[node name="PB_LeftLowerLeg" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(-1.2029001e-10, 2.5907575e-13, 1, 0, 1, -2.5907575e-13, -1, -3.1164225e-23, -1.2029001e-10, 0, 0, 0.20673375)
+body_offset = Transform3D(0.9999981, -0.00026064765, -0.0019403666, -0.0019577947, -0.13313304, -0.9910962, 0, 0.9910981, -0.13313329, 0.00040113926, 0.20489304, 0.027523143)
+bone_name = "LeftLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerLeg")
+
+[node name="PB_LeftFoot" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.06853046)
+body_offset = Transform3D(1, 0, 0, 0, 5.4359624e-08, -1, 0, 1, 5.4359624e-08, 0, 0.06853046, -3.7252903e-09)
+bone_name = "LeftFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_LeftFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftFoot")
+
+[node name="PB_RightUpperLeg" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21810237)
+body_offset = Transform3D(1, -5.4701695e-16, -1.7080467e-08, -1.7080467e-08, -3.2025877e-08, -1, 0, 1, -3.2025877e-08, 3.7252903e-09, 0.21810237, 6.9849193e-09)
+bone_name = "RightUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperLeg")
+
+[node name="PB_RightLowerLeg" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(1.2029001e-10, -2.5907575e-13, 1, 0, 1, 2.5907575e-13, -1, -3.1164225e-23, 1.2029001e-10, 0, 0, 0.20673375)
+body_offset = Transform3D(0.9999981, 0.00026064765, 0.0019403666, 0.0019577947, -0.13313304, -0.9910962, 0, 0.9910981, -0.13313329, -0.00040113926, 0.20489304, 0.027523143)
+bone_name = "RightLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerLeg")
+
+[node name="PB_RightFoot" type="PhysicalBone3D" parent="petra/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.06853046)
+body_offset = Transform3D(1, 0, 0, 0, 5.4359624e-08, -1, 0, 1, 5.4359624e-08, 0, 0.06853046, -3.7252903e-09)
+bone_name = "RightFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="petra/GeneralSkeleton/Ragdoll/PB_RightFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightFoot")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries/ = ExtResource("3_ual")
+libraries/undercity = ExtResource("4_undercity")

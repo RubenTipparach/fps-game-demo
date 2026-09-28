@@ -219,6 +219,70 @@ The generated glbs keep the ids the game already loads (`models/characters/<id>.
 `tools/blender/build_characters.py` and the segmented models are deleted in the same commit that
 lands the last replacement.
 
+### 10. As built (2026-09-28)
+
+Built after the owner's answer to H1-H3 ("Do recommend for now, conditionally I will review
+again later"). Where the build differs from the decisions above, this section wins.
+
+- **22 bodies**: 14 named models (the five MerSec troopers share `mersec`), 6 civilians from
+  seeds, and the two later-level grunts. They range from 10,104 to 15,856 triangles, against the
+  16,000 budget (jax is the largest). Each has 3 materials, four 1024 px textures and 53 bones,
+  and no animations. A full build takes about 2 minutes. `build_npcs.py -- --verify` rebuilds
+  all 22 and fails unless each matches its committed glb byte for byte; it passes.
+- **Textures are WebP at quality 85**, embedded in the glb (task 1.4). Godot 4.7 imports them
+  cleanly and extracts them next to the glb as `.webp`, which are committed with their
+  `.import` like any texture. The 22 bodies cost 16 MB of glbs plus 5.3 MB of extracted
+  textures; PNG would have cost about 7 MB per body.
+- **The allowlist is by zip membership.** A file counts as part of a pack only if its path is a
+  member of the pinned zip with a matching size and CRC-32 (`tools/deps/fetch_character_tools.py`,
+  which the build imports, so the pin is implemented once). An asset planted in the unpacked
+  folder, a table over budget and a zip with one extra byte are each refused, naming the NPC or
+  the pack.
+- **The pinned UAL build can't be downloaded any more**: its page now serves a newer build with a
+  different layout. The pack is marked `"fetch": "manual"` and is seeded once from a verified
+  copy (README). The glb the game uses is committed with its provenance.
+- **Faction gear (owner H3)** is rigid low-poly shells built by the script and skinned 100 % to
+  one bone each, painted into the outfit atlas as colour swatches. So a body keeps 3 materials
+  and 4 textures. Each shell is fitted a clearance of 2-12 mm outside the clothes and the body.
+  The build tests every piece against the body with a BVH, at rest and at the stress pose, and
+  against the other pieces on its bone, and fails on any intersection.
+  - MerSec: navy worksuit, chest and back plates with a hi-vis stripe, shoulder pads, belt,
+    helmet with a dark visor. Dace wears an officer's cap instead of the helmet.
+  - Drain Rats (skiv, rat_grunt): a grimy olive field jacket, a respirator with two filters,
+    goggles with green lenses.
+  - Scrap Kings (jax, kings_grunt): two scrap plates on the chest, a scrap pauldron, goggles on
+    the brow.
+  - Silk: charcoal suit with a magenta tie and tinted glasses. Petra: orange overalls.
+  - Signature pieces: Tank's vest plates, Kessler's loupe, Doc Vo's mask, Rivet's goggles and
+    backpack, Nguyen's paper cap.
+- **The wardrobe gaps** are filled from the pack: the field jacket stands in for coats, men's
+  clothes fit women's bodies well, and heads under caps carry no hair (a cap over MPFB hair
+  looked like a mushroom). The logo tees are avoided, and the plain tee's small logos are
+  painted out.
+- **Surrender and Cower** are keyed on UAL's rig by `tools/blender/build_npc_clips.py` from
+  `tools/blender/npc_clips.json`: 2.0 s each, looping seamlessly. Their names end in `_Loop`,
+  as UAL's looping clips do, so Godot's import marks them looping and strips the suffix.
+- **Animation plays through an `AnimationPlayer`** with a 0.25 s cross-fade (`blend_s`), not an
+  `AnimationTree`. Every NPC state is one looping clip, so a player is enough; a tree comes
+  when combat needs blending (aim over walk). The state-to-clip map is data
+  (`data/npc_bodies.json`). The guards stand in `Idle` until they hold weapons.
+- **The NPC scenes are written as text** by `tools/godot/gen_npc_scenes.gd`: each instances its
+  glb and adds only the Ragdoll and Anim nodes (17 KB). Packing an instanced glb from a script
+  embeds the whole body instead.
+- **The ragdoll** sits on Brushfire's debris layer and collides with the world and other
+  ragdolls. `NpcRagdoll` rebuilds the joints at rest two physics frames after the body loads,
+  before the NPC starts animating, and adds the neighbour collision exceptions; neither can be
+  saved in a scene. When the body freezes, it reads each bone's pose from its body, stops the
+  simulation and writes the poses back. A collapse can carry a push on the chest (newton-seconds)
+  for the hit that caused it.
+- **The segmented characters are retired.** Their builder, rig, table and `.blend` are deleted.
+  The two pieces the new tools shared moved into `tools/blender/tablekit.py` (the table
+  validator) and `tools/blender/studiokit.py` (the render studio).
+- **Not proven yet:**
+  - frame cost (needs a GPU; task 5.2);
+  - the MPFB clothes against the body at extreme poses (only the authored gear is tested);
+  - the faces, which stay static.
+
 ## Risks / Trade-offs
 
 - **The look.** MPFB bodies read as realistic people with photo-sourced skin, unlike the UT99

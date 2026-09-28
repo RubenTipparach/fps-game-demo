@@ -79,7 +79,12 @@ In the deck:
    - the drowned locker under the Tin Bridge;
    - the shrine's offering box (Lockpicking 2).
 10. **Sleep** in capsule 12. It heals you and saves.
-11. **The pause menu.** Esc. Save into slot 1 to 3 (or over the quicksave), load any slot, or
+11. **The people.** Every NPC is now a generated body (MPFB2 and CC0 assets) that plays one
+    shared set of animations: they idle, the MerSec pair walk their beat, and whoever you talk to
+    turns to you and gestures. The factions dress the part: MerSec armour, the Drain Rats'
+    respirators, the Scrap Kings' scrap plates, Petra's orange overalls. Their look is still yours
+    to review (survey H2, answered conditionally).
+12. **The pause menu.** Esc. Save into slot 1 to 3 (or over the quicksave), load any slot, or
     open Options. Draw your pistol in front of MerSec twice first: with a hostile watching, the
     save buttons grey out and say why. Quit to title asks once if your last save is more than
     5 minutes old.
@@ -88,6 +93,9 @@ In the deck:
 
 - **Combat.** A drawn pistol can't fire yet, and hostile MerSec don't attack: they stop talking and
   watch you. Combat comes with `openspec/changes/combat-and-enemies`.
+- **Deaths.** Every NPC is a generated body with a ragdoll that falls and settles (see
+  `docs/validation/2026-09-28-npc-bodies.md`), but nothing in play can kill one until combat
+  lands. The faces don't move, and the guards hold no weapons yet.
 - **The lockpicking and hacking minigames.** A held timer stands in for both until mockups E1 and
   E2 are approved.
 - **Missing screens.** There's no trade screen, stash screen, map, notes or conversation log,

@@ -245,11 +245,14 @@ BRUSHFIRE_BATCH="res://levels/csg/level_csg.tscn:csg,nav,lightmap;res://levels/t
 
 Every NPC body is generated from `tools/blender/npcs.json` (openspec/changes/npc-characters).
 The packs it draws on stay outside the repository, pinned by SHA-256 in
-`tools/deps/character_packs.json`:
+`tools/deps/character_packs.json`. MPFB2 and the CC0 assets download; the pinned UAL build is no
+longer offered (its page now serves a newer, different file), so copy a verified
+`ual_standard.zip` into `~/.cache/undercity/deps/packs/` once. The fetch checks it like the others.
 
 ```
 python3 tools/deps/fetch_character_tools.py                         # MPFB2, the CC0 assets, UAL
 blender -b --factory-startup --python tools/blender/build_npcs.py    # -> game/models/characters/*.glb
+blender -b --factory-startup --python tools/blender/build_npcs.py -- --verify  # rebuild matches, byte for byte
 blender -b --factory-startup --python tools/blender/build_npc_clips.py  # -> game/animations/undercity_clips.glb
 godot --headless --path game --import
 godot --headless --path game -s res://../tools/godot/setup_npc_import.gd  # bone maps, retarget options

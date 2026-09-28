@@ -1,0 +1,457 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/characters/rat_grunt.glb" id="1_body"]
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/NpcRagdoll.cs" id="2_ragdoll"]
+[ext_resource type="AnimationLibrary" path="res://animations/ual/ual_standard.glb" id="3_ual"]
+[ext_resource type="AnimationLibrary" path="res://animations/undercity_clips.glb" id="4_undercity"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Hips"]
+radius = 0.13
+height = 0.27
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Spine"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Chest"]
+radius = 0.12
+height = 0.25
+
+[sub_resource type="CapsuleShape3D" id="Capsule_UpperChest"]
+radius = 0.14
+height = 0.3476922
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Neck"]
+radius = 0.05
+height = 0.11
+
+[sub_resource type="CapsuleShape3D" id="Capsule_Head"]
+radius = 0.1
+height = 0.21000000000000002
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftShoulder"]
+radius = 0.045
+height = 0.1673175
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperArm"]
+radius = 0.055
+height = 0.2550195
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerArm"]
+radius = 0.045
+height = 0.2619915
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftHand"]
+radius = 0.04
+height = 0.11308487
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightShoulder"]
+radius = 0.045
+height = 0.1673175
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperArm"]
+radius = 0.055
+height = 0.2550195
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerArm"]
+radius = 0.045
+height = 0.2619915
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightHand"]
+radius = 0.04
+height = 0.11308487
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftUpperLeg"]
+radius = 0.085
+height = 0.43192393
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftLowerLeg"]
+radius = 0.065
+height = 0.4354636
+
+[sub_resource type="CapsuleShape3D" id="Capsule_LeftFoot"]
+radius = 0.05
+height = 0.14278752
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightUpperLeg"]
+radius = 0.085
+height = 0.43192393
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightLowerLeg"]
+radius = 0.065
+height = 0.4354636
+
+[sub_resource type="CapsuleShape3D" id="Capsule_RightFoot"]
+radius = 0.05
+height = 0.14278752
+
+[node name="rat_grunt" instance=ExtResource("1_body")]
+
+[node name="Ragdoll" type="PhysicalBoneSimulator3D" parent="rat_grunt/GeneralSkeleton"]
+script = ExtResource("2_ragdoll")
+
+[node name="PB_Hips" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 0
+joint_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.046570122)
+body_offset = Transform3D(1, 0, 0, 0, -4.9995712e-08, -1, 0, 1, -4.9995712e-08, 0, 0.046570122, 2.3283064e-09)
+bone_name = "Hips"
+mass = 12.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_Hips"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Hips")
+
+[node name="PB_Spine" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.035636663)
+body_offset = Transform3D(1, 0, 0, 0, -1.9600374e-07, -1, 0, 1, -1.9600374e-07, 0, 0.035636663, 6.9849193e-09)
+bone_name = "Spine"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_Spine"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Spine")
+
+[node name="PB_Chest" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.031160772)
+body_offset = Transform3D(1, 0, 0, 0, 1.1955065e-07, -1, 0, 1, 1.1955065e-07, 0, 0.031160772, -3.7252903e-09)
+bone_name = "Chest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_Chest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Chest")
+
+[node name="PB_UpperChest" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.1738461)
+body_offset = Transform3D(1, 0, 0, 0, 0.045933463, -0.9989445, 0, 0.9989445, 0.045933463, 0, 0.1736626, -0.0079853535)
+bone_name = "UpperChest"
+mass = 8.0
+joint_constraints/swing_span = 15.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_UpperChest"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_UpperChest")
+
+[node name="PB_Neck" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.050941013)
+body_offset = Transform3D(1, 0, 0, 0, -0.1675208, -0.98586863, 0, 0.98586863, -0.1675208, 0, 0.050221145, 0.00853368)
+bone_name = "Neck"
+mass = 1.0
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_Neck"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Neck")
+
+[node name="PB_Head" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.1)
+body_offset = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.1, 0)
+bone_name = "Head"
+mass = 4.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 30.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_Head")
+
+[node name="PB_LeftShoulder" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.08365875)
+body_offset = Transform3D(0.99997, -0.0013832622, 0.0076193092, 0.007743855, 0.17862174, -0.9838873, 0, 0.9839168, 0.17862709, -0.00063742185, 0.08231078, -0.014943719)
+bone_name = "LeftShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftShoulder")
+
+[node name="PB_LeftUpperArm" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.12750974)
+body_offset = Transform3D(1, 0, 1.4607865e-08, 1.4607865e-08, 0, -1, 0, 1, 0, -1.8626451e-09, 0.12750974, 0)
+bone_name = "LeftUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperArm")
+
+[node name="PB_LeftLowerArm" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13099575)
+body_offset = Transform3D(1, 0, 0, 0, 1.4219126e-08, -1, 0, 1, 1.4219126e-08, 0, 0.13099575, -1.8626451e-09)
+bone_name = "LeftLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerArm")
+
+[node name="PB_LeftHand" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.056542434)
+body_offset = Transform3D(0.99622244, 0.002906879, 0.08678921, 0.08683788, -0.03334833, -0.9956641, 0, 0.99943954, -0.03347478, -0.004907273, 0.056297272, 0.0018927455)
+bone_name = "LeftHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftHand")
+
+[node name="PB_RightShoulder" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.08365875)
+body_offset = Transform3D(0.99997, 0.0013832622, -0.0076193092, -0.007743855, 0.17862174, -0.9838873, 0, 0.9839168, 0.17862709, 0.00063742185, 0.08231078, -0.014943719)
+bone_name = "RightShoulder"
+mass = 1.0
+joint_constraints/swing_span = 10.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightShoulder"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightShoulder")
+
+[node name="PB_RightUpperArm" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.12750974)
+body_offset = Transform3D(1, 0, -1.4607865e-08, -1.4607865e-08, 0, -1, 0, 1, 0, 1.8626451e-09, 0.12750974, 0)
+bone_name = "RightUpperArm"
+mass = 2.5
+joint_constraints/swing_span = 70.0
+joint_constraints/twist_span = 40.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightUpperArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperArm")
+
+[node name="PB_RightLowerArm" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.13099575)
+body_offset = Transform3D(1, 0, 0, 0, 1.4219126e-08, -1, 0, 1, 1.4219126e-08, 0, 0.13099575, -1.8626451e-09)
+bone_name = "RightLowerArm"
+mass = 1.5
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightLowerArm"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerArm")
+
+[node name="PB_RightHand" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.056542434)
+body_offset = Transform3D(0.99622244, -0.002906879, -0.08678921, -0.08683788, -0.03334833, -0.9956641, 0, 0.99943954, -0.03347478, 0.004907273, 0.056297272, 0.0018927455)
+bone_name = "RightHand"
+mass = 0.5
+joint_constraints/swing_span = 30.0
+joint_constraints/twist_span = 20.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightHand"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightHand")
+
+[node name="PB_LeftUpperLeg" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21596196)
+body_offset = Transform3D(1, -2.2316547e-16, 1.7249752e-08, 1.7249752e-08, 1.2937314e-08, -1, 0, 1, 1.2937314e-08, -3.7252903e-09, 0.21596196, -2.7939677e-09)
+bone_name = "LeftUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftUpperLeg")
+
+[node name="PB_LeftLowerLeg" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, -2.910383e-11, 1, -7.450581e-09, 1, 2.9103829e-11, -1, -7.450581e-09, -2.1684043e-19, 0, 0, 0.2177318)
+body_offset = Transform3D(0.9999974, -0.00024948074, -0.0022866384, -0.002300208, -0.1084598, -0.9940981, 0, 0.99410075, -0.10846008, 0.0004978739, 0.21644677, 0.02361521)
+bone_name = "LeftLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftLowerLeg")
+
+[node name="PB_LeftFoot" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07139376)
+body_offset = Transform3D(1, 0, 0, 0, 5.2179495e-08, -1, 0, 1, 5.2179495e-08, 0, 0.07139376, -3.7252903e-09)
+bone_name = "LeftFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_LeftFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_LeftFoot")
+
+[node name="PB_RightUpperLeg" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.21596196)
+body_offset = Transform3D(1, 2.2316547e-16, -1.7249752e-08, -1.7249752e-08, 1.2937314e-08, -1, 0, 1, 1.2937314e-08, 3.7252903e-09, 0.21596196, -2.7939677e-09)
+bone_name = "RightUpperLeg"
+mass = 9.0
+joint_constraints/swing_span = 50.0
+joint_constraints/twist_span = 15.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightUpperLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightUpperLeg")
+
+[node name="PB_RightLowerLeg" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 3
+joint_offset = Transform3D(0, 2.910383e-11, 1, -7.450581e-09, 1, -2.9103829e-11, -1, -7.450581e-09, 2.1684043e-19, 0, 0, 0.2177318)
+body_offset = Transform3D(0.9999974, 0.00024948074, 0.0022866384, 0.002300208, -0.1084598, -0.9940981, 0, 0.99410075, -0.10846008, -0.0004978739, 0.21644677, 0.02361521)
+bone_name = "RightLowerLeg"
+mass = 4.0
+joint_constraints/angular_limit_enabled = true
+joint_constraints/angular_limit_lower = -140.0
+joint_constraints/angular_limit_upper = 0.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightLowerLeg"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightLowerLeg")
+
+[node name="PB_RightFoot" type="PhysicalBone3D" parent="rat_grunt/GeneralSkeleton/Ragdoll"]
+collision_layer = 32
+collision_mask = 33
+joint_type = 2
+joint_offset = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.07139376)
+body_offset = Transform3D(1, 0, 0, 0, 5.2179495e-08, -1, 0, 1, 5.2179495e-08, 0, 0.07139376, -3.7252903e-09)
+bone_name = "RightFoot"
+mass = 1.0
+joint_constraints/swing_span = 20.0
+joint_constraints/twist_span = 10.0
+friction = 0.8
+linear_damp = 0.05
+angular_damp = 0.8
+
+[node name="Capsule" type="CollisionShape3D" parent="rat_grunt/GeneralSkeleton/Ragdoll/PB_RightFoot"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("Capsule_RightFoot")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries/ = ExtResource("3_ual")
+libraries/undercity = ExtResource("4_undercity")

@@ -16,7 +16,6 @@ size = Vector3(3, 0.45, 2)
 
 [node name="RagdollTest" type="Node3D"]
 script = ExtResource("1_test")
-Bodies = PackedStringArray("res://scenes/undercity/npcs/tank.tscn", "res://scenes/undercity/npcs/silk.tscn", "res://scenes/undercity/npcs/mersec.tscn", "res://scenes/undercity/npcs/civ_a.tscn")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)

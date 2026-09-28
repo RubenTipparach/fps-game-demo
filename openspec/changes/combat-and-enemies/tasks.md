@@ -23,3 +23,9 @@
 - [ ] 4.1 Bodies from `npc-characters`: generated humans, a shared animation library (idle, walk, run, crouch, aim, fire, hit, KO, death, talk, sit, cower, hands up), ragdolls.
 - [ ] 4.2 NPC adapter using the core; weapon adapters for the seven player weapons.
 - [ ] 4.3 Video: each archetype's two non-shooting counters, one shot each.
+
+## 5. Performance
+
+- [ ] 5.1 Frame time with 10 and 30 NPC bodies (npc-characters: 10-16k triangles, skinned) on
+  screen, measured on a GPU in an exported release build, with and without import LODs
+  (CLAUDE.md 9). Moved here from npc-characters task 5.2.

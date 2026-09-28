@@ -18,6 +18,7 @@ namespace Brushfire;
 ///         {"setup": {"credits": n, "items": ["id:n"], "wear": ["id"], "flags": [..], "skills": {"persuasion": 2},
 ///                    "quests": [..], "health": n}} | {"state": true} (log the run)
 ///         {"click": "SaveHere"} (press a button by node name: title, pause, save rows by slot)
+///         {"kill": "tank" | "hub:civ_01"} (the NPC dies and its body falls; test only until combat lands)
 /// </summary>
 public partial class AutoTest : Node
 {
@@ -230,6 +231,22 @@ public partial class AutoTest : Node
             var npc = level.Npcs().FirstOrDefault(n => n.NpcId == npcId.AsString());
             npc?.Use();
             await Frames(3);
+        }
+        if (step.TryGetValue("kill", out var killId))
+        {
+            // Test harness only, until combat lands: the NPC is dead in the world and its body falls.
+            var npc = level.Npcs().FirstOrDefault(n => n.NpcId == killId.AsString() || n.StableId == killId.AsString());
+            if (npc == null)
+                GD.PrintErr($"[AutoTest] no npc '{killId}'");
+            else
+            {
+                state.World.SetNpc(npc.NpcId, Undercity.Core.World.NpcStatus.Dead);
+                var away = npc.GlobalPosition - PlayerController.Instance.GlobalPosition;
+                away.Y = 0;
+                npc.Collapse(away.Normalized() * 40f);
+                GD.Print($"[AutoTest] {npc.StableId} collapses");
+            }
+            await Frames(2);
         }
         if (step.TryGetValue("state", out _))
         {

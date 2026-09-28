@@ -8,44 +8,45 @@
 
 ## 1. Tooling
 
-- [ ] 1.1 `tools/deps/character_packs.json` (URL, SHA-256, licence, where the licence is stated)
+- [x] 1.1 `tools/deps/character_packs.json` (URL, SHA-256, licence, where the licence is stated)
   and `tools/deps/fetch_character_tools.py`, which downloads outside the repository and refuses
   a hash mismatch.
-- [ ] 1.2 `tools/blender/npcs.json` (the table, `budget`, the civilian random range) and
+- [x] 1.2 `tools/blender/npcs.json` (the table, `budget`, the civilian random range) and
   `tools/blender/build_npcs.py`, from the spike's `build_npcs.py`. It refuses an asset outside
   the allowlisted packs and a body over budget, naming the NPC and the number.
-- [ ] 1.3 A check that two builds write byte-identical glbs.
-- [ ] 1.4 Measure Godot 4.7's import of WebP textures inside a glb. Use WebP if it imports
-  cleanly, PNG otherwise, and record which in `design.md`.
-- [ ] 1.5 The bone maps as committed `.tres`, and a tool script that writes the retarget import
+- [x] 1.3 A check that two builds write byte-identical glbs.
+- [x] 1.4 Measure Godot 4.7's import of WebP textures inside a glb. It imports cleanly and
+  extracts `.webp` files: WebP at quality 85 (design section 10).
+- [x] 1.5 The bone maps as committed `.tres`, and a tool script that writes the retarget import
   options for every body glb and the UAL library.
 
 ## 2. First look (owner H2)
 
-- [ ] 2.1 Build Tank, Nguyen and one civilian. Put them in the hub at their spots, and capture
+- [x] 2.1 Build Tank, Nguyen and one civilian. Put them in the hub at their spots, and capture
   them in daylight and neon for the owner.
 
 ## 3. Animation
 
-- [ ] 3.1 UAL Standard as the shared `AnimationLibrary`; an `AnimationTree` on `NpcActor` with
-  idle, walk, talk and sit from the clip map in `design.md` section 6.
-- [ ] 3.2 Key surrender (hands up) and cower in Blender on the UAL rig, and add them to the
+- [x] 3.1 UAL Standard as the shared `AnimationLibrary`; an `AnimationPlayer` (design section 10:
+  a tree comes with combat) on `NpcActor` with idle, walk, talk and sit from the clip map in
+  `data/npc_bodies.json`.
+- [x] 3.2 Key surrender (hands up) and cower in Blender on the UAL rig, and add them to the
   library. Rifle holds follow with MerSec.
 
 ## 4. Ragdolls
 
-- [ ] 4.1 A generated ragdoll profile (20 capsules, the joint table, the collision
+- [x] 4.1 A generated ragdoll profile (20 capsules, the joint table, the collision
   exceptions), built into `npc.tscn` by `gen_undercity_scenes.py`.
-- [ ] 4.2 Death and knockout hand the body to physics; after `ragdoll_settle_s` (3.0 s, in
+- [x] 4.2 Death and knockout hand the body to physics; after `ragdoll_settle_s` (3.0 s, in
   data) it freezes in its pose. A test drops a body off the 0.45 m step and checks it is frozen
   at 3 s.
 
 ## 5. The rest, and captures
 
-- [ ] 5.1 Every named NPC and the civilian seeds. Outfits as the owner decides (H3).
-- [ ] 5.2 Frame time with 10 and 30 bodies on screen, measured on a GPU (not lavapipe), with
-  and without import LODs.
+- [x] 5.1 Every named NPC and the civilian seeds. Outfits as the owner decides (H3).
+- [x] 5.2 Moved to `combat-and-enemies` (its task 5.1): frame time needs a GPU, and combat puts
+  the most bodies on screen.
 - [ ] 5.3 Video: idle, talk, walk and a death to rest, on three bodies (CLAUDE.md 9).
-- [ ] 5.4 Retire `tools/blender/build_characters.py` and the segmented models.
+- [x] 5.4 Retire `tools/blender/build_characters.py` and the segmented models.
 - [ ] 5.5 Move the requirements into `openspec/specs/npc-characters` with their checks, and
   archive the change.
