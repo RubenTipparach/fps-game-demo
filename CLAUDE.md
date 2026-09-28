@@ -469,7 +469,9 @@ Before claiming anything is done, run what applies:
 
 - **Regenerate, don't hand-edit.** These files are generated: `level_csg.tscn`,
   `slag_works.map`, `level_trenchbroom.tscn`, `cistern.glb`, `level_blender.tscn`,
-  `scenes/**`, and the design maps under `docs/design/maps/`.
+  `scenes/**`, the design maps under `docs/design/maps/`, and the NPC pipeline's output
+  (`models/characters/*.glb`, `animations/undercity_clips.glb`, `animations/bonemaps/*.tres`;
+  README, "Undercity's NPC bodies").
 - **Rebuild and bake** with the `BRUSHFIRE_BATCH=... godot --editor --path game` command in
   README.md.
   - It needs Xvfb (`DISPLAY=:99`) and Vulkan (lavapipe), and takes about 15 minutes per level.
@@ -518,6 +520,10 @@ Nothing is an exception until it is listed here with its reason.
 - **Brushfire's project doesn't treat warnings as errors yet.** `game/Brushfire.csproj`
   predates section 5.6. Code there is cleaned up when it's touched, and the setting is turned
   on once it builds clean. `Undercity.Core` has it from its first commit.
+- **Generated NPC bodies commit their table and glb, not a `.blend`.** `tools/blender/build_npcs.py`
+  rebuilds every body byte for byte from `tools/blender/npcs.json` and the SHA-pinned packs, and
+  each body's `.blend` is 12.5 MB, about 275 MB for the 22 bodies. The table is the editable
+  source (owner, survey H1, 2026-09-28, approved conditionally).
 - **The first RPG spike is parked, not built.** `docs/spikes/rpg-core/` holds an early sketch
   of the inventory, dialog and disguise code. It predates these rules and doesn't compile. It
   is kept as reference for the OpenSpec changes and is not part of any build.

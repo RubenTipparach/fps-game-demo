@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Checks/RagdollTest.cs" id="1_test"]
+
+[sub_resource type="BoxShape3D" id="Box_floor"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxShape3D" id="Box_step"]
+size = Vector3(3, 0.45, 2)
+
+[sub_resource type="BoxMesh" id="Mesh_step"]
+size = Vector3(3, 0.45, 2)
+
+[node name="RagdollTest" type="Node3D"]
+script = ExtResource("1_test")
+Bodies = PackedStringArray("res://scenes/undercity/npcs/tank.tscn", "res://scenes/undercity/npcs/silk.tscn", "res://scenes/undercity/npcs/mersec.tscn", "res://scenes/undercity/npcs/civ_a.tscn")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("Box_floor")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("Mesh_floor")
+
+[node name="Step" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, -1)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Step"]
+shape = SubResource("Box_step")
+
+[node name="Mesh" type="MeshInstance3D" parent="Step"]
+mesh = SubResource("Mesh_step")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.5, -0.61, 0.61, 0, 0.71, 0.71, -0.87, -0.35, 0.35, 0, 4, 0)
+shadow_enabled = true
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(0.14, -0.28, 0.95, 0, 0.96, 0.29, -0.99, -0.04, 0.13, 4.2, 1.4, 0.6)
+current = true

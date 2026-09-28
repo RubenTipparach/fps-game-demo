@@ -85,6 +85,9 @@ public sealed class GameData
     /// <summary>data/saves.json.</summary>
     public required SavesTable Saves { get; init; }
 
+    /// <summary>data/npc_bodies.json.</summary>
+    public required NpcBodyTable NpcBodies { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -126,6 +129,7 @@ public sealed class GameData
             Perception = JsonData.Load<PerceptionTable>(source, "perception.json"),
             Npcs = JsonData.Load<NpcTable>(source, "npcs.json"),
             Saves = JsonData.Load<SavesTable>(source, "saves.json"),
+            NpcBodies = JsonData.Load<NpcBodyTable>(source, "npc_bodies.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,
@@ -184,6 +188,10 @@ public sealed class GameData
             {
                 errors.Add($"npcs.{n.Id}: unknown dialog '{n.Dialog}'");
             }
+        }
+        foreach (var n in Npcs.Npcs.Where(n => NpcBodies.Clip(n.Idle) is null))
+        {
+            errors.Add($"npcs.{n.Id}.idle: '{n.Idle}' isn't a state in npc_bodies.clips");
         }
         if (!Dialogs.ContainsKey(Npcs.Civilians.Dialog))
         {

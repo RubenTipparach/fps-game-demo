@@ -241,6 +241,23 @@ BRUSHFIRE_BATCH="res://levels/csg/level_csg.tscn:csg,nav,lightmap;res://levels/t
   godot --editor --path game
 ```
 
+### Undercity's NPC bodies
+
+Every NPC body is generated from `tools/blender/npcs.json` (openspec/changes/npc-characters).
+The packs it draws on stay outside the repository, pinned by SHA-256 in
+`tools/deps/character_packs.json`:
+
+```
+python3 tools/deps/fetch_character_tools.py                         # MPFB2, the CC0 assets, UAL
+blender -b --factory-startup --python tools/blender/build_npcs.py    # -> game/models/characters/*.glb
+blender -b --factory-startup --python tools/blender/build_npc_clips.py  # -> game/animations/undercity_clips.glb
+godot --headless --path game --import
+godot --headless --path game -s res://../tools/godot/setup_npc_import.gd  # bone maps, retarget options
+godot --headless --path game --import
+godot --headless --path game -s res://../tools/godot/gen_npc_scenes.gd    # -> game/scenes/undercity/npcs/*.tscn
+godot --headless --path game res://scenes/undercity/tests/ragdoll_test.tscn  # the ragdoll check
+```
+
 `BRUSHFIRE_AUTOTEST=script.json godot --path game` runs a scripted playtest and screenshot
 pass (`scripts/Core/AutoTest.cs`). `{"debug_draw": 1}` switches to unshaded, which is handy for
 checking generated geometry before spending time on a bake.
@@ -266,4 +283,6 @@ docs/                     UT99 reference set and style guide, screenshots
 
 * [func_godot](https://github.com/func-godot/func_godot_plugin) (MIT) imports the TrenchBroom map.
 * [Material Maker](https://github.com/RodZill4/material-maker) (MIT): brick, stone wall, diamond plate and lava are based on its example graphs.
+* [MPFB2](https://github.com/makehumancommunity/mpfb2) (code GPLv3, not shipped) generates Undercity's NPC bodies from the [MakeHuman system assets](https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip) (CC0).
+* The [Universal Animation Library](https://quaternius.com/packs/universalanimationlibrary.html) by Quaternius (CC0) animates them (`game/animations/ual/`).
 * Everything else (code, custom material graphs, levels, sounds, models) is original to this project.

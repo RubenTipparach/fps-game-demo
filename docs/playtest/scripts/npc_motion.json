@@ -1,0 +1,17 @@
+{"out": "/tmp/undercity_npc_motion", "god": true,
+ "steps": [
+  {"log": "NPC motion for a video: a MerSec patrol walking, Tank talking, a civilian falling (run with --write-movie)"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"goto": "hub:mersec_patrol_a", "distance": 4.0, "pitch": -4},
+  {"wait": 90},
+  {"goto": "hub:tank", "distance": 2.4, "pitch": -4},
+  {"wait": 20},
+  {"talk": "tank"},
+  {"wait": 75},
+  {"key": "Escape"},
+  {"goto": "hub:civ_01", "distance": 3.2, "pitch": -8},
+  {"wait": 20},
+  {"kill": "hub:civ_01"},
+  {"wait": 110},
+  {"quit": true}
+ ]}

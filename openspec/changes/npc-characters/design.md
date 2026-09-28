@@ -245,5 +245,7 @@ Rollback: the segmented glbs stay in place until step 5, and the ids are the sam
 
 ## Open Questions
 
-In the owner survey, section H: H1 adopt the pipeline; H2 the look, decided after seeing
-three in the hub; H3 how to fill the wardrobe gap.
+None open. The owner answered H1-H3 on 2026-09-28: "Do recommend for now, conditionally I will
+review again later." The recommendations stand (adopt; judge the look in the hub; author the
+outfits in Blender), and the owner reviews them again once the bodies are in the game. The
+`.blend` exception of decision 8 is in CLAUDE.md section 13.

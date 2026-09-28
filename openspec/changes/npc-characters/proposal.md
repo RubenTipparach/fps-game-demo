@@ -14,6 +14,10 @@ up close, with five hand-keyed clips. Combat needs much more:
 
 Hand-keying all of that per character doesn't scale to the Drains and the Yard.
 
+Then, on the design (survey H1-H3, 2026-09-28): "Do recommend for now, conditionally I will
+review again later." So the pipeline is adopted, the look is judged once the bodies stand in the
+hub, and the faction outfits are authored in Blender. All three stay open to the owner's review.
+
 ## What Changes
 
 - **Bodies from MPFB2**, the MakeHuman plugin for Blender

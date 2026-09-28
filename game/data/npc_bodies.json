@@ -1,0 +1,48 @@
+// How NPC bodies move and fall (openspec/changes/npc-characters, design sections 6 and 7).
+// Clip names are those of the shared libraries in game/animations: UAL Standard (no prefix, the
+// "_Loop" suffix stripped by the import) and our own clips (the "undercity/" library).
+{
+  "clips": {
+    "idle": "Idle",
+    "walk": "Walk",
+    "talk": "Idle_Talking",
+    // No NPC holds a weapon model until combat lands, so the guards stand.
+    "guard": "Idle",
+    "hostile": "Idle",
+    "sit": "Sitting_Idle",
+    "surrender": "undercity/Surrender",
+    "cower": "undercity/Cower",
+    "death": "Death01"
+  },
+  "blend_s": 0.25,
+  // Measured in docs/spikes/npc-pipeline on Jolt: 20 capsules, 80.5 kg. Every Jolt body was below
+  // 0.12 m/s at 3 s, and one twitched back up by 5 s, so the body freezes at settle_s.
+  "ragdoll": {
+    "settle_s": 3.0,
+    "friction": 0.8,
+    "linear_damp_per_s": 0.05,
+    "angular_damp_per_s": 0.8,
+    "bodies": [
+      {"bone": "Hips", "to": "Spine", "radius_m": 0.13, "mass_kg": 12.0, "joint": "none"},
+      {"bone": "Spine", "to": "Chest", "radius_m": 0.12, "mass_kg": 8.0, "joint": "cone", "a_deg": 15, "b_deg": 10},
+      {"bone": "Chest", "to": "UpperChest", "radius_m": 0.12, "mass_kg": 8.0, "joint": "cone", "a_deg": 15, "b_deg": 10},
+      {"bone": "UpperChest", "to": "Neck", "radius_m": 0.14, "mass_kg": 8.0, "joint": "cone", "a_deg": 15, "b_deg": 10},
+      {"bone": "Neck", "to": "Head", "radius_m": 0.05, "mass_kg": 1.0, "joint": "cone", "a_deg": 30, "b_deg": 30},
+      {"bone": "Head", "length_m": 0.2, "radius_m": 0.1, "mass_kg": 4.5, "joint": "cone", "a_deg": 30, "b_deg": 30},
+      {"bone": "LeftShoulder", "to": "LeftUpperArm", "radius_m": 0.045, "mass_kg": 1.0, "joint": "cone", "a_deg": 10, "b_deg": 10},
+      {"bone": "LeftUpperArm", "to": "LeftLowerArm", "radius_m": 0.055, "mass_kg": 2.5, "joint": "cone", "a_deg": 70, "b_deg": 40},
+      {"bone": "LeftLowerArm", "to": "LeftHand", "radius_m": 0.045, "mass_kg": 1.5, "joint": "hinge", "a_deg": -140, "b_deg": 0, "flex": [0, 0, 1]},
+      {"bone": "LeftHand", "to": "LeftMiddleProximal", "radius_m": 0.04, "mass_kg": 0.5, "joint": "cone", "a_deg": 30, "b_deg": 20},
+      {"bone": "RightShoulder", "to": "RightUpperArm", "radius_m": 0.045, "mass_kg": 1.0, "joint": "cone", "a_deg": 10, "b_deg": 10},
+      {"bone": "RightUpperArm", "to": "RightLowerArm", "radius_m": 0.055, "mass_kg": 2.5, "joint": "cone", "a_deg": 70, "b_deg": 40},
+      {"bone": "RightLowerArm", "to": "RightHand", "radius_m": 0.045, "mass_kg": 1.5, "joint": "hinge", "a_deg": -140, "b_deg": 0, "flex": [0, 0, 1]},
+      {"bone": "RightHand", "to": "RightMiddleProximal", "radius_m": 0.04, "mass_kg": 0.5, "joint": "cone", "a_deg": 30, "b_deg": 20},
+      {"bone": "LeftUpperLeg", "to": "LeftLowerLeg", "radius_m": 0.085, "mass_kg": 9.0, "joint": "cone", "a_deg": 50, "b_deg": 15},
+      {"bone": "LeftLowerLeg", "to": "LeftFoot", "radius_m": 0.065, "mass_kg": 4.0, "joint": "hinge", "a_deg": -140, "b_deg": 0, "flex": [0, 0, -1]},
+      {"bone": "LeftFoot", "to": "LeftToes", "radius_m": 0.05, "mass_kg": 1.0, "joint": "cone", "a_deg": 20, "b_deg": 10},
+      {"bone": "RightUpperLeg", "to": "RightLowerLeg", "radius_m": 0.085, "mass_kg": 9.0, "joint": "cone", "a_deg": 50, "b_deg": 15},
+      {"bone": "RightLowerLeg", "to": "RightFoot", "radius_m": 0.065, "mass_kg": 4.0, "joint": "hinge", "a_deg": -140, "b_deg": 0, "flex": [0, 0, -1]},
+      {"bone": "RightFoot", "to": "RightToes", "radius_m": 0.05, "mass_kg": 1.0, "joint": "cone", "a_deg": 20, "b_deg": 10}
+    ]
+  }
+}
