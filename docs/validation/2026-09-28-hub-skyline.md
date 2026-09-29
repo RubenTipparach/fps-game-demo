@@ -3,7 +3,7 @@
 The owner, playtesting the hub on 2026-09-28, found the sky over the slum empty: rooftops, then
 fog. The survey settled that every tower is a mesh with its own haze (I7) and the scale as
 designed, with searchlights (I8), and built this fourth (I1). This record covers
-`openspec/changes/hub-skyline`, built on branch `claude/elegant-gauss-qwjhk1`.
+`openspec/changes/archive/2026-09-29-hub-skyline`, built on branch `claude/elegant-gauss-qwjhk1`.
 
 ## Environment
 
@@ -65,7 +65,35 @@ Each is in the design's "Found in building".
 
 ## Captures
 
-(filled from the capture run)
+`docs/screenshots/hub_skyline/hub_skyline.mp4` comes from `docs/playtest/scripts/hub_skyline.json`,
+written with `--write-movie` at 30 fps with seed 7: 351 frames, 11.7 s, rendered in 17 minutes on
+lavapipe at 1600 x 900 with the 3D view at 0.67 scale, encoded to H.264 at 1280 x 720. The run
+quit with exit 0 and logged no errors. The stills beside it, with the baseline's two views from
+the change's write-up:
+
+| Still | Shows | Requirement |
+|---|---|---|
+| `baseline_north_from_market.png`, `01_north_from_market.png` | North from the Sump Market, before and after: empty fogged sky over the foundation wall, then towers with lit windows filling it | The skyline reads as dark towers with lit windows |
+| `baseline_east_over_the_cut.png`, `02_east_over_the_cut.png` | East over the Cut, before and after: towers stand behind the Drydock's roofs | Towers surround the hub |
+| `03_west_over_tin_stacks.png` | West from the market: a stall's awning and its lamp fill most of the frame; the western towers show at its left edge. The view isn't the design's "wall of lit windows"; still 04 is | Towers surround the hub |
+| `04_skyway_deck_west.png` | From the Skyway deck, 14 m up: the Kosei Stacks' wall of lit windows | The skyline reads as dark towers with lit windows |
+| `05_searchlights_a.png`, `06_searchlights_b.png` | Due south of the Spire, 8 s apart: its cyan halo, one beam rising, the other flaring at the crown where it points toward the camera | Searchlights sweep the sky |
+
+The first run's west view faced a nearby wall and its searchlight view left the Spire's crown
+above the frame; both views were moved and the whole video taken again.
+
+**Draw calls.** The `render_stats` step logged the whole frame:
+
+| View | Draw calls | Primitives | Objects |
+|---|---|---|---|
+| North from the market | 4,766 | 954,746 | 5,152 |
+| East over the Cut | 6,883 | 1,106,936 | 7,153 |
+| West from the market | 463 | 174,844 | 771 |
+| The Skyway deck | 2,730 | 746,023 | 2,967 |
+
+The skyline's own share is at most 7 draw calls per pass (5 surfaces and 2 beams, casting no
+shadows) and 2,556 triangles; the rest is the hub as it was. There is no before count from the
+baseline run, which predates the step.
 
 ## What the checks establish
 
@@ -73,8 +101,15 @@ Each is in the design's "Found in building".
   refused before anything is built.
 - The skyline sector is built from the layout, merged to 5 surfaces, and loads in the hub with
   no lightmap, no shadows, no collision and no navmesh, beside every existing system's tests.
+- In the capture, towers fill the sky above the hub's roofs in every direction shown, and the
+  Spire's searchlights rise and sweep.
 
 ## What they don't establish
+
+- **The whole horizon, seen.** The coverage rule is checked on the layout for every 30-degree
+  slice; the capture shows four directions.
+- **How the windows hold up close.** The windows are procedural and the same size on every
+  tower; seen from the Skyway deck they read as a dense field of lit cells.
 
 - **Frame cost.** Lavapipe doesn't measure it. The skyline is 2,556 unshaded triangles in 5
   surfaces, and the two beams are two more draw calls; the far plane moved from 400 m to

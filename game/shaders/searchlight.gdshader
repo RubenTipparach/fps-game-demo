@@ -1,4 +1,4 @@
-// A searchlight beam over the skyline (openspec/changes/hub-skyline, design section 3a; owner I8):
+// A searchlight beam over the skyline (openspec/changes/archive/2026-09-29-hub-skyline, design section 3a; owner I8):
 // sky decoration that casts no light. The mesh is an open cone standing on +Y, centred as Godot's
 // CylinderMesh is (scenes/undercity/searchlight.tscn); the vertex stage stands it on its base,
 // tilts it from vertical and turns it about the vertical, so the sweep costs no script and no CPU.

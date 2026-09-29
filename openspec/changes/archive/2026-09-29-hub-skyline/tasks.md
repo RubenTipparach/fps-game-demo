@@ -15,7 +15,7 @@
   material in the import presets.
 - [x] 2.2 The player camera's far plane to 1,500 m; the skyline sector in `hub.tscn` with no
   LightmapGI.
-- [ ] 2.3 The Spire's two searchlights (owner I8): additive beam shader and sweep.
+- [x] 2.3 The Spire's two searchlights (owner I8): additive beam shader and sweep.
 
 ## 3. Map
 
@@ -23,6 +23,6 @@
 
 ## 4. Captures
 
-- [ ] 4.1 The baseline views again (north from the market, east over the Cut) plus west from Tin
+- [x] 4.1 The baseline views again (north from the market, east over the Cut) plus west from Tin
   Stacks and one from the Skyway deck, before and after; triangle and draw-call counts;
   validation record; design page; archive.

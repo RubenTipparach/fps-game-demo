@@ -42,7 +42,7 @@ def player():
     s.node("CollisionShape3D", "CollisionShape3D", ".", position=v3(0, 0.9, 0),
            shape=s.sub_res("CylinderShape3D", height=1.8, radius=0.4))
     s.node("CameraRig", "Node3D", ".")
-    # far 1,500 m: the hub's skyline stands up to 1.2 km out (openspec/changes/hub-skyline, section 3)
+    # far 1,500 m: the hub's skyline stands up to 1.2 km out (openspec/changes/archive/2026-09-29-hub-skyline, section 3)
     s.node("Camera3D", "Camera3D", "CameraRig", current=True, fov=67.0, near=0.02, far=1500.0)
     wm = s.node("WeaponManager", "Node3D", "CameraRig/Camera3D",
                 script=s.ext_res("Script", "res://scripts/Player/WeaponManager.cs"))
@@ -249,7 +249,7 @@ def conversation_rig():
     s.save(out("conversation_rig.tscn"))
 
 
-# A searchlight's cone (openspec/changes/hub-skyline, design section 3a): 900 m long, 3 degrees
+# A searchlight's cone (openspec/changes/archive/2026-09-29-hub-skyline, design section 3a): 900 m long, 3 degrees
 # wide, off a lamp 0.8 m across. The shader stands it on its base and sweeps it, so the node's box
 # is set to hold every place the sweep can reach (up to 35 degrees from vertical).
 BEAM_LENGTH_M = 900.0

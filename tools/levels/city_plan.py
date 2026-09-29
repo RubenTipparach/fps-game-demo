@@ -129,7 +129,7 @@ PROP_EXTRAS = {"visibility_range_end_m": 70.0}
 # the water's surface refracts and reflects what is around it (shaders/water.gdshader): it takes no
 # baked light and casts no shadow
 WATER_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
-# the skyline is unshaded scenery past the hub's edges (openspec/changes/hub-skyline, design
+# the skyline is unshaded scenery past the hub's edges (openspec/changes/archive/2026-09-29-hub-skyline, design
 # section 3): no baked light, no shadows
 SKYLINE_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
 # Lightmap texels: the import bakes at 0.4 m (import_presets.py); interiors ask for 0.15 m.
@@ -3162,7 +3162,7 @@ class City:
     # ------------------------------------------------------------------ the skyline
 
     def skyline_geometry(self):
-        """Meridian's towers beyond the hub's edges (openspec/changes/hub-skyline): each tower's
+        """Meridian's towers beyond the hub's edges (openspec/changes/archive/2026-09-29-hub-skyline): each tower's
         massing and crown (skyline.py), merged into one object per ring in the skyline sector,
         with no collision. Every box is registered with the z-fighting check."""
         towers = self.m.get("skyline", [])

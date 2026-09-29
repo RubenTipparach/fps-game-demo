@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the skyline's material (openspec/changes/hub-skyline, design section 3).
+"""Generate the skyline's material (openspec/changes/archive/2026-09-29-hub-skyline, design section 3).
 
     python3 tools/godot/gen_skyline_materials.py
 

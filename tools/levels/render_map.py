@@ -772,7 +772,7 @@ def draw_legend(c, m, x0, LW, vh):
                   + (f'<tspan class="lg-n" dx="8">{esc(it["note"])}</tspan>' if single and it.get("note") else "")
                   + '</text></g>')
             cy += 16
-    # the locator inset: where the level sits among the city's towers (openspec/changes/hub-skyline)
+    # the locator inset: where the level sits among the city's towers (openspec/changes/archive/2026-09-29-hub-skyline)
     if inset_h:
         draw_locator(c, m, 24, vh - key_h - 22 - inset_h, LW - 48, inset_h)
     # key

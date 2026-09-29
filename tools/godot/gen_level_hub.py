@@ -44,7 +44,7 @@ from shapely.geometry import box  # noqa: E402
 
 LEVEL = "hub"
 NAV_GROUP = "hub_nav"
-# Sectors that are only scenery (openspec/changes/hub-skyline): no navmesh, no LightmapGI, no
+# Sectors that are only scenery (openspec/changes/archive/2026-09-29-hub-skyline): no navmesh, no LightmapGI, no
 # lights. The skyline is unshaded and stands past the hub's edges.
 SCENERY = {"skyline"}
 CITY_GLOW = "#2c2a52"          # the sky's glow over the Sump: blue-violet, light-polluted

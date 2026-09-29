@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_skyline", "god": true,
  "steps": [
-  {"log": "hub skyline (openspec/changes/hub-skyline): the baseline views again, west over Tin Stacks, the Skyway deck, the Spire's searchlights (run with --write-movie)"},
+  {"log": "hub skyline (openspec/changes/archive/2026-09-29-hub-skyline): the baseline views again, west over Tin Stacks, the Skyway deck, the Spire's searchlights (run with --write-movie)"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"render_scale": 0.67},
   {"wait": 20},

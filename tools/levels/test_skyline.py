@@ -1,4 +1,4 @@
-"""The skyline's four rules (openspec/changes/hub-skyline, design section 2), on the hub's own
+"""The skyline's four rules (openspec/changes/archive/2026-09-29-hub-skyline, design section 2), on the hub's own
 layout and on layouts broken on purpose, each failing case naming what it breaks.
 
     python3 -m unittest discover -s tools/levels -p 'test_*.py'

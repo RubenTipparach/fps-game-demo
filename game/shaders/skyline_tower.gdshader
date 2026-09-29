@@ -1,4 +1,4 @@
-// Meridian's towers around the hub (openspec/changes/hub-skyline, design section 3): dark masses
+// Meridian's towers around the hub (openspec/changes/archive/2026-09-29-hub-skyline, design section 3): dark masses
 // with lit windows, neon crowns, blinking beacons and holo billboards, hazed by distance. Unshaded
 // and out of the scene fog, which would wash them out; the haze here stands in for it.
 //

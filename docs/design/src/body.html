@@ -119,6 +119,8 @@
         <tr><td><span class="chip built">Built</span></td><td>The NPC bodies: 22 generated in Blender with MPFB2 from CC0 MakeHuman assets, sharing one CC0 animation library (UAL) and falling as Jolt ragdolls that come to rest. Adopted on the owner's conditional answer (H1 to H3); the look is judged in the hub.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Water, swimming and ways out (F14): the runner floats, swims, dives and can drown; 17 ladders and the ship's boarding ladders lead out, every point of water within 25 m of swimming of one. See <code>docs/validation/2026-09-28-water-and-swimming.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The Kestrel fires (F18): everyone can be shot by the one damage rule, people fight, flee, cower or surrender, gunfire turns MerSec, and death fades to the newest save. See <code>docs/validation/2026-09-28-hub-combat.md</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Meridian's towers (F15): the Halcyon Spire and 31 more stand around the hub by four checked rules, drawn in 5 surfaces with their own haze out to 1,500 m, and the Spire's two searchlights sweep the sky. Video: <code>docs/screenshots/hub_skyline/hub_skyline.mp4</code>.</td></tr>
+        <tr><td><span class="chip proposed">In progress</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig are built and tested; the faces are being tuned, and survey J1 asks how one key meets every skin tone and place.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
       </tbody></table></div>
@@ -874,7 +876,6 @@
         <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
-        <tr><td><code>hub-skyline</code></td><td>the towers around the hub, coverage, rendering, the map inset</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, the body pool</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -884,6 +885,7 @@
         <tr><td><code>specs/title-and-pause</code></td><td>title, save list, the save rule, quitting, one objective, panel sizes</td><td class="n">6</td><td><span class="chip built">Built</span></td></tr>
         <tr><td><code>specs/npc-characters</code></td><td>generated bodies, one skeleton and library, ragdolls, the body budget</td><td class="n">4</td><td><span class="chip built">Built</span></td></tr>
         <tr><td><code>specs/hub-combat</code></td><td>the Kestrel, damage, everyone can be shot, defences, crime, death</td><td class="n">8</td><td><span class="chip built">Built</span></td></tr>
+        <tr><td><code>specs/hub-skyline</code></td><td>the towers around the hub, coverage, rendering, searchlights, the map inset</td><td class="n">4</td><td><span class="chip built">Built</span></td></tr>
       </tbody></table></div>
   </div>
 </section>
@@ -981,9 +983,9 @@
 
 <!-- ========================================================= F15 -->
 <section id="skyline">
-  <div class="sh"><span class="key">F15</span><h2>Meridian's towers</h2><span class="spec">openspec/changes/hub-skyline</span></div>
+  <div class="sh"><span class="key">F15</span><h2>Meridian's towers</h2><span class="spec">openspec/specs/hub-skyline</span></div>
   <p class="intro">Owner, 2026-09-28: "There should be mega skyscrapers surrounding our little slum area." Nothing in the hub stands above the 40 m foundation wall, and past the rooftops there is empty, fogged sky. The skyline puts the Halcyon Spire (440 m) and a ring of named megastructures around Low Harbor. They render unshaded, with lit windows and their own darker haze, so they read as towers, not fog ghosts.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (I7, I8, with searchlights) · fourth</span></div>
+  <div class="controls"><span class="chip built">Built (I7, I8, with searchlights)</span><span class="chip enforced">Checked: 10 skyline tests, 5 surfaces, 2,556 triangles; video</span></div>
   <div class="sub">
     <h3>Plan <small>layout metres; the hub is the lit rectangle; heights in metres</small></h3>
     <div class="diagram" role="img" aria-label="Plan of the hub surrounded by the named towers of the skyline">

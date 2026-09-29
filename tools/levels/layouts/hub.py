@@ -85,7 +85,7 @@ MAP = {
     ],
 
     # Named buildings. Rooms make a floor plan (enterable); fixtures are furniture and machines.
-    # Meridian's towers around the slum (openspec/changes/hub-skyline): scenery beyond the hub's
+    # Meridian's towers around the slum (openspec/changes/archive/2026-09-29-hub-skyline): scenery beyond the hub's
     # edges, drawn by the skyline sector and the map's locator inset. Layout metres like the rest,
     # so towers sit at negative or beyond-edge coordinates. "style" picks the massing (spire,
     # arcology, slab, corporate, civic, cluster), "crown" the top (halo, neon, billboard, beacons),

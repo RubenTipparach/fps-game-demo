@@ -1,4 +1,4 @@
-"""Meridian's towers around the hub (openspec/changes/hub-skyline): each tower's massing as boxes,
+"""Meridian's towers around the hub (openspec/changes/archive/2026-09-29-hub-skyline): each tower's massing as boxes,
 and the four rules the plan asserts on the layout's "skyline" list.
 
 It lives beside city_plan.py because the plan builds the skyline sector from it and the map's
