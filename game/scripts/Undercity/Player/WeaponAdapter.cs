@@ -1,6 +1,6 @@
 // The runner's weapons in Undercity: draws the belt's firearm into Brushfire's WeaponManager,
-// holsters it, feeds it rounds from the core's magazines, and reloads it (openspec/changes/
-// hub-combat, design section 1).
+// holsters it, feeds it rounds from the core's magazines, and reloads it (openspec/changes/archive/
+// 2026-09-28-hub-combat, design section 1).
 //
 // It lives in the Godot layer as the seam between the two games' halves. What is drawn, the
 // rounds, the reload time and every number the weapon fires with belong to the core and to

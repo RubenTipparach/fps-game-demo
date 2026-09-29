@@ -458,6 +458,30 @@ bone_name = "RightHand"
 [node name="Grip" type="Node3D" parent="lin/GeneralSkeleton/RightHand"]
 transform = Transform3D(-0.26115167, 0.95043564, 0.16873598, -0.022517351, 0.1687564, -0.98540056, -0.9650351, -0.2611385, -0.022669723, 1.1920929e-07, 0.06999999, 0)
 
+[node name="hold_r" type="Node3D" parent="lin/GeneralSkeleton/RightHand"]
+transform = Transform3D(-0.37362835, 0.39361557, -0.83992183, 0.15610208, -0.8659028, -0.47523108, -0.91434896, -0.30867332, 0.26208162, 1.4901161e-08, 0.07000005, 2.9802322e-08)
+
+[node name="LeftHand" type="BoneAttachment3D" parent="lin/GeneralSkeleton"]
+bone_name = "LeftHand"
+
+[node name="carry_l" type="Node3D" parent="lin/GeneralSkeleton/LeftHand"]
+transform = Transform3D(-0.72674656, -0.28799254, 0.6236183, -0.034111425, -0.8916148, -0.45150816, 0.6860582, -0.3494045, 0.6381541, -3.7252903e-09, 0.07000005, -8.940697e-08)
+
+[node name="torch_l" type="Node3D" parent="lin/GeneralSkeleton/LeftHand"]
+transform = Transform3D(-0.18129475, -0.9760091, -0.12057577, -0.068007484, 0.13475657, -0.9885422, 0.9810745, -0.17101747, -0.09080658, 1.1920929e-07, 0.06999999, 2.9802322e-08)
+
+[node name="LeftLowerArm" type="BoneAttachment3D" parent="lin/GeneralSkeleton"]
+bone_name = "LeftLowerArm"
+
+[node name="forearm_l" type="Node3D" parent="lin/GeneralSkeleton/LeftLowerArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+
+[node name="Head" type="BoneAttachment3D" parent="lin/GeneralSkeleton"]
+bone_name = "Head"
+
+[node name="head" type="Node3D" parent="lin/GeneralSkeleton/Head"]
+transform = Transform3D(-0.9977701, 0.048649456, -0.045696795, 0.06545749, 0.84707254, -0.527431, 0.013049267, -0.52924603, -0.8483681, 0, 0, 0)
+
 [node name="Anim" type="AnimationPlayer" parent="."]
 libraries/ = ExtResource("3_ual")
 libraries/undercity = ExtResource("4_undercity")

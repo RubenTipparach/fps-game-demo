@@ -4,6 +4,7 @@
 // root's scene (CLAUDE.md 6.3).
 
 #nullable enable
+using System.Collections.Generic;
 using Godot;
 using Undercity.Core.World;
 
@@ -34,6 +35,9 @@ public interface ILevelHost
 
     /// <summary>The level's water: where it is and how deep a body is in it.</summary>
     LevelWater Water { get; }
+
+    /// <summary>How each civilian looks, by stable id: the core's crowd rule over the level's placements.</summary>
+    IReadOnlyDictionary<string, CrowdLook> Crowd { get; }
 
     /// <summary>The player's body.</summary>
     Brushfire.PlayerController Player { get; }

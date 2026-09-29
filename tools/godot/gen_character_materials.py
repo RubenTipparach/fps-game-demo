@@ -15,9 +15,10 @@ settings live once, in SKIN and OUTFIT below, so the templates and the bodies ca
 - Subsurface scattering in skin mode, strength 0.30, with transmittance (depth 0.2, boost 0.3),
   so ears glow against a rim gel.
 - Specular 0.42: Godot's F0 is 0.16 x specular squared, so 0.028, MakeHuman's skins' 0.027.
-- The outfit (clothes, gear and the eyes, which share its atlas) takes its roughness from its
-  normal map's alpha (npcs.json "outfit_roughness"): the eyes' 0.08 gives them the key's
-  catchlight, the design's character_eye.tres folded into the outfit.
+- The outfit (clothes, gear and the eyes, which share its atlas) is drawn by
+  shaders/character_outfit.gdshader: its roughness is its normal map's alpha (npcs.json
+  "outfit_roughness"), the eyes' 0.08 giving them the key's catchlight, and a civilian's palette
+  shifts the clothes per instance (openspec/changes/archive/2026-09-29-crowd-variety).
 
 It lives in tools because it is authoring (CLAUDE.md 6.1): the committed .tres files are what the
 game loads, and re-running overwrites them.
@@ -47,12 +48,14 @@ SKIN = {
     "subsurf_scatter_transmittance_boost": 0.3,
 }
 
+# The outfit is drawn by shaders/character_outfit.gdshader (openspec/changes/archive/2026-09-29-crowd-variety): the
+# same roughness from the normal map's alpha, and a civilian's palette per instance, the eyes left
+# as they are. Its parameters, in the order Godot writes them.
+OUTFIT_SHADER = "res://shaders/character_outfit.gdshader"
 OUTFIT = {
-    "roughness": 1.0,
-    "roughness_texture_channel": 3,          # the normal map's alpha
-    "metallic_specular": 0.5,
-    "normal_enabled": True,
-    "normal_scale": 1.0,
+    "shader_parameter/specular": 0.5,
+    "shader_parameter/normal_strength": 1.0,
+    "shader_parameter/eye_roughness_below": 0.3,
 }
 MATERIALS = {"skin": SKIN, "outfit": OUTFIT}
 
@@ -66,15 +69,24 @@ def fmt(v):
 
 
 def write(path, part, body_id=None):
-    head, props = "[gd_resource type=\"StandardMaterial3D\" format=3]\n\n", []
+    shader = part == "outfit"
+    kind = "ShaderMaterial" if shader else "StandardMaterial3D"
+    ext, props = [], []
+    if shader:
+        ext.append(f"[ext_resource type=\"Shader\" path=\"{OUTFIT_SHADER}\" id=\"0_shader\"]")
     if body_id is not None:
         albedo, normal = f"{TEXTURES}{body_id}_{part}_albedo.webp", f"{TEXTURES}{body_id}_{part}_normal.webp"
-        head = ("[gd_resource type=\"StandardMaterial3D\" load_steps=3 format=3]\n\n"
-                f"[ext_resource type=\"Texture2D\" path=\"{albedo}\" id=\"1_albedo\"]\n"
-                f"[ext_resource type=\"Texture2D\" path=\"{normal}\" id=\"2_normal\"]\n\n")
-        props = ["albedo_texture = ExtResource(\"1_albedo\")", "roughness_texture = ExtResource(\"2_normal\")",
-                 "normal_texture = ExtResource(\"2_normal\")"]
+        ext += [f"[ext_resource type=\"Texture2D\" path=\"{albedo}\" id=\"1_albedo\"]",
+                f"[ext_resource type=\"Texture2D\" path=\"{normal}\" id=\"2_normal\"]"]
+        props = (["shader_parameter/albedo_texture = ExtResource(\"1_albedo\")",
+                  "shader_parameter/normal_texture = ExtResource(\"2_normal\")"] if shader else
+                 ["albedo_texture = ExtResource(\"1_albedo\")", "roughness_texture = ExtResource(\"2_normal\")",
+                  "normal_texture = ExtResource(\"2_normal\")"])
+    steps = f" load_steps={len(ext) + 1}" if ext else ""
+    head = f"[gd_resource type=\"{kind}\"{steps} format=3]\n\n" + ("\n".join(ext) + "\n\n" if ext else "")
     body = [f"resource_name = \"{body_id}_{part}\"" if body_id else f"resource_name = \"character_{part}\""]
+    if shader:
+        body.append("shader = ExtResource(\"0_shader\")")
     body += [f"{k} = {fmt(v)}" for k, v in MATERIALS[part].items()] + props
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "[resource]\n" + "\n".join(body) + "\n")

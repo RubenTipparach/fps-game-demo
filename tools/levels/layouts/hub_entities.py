@@ -72,7 +72,7 @@ NPCS = [
     _npc("oracle", (142.4, 100), 90),
 ]
 
-# About 25 residents, dock workers and night-market customers (design section 2).
+# About 35 residents, dock workers and night-market customers (design section 2).
 _CIVS = [
     (20, 41, 90), (70, 40.5, 270), (100, 39.5, 180), (125, 38, 0), (150, 39, 90), (180, 40, 270),
     (119, 50, 180), (120, 65, 0),
@@ -85,6 +85,10 @@ _CIVS = [
     (156, 122, 200), (170, 129.5, 270),
     (110, 142, 180),
     (188, 80, 0), (217.5, 90, 180), (230, 90, 270),
+    # Talking partners, 1.4 m from civilians 10, 12, 19 and 31 and facing them: two civilians
+    # this close stand talking, face to face (openspec/changes/archive/2026-09-29-crowd-variety, design section 2;
+    # data/crowd.json talk_pair_radius_m).
+    (101, 91.5, 225), (125, 86.4, 0), (90, 63.1, 180), (228.6, 90, 90),
 ]
 CIVILIANS = [{"kind": "civ", "id": f"civ_{i + 1:02d}", "at": (x, y), "facing_deg": f, "props": {}}
              for i, (x, y, f) in enumerate(_CIVS)]

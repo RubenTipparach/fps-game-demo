@@ -1,8 +1,8 @@
-// The crowd rule (openspec/changes/crowd-variety, "No lookalikes nearby" and "Civilians vary at
+// The crowd rule (openspec/changes/archive/2026-09-29-crowd-variety, "No lookalikes nearby" and "Civilians vary at
 // runtime"): on the hub's real placements, with world seeds 1 to 100, no two civilians within
 // 15 m share body and palette and no body is used more than three times; the same seed gives the
-// same crowd; roles follow districts; umbrellas are for outdoors; and accessories never double up
-// on a slot.
+// same crowd; roles follow districts; umbrellas are for the open; accessories never double up on a
+// slot; and civilians placed close together stand talking in pairs.
 
 using Undercity.Core.Data;
 using Undercity.Core.World;
@@ -22,7 +22,7 @@ public sealed class CrowdTests
     {
         var civilians = TestData.Data.Levels["hub"].Npcs.Where(n => n.Value == "civ").Select(n => n.Key).OrderBy(k => k, StringComparer.Ordinal);
         Assert.Equal(civilians, Hub.Keys.OrderBy(k => k, StringComparer.Ordinal));
-        Assert.Equal(31, Hub.Count);
+        Assert.Equal(35, Hub.Count);
     }
 
     [Fact]
@@ -71,6 +71,7 @@ public sealed class CrowdTests
             Assert.Equal(look.Accessories, again[sid].Accessories);
             Assert.Equal(look.Scale, again[sid].Scale);
             Assert.Equal(look.Idle, again[sid].Idle);
+            Assert.Equal(look.Partner, again[sid].Partner);
         }
     }
 
@@ -95,7 +96,7 @@ public sealed class CrowdTests
     }
 
     [Fact]
-    public void About_a_third_of_the_outdoor_civilians_who_may_carry_one_hold_an_umbrella_and_nobody_indoors()
+    public void About_a_third_of_the_civilians_in_the_open_who_may_carry_one_hold_an_umbrella_and_nobody_sheltered()
     {
         int outdoor = 0, umbrellas = 0;
         foreach (var seed in Seeds)
@@ -104,8 +105,8 @@ public sealed class CrowdTests
             foreach (var (sid, place) in Hub)
             {
                 var carries = looks[sid].Accessories.Contains(Table.Umbrella);
-                Assert.False(place.Indoors && carries, $"seed {seed}: {sid} holds an umbrella indoors");
-                if (!place.Indoors && Table.Roles[looks[sid].Role].Accessories.Contains(Table.Umbrella))
+                Assert.False(place.Sheltered && carries, $"seed {seed}: {sid} holds an umbrella under cover");
+                if (!place.Sheltered && Table.Roles[looks[sid].Role].Accessories.Contains(Table.Umbrella))
                 {
                     outdoor++;
                     umbrellas += carries ? 1 : 0;
@@ -132,6 +133,55 @@ public sealed class CrowdTests
                 }
                 Assert.InRange(look.Scale, Table.ScaleRange[0], Table.ScaleRange[1]);
             }
+        }
+    }
+
+    [Fact]
+    public void Civilians_placed_in_a_pair_face_each_other_and_talk_unless_an_accessory_sets_the_idle()
+    {
+        var partners = CrowdPicker.TalkPartners(Hub, Table);
+        Assert.True(partners.Count >= 8, $"the hub places at least four talking pairs; it has {partners.Count / 2}");
+        foreach (var seed in Seeds)
+        {
+            var looks = CrowdPicker.Assign(seed, Hub, Table);
+            foreach (var (sid, look) in looks)
+            {
+                Assert.Equal(partners.GetValueOrDefault(sid), look.Partner);
+                if (look.Partner is { } other)
+                {
+                    Assert.Equal(sid, looks[other].Partner);
+                    Assert.True(CrowdPicker.Distance(Hub[sid], Hub[other]) <= Table.TalkPairRadiusM, $"{sid} and {other} stand too far apart to talk");
+                    // An umbrella is held up, a bag hangs: what they carry keeps its idle.
+                    var forced = look.Accessories.Select(a => Table.Accessories[a].Idle).FirstOrDefault(i => i is not null);
+                    Assert.Equal(forced ?? CrowdPicker.TalkIdle, look.Idle);
+                }
+            }
+        }
+    }
+
+    [Fact]
+    public void Nobody_stands_in_two_pairs()
+    {
+        var place = new CrowdPlace { At = new[] { 0.0, 0.0 } };
+        var crowd = new Dictionary<string, CrowdPlace>
+        {
+            ["a"] = place,
+            ["b"] = new CrowdPlace { At = new[] { 1.0, 0.0 } },
+            ["c"] = new CrowdPlace { At = new[] { 1.5, 0.0 } },
+        };
+        var partners = CrowdPicker.TalkPartners(crowd, Table);
+        Assert.Equal("c", partners["b"]);
+        Assert.False(partners.ContainsKey("a"), "a is left out: b is closer to c than to a, and nobody talks in a three");
+    }
+
+    [Fact]
+    public void Every_accessory_has_its_prop_and_a_mount_the_bodies_carry()
+    {
+        foreach (var (id, a) in Table.Accessories)
+        {
+            var glb = Path.Combine(TestData.RepoRoot, "game", "models", "undercity", "props", id + ".glb");
+            Assert.True(File.Exists(glb), $"'{id}' has no prop; run tools/blender/build_undercity_props.py");
+            Assert.True(TestData.Data.NpcBodies.Mounts.ContainsKey(a.Mount), $"'{id}' hangs from '{a.Mount}', which no body has");
         }
     }
 

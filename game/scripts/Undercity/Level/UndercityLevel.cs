@@ -62,6 +62,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
     private PlayerController? _player;
     private LevelDef? _def;
     private LevelWater? _water;
+    private IReadOnlyDictionary<string, CrowdLook>? _crowd;
     private readonly Dictionary<string, Node> _stable = new(StringComparer.Ordinal);
     private double _watchS;
     private bool _weaponSeenThisDraw;
@@ -94,6 +95,9 @@ public partial class UndercityLevel : Node3D, ILevelHost
 
     /// <inheritdoc/>
     public LevelWater Water => _water!;
+
+    /// <inheritdoc/>
+    public IReadOnlyDictionary<string, CrowdLook> Crowd => _crowd!;
 
     /// <inheritdoc/>
     public PlayerController Player => _player!;
@@ -136,6 +140,9 @@ public partial class UndercityLevel : Node3D, ILevelHost
         }
         _def = _session.State.Data.Levels[LevelId];
         _water = new LevelWater(_def.Water, _session.State.Data.Water);
+        // The whole crowd at once, from the world seed: no two neighbours look alike, and a save
+        // sees the same crowd (openspec/changes/archive/2026-09-29-crowd-variety).
+        _crowd = CrowdPicker.Assign(State.World.Seed, _def.Crowd, State.Data.Crowd);
         State.World.CurrentLevel = LevelId;
 
         _player = PlayerScene.Instantiate<PlayerController>();

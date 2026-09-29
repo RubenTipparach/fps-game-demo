@@ -64,6 +64,9 @@ public sealed class StubLevelHost : ILevelHost
     /// <inheritdoc/>
     public LevelWater Water { get; }
 
+    /// <summary>No civilians are placed.</summary>
+    public IReadOnlyDictionary<string, CrowdLook> Crowd { get; } = new Dictionary<string, CrowdLook>();
+
     /// <summary>No body: the HUD's compass stays where it is.</summary>
     public Brushfire.PlayerController Player => null!;
 

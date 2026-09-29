@@ -1,14 +1,19 @@
-// The crowd (openspec/changes/crowd-variety, design sections 2 to 5): the bodies, palettes,
+// The crowd (openspec/changes/archive/2026-09-29-crowd-variety, design sections 2 to 5): the bodies, palettes,
 // accessories and idles civilians draw from by role, and the rule against lookalikes.
 // core/Undercity.Core/World/Crowd.cs reads it; CrowdPicker.Assign decides the whole crowd from the
 // world seed. A role's idles and an accessory's idle are states of npc_bodies.json. UAL Standard
-// has no phone, lean, smoke or look-around clip, so the idles are the ones it has.
+// has no phone, lean, smoke or look-around clip, so the idles are the ones it has. An accessory's
+// mount is one of npc_bodies.json's, and its prop is game/models/undercity/props/<id>.glb. The
+// umbrella is held up in the left hand (Idle_Torch raises the left); a bag or a briefcase keeps
+// the plain idle, since the talking idle swings both hands up to the chest.
 {
   "lookalike_radius_m": 15.0,
   "max_per_body": 3,
   "scale_range": [0.95, 1.05],
   "max_accessories": 2,
   "rain_umbrella_share": 0.35,
+  // Two civilians placed this close stand talking, face to face.
+  "talk_pair_radius_m": 2.0,
   "umbrella": "umbrella",
   "body_pools": {
     "civilian": ["civ_a", "civ_b", "civ_c", "civ_d", "civ_e", "civ_f", "civ_g", "civ_h", "civ_i",
@@ -25,17 +30,17 @@
     "crimson": {"hue_deg": 350, "sat": 1.1}
   },
   "accessories": {
-    "umbrella": {"bone": "RightHand", "slot": "hand_r", "idle": "torch"},
-    "cigarette": {"bone": "RightHand", "slot": "hand_r"},
-    "bag": {"bone": "LeftHand", "slot": "hand_l"},
-    "briefcase": {"bone": "LeftHand", "slot": "hand_l"},
-    "cap": {"bone": "Head", "slot": "hat"},
-    "beanie": {"bone": "Head", "slot": "hat"},
-    "headphones": {"bone": "Head", "slot": "ears"},
-    "visor": {"bone": "Head", "slot": "eyes"},
-    "respirator": {"bone": "Head", "slot": "mouth"},
-    "implant": {"bone": "Head", "slot": "temple"},
-    "prosthetic": {"bone": "LeftLowerArm", "slot": "arm_l"}
+    "umbrella": {"mount": "torch_l", "slot": "hand_l", "idle": "torch"},
+    "cigarette": {"mount": "hold_r", "slot": "hand_r"},
+    "bag": {"mount": "carry_l", "slot": "hand_l", "idle": "idle"},
+    "briefcase": {"mount": "carry_l", "slot": "hand_l", "idle": "idle"},
+    "cap": {"mount": "head", "slot": "hat"},
+    "beanie": {"mount": "head", "slot": "hat"},
+    "headphones": {"mount": "head", "slot": "ears"},
+    "visor": {"mount": "head", "slot": "eyes"},
+    "respirator": {"mount": "head", "slot": "mouth"},
+    "implant": {"mount": "head", "slot": "temple"},
+    "prosthetic": {"mount": "forearm_l", "slot": "arm_l"}
   },
   "roles": {
     "shopper": {"bodies": "civilian", "accessories": ["umbrella", "bag", "briefcase", "headphones", "visor", "cap"],

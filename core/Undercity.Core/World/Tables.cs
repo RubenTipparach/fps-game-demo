@@ -60,9 +60,6 @@ public sealed class CivilianPool
     /// <summary>The dialog tree civilians use.</summary>
     public required string Dialog { get; init; }
 
-    /// <summary>The model ids civilians are drawn from.</summary>
-    public required IReadOnlyList<string> Models { get; init; }
-
     /// <summary>Small-talk lines.</summary>
     public required IReadOnlyList<string> SmallTalk { get; init; }
 
@@ -102,9 +99,9 @@ public sealed class NpcTable : IValidated
         {
             errors.Add($"npcs.{n.Id}: intelligence must be 1 to 5");
         }
-        if (Civilians.SmallTalk.Count == 0 || Civilians.Rumours.Count == 0 || Civilians.Models.Count == 0)
+        if (Civilians.SmallTalk.Count == 0 || Civilians.Rumours.Count == 0)
         {
-            errors.Add("civilians need models, small_talk and rumours");
+            errors.Add("civilians need small_talk and rumours");
         }
         void Body(string where, double health, IReadOnlyDictionary<string, double> resist)
         {
@@ -297,7 +294,7 @@ public sealed class LevelDef : IValidated
     public IReadOnlyDictionary<string, string> Npcs { get; init; } = new Dictionary<string, string>();
 
     /// <summary>
-    /// Where each civilian stands, by stable id, for the crowd rule (openspec/changes/crowd-variety):
+    /// Where each civilian stands, by stable id, for the crowd rule (openspec/changes/archive/2026-09-29-crowd-variety):
     /// every "civ" placement in <see cref="Npcs"/> has one.
     /// </summary>
     public IReadOnlyDictionary<string, CrowdPlace> Crowd { get; init; } = new Dictionary<string, CrowdPlace>();

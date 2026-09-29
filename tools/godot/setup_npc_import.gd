@@ -104,20 +104,22 @@ func patch(glb: String, bonemap: BoneMap, as_library: bool) -> void:
 	if cf.load(ip) != OK:
 		fail("%s has no .import yet: run `godot --headless --path game --import` first" % glb)
 		return
-	# The skeleton's node path inside the imported scene, as the import dialog would name it.
+	# The skeleton's node path inside the imported scene, as the import dialog would name it: the
+	# path before the retarget renames it. Once a pass has written it, keep it, since a retargeted
+	# import (a body re-run, or a library) no longer shows the old name: options keyed by the new
+	# name "GeneralSkeleton" would match nothing and the next clean import would lose the retarget.
 	var skel_path := ""
-	var imported = load(glb)
+	if cf.has_section_key("params", "_subresources"):
+		var subs: Dictionary = cf.get_value("params", "_subresources")
+		for key in subs.get("nodes", {}):
+			skel_path = str(key).trim_prefix("PATH:")
+	var imported = load(glb) if skel_path == "" else null
 	if imported is PackedScene:
 		var inst: Node = imported.instantiate()
 		var sk := find_skeleton(inst)
 		if sk:
 			skel_path = str(inst.get_path_to(sk))
 		inst.free()
-	elif cf.has_section_key("params", "_subresources"):
-		# Already an animation library: keep the skeleton path the first pass found.
-		var subs: Dictionary = cf.get_value("params", "_subresources")
-		for key in subs.get("nodes", {}):
-			skel_path = str(key).trim_prefix("PATH:")
 	if skel_path == "":
 		fail("%s: no Skeleton3D found" % glb)
 		return

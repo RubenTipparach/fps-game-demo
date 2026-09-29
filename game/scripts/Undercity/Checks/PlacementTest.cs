@@ -5,7 +5,10 @@
 // floor, overlaps no world collider and no other person, and the floor is right under their feet.
 // Every stop on an NPC's patrol is tested the same way. Every ladder out of the water is tested
 // with the player's collider: its foot at least 0.5 m under the surface, room to climb its whole
-// height, and room to stand on the floor at its top (openspec/changes/archive/2026-09-29-water-and-swimming). Prints
+// height, and room to stand on the floor at its top (openspec/changes/archive/2026-09-29-water-and-swimming). Every
+// accessory a civilian's role may give them is tested in its mount's pose, on every body of the
+// role's pool at both ends of the height range, against the level: an umbrella held up into a
+// wall, or a bag hanging into a counter, fails (openspec/changes/archive/2026-09-29-crowd-variety, task 3.3). Prints
 // PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
@@ -20,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Brushfire;
 using Godot;
 using GArray = Godot.Collections.Array<Godot.Rid>;
@@ -83,6 +87,7 @@ public partial class PlacementTest : Node3D
             }
             CheckSpawns();
             CheckLadders();
+            await CheckAccessories();
         }
         catch (Exception e)
         {
@@ -150,7 +155,7 @@ public partial class PlacementTest : Node3D
         var col = ColliderOf(player);
         var radius = col.Shape is CylinderShape3D c ? c.Radius : 0.4f;
         var data = Session.Data;
-        var level = LevelDir.TrimEnd('/').Split('/').Last();
+        var level = LevelId;
         var water = new LevelWater(data.Levels[level].Water, data.Water);
         var ladders = GetTree().GetNodesInGroup("ladders").OfType<Ladder>().OrderBy(n => n.Name.ToString(), StringComparer.Ordinal).ToList();
         if (ladders.Count == 0 && data.Levels[level].Water.Count > 0)
@@ -188,6 +193,117 @@ public partial class PlacementTest : Node3D
             Check($"{l.Name} landing", col.Shape, new Transform3D(Basis.Identity, l.Landing), col.Transform, Array.Empty<Rid>(), Layers.World | Layers.Enemy);
         }
         player.Free();
+    }
+
+    private string LevelId => LevelDir.TrimEnd('/').Split('/').Last();
+
+    // Each civilian's accessories, as the crowd rule may give them (the umbrella only in the open),
+    // in the pose of their mount, on each body of the role's pool at the smallest and largest
+    // scale, turned as the civilian stands. The first placement that touches the level fails.
+    private async Task CheckAccessories()
+    {
+        var data = Session.Data;
+        var crowd = data.Crowd;
+        var places = data.Levels[LevelId].Crowd;
+        var shapes = crowd.Accessories.Keys.Order(StringComparer.Ordinal).ToDictionary(id => id, PropShapes, StringComparer.Ordinal);
+        var mounts = new Dictionary<string, Dictionary<string, Transform3D>>(StringComparer.Ordinal);
+        foreach (var body in crowd.BodyPools.Values.SelectMany(p => p).Distinct().Order(StringComparer.Ordinal))
+        {
+            mounts[body] = await MountsOf(body, data.NpcBodies);
+        }
+        var scales = crowd.ScaleRange.Select(s => (float)s).Distinct().ToArray();
+        foreach (var civ in People("ent_civ"))
+        {
+            var sid = $"{LevelId}:{Entity.Meta(civ, "id")}";
+            if (!places.TryGetValue(sid, out var place))
+            {
+                Fail($"{civ.Name}: the level's crowd block doesn't place {sid}");
+                continue;
+            }
+            var role = crowd.Roles[crowd.RoleFor(place.District)];
+            foreach (var id in role.Accessories.Where(a => a != crowd.Umbrella || !place.Sheltered))
+            {
+                _people++;
+                var mount = crowd.Accessories[id].Mount;
+                var hit = crowd.BodyPools[role.Bodies].SelectMany(b => scales.Select(s => (Body: b, Scale: s)))
+                    .Select(v => (v.Body, v.Scale, Hits: Overlaps(shapes[id],
+                        civ.GlobalTransform * new Transform3D(new Basis(Vector3.Up, Mathf.Pi).Scaled(Vector3.One * v.Scale), Vector3.Zero)
+                        * mounts[v.Body][mount])))
+                    .FirstOrDefault(v => v.Hits.Count > 0);
+                if (hit.Hits is { Count: > 0 })
+                {
+                    Fail($"{civ.Name} with {id} ({hit.Body} at {hit.Scale:0.00}): it overlaps {string.Join(", ", hit.Hits)}");
+                }
+                else
+                {
+                    GD.Print($"PASS [placement_test] {civ.Name} with {id}");
+                }
+            }
+        }
+    }
+
+    // A prop's convex parts, from its glb: one shape per mesh, with the mesh's place in the prop.
+    private static List<(Shape3D Shape, Transform3D Local)> PropShapes(string id)
+    {
+        var prop = GD.Load<PackedScene>($"res://models/undercity/props/{id}.glb").Instantiate<Node3D>();
+        var parts = prop.FindChildren("*", nameof(MeshInstance3D), true, false).OfType<MeshInstance3D>()
+            .Select(m => ((Shape3D)m.Mesh.CreateConvexShape(), RelativeTo(prop, m))).ToList();
+        prop.Free();
+        return parts;
+    }
+
+    private static Transform3D RelativeTo(Node3D root, Node3D node)
+    {
+        var x = Transform3D.Identity;
+        for (Node? n = node; n is Node3D n3 && n != root; n = n.GetParent())
+        {
+            x = n3.Transform * x;
+        }
+        return x;
+    }
+
+    // Where each mount is on a body, relative to the body's root, in the mount's pose (the idle
+    // for a bone-aligned mount, which follows whatever the body plays).
+    private async Task<Dictionary<string, Transform3D>> MountsOf(string body, Undercity.Core.World.NpcBodyTable table)
+    {
+        var model = GD.Load<PackedScene>($"res://scenes/undercity/npcs/{body}.tscn").Instantiate<Node3D>();
+        AddChild(model);
+        var anim = model.GetNode<AnimationPlayer>("Anim");
+        var result = new Dictionary<string, Transform3D>(StringComparer.Ordinal);
+        foreach (var group in table.Mounts.GroupBy(m => m.Value.Pose.Length > 0 ? m.Value.Pose : "idle").OrderBy(g => g.Key, StringComparer.Ordinal))
+        {
+            var clip = table.Clip(group.Key) ?? throw new InvalidOperationException($"no clip for the state '{group.Key}'");
+            anim.Play(clip);
+            anim.Seek(anim.CurrentAnimationLength, true);
+            for (var i = 0; i < 2; i++)
+            {
+                await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            }
+            foreach (var (id, _) in group)
+            {
+                var node = model.FindChild(id, true, false) as Node3D
+                    ?? throw new InvalidOperationException($"{body}.tscn has no mount '{id}'; run tools/godot/gen_npc_scenes.gd");
+                result[id] = model.GlobalTransform.AffineInverse() * node.GlobalTransform;
+            }
+        }
+        model.QueueFree();
+        return result;
+    }
+
+    private List<string> Overlaps(List<(Shape3D Shape, Transform3D Local)> parts, Transform3D at)
+    {
+        var space = GetWorld3D().DirectSpaceState;
+        return parts.SelectMany(p => space.IntersectShape(new PhysicsShapeQueryParameters3D
+            {
+                Shape = p.Shape,
+                Transform = at * p.Local,
+                CollisionMask = Layers.World,
+            }, 8))
+            .Select(h => h["collider"].As<Node>())
+            .Where(n => n is not null)
+            .Select(n => $"{n.GetParent()?.Name}/{n.Name}")
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
     // Overlap only: nothing in the level where the body is.

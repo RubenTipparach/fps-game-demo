@@ -381,6 +381,7 @@ class Plan:
         self.lights = 0
         self.zboxes = {}          # z-fighting groups: name -> {"airs": [], "details": []}
         self.solids = []          # (label, footprint, z0, z1): solids that aren't boxes
+        self.covers = []          # (label, footprint, z0): awnings people shelter under
         self.entity_list = entities or []
         self.districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
         self.probes = []          # reflection probe boxes for the scene generator
@@ -434,6 +435,11 @@ class Plan:
         """Register a solid that isn't an axis-aligned box (a stall's counter, a pillar) by its
         footprint corners and height, for the standing-room check."""
         self.solids.append((label, Polygon(corners), z0, z1))
+
+    def cover(self, corners, z0, label):
+        """Register an awning by its footprint corners and its underside's lowest height: a
+        civilian under it is sheltered, and doesn't open an umbrella (export_level_data.py)."""
+        self.covers.append((label, Polygon(corners), z0))
 
     def zdetail(self, group, lo, hi, label):
         """Register an axis-aligned box (layout coordinates) for the z-fighting check."""
@@ -1061,6 +1067,7 @@ class City:
                             vis.append(hexa_pts([(*P(s0, 0.03), 3.29), (*P(s1, 0.03), 3.29), (*P(s1, 1.5), 2.94),
                                                  (*P(s0, 1.5), 2.94), (*P(s0, 0.03), 3.35), (*P(s1, 0.03), 3.35),
                                                  (*P(s1, 1.5), 3.0), (*P(s0, 1.5), 3.0)], "awning"))
+                            Pn.cover([P(s0, 0.03), P(s1, 0.03), P(s1, 1.5), P(s0, 1.5)], 2.94, "shop awning")
                 elif kind == "shanty":
                     c = rng.uniform(0.9, L - 0.9)
                     cutters.append(self.recess(P, c - 0.5, c + 0.5, FLOOR_Z, 2.3, 0.25, "window_dark", reveal))
@@ -1077,6 +1084,7 @@ class City:
                                 vis.append(hexa_pts([(*P(s0, 0.03), 2.59), (*P(s1, 0.03), 2.59), (*P(s1, 1.2), 2.29),
                                                      (*P(s0, 1.2), 2.29), (*P(s0, 0.03), 2.65), (*P(s1, 0.03), 2.65),
                                                      (*P(s1, 1.2), 2.35), (*P(s0, 1.2), 2.35)], "awning"))
+                                Pn.cover([P(s0, 0.03), P(s1, 0.03), P(s1, 1.2), P(s0, 1.2)], 2.29, "shanty awning")
                 elif kind in ("rollup", "loading") and L >= 5.0:
                     wd, hd = (3.6, 3.95) if kind == "rollup" else (3.2, 3.55)
                     nd = max(1, int(L // 6.5))
@@ -1709,6 +1717,7 @@ class City:
         c4 = [L(-hw - 0.15, -hd - 0.15), L(hw + 0.15, -hd - 0.15), L(hw + 0.15, hd + 0.45), L(-hw - 0.15, hd + 0.45)]
         prims.append(hexa_pts([(*c4[0], z + 2.6), (*c4[1], z + 2.6), (*c4[2], z + 2.3), (*c4[3], z + 2.3),
                                (*c4[0], z + 2.66), (*c4[1], z + 2.66), (*c4[2], z + 2.36), (*c4[3], z + 2.36)], "awning"))
+        P.cover(c4, z + 2.3, "stall awning")
         gx, gy = L(0, hd - 0.35)
         prims.append(obox(gx, gy, ux, uy, 0.3, 0.08, z + 2.1, z + 2.18, "lamp_glow"))
         if light:

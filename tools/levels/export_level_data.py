@@ -8,7 +8,9 @@ by stable id "<level>:<id>", for Undercity.Core (core/Undercity.Core/World/Table
 The output is generated: regenerate it, don't hand-edit it (CLAUDE.md 11).
 """
 
+import contextlib
 import importlib
+import io
 import json
 import pathlib
 import sys
@@ -18,21 +20,30 @@ from shapely.geometry import Point, Polygon
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "levels"))
 
+import city_plan  # noqa: E402  (the plan knows the awnings a civilian stands under)
+
+# How far an open umbrella reaches from its holder, metres: the canopy's 0.5 m radius, held 0.45 m
+# forward and 0.18 m to the side (tools/blender/build_undercity_props.py, umbrella; the torch_l
+# mount). A civilian this close to an awning would push it into the awning, and is sheltered.
+UMBRELLA_REACH_M = 1.0
+
 KINDS = {"loot": "containers", "terminal": "terminals", "door": "doors", "trigger": "triggers",
          "exit": "exits", "zone": "zones", "item": "items"}
 NO_DATA = {"spawn", "npc", "civ", "bed", "stash"}
 
 
-def crowd_place(e, layout):
-    """Where a civilian stands, for the crowd rule (openspec/changes/crowd-variety): the place in
-    layout metres, the district it stands in (none between districts) and whether it is inside a
-    named building (umbrellas are for outdoors)."""
+def crowd_place(e, layout, covers):
+    """Where a civilian stands, for the crowd rule (openspec/changes/archive/2026-09-29-crowd-variety): the place in
+    layout metres, the district it stands in (none between districts) and whether it is sheltered,
+    inside a named building, or under or within an umbrella's reach of an awning the plan registered
+    (umbrellas are for the open)."""
     x, y = (float(v) for v in e["at"])
     pt = Point(x, y)
     district = next((d["name"].lower().replace(" ", "_") for d in layout.get("districts", [])
                      if Polygon(d["poly"]).covers(pt)), None)
-    indoors = any(Polygon(b["poly"]).covers(pt) for b in layout.get("buildings", []))
-    return {"at": [x, y], "district": district, "indoors": indoors}
+    sheltered = (any(Polygon(b["poly"]).covers(pt) for b in layout.get("buildings", []))
+                 or any(fp.distance(pt) <= UMBRELLA_REACH_M for _, fp, _ in covers))
+    return {"at": [x, y], "district": district, "sheltered": sheltered}
 
 
 def export(level_id):
@@ -51,6 +62,11 @@ def export(level_id):
             raise SystemExit(f"{level_id}: a water body has no id")
         out["water"].append({"id": w["id"], "surface_m": w["surface_m"], "bed_m": w["bed_m"],
                              "poly": [[float(x), float(y)] for x, y in w["poly"]]})
+    # The awnings civilians shelter under, from the level's plan; its checks report on stderr.
+    covers = []
+    if any(e["kind"] == "civ" for e in ents):
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            covers = city_plan.build(level_id).covers
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:
@@ -66,7 +82,7 @@ def export(level_id):
             out["npcs"][sid] = e["props"]["npc"]
         elif kind == "civ":
             out["npcs"][sid] = "civ"
-            out["crowd"][sid] = crowd_place(e, layout)
+            out["crowd"][sid] = crowd_place(e, layout, covers)
         elif kind in KINDS:
             if "data" not in e:
                 raise SystemExit(f"{level_id}: {kind} '{local}' has no data")

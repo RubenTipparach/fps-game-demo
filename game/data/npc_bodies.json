@@ -25,6 +25,18 @@
     "hit_head": "Hit_Head"
   },
   "blend_s": 0.25,
+  // Where a civilian's accessories hang (openspec/changes/archive/2026-09-29-crowd-variety, design section 5): a
+  // point along a bone, fitted in a state's pose (none for the rest pose). The generated NPC scenes
+  // put a node there with the body's axes in that pose (or, with "axes": "bone", the bone's own,
+  // +Y along it); each prop is built at such an origin.
+  // The hands' points are the palm, as the weapon grip's is (tools/godot/gen_npc_scenes.gd).
+  "mounts": {
+    "head": {"bone": "Head", "pose": "idle"},
+    "torch_l": {"bone": "LeftHand", "pose": "torch", "along_m": 0.07},
+    "hold_r": {"bone": "RightHand", "pose": "idle", "along_m": 0.07},
+    "carry_l": {"bone": "LeftHand", "pose": "idle", "along_m": 0.07},
+    "forearm_l": {"bone": "LeftLowerArm", "along_m": 0.12, "axes": "bone"}
+  },
   // Measured in docs/spikes/npc-pipeline on Jolt: 20 capsules, 80.5 kg. Every Jolt body was below
   // 0.12 m/s at 3 s, and one twitched back up by 5 s, so the body freezes at settle_s.
   "ragdoll": {

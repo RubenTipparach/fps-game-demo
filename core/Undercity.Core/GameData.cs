@@ -187,6 +187,10 @@ public sealed class GameData
         {
             errors.Add($"crowd.json accessories.{id}.idle: '{a.Idle}' is no state of npc_bodies.json");
         }
+        foreach (var (id, a) in Crowd.Accessories.Where(a => !NpcBodies.Mounts.ContainsKey(a.Value.Mount)))
+        {
+            errors.Add($"crowd.json accessories.{id}.mount: '{a.Mount}' is no mount of npc_bodies.json");
+        }
         void Item(string? id, string where)
         {
             if (id is not null && !Items.Exists(id))

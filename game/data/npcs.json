@@ -17,14 +17,13 @@
     {"id": "lin", "name": "Sister Lin", "role": "shrine keeper", "faction": "residents", "intelligence": 2, "dialog": "lin", "model": "lin", "idle": "idle", "health": 70, "defence": "cower"},
     {"id": "oracle", "name": "The Oracle", "role": "data broker", "faction": "residents", "intelligence": 3, "dialog": "oracle", "model": "civ_f", "idle": "idle", "health": 70, "defence": "cower"},
     {"id": "mersec_station", "name": "MerSec trooper", "role": "station guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
-    {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
-    {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
-    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
-    {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"}
+    {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_b", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_c", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_c", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_b", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"}
   ],
   "civilians": {
     "dialog": "civilian",
-    "models": ["civ_a", "civ_b", "civ_c", "civ_d", "civ_e", "civ_f"],
     "health": 60,
     "defences": {"flee": 70, "cower": 30},
     "small_talk": [

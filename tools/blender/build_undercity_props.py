@@ -1,5 +1,6 @@
 """Undercity's prop kit: the doors, containers, consoles and gates of Meridian's flooded
-underbelly, modelled in Blender as low-poly, bevelled, UT99-era pieces.
+underbelly, the weapons NPCs hold and the accessories civilians wear, modelled in Blender as
+low-poly, bevelled, UT99-era pieces.
 
 Run:  blender -b --factory-startup -P tools/blender/build_undercity_props.py
 Writes:
@@ -53,6 +54,7 @@ TEX_DIR = os.path.join(GAME, "textures", "props")
 MAT_DIR = os.path.join(GAME, "materials", "props")
 BLEND = os.path.join(HERE, "undercity_props.blend")
 MAX_TRIS = 1500          # per prop, visible meshes (the brief's low-poly budget)
+ACCESSORY_TRIS = 800     # per accessory (openspec/changes/archive/2026-09-29-crowd-variety, design section 2)
 SEED = 7713              # the generated textures' wear and screen noise
 
 
@@ -95,6 +97,11 @@ MATERIALS = {
                       emission_tex="led_lens_emission"),
     "led_cyan": dict(color=(0.03, 0.25, 0.3), roughness=0.3, emission=(0.2, 0.9, 1.0), energy=4.0,
                      emission_tex="led_lens_emission"),
+    # The civilians' accessories (openspec/changes/archive/2026-09-29-crowd-variety): wet nylon, cloth and paper.
+    "umbrella_nylon": dict(color=(0.05, 0.055, 0.07), roughness=0.25),
+    "fabric_navy": dict(color=(0.1, 0.13, 0.24), roughness=0.9),
+    "fabric_rust": dict(color=(0.42, 0.12, 0.07), roughness=0.95),
+    "paper_white": dict(color=(0.86, 0.84, 0.78), roughness=0.8),
 }
 
 # Faces of these materials get UVs fitted to their own rectangle (0..1 across the face, read
@@ -921,9 +928,9 @@ def item_pouch(coll, reg):
 
 
 def kestrel(coll, reg):
-    """The Kestrel 10mm, the runner's pistol, as a first-person viewmodel (openspec/changes/
-    hub-combat, design section 8): a squared slide with stepped rear serrations and a cyan round
-    counter lens, a lighter frame and dust cover, an angled rubber grip, a trigger guard, sights
+    """The Kestrel 10mm, the runner's pistol, as a first-person viewmodel
+    (openspec/changes/archive/2026-09-28-hub-combat, design section 8): a squared slide with
+    stepped rear serrations and a cyan round counter lens, a lighter frame and dust cover, an angled rubber grip, a trigger guard, sights
     and a barrel stub. Full size; the barrel points +Y (Godot's forward). Origin: the web of the hand, where
     the grip meets the frame. The muzzle is at (0, 0.155, 0.095), which kestrel.tscn's Muzzle
     marks. No collision: it's only ever in the runner's hand."""
@@ -990,6 +997,192 @@ def scattergun(coll, reg):
     return [k.finish("Scattergun")]
 
 
+# ----------------------------------------------------------------------------- accessories
+#
+# What civilians carry and wear (openspec/changes/archive/2026-09-29-crowd-variety, design section 2; data/crowd.json
+# "accessories"). Each is built at its mount's origin (data/npc_bodies.json "mounts", placed on
+# every body by tools/godot/gen_npc_scenes.gd), in the kit's axes: x the body's right, y its
+# front, z up, in the pose the mount is fitted in.
+#   head:      the head bone's joint, about level with the tip of the nose, in the idle pose.
+#              Measured on eleven bodies: the skull's sides are 0.08 m out, its top 0.145-0.18 m
+#              up (with hair) and the back of the head 0.10-0.16 m back; the eyes are 0.03-0.06 m
+#              up and 0.08-0.10 m forward, the tip of the nose level and 0.11-0.14 m forward, the
+#              ears level and 0.075 m out.
+#   torch_l:   the left palm in Idle_Torch, the hand raised to 1.3 m and 0.45 m forward.
+#   hold_r:    the right palm in the idle, the arm hanging.
+#   carry_l:   the left palm in the idle, the arm hanging.
+#   forearm_l: 0.12 m down the left forearm, in the bone's own axes: z runs along it to the wrist.
+# No collision: an accessory never stops anything.
+
+def ring(z, hx, hy, yc=0.0, n=12):
+    """n points of an ellipse at height z: half sizes hx (across) and hy (front to back)."""
+    return [(hx * math.cos(2 * math.pi * i / n), yc + hy * math.sin(2 * math.pi * i / n), z) for i in range(n)]
+
+
+def shell(k, rim, apex_top, apex_under, mat):
+    """A thin cone of panels from the rim points to an apex above, and back under to a second
+    apex a little lower: an umbrella's canopy, drawn from both sides as one closed mesh."""
+    preview_material(mat)
+    bm = bmesh.new()
+    rv = [bm.verts.new(Vector(p)) for p in rim]
+    top, under = bm.verts.new(Vector(apex_top)), bm.verts.new(Vector(apex_under))
+    n = len(rv)
+    for i in range(n):
+        a, b = rv[i], rv[(i + 1) % n]
+        bm.faces.new((a, b, top))
+        bm.faces.new((b, a, under))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    bm.normal_update()
+    k._add(bm, mat, 0.0)
+
+
+def umbrella(coll, reg):
+    """An open umbrella held up (the torch_l mount; the idle Idle_Torch): eight panels of wet
+    black nylon over a shaft lit cyan, the city's signature, a rubber handle in the fist, a
+    ferrule and rib tips. The canopy is 1.0 m across, 0.62-0.84 m above the fist."""
+    k = PropKit("Umbrella", coll, reg)
+    k.cyl((0.0, 0.0, 0.0), 0.014, 0.14, "z", "rubber", segments=8)                         # handle
+    k.cyl((0.0, 0.0, 0.46), 0.008, 0.78, "z", "led_cyan", segments=6)                     # shaft
+    k.cyl((0.0, 0.0, 0.875), 0.006, 0.07, "z", "gunmetal", segments=6)                    # ferrule
+    rim = ring(0.62, 0.5, 0.5, n=8)
+    shell(k, rim, (0.0, 0.0, 0.84), (0.0, 0.0, 0.825), "umbrella_nylon")
+    for x, y, z in rim:                                                                    # rib tips
+        k.cyl((x * 1.02, y * 1.02, z), 0.006, 0.02, "z", "gunmetal", segments=6)
+    return [k.finish("Umbrella")]
+
+
+def cigarette(coll, reg):
+    """A lit cigarette between the fingers of the hanging right hand (hold_r): paper, a filter
+    and an ember that glows."""
+    k = PropKit("Cigarette", coll, reg)
+    k.cyl((0.0, 0.03, -0.06), 0.0045, 0.06, "y", "paper_white", segments=6)
+    k.cyl((0.0, -0.011, -0.06), 0.0046, 0.022, "y", "cardboard", segments=6)              # filter
+    k.cyl((0.0, 0.0655, -0.06), 0.0044, 0.011, "y", "led_amber", segments=6)              # ember
+    return [k.finish("Cigarette")]
+
+
+def bag(coll, reg):
+    """A paper shopping bag hanging from the left hand (carry_l): rope handles up into the fist,
+    the bag's broad sides facing the leg and away."""
+    k = PropKit("Bag", coll, reg)
+    k.box((-0.05, -0.15, -0.42), (0.05, 0.15, -0.12), "cardboard", bevel=0.006)
+    k.box((-0.061, -0.161, -0.16), (0.061, 0.161, -0.135), "paper_white", bevel=0.0)     # folded band
+    for y in (-0.06, 0.06):                                                               # handles
+        k.hull([(sx * 0.004, y + dy, z) for sx in (-1, 1) for dy, z in ((-0.004, -0.13), (0.004, -0.13),
+                                                                       (-y * 0.9 - 0.004, 0.0), (-y * 0.9 + 0.004, 0.0))],
+               "rubber")
+    return [k.finish("Bag")]
+
+
+def briefcase(coll, reg):
+    """A black briefcase hanging from the left hand (carry_l): a lacquered case, brass catches and
+    a handle in the fist."""
+    k = PropKit("Briefcase", coll, reg)
+    k.box((-0.045, -0.21, -0.41), (0.045, 0.21, -0.08), "lacquer_black", bevel=0.01)
+    k.box((-0.012, -0.06, -0.035), (0.012, 0.06, -0.015), "rubber", bevel=0.004)          # handle
+    for y in (-0.05, 0.05):
+        k.box((-0.008, y - 0.008, -0.08), (0.008, y + 0.008, -0.035), "gunmetal", bevel=0.0)   # its posts
+    for sx in (-1, 1):
+        for y in (-0.13, 0.13):
+            x0, x1 = sorted((sx * 0.045, sx * 0.052))
+            k.box((x0, y - 0.02, -0.12), (x1, y + 0.02, -0.095), "brass", bevel=0.0)      # catches
+    return [k.finish("Briefcase")]
+
+
+def cap(coll, reg):
+    """A navy baseball cap (head): a crown over the hair and a brim over the eyes."""
+    k = PropKit("Cap", coll, reg)
+    k.hull(ring(0.075, 0.1, 0.112, -0.004) + ring(0.15, 0.094, 0.106, -0.004) + ring(0.195, 0.068, 0.078, -0.01)
+           + ring(0.212, 0.03, 0.034, -0.012, n=8), "fabric_navy")
+    k.hull([(sx * hx, y, z + dz) for sx in (-1, 1) for hx, y, z in ((0.088, 0.07, 0.092), (0.075, 0.2, 0.078))
+            for dz in (0.0, 0.009)], "fabric_navy")                                       # brim
+    k.cyl((0.0, -0.012, 0.216), 0.012, 0.008, "z", "fabric_navy", segments=8)             # button
+    return [k.finish("Cap")]
+
+
+def beanie(coll, reg):
+    """A rust knit beanie (head), pulled down over the ears' tops, with a turned-up cuff."""
+    k = PropKit("Beanie", coll, reg)
+    k.hull(ring(0.065, 0.1, 0.113, -0.006) + ring(0.15, 0.096, 0.108, -0.006) + ring(0.2, 0.072, 0.084, -0.01)
+           + ring(0.222, 0.03, 0.036, -0.012, n=8), "fabric_rust")
+    k.hull(ring(0.055, 0.107, 0.12, -0.006) + ring(0.1, 0.104, 0.117, -0.006), "fabric_rust")   # cuff
+    return [k.finish("Beanie")]
+
+
+def headphones(coll, reg):
+    """Over-ear headphones (head): a band over the crown, black cups over the ears with a cyan
+    light on each."""
+    k = PropKit("Headphones", coll, reg)
+    cz, rx, rz = 0.06, 0.112, 0.135          # the band: half an ellipse over the crown, from the cups
+    angles = [math.radians(a) for a in range(-75, 76, 25)]
+    for a0, a1 in zip(angles, angles[1:]):                                               # the band
+        pts = []
+        for a in (a0, a1):
+            for dr in (0.0, 0.012):
+                for y in (-0.028, -0.004):
+                    pts.append(((rx + dr) * math.sin(a), y, cz + (rz + dr) * math.cos(a)))
+        k.hull(pts, "gunmetal_light")
+    for sx in (-1, 1):
+        x = sx * 0.1025
+        k.cyl((x, -0.016, 0.02), 0.042, 0.035, "x", "lacquer_black", segments=10)       # cup
+        k.cyl((sx * 0.1215, -0.016, 0.02), 0.009, 0.004, "x", "led_cyan", segments=8)   # light
+        x0, x1 = sorted((sx * 0.112, sx * 0.124))
+        k.box((x0, -0.026, 0.055), (x1, -0.006, cz + rz * math.cos(angles[0]) + 0.004), "gunmetal_light",
+              bevel=0.0)                                                                  # yoke
+    return [k.finish("Headphones")]
+
+
+def visor(coll, reg):
+    """An AR visor (head): a cyan lens wrapped across the eyes and arms back over the ears."""
+    k = PropKit("Visor", coll, reg)
+    k.hull([(sx * hx, y + dy, z) for sx in (-1, 1) for hx, y in ((0.045, 0.125), (0.078, 0.098), (0.09, 0.04))
+            for dy in (0.0, 0.008) for z in (0.018, 0.068)], "led_cyan")
+    for sx in (-1, 1):
+        x0, x1 = sorted((sx * 0.09, sx * 0.098))
+        k.box((x0, -0.035, 0.036), (x1, 0.035, 0.048), "gunmetal", bevel=0.0)            # arm
+    return [k.finish("Visor")]
+
+
+def respirator(coll, reg):
+    """A half-face respirator (head), common in the Kiln: a rubber mask over the nose and mouth
+    and two filter cans."""
+    k = PropKit("Respirator", coll, reg)
+    k.hull([(0.0, 0.14, 0.03), (0.0, 0.175, -0.025), (0.0, 0.135, -0.085)]
+           + [(sx * x, y, z) for sx in (-1, 1) for x, y, z in ((0.045, 0.105, 0.022), (0.066, 0.07, -0.015),
+                                                             (0.055, 0.095, -0.075), (0.03, 0.135, -0.08),
+                                                             (0.035, 0.155, 0.005))], "rubber")
+    for sx in (-1, 1):
+        k.cyl((sx * 0.058, 0.13, -0.045), 0.024, 0.03, "y", "gunmetal", segments=10)     # filters
+        k.cyl((sx * 0.058, 0.1465, -0.045), 0.018, 0.003, "y", "gunmetal_light", segments=10)
+    return [k.finish("Respirator")]
+
+
+def implant(coll, reg):
+    """A cybernetic implant on the right temple (head): a steel plate set into the skin with two
+    red lights."""
+    k = PropKit("Implant", coll, reg)
+    k.box((0.066, 0.02, 0.045), (0.08, 0.065, 0.085), "gunmetal", bevel=0.003)
+    for y in (0.032, 0.052):
+        k.cyl((0.0815, y, 0.065), 0.004, 0.003, "x", "led_red", segments=6)
+    return [k.finish("Implant")]
+
+
+def prosthetic(coll, reg):
+    """A prosthetic forearm shell (forearm_l, along the bone): a steel sleeve from the elbow to
+    the wrist with cyan seams lit along it."""
+    k = PropKit("Prosthetic", coll, reg)
+    k.hull(ring(-0.1, 0.05, 0.05, n=8) + ring(0.02, 0.052, 0.052, n=8) + ring(0.12, 0.042, 0.042, n=8),
+           "gunmetal_light")
+    for a in (0.0, math.pi):                                                              # seams
+        x, y = 0.0535 * math.cos(a), 0.0535 * math.sin(a)
+        x0, x1 = sorted((x - 0.004, x + 0.004))
+        y0, y1 = sorted((y - 0.004, y + 0.004))
+        k.box((x0, y0, -0.08), (x1, y1, 0.05), "led_cyan", bevel=0.0)
+    return [k.finish("Prosthetic")]
+
+
+ACCESSORIES = (umbrella, cigarette, bag, briefcase, cap, beanie, headphones, visor, respirator, implant, prosthetic)
+
 STATIC, DYNAMIC = 2, 3   # Godot's meshes/light_baking: static lightmaps, or lit by probes
 # name -> (builder, light baking). Moving and vanishing props are dynamic, so no stale bake.
 PROPS = {
@@ -1010,6 +1203,17 @@ PROPS = {
     "kestrel": (kestrel, DYNAMIC),
     "baton": (baton, DYNAMIC),
     "scattergun": (scattergun, DYNAMIC),
+    "umbrella": (umbrella, DYNAMIC),
+    "cigarette": (cigarette, DYNAMIC),
+    "bag": (bag, DYNAMIC),
+    "briefcase": (briefcase, DYNAMIC),
+    "cap": (cap, DYNAMIC),
+    "beanie": (beanie, DYNAMIC),
+    "headphones": (headphones, DYNAMIC),
+    "visor": (visor, DYNAMIC),
+    "respirator": (respirator, DYNAMIC),
+    "implant": (implant, DYNAMIC),
+    "prosthetic": (prosthetic, DYNAMIC),
 }
 
 
@@ -1025,8 +1229,9 @@ def build(name, fn, light_baking):
     objs = fn(coll, reg)
     assert_no_zfighting(name, [], props=reg)
     tris = triangles(objs)
-    if tris >= MAX_TRIS:
-        raise SystemExit(f"[undercity_props] {name}: {tris} triangles, over the {MAX_TRIS} budget")
+    budget = ACCESSORY_TRIS if fn in ACCESSORIES else MAX_TRIS
+    if tris >= budget:
+        raise SystemExit(f"[undercity_props] {name}: {tris} triangles, over the {budget} budget")
     rel = f"models/undercity/props/{name}.glb"
     export(objs, os.path.join(GAME, rel))
     import_presets.write(rel, light_baking, 0.05, "res://addons/brushfire_tools/prop_import.gd")

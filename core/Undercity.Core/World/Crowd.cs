@@ -1,5 +1,5 @@
 // The crowd: which body, outfit palette, accessories, height and idle each civilian takes, and the
-// rule that no two nearby civilians look alike (openspec/changes/crowd-variety, design sections 2
+// rule that no two nearby civilians look alike (openspec/changes/archive/2026-09-29-crowd-variety, design sections 2
 // to 5). The level says where each civilian stands (LevelDef.Crowd); data/crowd.json says what
 // they may wear by role; CrowdPicker.Assign decides the whole crowd at once.
 //
@@ -20,8 +20,8 @@ public sealed class CrowdPlace
     /// <summary>The district it stands in; null between districts.</summary>
     public string? District { get; init; }
 
-    /// <summary>True inside a named building: no umbrella there.</summary>
-    public bool Indoors { get; init; }
+    /// <summary>True inside a building or under an awning: no umbrella there.</summary>
+    public bool Sheltered { get; init; }
 }
 
 /// <summary>An outfit palette: how the clothes' colours shift. Skin, hair and eyes never shift.</summary>
@@ -34,11 +34,11 @@ public sealed class PaletteDef
     public required double Sat { get; init; }
 }
 
-/// <summary>An accessory a civilian may carry: the bone it hangs from and the slot it fills.</summary>
+/// <summary>An accessory a civilian may carry: where it hangs and the slot it fills.</summary>
 public sealed class AccessoryDef
 {
-    /// <summary>The humanoid bone it attaches to (Godot's SkeletonProfileHumanoid names).</summary>
-    public required string Bone { get; init; }
+    /// <summary>The mount it hangs from (data/npc_bodies.json "mounts"); its prop is game/models/undercity/props/&lt;id&gt;.glb.</summary>
+    public required string Mount { get; init; }
 
     /// <summary>What it occupies (hat, face, ears, hand_r...): one accessory per slot.</summary>
     public required string Slot { get; init; }
@@ -99,6 +99,9 @@ public sealed class CrowdTable : IValidated
     /// <summary>The role of a civilian between districts.</summary>
     public required string DefaultRole { get; init; }
 
+    /// <summary>Two civilians placed within this distance of each other stand talking, face to face, metres.</summary>
+    public required double TalkPairRadiusM { get; init; }
+
     /// <summary>The role for a civilian in <paramref name="district"/>.</summary>
     public string RoleFor(string? district) =>
         district is not null && DistrictRoles.TryGetValue(district, out var r) ? r : DefaultRole;
@@ -117,6 +120,10 @@ public sealed class CrowdTable : IValidated
         if (ScaleRange.Count != 2 || !ScaleRange.All(double.IsFinite) || !(ScaleRange[0] > 0) || ScaleRange[0] > ScaleRange[1])
         {
             errors.Add("crowd.json scale_range: [lo, hi], 0 < lo <= hi");
+        }
+        if (!(TalkPairRadiusM >= 0) || !double.IsFinite(TalkPairRadiusM))
+        {
+            errors.Add("crowd.json talk_pair_radius_m: a finite distance, 0 or more");
         }
         if (MaxAccessories < 0)
         {
@@ -174,7 +181,9 @@ public sealed class CrowdTable : IValidated
 /// <param name="Accessories">The accessories they carry, in the order drawn.</param>
 /// <param name="Scale">Their height scale.</param>
 /// <param name="Idle">The idle state they play.</param>
-public sealed record CrowdLook(string Role, string Body, string Palette, IReadOnlyList<string> Accessories, double Scale, string Idle);
+/// <param name="Partner">The civilian they stand talking with and face, or null.</param>
+public sealed record CrowdLook(string Role, string Body, string Palette, IReadOnlyList<string> Accessories, double Scale, string Idle,
+    string? Partner);
 
 /// <summary>Decides how every civilian of a level looks.</summary>
 public static class CrowdPicker
@@ -185,7 +194,8 @@ public static class CrowdPicker
     /// bodies and the palettes, and takes the first (body, palette) that keeps the rules: no
     /// civilian already placed within <see cref="CrowdTable.LookalikeRadiusM"/> has both, and the
     /// body isn't yet used <see cref="CrowdTable.MaxPerBody"/> times. When no pair keeps both, the
-    /// cap gives way before the lookalike rule, and the least used body is taken.
+    /// cap gives way before the lookalike rule, and the least used body is taken. Civilians placed
+    /// in a pair (<see cref="TalkPartners"/>) talk, unless an accessory forces its own idle.
     /// </summary>
     public static IReadOnlyDictionary<string, CrowdLook> Assign(ulong worldSeed, IReadOnlyDictionary<string, CrowdPlace> crowd, CrowdTable t)
     {
@@ -193,6 +203,7 @@ public static class CrowdPicker
         var used = new Dictionary<string, int>(StringComparer.Ordinal);
         var placed = new List<(CrowdPlace Place, CrowdLook Look)>();
         var looks = new Dictionary<string, CrowdLook>(StringComparer.Ordinal);
+        var partners = TalkPartners(crowd, t);
         foreach (var sid in crowd.Keys.OrderBy(k => k, StringComparer.Ordinal))
         {
             var place = crowd[sid];
@@ -227,13 +238,56 @@ public static class CrowdPicker
             var accessories = Accessories(t, role, place, rng);
             var lo = t.ScaleRange[0];
             var scale = Math.Round(lo + (t.ScaleRange[1] - lo) * rng.NextDouble(), 3);
-            var forced = accessories.Select(a => t.Accessories[a].Idle).FirstOrDefault(i => i is not null);
-            var idle = forced ?? role.Idles[rng.Next(role.Idles.Count)];
-            var look = new CrowdLook(roleName, pick.Value.Body, pick.Value.Palette, accessories, scale, idle);
+            var drawn = role.Idles[rng.Next(role.Idles.Count)];
+            var partner = partners.GetValueOrDefault(sid);
+            var idle = IdleFor(accessories, t, partner is null ? drawn : TalkIdle);
+            var look = new CrowdLook(roleName, pick.Value.Body, pick.Value.Palette, accessories, scale, idle, partner);
             looks[sid] = look;
             placed.Add((place, look));
         }
         return looks;
+    }
+
+    /// <summary>
+    /// The idle of someone carrying <paramref name="accessories"/>: the first one's own idle (an
+    /// umbrella is held up, a bag hangs), or <paramref name="otherwise"/>.
+    /// </summary>
+    public static string IdleFor(IEnumerable<string> accessories, CrowdTable t, string otherwise) =>
+        accessories.Select(a => t.Accessories[a].Idle).FirstOrDefault(i => i is not null) ?? otherwise;
+
+    /// <summary>The idle state of a civilian who stands talking.</summary>
+    public const string TalkIdle = "talk";
+
+    /// <summary>
+    /// Who stands talking with whom, from the placements alone: civilians within
+    /// <see cref="CrowdTable.TalkPairRadiusM"/> of each other pair up, the closest pairs first (ties
+    /// by stable id), each in one pair at most. Both directions of every pair are in the result.
+    /// </summary>
+    public static IReadOnlyDictionary<string, string> TalkPartners(IReadOnlyDictionary<string, CrowdPlace> crowd, CrowdTable t)
+    {
+        var ids = crowd.Keys.OrderBy(k => k, StringComparer.Ordinal).ToArray();
+        var pairs = new List<(double D, string A, string B)>();
+        for (var i = 0; i < ids.Length; i++)
+        {
+            for (var j = i + 1; j < ids.Length; j++)
+            {
+                var d = Distance(crowd[ids[i]], crowd[ids[j]]);
+                if (d <= t.TalkPairRadiusM)
+                {
+                    pairs.Add((d, ids[i], ids[j]));
+                }
+            }
+        }
+        var partners = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var (_, a, b) in pairs.OrderBy(p => p.D).ThenBy(p => p.A, StringComparer.Ordinal).ThenBy(p => p.B, StringComparer.Ordinal))
+        {
+            if (!partners.ContainsKey(a) && !partners.ContainsKey(b))
+            {
+                partners[a] = b;
+                partners[b] = a;
+            }
+        }
+        return partners;
     }
 
     private static bool Twin(CrowdPlace place, string body, string palette, List<(CrowdPlace Place, CrowdLook Look)> placed, double radiusM) =>
@@ -243,12 +297,12 @@ public static class CrowdPicker
     public static double Distance(CrowdPlace a, CrowdPlace b) =>
         Math.Sqrt(Math.Pow(a.At[0] - b.At[0], 2) + Math.Pow(a.At[1] - b.At[1], 2));
 
-    // The umbrella first, outdoors, for rain_umbrella_share of them; then up to max_accessories in
+    // The umbrella first, in the open, for rain_umbrella_share of them; then up to max_accessories in
     // all from the role's list in a seeded order, one per slot.
     private static List<string> Accessories(CrowdTable t, CrowdRoleDef role, CrowdPlace place, SeededRandom rng)
     {
         var count = rng.Next(t.MaxAccessories + 1);
-        var umbrella = !place.Indoors && role.Accessories.Contains(t.Umbrella) && rng.NextDouble() < t.RainUmbrellaShare;
+        var umbrella = !place.Sheltered && role.Accessories.Contains(t.Umbrella) && rng.NextDouble() < t.RainUmbrellaShare;
         var chosen = new List<string>();
         var slots = new HashSet<string>(StringComparer.Ordinal);
         if (umbrella && t.MaxAccessories > 0)

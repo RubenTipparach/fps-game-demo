@@ -20,6 +20,11 @@
 # of the hand and its barrel (or shaft) along -Z, so one Grip holds them all. Grip's transform is
 # worked out from the body's own pose in UAL's Pistol_Aim_Neutral: at that pose the barrel points
 # along the body's facing, level, from the palm.
+#
+# The accessories' mounts (data/npc_bodies.json "mounts", openspec/changes/archive/2026-09-29-crowd-variety) are
+# worked out the same way: a node on its bone's attachment, at a point along the bone, whose axes
+# are the body's (-Z its facing, +Y up) in the mount's pose, or the bone's own. Grip is the aim
+# pose's palm.
 extends SceneTree
 
 const BODIES_DIR := "res://models/characters"
@@ -111,13 +116,23 @@ func body_def(sk: Skeleton3D, b: Dictionary, id: String) -> Dictionary:
 	return {"bone": bone, "props": props, "radius": radius, "height": max(length, 2.0 * radius + 0.01)}
 
 
+## The clip a state plays (data "clips"), as [library, clip name].
+func state_clip(data: Dictionary, state: String) -> Array:
+	var clip: String = data["clips"].get(state, "")
+	var lib := ""
+	if "/" in clip:
+		lib = clip.get_slice("/", 0)
+		clip = clip.get_slice("/", 1)
+	return [lib, clip]
+
+
 func line(key: String, value) -> String:
 	return "%s = %s\n" % [key, var_to_str(value)]
 
 
 ## Writes the scene as text: the glb as an instance, and only the nodes this adds. (Packing an
 ## instanced glb from a script embeds the whole body instead of inheriting it.)
-func write_scene(id: String, glb: String, skel_path: String, bodies: Array, profile: Dictionary, grip: Transform3D) -> bool:
+func write_scene(id: String, glb: String, skel_path: String, bodies: Array, profile: Dictionary, mounts: Dictionary) -> bool:
 	var libs := {}
 	for lib_name in LIBRARIES:
 		var path: String = LIBRARIES[lib_name]
@@ -159,10 +174,18 @@ func write_scene(id: String, glb: String, skel_path: String, bodies: Array, prof
 		# The capsule's Y onto the body's Z.
 		t += line("transform", Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO))
 		t += 'shape = SubResource("Capsule_%s")\n\n' % b["bone"]
-	t += '[node name="%s" type="BoneAttachment3D" parent="%s"]\n' % [HAND, skel_path]
-	t += line("bone_name", HAND) + "\n"
-	t += '[node name="Grip" type="Node3D" parent="%s/%s"]\n' % [skel_path, HAND]
-	t += line("transform", grip) + "\n"
+	# One attachment per bone, in the order the mounts first name them; Grip first, on RightHand.
+	var bones := []
+	for m in mounts:
+		if not mounts[m]["bone"] in bones:
+			bones.append(mounts[m]["bone"])
+	for bone in bones:
+		t += '[node name="%s" type="BoneAttachment3D" parent="%s"]\n' % [bone, skel_path]
+		t += line("bone_name", bone) + "\n"
+		for m in mounts:
+			if mounts[m]["bone"] == bone:
+				t += '[node name="%s" type="Node3D" parent="%s/%s"]\n' % [m, skel_path, bone]
+				t += line("transform", mounts[m]["transform"]) + "\n"
 	t += '[node name="Anim" type="AnimationPlayer" parent="."]\n'
 	for lib_name in lib_ids:
 		t += 'libraries/%s = ExtResource("%s")\n' % [lib_name, lib_ids[lib_name]]
@@ -175,7 +198,8 @@ func write_scene(id: String, glb: String, skel_path: String, bodies: Array, prof
 	return true
 
 
-func generate(glb: String, profile: Dictionary) -> void:
+func generate(glb: String, data: Dictionary) -> void:
+	var profile: Dictionary = data["ragdoll"]
 	var id := glb.get_file().get_basename()
 	var ps = load(glb)
 	if not ps is PackedScene:
@@ -194,51 +218,70 @@ func generate(glb: String, profile: Dictionary) -> void:
 		if not d.is_empty():
 			bodies.append(d)
 	var skel_path := str(root.get_path_to(sk))
-	var grip := grip_transform(root, sk, id)
+	# Grip, then the accessories' mounts, keyed by node name.
+	var mounts := {"Grip": {"bone": HAND, "transform": mount_transform(root, sk, id, HAND, ["", AIM_CLIP], PALM_M)}}
+	var mount_data: Dictionary = data.get("mounts", {})
+	var mount_ids := mount_data.keys()
+	mount_ids.sort()
+	for m in mount_ids:
+		var md: Dictionary = mount_data[m]
+		var pose: String = md.get("pose", "")
+		var clip := state_clip(data, pose) if pose != "" else []
+		var along := float(md.get("along_m", 0.0))
+		# A bone-aligned mount is the bone's own frame at the point, whatever the pose.
+		var xf := Transform3D(Basis(), Vector3(0, along, 0)) if md.get("axes", "body") == "bone" \
+			else mount_transform(root, sk, id, md["bone"], clip, along)
+		mounts[m] = {"bone": md["bone"], "transform": xf}
 	root.free()
 	if _failed:
 		return
-	if bodies.size() == profile["bodies"].size() and write_scene(id, glb, skel_path, bodies, profile, grip):
+	if bodies.size() == profile["bodies"].size() and write_scene(id, glb, skel_path, bodies, profile, mounts):
 		print("[gen_npc_scenes] %s: ragdoll of %d bodies under %s" % [id, bodies.size(), skel_path])
 
 
-## Grip, relative to the hand bone: in the aim pose, the palm, with -Z along the body's facing
-## (the bodies face +Z) and +Y up.
-func grip_transform(root: Node, sk: Skeleton3D, id: String) -> Transform3D:
-	var lib = load(LIBRARIES[""])
-	var hand := sk.find_bone(HAND)
-	if not lib is AnimationLibrary or not lib.has_animation(AIM_CLIP) or hand < 0:
-		fail("%s: can't fit the grip (no %s in %s, or no %s bone)" % [id, AIM_CLIP, LIBRARIES[""], HAND])
+## A mount, relative to its bone: the point `along` metres down the bone from its head, in the
+## pose of `clip` ([library, name], its last frame; empty for the rest pose), with -Z along the
+## body's facing (the bodies face +Z) and +Y up. Grip is the palm in the aim pose.
+func mount_transform(root: Node, sk: Skeleton3D, id: String, bone_name: String, clip: Array, along: float) -> Transform3D:
+	var bone := sk.find_bone(bone_name)
+	if bone < 0:
+		fail("%s: the skeleton has no bone %s for a mount" % [id, bone_name])
 		return Transform3D.IDENTITY
-	var anim: Animation = lib.get_animation(AIM_CLIP)
-	var t := anim.length
-	for i in anim.get_track_count():
-		var bone := sk.find_bone(str(anim.track_get_path(i).get_concatenated_subnames()))
-		if bone < 0:
-			continue
-		match anim.track_get_type(i):
-			Animation.TYPE_ROTATION_3D:
-				sk.set_bone_pose_rotation(bone, anim.rotation_track_interpolate(i, t))
-			Animation.TYPE_POSITION_3D:
-				sk.set_bone_pose_position(bone, anim.position_track_interpolate(i, t))
-	# A skeleton outside the tree doesn't update its global poses, so the hand's is composed from
+	if not clip.is_empty():
+		var lib_path: String = LIBRARIES.get(clip[0], "")
+		var lib = load(lib_path) if lib_path != "" else null
+		if not lib is AnimationLibrary or not lib.has_animation(clip[1]):
+			fail("%s: can't fit a mount on %s (no clip %s)" % [id, bone_name, "/".join(clip)])
+			return Transform3D.IDENTITY
+		var anim: Animation = lib.get_animation(clip[1])
+		var t := anim.length
+		for i in anim.get_track_count():
+			var b := sk.find_bone(str(anim.track_get_path(i).get_concatenated_subnames()))
+			if b < 0:
+				continue
+			match anim.track_get_type(i):
+				Animation.TYPE_ROTATION_3D:
+					sk.set_bone_pose_rotation(b, anim.rotation_track_interpolate(i, t))
+				Animation.TYPE_POSITION_3D:
+					sk.set_bone_pose_position(b, anim.position_track_interpolate(i, t))
+	# A skeleton outside the tree doesn't update its global poses, so the bone's is composed from
 	# the local poses up its chain.
 	var in_skeleton := Transform3D.IDENTITY
-	var b := hand
-	while b >= 0:
-		in_skeleton = sk.get_bone_pose(b) * in_skeleton
-		b = sk.get_bone_parent(b)
+	var c := bone
+	while c >= 0:
+		in_skeleton = sk.get_bone_pose(c) * in_skeleton
+		c = sk.get_bone_parent(c)
 	# The skeleton's place in the body: the nodes between it and the root.
 	var to_root := Transform3D.IDENTITY
 	var n: Node = sk
 	while n != root:
 		to_root = (n as Node3D).transform * to_root
 		n = n.get_parent()
-	var hand_pose: Transform3D = to_root * in_skeleton
-	var palm: Vector3 = hand_pose * Vector3(0, PALM_M, 0)
-	var aim := Transform3D(Basis(Vector3(-1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1)), palm)
+	var pose: Transform3D = to_root * in_skeleton
+	var point: Vector3 = pose * Vector3(0, along, 0)
+	var frame := Transform3D(Basis(Vector3(-1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1)), point)
 	sk.reset_bone_poses()
-	return (hand_pose.affine_inverse() * aim).orthonormalized()
+	return (pose.affine_inverse() * frame).orthonormalized()
 
 
 func fail(msg: String) -> void:
@@ -256,5 +299,5 @@ func _init() -> void:
 	files.sort()
 	for f in files:
 		if f.ends_with(".glb"):
-			generate(BODIES_DIR.path_join(f), data["ragdoll"])
+			generate(BODIES_DIR.path_join(f), data)
 	quit(1 if _failed else 0)

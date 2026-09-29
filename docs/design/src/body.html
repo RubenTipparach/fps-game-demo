@@ -114,12 +114,13 @@
       <h3>Status <small>what is real today</small></h3>
       <div class="scroll"><table class="tbl"><tbody>
         <tr><td><span class="chip built">Built</span></td><td>Low Harbor, the hub: built in Blender from its layout in eight sectors, with every NPC, door, container, terminal and exit placed. See <code>docs/playtest/undercity_hub.md</code>.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, the NPC body table, with 173 tests. The Godot layer only wires it to scenes.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, the NPC body table and the crowd rule, with 189 tests. The Godot layer only wires it to scenes.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The HUD, the wrist-deck (Inventory, Skills, Journal), the dialog and terminal screens, the title screen, the pause menu with saves, and options, from the approved mockups.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td>The NPC bodies: 22 generated in Blender with MPFB2 from CC0 MakeHuman assets, sharing one CC0 animation library (UAL) and falling as Jolt ragdolls that come to rest. Adopted on the owner's conditional answer (H1 to H3); the look is judged in the hub.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>The NPC bodies: 36 generated in Blender with MPFB2 from CC0 MakeHuman assets, sharing one CC0 animation library (UAL) and falling as Jolt ragdolls that come to rest. Adopted on the owner's conditional answer (H1 to H3); the look is judged in the hub.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Water, swimming and ways out (F14): the runner floats, swims, dives and can drown; 17 ladders and the ship's boarding ladders lead out, every point of water within 25 m of swimming of one. The water is opaque so it reflects the lit city. Video: <code>docs/screenshots/water_and_swimming/water_and_swimming.mp4</code>; record: <code>docs/validation/2026-09-28-water-and-swimming.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The Kestrel fires (F18): everyone can be shot by the one damage rule, people fight, flee, cower or surrender, gunfire turns MerSec, and death fades to the newest save. See <code>docs/validation/2026-09-28-hub-combat.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Meridian's towers (F15): the Halcyon Spire and 31 more stand around the hub by four checked rules, drawn in 5 surfaces with their own haze out to 1,500 m, and the Spire's two searchlights sweep the sky. Video: <code>docs/screenshots/hub_skyline/hub_skyline.mp4</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>The crowd (F17): 18 civilian bodies and 3 MerSec faces; each civilian's body, palette, accessories, height and idle picked for the whole crowd by one rule in the core, with no lookalikes within 15 m; four talking pairs. See <code>docs/validation/2026-09-29-crowd-variety.md</code>.</td></tr>
         <tr><td><span class="chip proposed">In progress</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig are built and tested; the faces are being tuned, and survey J1 asks how one key meets every skin tone and place.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
@@ -877,7 +878,7 @@
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
-        <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, the body pool</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, talking pairs, the body pool</td><td class="n">4</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>scrap-kings-yard</code></td><td>the Yard, M2, S1, S2</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -1103,20 +1104,21 @@
 
 <!-- ========================================================= F17 -->
 <section id="crowd">
-  <div class="sh"><span class="key">F17</span><h2>The crowd</h2><span class="spec">openspec/changes/crowd-variety</span></div>
-  <p class="intro">Owner, 2026-09-28: "would be cool to have some variety in NPCs too." Today 31 civilians share 6 bodies (about 5 twins each), the 5 troopers share one face, and everyone plays the same idle. The plan: 18 civilian bodies and 3 trooper bodies, plus runtime variety picked by one rule in the core, so a save reproduces the crowd.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (I13, I14) · fifth</span></div>
+  <div class="sh"><span class="key">F17</span><h2>The crowd</h2><span class="spec">openspec/specs/crowd-variety</span></div>
+  <p class="intro">Owner, 2026-09-28: "would be cool to have some variety in NPCs too." The hub's 31 civilians shared 6 bodies (about 5 twins each), the 5 troopers one face, and everyone played the same idle. Now: 18 civilian bodies and 3 trooper faces, and runtime variety picked by one rule in the core for the whole crowd at once, so a save reproduces it. Four talking pairs join the crowd (35 civilians).</p>
+  <div class="controls"><span class="chip built">Built (I13, I14; I1: fifth)</span><span class="chip enforced">Checked: 189 core tests, placement 612 of 612 with accessories</span></div>
   <div class="sub">
     <div class="scroll"><table class="tbl">
       <thead><tr><th>Varies</th><th>How</th></tr></thead>
       <tbody>
         <tr><td>Body</td><td>18 civilian bodies covering every CC0 age band, ethnicity and sex, with the unused hair (afro, bob, braid, long) and casual suits; 3 MerSec faces under one kit</td></tr>
         <tr><td>Outfit colour</td><td>8 named palettes (hue and saturation) on the outfit material; skin, hair and eyes never recoloured</td></tr>
-        <tr><td>Accessories</td><td>0-2 per civilian on bones: umbrellas in the rain (35 % outdoors), caps, beanies, fedoras, headphones, AR visors, respirators, bags, briefcases, lit cigarettes, glowing implants, an illuminated prosthetic arm</td></tr>
+        <tr><td>Accessories</td><td>0-2 per civilian, one per slot, on five mounts fitted to every body: an umbrella with a lit shaft (35 % of those in the open, never under an awning), caps, beanies, headphones, AR visors, respirators, shopping bags, briefcases, lit cigarettes, glowing temple implants, a prosthetic forearm with lit seams (52-244 triangles each)</td></tr>
         <tr><td>Height</td><td>x0.95-1.05</td></tr>
-        <tr><td>Idle</td><td>by role: phone, smoke, lean, look around, sit, kneel and fix, or two neighbours talking to each other</td></tr>
+        <tr><td>Idle</td><td>by role, from the clips UAL has: shoppers and residents idle or talk, dockhands idle or kneel at a repair; an umbrella is held up (<code>Idle_Torch</code>), a bag hangs; two civilians placed within 2 m face each other and talk</td></tr>
         <tr><td>The rule</td><td>no two civilians within 15 m share body and palette; no body more than 3 times; tested on the hub's placements with seeds 1-100</td></tr>
       </tbody></table></div>
+    <p class="note">Found in building: no two hub civilians stood within 10 m of each other, so talking pairs are placed by the layout. Accessories hang from mounts (a bone, a point on it and the pose it is fitted in), since <code>Idle_Torch</code> raises the left hand and a bag hangs in the idle. The head joint is at nose level, so the face pieces were refitted. Umbrellas pushed into the market's awnings, so every awning is registered and a civilian within an umbrella's reach of one is sheltered. MerSec's faces are authored per trooper. The outfit shader recolours cloth and leaves the eyes (alpha under 0.3) alone. See <code>docs/validation/2026-09-29-crowd-variety.md</code>.</p>
   </div>
 </section>
 
@@ -1146,7 +1148,7 @@
         <tr><td>Kessler</td><td class="n">80</td><td>fight with the scattergun</td><td class="n">4 / 2</td></tr>
         <tr><td>Silk</td><td class="n">90</td><td>surrender</td><td class="n">5 / 3</td></tr>
         <tr><td>Other named NPCs</td><td class="n">50-90</td><td>flee or cower</td><td class="n">3-5 / 2-3</td></tr>
-        <tr><td>Civilians (31)</td><td class="n">60</td><td>flee 70 % (25 m along the navmesh, then cower) / cower 30 %</td><td class="n">3 / 2</td></tr>
+        <tr><td>Civilians (35)</td><td class="n">60</td><td>flee 70 % (25 m along the navmesh, then cower) / cower 30 %</td><td class="n">3 / 2</td></tr>
       </tbody></table></div>
     <p class="note">A shot heard by MerSec turns them hostile with no warning. Hurting a faction's member costs 15 reputation, and killing one costs 50. A dead quest giver fails their quests and closes their shop. Health regenerates only to 25 %. At 0 the screen fades and the newest save loads.</p>
     <p class="note">Found in building: a reload takes its time in the core, and a dry pull starts one. A fighter who only hears a shot holds; the law turns MerSec. A hostile fighter goes after the runner while they see them (40 m) or for 20 s after the last shot or hit, so the whole precinct doesn't cross the hub. People flee at a sprint (5.5 m/s), fighters close at a run (3.5 m/s). MerSec draw the Kestrel's model; Tank has a baton and Kessler a scattergun, held in a grip fitted from the pistol-aim pose. People bleed where Brushfire's robots spark.</p>

@@ -144,10 +144,23 @@ public partial class CombatTest : Node3D
     /// <summary>One pull of the trigger, then the weapon's time between shots.</summary>
     private async Task Fire()
     {
-        Input.ActionPress("fire");
-        await Ticks(2);
-        Input.ActionRelease("fire");
+        await PullTrigger();
         await Seconds((float)(1 / Kestrel.RatePerS) + 0.05f);
+    }
+
+    // Holds fire through one whole drawn frame: the weapon reads its trigger each drawn frame
+    // (WeaponManager._Process), and process_frame fires before the nodes' _Process, so the second
+    // signal comes after a frame that saw the press. The press was held for two physics ticks,
+    // and under load two ticks can pass inside one frame: the press went unseen (Silk's
+    // surrender failed that way).
+    private async Task PullTrigger()
+    {
+        Input.ActionPress("fire");
+        for (var i = 0; i < 2; i++)
+        {
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
+        Input.ActionRelease("fire");
     }
 
     private async Task Draw()
@@ -279,9 +292,7 @@ public partial class CombatTest : Node3D
             await Fire();
         }
         var reserve = S.Rounds!.Value.Reserve;
-        Input.ActionPress("fire");
-        await Ticks(2);
-        Input.ActionRelease("fire");
+        await PullTrigger();
         Check("pulling the trigger on an empty magazine starts a reload", S.Reloading, $"{S.Rounds}");
         var left = (float)S.ReloadLeftS;
         await Seconds(left - 0.1f);

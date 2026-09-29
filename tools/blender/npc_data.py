@@ -107,7 +107,7 @@ CIVILIAN = Obj({
     "seed": Int(lo=0, hi=(1 << 31) - 1),
     "sex": Str(choices=SEXES),
     "race": Str(choices=RACES),
-    # openspec/changes/crowd-variety: draw the age inside one of MPFB's skin bands (the table's
+    # openspec/changes/archive/2026-09-29-crowd-variety: draw the age inside one of MPFB's skin bands (the table's
     # civilian_range.age_bands_years), so the rows can cover the CC0 skin grid; unset, the age is
     # drawn over the whole civilian range as before.
     "age_band": Str(None, choices=AGE_BANDS, nullable=True),

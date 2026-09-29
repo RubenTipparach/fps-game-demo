@@ -8,8 +8,10 @@
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): who it is comes from
 // data/npcs.json, what it says from its dialog tree, which clip plays for each state from
 // data/npc_bodies.json, and every judgement and every hit from the core. Its status and health
-// are kept under its target key (a named NPC's id, a civilian's stable id; openspec/changes/
-// hub-combat, design section 9).
+// are kept under its target key (a named NPC's id, a civilian's stable id;
+// openspec/changes/archive/2026-09-28-hub-combat, design section 9). A civilian's body, outfit
+// palette, accessories, height and idle are the core's crowd pick (ILevelHost.Crowd,
+// openspec/changes/archive/2026-09-29-crowd-variety), applied here.
 
 #nullable enable
 using System;
@@ -120,9 +122,18 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
             GD.PushError($"[Undercity] {StableId}: unknown npc '{NpcId}'");
         }
         _tree = data.Dialogs[_def?.Dialog ?? data.Npcs.Civilians.Dialog];
-        _idle = _def?.Idle ?? "idle";
+        var look = _def is null ? services.Level.Crowd.GetValueOrDefault(StableId) : null;
+        if (_def is null && look is null)
+        {
+            GD.PushError($"[Undercity] {StableId}: a civilian the level's crowd block doesn't place (tools/levels/export_level_data.py)");
+        }
+        _idle = _def?.Idle ?? look?.Idle ?? "idle";
         _target = _def is null ? NpcTarget.Civilian(data.Npcs.Civilians, StableId, Faction, DisplayName) : NpcTarget.For(_def);
-        LoadModel(ModelId(data));
+        LoadModel(_def?.Model ?? look?.Body);
+        if (look is not null)
+        {
+            Dress(look, data.Crowd);
+        }
         var weapon = _def?.Weapon is { } wid ? data.Weapons.Find(wid) : null;
         _held = Hold(weapon);
         OnCharactersLayer(data.CharacterLighting.CharactersLayer);
@@ -136,19 +147,12 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         Play(_patrol.Count > 0 ? "walk" : _idle);
     }
 
-    private string ModelId(Undercity.Core.GameData data)
+    private void LoadModel(string? modelId)
     {
-        if (_def is not null)
+        if (modelId is null)
         {
-            return _def.Model;
+            return;
         }
-        // A civilian's look is chosen by its stable id, so a save always sees the same crowd (CLAUDE.md 5.4).
-        var models = data.Npcs.Civilians.Models;
-        return models[SeededRandom.For(_s!.State.World.Seed, StableId, "civilian_model").Next(models.Count)];
-    }
-
-    private void LoadModel(string modelId)
-    {
         var path = $"res://scenes/undercity/npcs/{modelId}.tscn";
         if (!ResourceLoader.Exists(path))
         {
@@ -165,6 +169,25 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         if (_anim is null || _ragdoll is null)
         {
             GD.PushWarning($"[Undercity] {StableId}: {path} lacks its Anim or Ragdoll node; regenerate it");
+        }
+    }
+
+    /// <summary>
+    /// Dresses a civilian as the crowd rule chose (openspec/changes/archive/2026-09-29-crowd-variety, design section
+    /// 2), by the one dressing code (<see cref="CrowdDress"/>), and turns them to a talking partner.
+    /// </summary>
+    private void Dress(CrowdLook look, CrowdTable crowd)
+    {
+        if (GetNodeOrNull<Node3D>("Model") is not { } model)
+        {
+            return;
+        }
+        CrowdDress.Apply(model, look, crowd, w => GD.PushWarning($"[Undercity] {StableId}: {w}"));
+        // The partner's place, layout metres (x east, y south) as Godot's x and z.
+        if (look.Partner is { } partner && _s!.Level.Def.Crowd.TryGetValue(partner, out var other))
+        {
+            var to = new Vector3((float)other.At[0] - GlobalPosition.X, 0, (float)other.At[1] - GlobalPosition.Z);
+            Rotation = new Vector3(0, Mathf.Atan2(-to.X, -to.Z), 0);
         }
     }
 
