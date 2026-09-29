@@ -3,7 +3,7 @@
 // It lives in the core because breath and stamina are saved, because every water body (the hub's
 // canal, the dry dock, the Drains' flooded bypass) must share one rule, and because the belt's
 // refusal to draw while swimming must agree with the keys and the HUD (CLAUDE.md 5.1;
-// openspec/changes/water-and-swimming). How the body moves in water (buoyancy, strokes, ladders)
+// openspec/changes/archive/2026-09-29-water-and-swimming). How the body moves in water (buoyancy, strokes, ladders)
 // is the Godot layer's job; it reads the same table.
 
 using Undercity.Core.Data;

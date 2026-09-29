@@ -5,7 +5,7 @@
 // floor, overlaps no world collider and no other person, and the floor is right under their feet.
 // Every stop on an NPC's patrol is tested the same way. Every ladder out of the water is tested
 // with the player's collider: its foot at least 0.5 m under the surface, room to climb its whole
-// height, and room to stand on the floor at its top (openspec/changes/water-and-swimming). Prints
+// height, and room to stand on the floor at its top (openspec/changes/archive/2026-09-29-water-and-swimming). Prints
 // PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
@@ -139,7 +139,7 @@ public partial class PlacementTest : Node3D
     }
 
     /// <summary>How far under the water's surface a ladder's foot must reach, metres: a floating
-    /// swimmer's hands are there (openspec/changes/water-and-swimming, task 4.2).</summary>
+    /// swimmer's hands are there (openspec/changes/archive/2026-09-29-water-and-swimming, task 4.2).</summary>
     private const float LadderUnderM = 0.5f;
 
     // Each ladder, with the player's own collider: its foot under the water, the climb clear from

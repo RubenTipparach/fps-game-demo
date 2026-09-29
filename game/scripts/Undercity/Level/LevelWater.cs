@@ -4,7 +4,7 @@
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): where the water is comes from the
 // level's data (data/levels/<id>.json "water", exported from the layout), and how deep a body is in
 // it is the core's one rule (Undercity.Core.World.WaterRules). The player, ragdolls and dropped
-// items all ask here, so they agree (openspec/changes/water-and-swimming).
+// items all ask here, so they agree (openspec/changes/archive/2026-09-29-water-and-swimming).
 
 #nullable enable
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 // The water check (scenes/undercity/tests/swim_test.tscn): loads the hub and drives the runner
-// through the water with the real keys, the real body and the real level (openspec/changes/
-// water-and-swimming): falling off the quay by the Tin Bridge and floating, swimming speed, a dive
+// through the water with the real keys, the real body and the real level (openspec/changes/archive/
+// 2026-09-29-water-and-swimming): falling off the quay by the Tin Bridge and floating, swimming speed, a dive
 // and breath, climbing out by a quay ladder, climbing back down it, a mantle onto a moored boat,
 // a body that floats and an item that sinks. Prints PASS or FAIL per check and quits with 1 on any
 // failure.

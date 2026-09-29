@@ -4,7 +4,7 @@ The owner, playtesting the hub on 2026-09-28: "Falling into the Bay there's no w
 swimming, and no way to get back out, need a ladder or something. And need water physics." The
 survey put this change first (I1) and settled drowning, stamina ("swimming consumes stamina but
 slowly", I3), the exits (I4), the drowned locker (I5) and the breath meter D8 (I6). This record
-covers `openspec/changes/water-and-swimming`, built on branch `claude/elegant-gauss-qwjhk1`.
+covers `openspec/changes/archive/2026-09-29-water-and-swimming`, built on branch `claude/elegant-gauss-qwjhk1`.
 
 ## Environment
 
@@ -87,15 +87,23 @@ Each of these is in the design's "found in building" notes.
 - **Two quay ladders landed their climbers astride a kerb.** The placement test's first ladder run
   failed them; the plan now finds each ladder's landing on level ground.
 - **Ladder speed 3.0 m/s** (designed 2.4): the first climb took 1.97 s of the 2 s allowed.
-- **Buoyancy 1.3** (designed 1.15), and bodies in water aren't frozen: at 1.15 the settle-time
-  freeze caught a rising body 1.5 m under the surface.
+- **Buoyancy 1.8** (designed 1.15), and bodies in water aren't frozen: at 1.15 the settle-time
+  freeze caught a rising body 1.5 m under the surface. At 1.3 it floated, but 77 % under: once
+  the water was opaque (below), a body showed 5 cm above the surface and couldn't be seen from
+  the quay. At 1.8 each bone rests half out, and the swim test's floating body settles with its
+  bones 0.01 m under the surface on average.
 - **Dropped items now fall to the floor** everywhere; before, a drop hung where it was dropped.
 
 - **The first video showed black water from swimming height** (the design's named risk:
   transparent water gets no screen-space reflections, and no probe covered the water). A body
   floating 7.5 m away was lost in it. Six outdoor probes now cover the Cut, the dry dock and the
-  gate channel, and the video is captured again with them. The body is now filmed from the quay,
-  looking down on it.
+  gate channel, but the second video was still black: the water shader read the screen and
+  depth textures, which made it transparent, and Godot skips screen-space reflections on
+  transparent materials. The water is now opaque, its deep colour what murky water 2.3-4.5 m
+  deep would show anyway, and it reflects the lit city. `tools/material_maker/
+  test_shader_materials.py` pins it: the water shader reads no screen or depth texture and sets
+  no alpha, and the material sets only parameters its shader declares.
+  The body is now filmed from the quay's edge, looking down on it 6.4 m away.
 
 The longest swim to a way out is 20.6 m in the Cut, 15.2 m in the dry dock and 15.3 m in the
 dock gate channel. The hub has 17 ladders.
@@ -120,10 +128,29 @@ The five sectors whose meshes didn't change baked to the same files.
 
 ## Captures
 
-Pending the rebake. The script is `docs/playtest/scripts/water_and_swimming.json`: walking off
-the quay by the Tin Bridge, swimming under it to a ladder and climbing out, diving to the
-drowned locker, the AIR bar running low, a body falling into the Cut and floating, and the ship's
-boarding ladder, as a video and stills in `docs/screenshots/water_and_swimming/`.
+`docs/playtest/scripts/water_and_swimming.json`, run with `--write-movie` at `--fixed-fps 30`
+(`BRUSHFIRE_SEED=7`), on the rebaked hub with the opaque water and buoyancy 1.8, from a clean
+worktree of the branch's head (so nothing uncommitted from later work could show). The video is
+`docs/screenshots/water_and_swimming/water_and_swimming.mp4` (27 s, 1280 x 720, with sound);
+the stills beside it:
+
+| Still | Shows | Requirement |
+|---|---|---|
+| `01_quay_by_the_tin_bridge.png` | the Cut from the quay: the water reflects the windows, lamps and the depot's neon | Water comes from the layout |
+| `02_fallen_in.png` | from swimming height, the lights' reflections broken into streaks by the ripples, the quay wall 2.2 m above | The player wades and swims |
+| `03_at_the_ladder.png` | a quay ladder's rungs from the water | Ladders and ledges lead out of the water |
+| `04_climbed_out.png` | back on the quay, through the railing's gap | Ladders and ledges lead out of the water |
+| `05_drowned_locker.png` | on the bed under the Tin Bridge, in the underwater tint, the locked locker's prompt | The player wades and swims |
+| `06_air_running_out.png` | the AIR bar low and red under the health panel (D8) | Breath runs out under water |
+| `07_body_floating.png` | a civilian's body floating spread out on the Cut, 6.4 m out from the quay's edge | Bodies float and things sink |
+| `08_boarding_ladder.png` | the MV Anselm's boarding ladder from the dry dock's water | Every water body has a way out |
+| `09_aboard_the_anselm.png` | on the ship's deck after the climb | Ladders and ledges lead out of the water |
+
+The baselines from the owner's playtest stay beside them (`baseline_*.png`).
+
+The body in `07` is small and dark: the hub is at night in the rain, and the corpse is in
+dark clothes. It reads as a body from the quay but doesn't stand out, which is the scene more
+than the rule.
 
 ## What the checks establish
 

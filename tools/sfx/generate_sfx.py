@@ -563,7 +563,7 @@ def lava_burn():
 
 
 # ----------------------------------------------------------------------------- water (Undercity)
-# openspec/changes/water-and-swimming, design sections 2, 3a and 6.
+# openspec/changes/archive/2026-09-29-water-and-swimming, design sections 2, 3a and 6.
 
 def bubbles(d, count, f_lo, f_hi):
     """Bubble plinks: short upward sine chirps scattered over d seconds."""

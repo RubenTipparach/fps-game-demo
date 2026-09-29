@@ -1,7 +1,7 @@
 // What the runner sees and hears with their head under water: the underwater view (a full-screen
 // fog, shaders/underwater.gdshader) shows, and the SFX bus, which the world's sounds pass through,
 // goes through its low-pass filter (audio/default_bus_layout.tres). The UI and music are untouched
-// (openspec/changes/water-and-swimming, design section 6).
+// (openspec/changes/archive/2026-09-29-water-and-swimming, design section 6).
 //
 // It lives in the Godot layer because it only switches a view and an audio effect; where the
 // water is comes from the level (LevelWater).

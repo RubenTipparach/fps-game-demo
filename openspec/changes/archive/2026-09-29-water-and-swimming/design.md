@@ -162,10 +162,14 @@ four on the ship.
 ### 5. Water physics for bodies and things
 
 - **Ragdolls float.** Each ragdoll bone in the water gets an upward force
-  `1.3 x m x g x f`, where `f` is the submerged fraction of that bone's collider (from its
+  `1.8 x m x g x f`, where `f` is the submerged fraction of that bone's collider (from its
   centre height and how upright it lies). Linear damping is 2.5/s and angular damping 3.0/s.
   - Changed in building: the ratio was 1.15, and a body that fell in from the quay had risen
     only halfway back to the surface after 6 s. At 1.3 it floats at the surface from 4 s.
+  - Changed again when the water became opaque (section 6): at 1.3 a bone rests 77 %
+    under, so a lying torso shows about 5 cm above the surface, and from the quay the body
+    couldn't be seen at all. At 1.8 each bone rests 56 % under and a torso shows about 11 cm:
+    a body that reads as one, riding higher than a real one would.
   - Changed in building: a body in water isn't frozen at `settle_s`; the freeze stopped a
     rising body under water. It floats on, damped. A body on land freezes as before.
 - **Dropped items fall to the floor under them**, through air and, in water, sinking at
@@ -221,7 +225,7 @@ are the theme's `cyan` and `danger` roles.
   "mantle_reach_m": 0.6, "mantle_min_rise_m": 0.2, "mantle_max_rise_m": 1.0, "mantle_time_s": 0.45,
   "ladder_speed_mps": 3.0, "ladder_facing_dot": 0.3, "ladder_reach_m": 0.5, "ladder_side_reach_m": 0.3,
   "ladder_push_off_mps": 3.0, "ladder_top_step_m": 0.7, "ladder_top_step_s": 0.3,
-  "body_buoyancy_ratio": 1.3, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
+  "body_buoyancy_ratio": 1.8, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
   "item_sink_mps": 0.6
 }
 ```

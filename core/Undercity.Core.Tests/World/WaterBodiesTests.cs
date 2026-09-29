@@ -1,5 +1,5 @@
 // Where water is and how deep a body is in it, against the hub's exported water
-// (openspec/changes/water-and-swimming: "Water volumes come from the layout", "The player wades
+// (openspec/changes/archive/2026-09-29-water-and-swimming: "Water volumes come from the layout", "The player wades
 // and swims").
 
 using Undercity.Core.Vitals;

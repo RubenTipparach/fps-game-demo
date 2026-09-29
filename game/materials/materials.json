@@ -117,7 +117,7 @@
   "water": {
     "tile_m": 6.0,
     "normal_scale": 0.6,
-    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/water.gdshader (openspec/changes/water-and-swimming)",
+    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/water.gdshader (openspec/changes/archive/2026-09-29-water-and-swimming)",
     "shader": "res://shaders/water.gdshader",
     "shader_params": {
       "color": "#0b2327",

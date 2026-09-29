@@ -1,4 +1,4 @@
-// Canal water (openspec/changes/water-and-swimming, design section 6): a dark surface that
+// Canal water (openspec/changes/archive/2026-09-29-water-and-swimming, design section 6): a dark surface that
 // reflects the lit city. Two scrolling normal maps and rain ripples (the hub always rains) break
 // the screen-space reflections of the windows, neon and lamps into streaks, with a glassy
 // roughness. Both faces draw, so the surface shows from below.

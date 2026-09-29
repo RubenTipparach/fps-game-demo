@@ -3,7 +3,7 @@
 //
 // It lives in the core because the swim motor, ragdoll buoyancy, sinking items and the level's
 // placement checks must all agree on where water is and how deep it is (CLAUDE.md 5.1;
-// openspec/changes/water-and-swimming). The layout (tools/levels/layouts/<id>.py "water") is the
+// openspec/changes/archive/2026-09-29-water-and-swimming). The layout (tools/levels/layouts/<id>.py "water") is the
 // single source; tools/levels/export_level_data.py copies it here.
 
 using Undercity.Core.Data;

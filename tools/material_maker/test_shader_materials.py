@@ -1,6 +1,6 @@
 """Materials drawn by their own shader (materials.json "shader"): the committed .tres is what
 postprocess.py writes, a parameter the shader doesn't declare is refused, and the canal water
-stays opaque so Godot's screen-space reflections reach it (openspec/changes/water-and-swimming,
+stays opaque so Godot's screen-space reflections reach it (openspec/changes/archive/2026-09-29-water-and-swimming,
 design section 6: transparent, it reflected nothing and read black from swimming height).
 
     python3 -m unittest discover -s tools/material_maker -p 'test_*.py'

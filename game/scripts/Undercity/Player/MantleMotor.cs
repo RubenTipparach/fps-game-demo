@@ -1,5 +1,5 @@
 // The mantle: a swimmer climbing onto a ledge whose top is 0.2-1.0 m above the water (a moored
-// boat's deck, the outfall's ledge), with jump (openspec/changes/water-and-swimming, design
+// boat's deck, the outfall's ledge), with jump (openspec/changes/archive/2026-09-29-water-and-swimming, design
 // section 4).
 //
 // It lives in the Godot layer because it probes the level's colliders and moves a physics body.

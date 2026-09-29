@@ -302,7 +302,7 @@ public sealed class LevelDef : IValidated
     /// </summary>
     public IReadOnlyDictionary<string, CrowdPlace> Crowd { get; init; } = new Dictionary<string, CrowdPlace>();
 
-    /// <summary>The level's water bodies, from its layout (openspec/changes/water-and-swimming).</summary>
+    /// <summary>The level's water bodies, from its layout (openspec/changes/archive/2026-09-29-water-and-swimming).</summary>
     public IReadOnlyList<WaterBody> Water { get; init; } = Array.Empty<WaterBody>();
 
     /// <summary>The level's districts, from its layout; none for a level without.</summary>

@@ -6,7 +6,7 @@ namespace Brushfire;
 /// Moves the player's body in place of the ground and air rules while it applies: Undercity's
 /// swimming, ladders and mantling (game/scripts/Undercity/Player/PlayerWater.cs). The controller
 /// asks it first every physics tick, so the controller itself stays the Quake-style walker it
-/// was (CLAUDE.md 13) and gains only this hand-off (openspec/changes/water-and-swimming).
+/// was (CLAUDE.md 13) and gains only this hand-off (openspec/changes/archive/2026-09-29-water-and-swimming).
 /// </summary>
 public interface IMovementOverride
 {

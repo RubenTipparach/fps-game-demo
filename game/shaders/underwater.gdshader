@@ -1,4 +1,4 @@
-// Under the water (openspec/changes/water-and-swimming, design section 6): drawn over the whole
+// Under the water (openspec/changes/archive/2026-09-29-water-and-swimming, design section 6): drawn over the whole
 // view while the camera is below a surface, it tints the scene and fogs it with distance (63 %
 // hidden at visibility_m, 86 % at twice that), and wobbles it a little. A 2 x 2 quad in front
 // of the camera (scenes/undercity/player.tscn, "Underwater") covers the screen; its numbers are

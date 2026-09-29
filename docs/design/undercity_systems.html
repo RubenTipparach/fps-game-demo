@@ -385,7 +385,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
         <tr><td><span class="chip built">Built</span></td><td><code>Undercity.Core</code>: skills and XP, the pack and belt, prices, locks, disguises, the hub's law, dialog, quests, saves and the save rule, the NPC body table, with 173 tests. The Godot layer only wires it to scenes.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The HUD, the wrist-deck (Inventory, Skills, Journal), the dialog and terminal screens, the title screen, the pause menu with saves, and options, from the approved mockups.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The NPC bodies: 22 generated in Blender with MPFB2 from CC0 MakeHuman assets, sharing one CC0 animation library (UAL) and falling as Jolt ragdolls that come to rest. Adopted on the owner's conditional answer (H1 to H3); the look is judged in the hub.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td>Water, swimming and ways out (F14): the runner floats, swims, dives and can drown; 17 ladders and the ship's boarding ladders lead out, every point of water within 25 m of swimming of one. See <code>docs/validation/2026-09-28-water-and-swimming.md</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Water, swimming and ways out (F14): the runner floats, swims, dives and can drown; 17 ladders and the ship's boarding ladders lead out, every point of water within 25 m of swimming of one. The water is opaque so it reflects the lit city. Video: <code>docs/screenshots/water_and_swimming/water_and_swimming.mp4</code>; record: <code>docs/validation/2026-09-28-water-and-swimming.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The Kestrel fires (F18): everyone can be shot by the one damage rule, people fight, flee, cower or surrender, gunfire turns MerSec, and death fades to the newest save. See <code>docs/validation/2026-09-28-hub-combat.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Meridian's towers (F15): the Halcyon Spire and 31 more stand around the hub by four checked rules, drawn in 5 surfaces with their own haze out to 1,500 m, and the Spire's two searchlights sweep the sky. Video: <code>docs/screenshots/hub_skyline/hub_skyline.mp4</code>.</td></tr>
         <tr><td><span class="chip proposed">In progress</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig are built and tested; the faces are being tuned, and survey J1 asks how one key meets every skin tone and place.</td></tr>
@@ -3192,9 +3192,9 @@ SHED</title></path>
 
 <!-- ========================================================= F14 -->
 <section id="water">
-  <div class="sh"><span class="key">F14</span><h2>Water, swimming and ways out</h2><span class="spec">openspec/changes/water-and-swimming</span></div>
+  <div class="sh"><span class="key">F14</span><h2>Water, swimming and ways out</h2><span class="spec">openspec/specs/water-and-swimming</span></div>
   <p class="intro">Owner, 2026-09-28: "Falling into the Bay there's no water physics, swimming, and no way to get back out." It was a flat, opaque surface with no collider: a fall sank you to the bed, 4.5 m under a quay you couldn't jump to. Now one set of rules serves every water body, the Drains' bypass included: wade, swim, hold your breath, tire slowly, and always have a way out within 25 m of swimming. The hub has 17 ladders: 12 on the Cut, one on the dry dock's quay and four over the side of the MV Anselm, which fills the dock. They are on the hub map (F2) as cyan ladders.</p>
-  <div class="controls"><span class="chip built">Built (I1: first)</span><span class="chip enforced">Checked: the plan's exit rule, swim_test 18 of 18, ladders in the placement test</span></div>
+  <div class="controls"><span class="chip built">Built (I1: first)</span><span class="chip enforced">Checked: the plan's exit rule, swim_test 18 of 18, ladders in the placement test</span><span class="chip">Video: docs/screenshots/water_and_swimming/water_and_swimming.mp4</span></div>
   <div class="sub">
     <h3>The Cut in section <small>measured heights; 60 px = 1 m</small></h3>
     <div class="diagram" role="img" aria-label="Section through the Cut's quay showing the water, the bed, the jump height, a ladder and a boat ledge">
@@ -3242,7 +3242,7 @@ SHED</title></path>
         <tr><td>Breath</td><td class="n">45 s</td><td>the Drains' bypass number; refills in 3 s; then 8 damage/s</td></tr>
         <tr><td>Stamina (owner, I3)</td><td class="n">100, -0.8/s</td><td>"swimming consumes stamina but slowly": 125 s of swimming, then half speed; refills in about 8 s out of deep water; heavier breathing below 25 %, no meter</td></tr>
         <tr><td>Ladders</td><td class="n">every 30 m, 3.0 m/s</td><td>3 m clear of bridges, boats and pillars; a 1.2 m gap in the railing; each lands its climber on level ground past any kerb. 3.0, not 2.4: a floating swimmer's feet are 1.5 m down, and 2.4 m/s took 1.97 s of the 2 s allowed</td></tr>
-        <tr><td>Bodies and items</td><td class="n">x1.3 buoyancy</td><td>ragdolls float and settle at the surface in about 4 s, and aren't frozen while in water (at 1.15 a body was still rising after 6 s); dropped items fall to the floor, sinking at 0.6 m/s, and can be picked up on the bed</td></tr>
+        <tr><td>Bodies and items</td><td class="n">x1.8 buoyancy</td><td>ragdolls float and settle at the surface in about 4 s, half out of the water, and aren't frozen while in water (at 1.15 a body was still rising after 6 s; at 1.3 it floated 77 % under and couldn't be seen from the quay); dropped items fall to the floor, sinking at 0.6 m/s, and can be picked up on the bed</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">

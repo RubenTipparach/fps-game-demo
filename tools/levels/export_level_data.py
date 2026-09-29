@@ -45,7 +45,7 @@ def export(level_id):
     for d in layout.get("districts", []):
         out["districts"].append({"id": d["name"].lower().replace(" ", "_"),
                                  "poly": [[float(x), float(y)] for x, y in d["poly"]]})
-    # The layout's water bodies, for the core's water rule (openspec/changes/water-and-swimming).
+    # The layout's water bodies, for the core's water rule (openspec/changes/archive/2026-09-29-water-and-swimming).
     for w in layout.get("water", []):
         if "id" not in w:
             raise SystemExit(f"{level_id}: a water body has no id")

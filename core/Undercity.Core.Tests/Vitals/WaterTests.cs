@@ -1,5 +1,5 @@
 // Breath, stamina and the belt in water, against the shipped data/water.json
-// (openspec/changes/water-and-swimming: "Breath runs out under water", "Swimming tires the
+// (openspec/changes/archive/2026-09-29-water-and-swimming: "Breath runs out under water", "Swimming tires the
 // swimmer", "No weapon while swimming").
 
 using Undercity.Core.Data;

@@ -1,5 +1,5 @@
 // A one-shot burst of particles from an authored scene: a splash where something falls into water
-// (openspec/changes/water-and-swimming, design section 5), blood where a shot hits a person
+// (openspec/changes/archive/2026-09-29-water-and-swimming, design section 5), blood where a shot hits a person
 // (openspec/changes/archive/2026-09-28-hub-combat). One place plays every burst, so they all scale alike and free
 // themselves alike.
 //

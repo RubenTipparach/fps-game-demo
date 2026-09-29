@@ -1,5 +1,5 @@
-// The ladder motor: climbing a ladder out of the water, or down into it (openspec/changes/
-// water-and-swimming, design section 4). Facing the ladder with forward held takes hold and
+// The ladder motor: climbing a ladder out of the water, or down into it (openspec/changes/archive/
+// 2026-09-29-water-and-swimming, design section 4). Facing the ladder with forward held takes hold and
 // climbs; back climbs down; jump pushes off. At the top the climber steps onto the floor, and
 // from the floor "Climb down" (the ladder's use prompt) takes hold at the top.
 //

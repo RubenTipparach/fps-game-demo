@@ -1,5 +1,5 @@
 """Tests of the city plan's level rules that a layout alone can't show: ways out of the water
-(openspec/changes/water-and-swimming, "Every water body has a way out") and people kept out of
+(openspec/changes/archive/2026-09-29-water-and-swimming, "Every water body has a way out") and people kept out of
 it ("People stand clear of the level"). Each test builds on the committed hub.
 
     python3 -m unittest discover -s tools/levels -p 'test_*.py'

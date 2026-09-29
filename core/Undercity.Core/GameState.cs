@@ -67,7 +67,7 @@ public sealed class GameState
     /// <summary>Health, regenerating only to its floor.</summary>
     public FloorPool Health { get; }
 
-    /// <summary>Breath under water (openspec/changes/water-and-swimming).</summary>
+    /// <summary>Breath under water (openspec/changes/archive/2026-09-29-water-and-swimming).</summary>
     public Breath Breath { get; }
 
     /// <summary>Stamina, used by swimming (owner, survey I3).</summary>

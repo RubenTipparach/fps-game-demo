@@ -4,7 +4,7 @@
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): the level plan places, sizes and
 // builds it (tools/levels/city_plan.py ladder(), whose ENT_ladder metadata this reads), and how it
 // is climbed is the player's ladder motor, with its numbers in data/water.json
-// (openspec/changes/water-and-swimming, design section 4).
+// (openspec/changes/archive/2026-09-29-water-and-swimming, design section 4).
 
 #nullable enable
 using Godot;

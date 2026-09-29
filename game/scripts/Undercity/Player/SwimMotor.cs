@@ -1,4 +1,4 @@
-// The swim motor: how a body moves in deep water (openspec/changes/water-and-swimming, design
+// The swim motor: how a body moves in deep water (openspec/changes/archive/2026-09-29-water-and-swimming, design
 // section 2). Quake's rule: you swim where you look. At the surface a pitch dead zone keeps a
 // swimmer from diving by looking slightly down, and a damped spring floats the eyes just above the
 // water; under it, a swimmer with no vertical input hovers.

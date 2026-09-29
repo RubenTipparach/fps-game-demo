@@ -49,6 +49,8 @@
 - [x] 4.2 The placement test also checks every ladder: its foot at least 0.5 m under the
   surface, the climb clear, and room to stand at its landing.
 - [x] 4.3 AutoTest holds several actions at once, and sets and logs breath and stamina.
-- [ ] 4.4 Video: walk off the quay by the Tin Bridge, swim to a ladder, climb out; dive to the
+- [x] 4.4 Video: walk off the quay by the Tin Bridge, swim to a ladder, climb out; dive to the
   bed and surface; a body floating in the Cut. Validation record with the numbers.
-- [ ] 4.5 Rebake the rebuilt sectors; update the design page and archive.
+  (`docs/screenshots/water_and_swimming/water_and_swimming.mp4`, captured a third time once the
+  water was opaque and bodies floated higher.)
+- [x] 4.5 Rebake the rebuilt sectors; update the design page and archive.

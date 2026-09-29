@@ -1,7 +1,7 @@
 // The runner in water: how deep they are (told to the core, which runs breath, stamina and the
 // belt's refusal), and which rule moves the body on each tick: a mantle under way, a ladder held,
 // the swim motor in deep water, or Brushfire's ground and air rules, slowed while wading
-// (openspec/changes/water-and-swimming, design sections 2 and 4).
+// (openspec/changes/archive/2026-09-29-water-and-swimming, design sections 2 and 4).
 //
 // It lives in the Godot layer because it turns the body's place into a core call and hands the
 // body to a motor; each motor has the one job of moving it (SwimMotor, LadderMotor, MantleMotor).

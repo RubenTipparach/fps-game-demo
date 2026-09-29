@@ -10,7 +10,7 @@
 // exceptions are runtime-only. Both follow the measurement (docs/spikes/npc-pipeline).
 // A body that falls into water floats: each bone is pushed up in proportion to how much of it
 // is under the surface, and damped, and it isn't frozen while it's in the water
-// (openspec/changes/water-and-swimming, design section 5).
+// (openspec/changes/archive/2026-09-29-water-and-swimming, design section 5).
 
 #nullable enable
 using System.Collections.Generic;

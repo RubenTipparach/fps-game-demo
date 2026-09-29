@@ -85,7 +85,7 @@ PILLAR_BASE_HALF_M = 1.2  # a viaduct pillar's base, half its side
 SKYWAY_SCENERY_M = 200.0  # the Skyway runs on this far past each edge, as scenery (hub-skyline)
 SKYWAY_SCENERY_SPAN_M = 36.0  # ... in spans about this long, as over the hub
 SKYWAY_PIER_DEPTH_M = 40.0    # ... on piers down into the haze below the hub's ground
-# Ways out of the water (openspec/changes/water-and-swimming, design section 4). How a ladder
+# Ways out of the water (openspec/changes/archive/2026-09-29-water-and-swimming, design section 4). How a ladder
 # or a ledge is climbed is the game's (data/water.json); where they are is level construction.
 LADDER_EVERY_M = 30.0   # a quay ladder every this many metres of open quay
 EXIT_REACH_M = 25.0     # every point of water is this close to a way out, in a straight swim
@@ -2914,7 +2914,7 @@ class City:
                             self.railing("streets", (A[0] + t[0] * u0, A[1] + t[1] * u0),
                                          (A[0] + t[0] * u1, A[1] + t[1] * u1), n, z, "gunmetal", inset=0.12)
 
-    # ways out of the water (openspec/changes/water-and-swimming, design section 4) ------------------
+    # ways out of the water (openspec/changes/archive/2026-09-29-water-and-swimming, design section 4) ------------------
     def water_pillars(self):
         """The footprints of the Skyway pillars that stand in water."""
         if not self.viaduct:
@@ -3213,7 +3213,7 @@ class City:
             raise SystemExit(f"{self.m['id']}: the skyline breaks its rules:\n  " + "\n  ".join(found))
 
     def check_exits(self):
-        """Falling in is never a soft lock (openspec/changes/water-and-swimming, "Every water body
+        """Falling in is never a soft lock (openspec/changes/archive/2026-09-29-water-and-swimming, "Every water body
         has a way out"): exit_problems() finds nothing."""
         problems = self.exit_problems()
         if problems:

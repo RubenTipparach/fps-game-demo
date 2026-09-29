@@ -1,6 +1,6 @@
 // An item on the floor: placed by the layout or dropped by the runner. Taking it picks up what
 // fits; the rest stays. A dropped item comes to rest on the floor under it: it falls through air
-// and sinks through water at data/water.json's item_sink_mps (openspec/changes/water-and-swimming).
+// and sinks through water at data/water.json's item_sink_mps (openspec/changes/archive/2026-09-29-water-and-swimming).
 //
 // It lives in the Godot layer as a thin adapter (CLAUDE.md 6.2): pickup and stacking are the core's.
 
