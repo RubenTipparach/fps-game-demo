@@ -138,7 +138,7 @@ func patch(glb: String, bonemap: BoneMap, as_library: bool) -> void:
 	}
 	var subs := {"nodes": {"PATH:" + skel_path: opts}}
 	# A body's skin and outfit take their generated materials (tools/godot/gen_character_materials.py):
-	# openspec/changes/character-lighting, design sections 1 and 8.
+	# openspec/changes/archive/2026-09-29-character-lighting, design sections 1 and 8.
 	if not as_library:
 		var id := glb.get_file().get_basename()
 		var mats := {}
@@ -182,7 +182,7 @@ func _init() -> void:
 	quit(1 if _failed else 0)
 
 
-## A body's normal maps carry roughness in their alpha (openspec/changes/character-lighting,
+## A body's normal maps carry roughness in their alpha (openspec/changes/archive/2026-09-29-character-lighting,
 ## design sections 1 and 8). They stay lossless, and the editor's "detect 3D" is off: it would
 ## switch them to VRAM compression, whose normal-map format drops the alpha.
 func keep_alpha(texture: String) -> void:

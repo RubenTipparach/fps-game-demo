@@ -1,5 +1,5 @@
 """Authors tools/blender/npc_skin_roughness.png: how rough the skin is where, in the MakeHuman UV
-layout every body shares (openspec/changes/character-lighting, design section 1). Faces are oily
+layout every body shares (openspec/changes/archive/2026-09-29-character-lighting, design section 1). Faces are oily
 down the T-zone (forehead, nose, lips), less so on the cheeks and chin, and dry elsewhere, so a
 key light picks out the T-zone as a portrait's does.
 

@@ -47,6 +47,7 @@ from blendkit import GAME, HERE, MANIFEST, collection, material  # noqa: E402
 from build_props import Kit, export, reset  # noqa: E402  (also puts tools/godot on sys.path)
 
 import import_presets  # noqa: E402  (tools/godot: the one writer of .glb.import presets)
+import detailing  # noqa: E402  (the sliding leaves' catalogue and sizes)
 from detailing import assert_no_zfighting  # noqa: E402
 
 OUT = os.path.join(GAME, "models", "undercity", "props")
@@ -591,6 +592,40 @@ def door_leaf(coll, reg):
     attach(status, leaf)
     col = collision(coll, "Leaf", [((0, -t, 0), (W, t, H))], parent=leaf)
     return [leaf, status, col]
+
+
+def sliding_leaf(face, clear_w, clear_h):
+    """One leaf of a public entrance's sliding door (openspec/changes/hub-doorways, design section
+    3.3): detailing.sliding_leaf's size, the same both ways round, so one mesh serves both leaves.
+    "glazed": a glass pane in a tech_panel frame; "steel": a solid leaf with a vision slit and a
+    kick plate on each face; "hazard": steel with hazard stripes down both edges. Origin: the
+    bottom of the leaf's middle; its faces are +-Y."""
+    L = detailing.sliding_leaf(clear_w, clear_h)
+    W, H, t = L["w"], L["h"], L["t"]
+    x0, x1, h = -W / 2, W / 2, t / 2
+
+    def build(coll, reg):
+        k = PropKit("Leaf", coll, reg)
+        if face == "glazed":
+            k.box((x0, -h, 0.0), (x1, h, 0.32), "tech_panel", bevel=0.005)              # bottom rail
+            k.box((x0, -h, H - 0.18), (x1, h, H), "tech_panel", bevel=0.005)            # top rail
+            k.box((x0, -h, 0.32), (x0 + 0.09, h, H - 0.18), "tech_panel", bevel=0.005)  # stiles
+            k.box((x1 - 0.09, -h, 0.32), (x1, h, H - 0.18), "tech_panel", bevel=0.005)
+            k.box((x0 + 0.09, -0.008, 0.32), (x1 - 0.09, 0.008, H - 0.18), "glass", bevel=0.0)
+        else:
+            k.box((x0, -h, 0.0), (x1, h, H), "tech_panel", bevel=0.005)
+            for s in (1, -1):                                                          # both faces
+
+                def Y(a, b):
+                    return tuple(sorted((s * (h + a), s * (h + b))))
+                y0, y1 = Y(0.0, 0.006)
+                k.box((-0.07, y0, 1.45), (0.07, y1, 1.95), "glass", bevel=0.0)                 # vision slit
+                k.box((x0 + 0.06, y0, 0.04), (x1 - 0.06, y1, 0.3), "diamond_plate", bevel=0.0)  # kick plate
+                if face == "hazard":
+                    for e0, e1 in ((x0 + 0.02, x0 + 0.14), (x1 - 0.14, x1 - 0.02)):
+                        k.box((e0, y0, 0.36), (e1, y1, H - 0.04), "hazard_stripes", bevel=0.0)
+        return [k.finish("Leaf")]
+    return build
 
 
 BARRIER_PIVOT = (-4.3, -0.26, 1.0)     # the arm's hinge: top of the left post, behind it
@@ -1214,6 +1249,9 @@ PROPS = {
     "respirator": (respirator, DYNAMIC),
     "implant": (implant, DYNAMIC),
     "prosthetic": (prosthetic, DYNAMIC),
+    # a public entrance's leaves, one per size and face (openspec/changes/hub-doorways): moving, so probe-lit
+    **{f"sliding_{detailing.sliding_tag(w, h, face)}": (sliding_leaf(face, w, h), DYNAMIC)
+       for w, h, face in detailing.SLIDING_LEAVES},
 }
 
 

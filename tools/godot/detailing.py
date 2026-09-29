@@ -281,6 +281,140 @@ def frame_solids(kind, pos, yaw=0.0):
     return out
 
 
+# ----------------------------------------------------------------------------- framed doorways
+
+# A doorway built into a level's walls by E1M3's rules (openspec/changes/hub-doorways, design
+# section 3.2): carved at its fits, the clear opening plus REVEAL at each jamb and at the head;
+# liners fill the reveals, so the opening a person walks through is the clear one; an
+# architrave, or on an entrance a portal, stands proud of each wall face that faces air. It is
+# FRAMES' rule (R2) at any size, for levels whose doors are boxes in their own mesh rather than a
+# frame prop. Metres.
+ARCHITRAVE = dict(width=0.15, proud=0.1, head=0.2)      # beyond the fits edge; the head over the jambs
+PORTAL = dict(pilaster=0.35, pilaster_proud=0.15, plinth=0.55, capital=0.2, cap_proud=0.2, cap_over=0.05,
+              lintel=0.35, lintel_proud=0.25, lintel_over=0.1, light_inset=0.2, light_t=0.02)
+FRAME_KINDS = ("architrave", "portal")
+
+
+def door_fits(clear_w, clear_h):
+    """The opening a framed door is carved at: its clear opening plus REVEAL at each jamb and at the head."""
+    return clear_w + 2 * REVEAL, clear_h + REVEAL
+
+
+def door_frame(clear_w, clear_h, wall_t, out="architrave", inside="architrave", step=0.02,
+               mat="tech_panel", light="light_panel"):
+    """The boxes of a framed doorway, in the door's own frame: u along the wall from the
+    opening's middle, v through the wall from its outside face (0) to its inside face (wall_t),
+    z up from the floor. `out` and `inside` say what stands on each face: "architrave", "portal"
+    (an entrance: plinths, pilasters, capitals and a lintel with a downlight strip) or None (the
+    face is against solid, or isn't built). `step` is the threshold plate's height, the level's
+    underfoot step.
+
+    Returns dicts {"lo": (u, v, z), "hi": (u, v, z), "mat", "part", "buried"}: "buried" names
+    the box's faces ("-u", "+u", "-v", "+v", "-z", "+z") pressed against the carved wall, the
+    floor or another part of the frame, which a mesh can leave out. Faces pressed back to back
+    are allowed (CLAUDE.md 7.2); no two faces share a plane facing the same way where they
+    overlap, which assert_no_zfighting checks for the level."""
+    for face, kind in (("out", out), ("inside", inside)):
+        if kind is not None and kind not in FRAME_KINDS:
+            raise ValueError(f"door_frame: {face} is {kind!r}, not one of {FRAME_KINDS} or None")
+    cu = clear_w / 2
+    fu, fh = cu + REVEAL, clear_h + REVEAL
+    boxes = []
+
+    def add(u0, u1, v0, v1, z0, z1, part, buried, m=mat):
+        boxes.append({"lo": (u0, v0, z0), "hi": (u1, v1, z1), "mat": m, "part": part, "buried": set(buried)})
+
+    # Where a face has a frame, it covers the liners' ends from the clear edge outward.
+    ends = ({"-v"} if out else set()) | ({"+v"} if inside else set())
+    for side in (-1, 1):
+        lo, hi = sorted((side * cu, side * fu))
+        add(lo, hi, 0.0, wall_t, 0.0, clear_h, "liner", {"+u" if side > 0 else "-u", "-z", "+z"} | ends)
+    add(-fu, fu, 0.0, wall_t, clear_h, fh, "liner", {"-u", "+u", "+z"} | ends)
+    add(-cu, cu, 0.0, wall_t, 0.0, step, "threshold", {"-u", "+u", "-z"})
+    for kind, sign in ((out, -1), (inside, 1)):
+        if kind is None:
+            continue
+        back = "+v" if sign < 0 else "-v"
+
+        def V(proud):
+            return (-proud, 0.0) if sign < 0 else (wall_t, wall_t + proud)
+        if kind == "architrave":
+            a = ARCHITRAVE
+            for side in (-1, 1):
+                lo, hi = sorted((side * cu, side * (fu + a["width"])))
+                add(lo, hi, *V(a["proud"]), 0.0, clear_h, "architrave", {back, "-z", "+z"})
+            add(-(fu + a["width"]), fu + a["width"], *V(a["proud"]), clear_h, fh + a["head"], "architrave", {back})
+            continue
+        q = PORTAL
+        outer = fu + q["pilaster"]
+        for side in (-1, 1):
+            lo, hi = sorted((side * cu, side * (outer + q["cap_over"])))
+            add(lo, hi, *V(q["cap_proud"]), 0.0, q["plinth"], "plinth", {back, "-z"})
+            lo, hi = sorted((side * cu, side * outer))
+            add(lo, hi, *V(q["pilaster_proud"]), q["plinth"], clear_h - q["capital"], "pilaster", {back, "-z", "+z"})
+            lo, hi = sorted((side * cu, side * (outer + q["cap_over"])))
+            add(lo, hi, *V(q["cap_proud"]), clear_h - q["capital"], clear_h, "capital", {back, "+z"})
+        span = outer + q["cap_over"] + q["lintel_over"]
+        add(-span, span, *V(q["lintel_proud"]), clear_h, clear_h + q["lintel"], "lintel", {back})
+        v0, v1 = V(q["lintel_proud"])
+        mid, half = (v0 + v1) / 2, (q["lintel_proud"] - 2 * 0.04) / 2
+        add(-(cu - q["light_inset"]), cu - q["light_inset"], mid - half, mid + half, clear_h - q["light_t"], clear_h,
+            "downlight", {"+z"}, light)
+    return boxes
+
+
+# A public entrance's sliding door (openspec/changes/hub-doorways, design section 3.3; owner K2):
+# two leaves, each half the clear width plus half LEAF_OVERLAP, so they overlap when shut, hanging
+# on the building's inside face at LEAF_OFF_M (the two leaves' faces nearest the wall; they pass in
+# front of the inside architrave, ARCHITRAVE["proud"]) and sliding apart by their own width. The
+# catalogue is every size and face the kit builds; the prop kit, the scene generator and the plan
+# all read it, and the plan refuses an entrance it lacks.
+LEAF_T_M = 0.05
+LEAF_OVERLAP_M = 0.1
+LEAF_OFF_M = (0.15, 0.21)
+LEAF_OVER_HEAD_M = 0.05
+SLIDING_FACES = ("glazed", "steel", "hazard")
+SLIDING_LEAVES = ((2.0, 2.4, "steel"), (2.5, 3.0, "glazed"), (3.0, 3.0, "glazed"), (4.0, 3.0, "glazed"),
+                  (4.0, 3.0, "steel"), (5.0, 3.0, "hazard"))
+
+
+def sliding_leaf(clear_w, clear_h):
+    """One leaf of a sliding entrance: {"w", "h", "t"} metres."""
+    return {"w": clear_w / 2 + LEAF_OVERLAP_M / 2, "h": clear_h + LEAF_OVER_HEAD_M, "t": LEAF_T_M}
+
+
+def sliding_tag(clear_w, clear_h, face):
+    """The catalogue name of a sliding entrance: "glazed_300x300"."""
+    return f"{face}_{round(clear_w * 100)}x{round(clear_h * 100)}"
+
+
+def sliding_sweep(clear_w, clear_h):
+    """Where the two leaves stand when open, in the door's frame on the inside face: (u0, u1, v0,
+    v1, z0, z1) per leaf, u along the wall from the opening's middle, v into the room, z up."""
+    leaf = sliding_leaf(clear_w, clear_h)
+    cu = clear_w / 2
+    v0, v1 = LEAF_OFF_M[0], LEAF_OFF_M[1] + leaf["t"]
+    return [(-(cu + leaf["w"]), -cu, v0, v1, 0.0, leaf["h"]), (cu, cu + leaf["w"], v0, v1, 0.0, leaf["h"])]
+
+
+def frame_top(clear_h, kind):
+    """The top of a frame over its opening, metres above the floor: a sign starts above it."""
+    return clear_h + PORTAL["lintel"] if kind == "portal" else clear_h + REVEAL + ARCHITRAVE["head"]
+
+
+def frame_triangles(boxes):
+    """Triangles a frame's boxes draw with their buried faces left out: two per visible face."""
+    return sum(2 * (6 - len(b["buried"])) for b in boxes)
+
+
+def frame_outer_width(clear_w, kind):
+    """How wide a frame stands on a wall face, metres: what a wall needs beside the opening."""
+    fu = clear_w / 2 + REVEAL
+    if kind == "portal":
+        return 2 * (fu + PORTAL["pilaster"] + PORTAL["cap_over"] + PORTAL["lintel_over"])
+    return 2 * (fu + ARCHITRAVE["width"])
+
+
 # ----------------------------------------------------------------------------- z-fighting check
 
 PLANE_TOL = 0.005   # faces closer than 5 mm to each other's plane count as coplanar

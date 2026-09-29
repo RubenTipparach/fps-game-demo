@@ -6,15 +6,26 @@ namespace Brushfire;
 /// <summary>
 /// Quake 2 / Unreal style split door: a static, lightmapped frame with two sliding leaves
 /// (<see cref="Door"/> bodies in controlled mode) and red/green status lights on the lintel.
-/// Opens for the player and for enemies, stays open while anyone is in the doorway.
+/// Opens for the player and for the members of the groups it names (enemies in Brushfire's
+/// maps, people in Undercity's hub: openspec/changes/hub-doorways), stays open while anyone is in
+/// the doorway.
 /// </summary>
 public partial class Doorway : Node3D
 {
+    /// <summary>The leaves part when the player comes this near, metres.</summary>
     [Export] public float TriggerRadius = 3.6f;
+    /// <summary>The leaves part when a member of <see cref="OpenForGroups"/> comes this near, metres.</summary>
+    [Export] public float GroupTriggerRadius = 3.0f;
+    /// <summary>The node groups whose members open the door as well as the player.</summary>
+    [Export] public string[] OpenForGroups = { "enemies" };
+    /// <summary>The door closes this long after the last one leaves, seconds.</summary>
     [Export] public float Wait = 1.8f;
     [Export] public bool Locked;
 
     readonly List<Door> _leaves = new();
+
+    /// <summary>The door's leaves, found when it is ready.</summary>
+    protected IReadOnlyList<Door> Leaves => _leaves;
     MeshInstance3D _status;
     StandardMaterial3D _red, _green;
     AudioStreamPlayer3D _audio;
@@ -53,9 +64,10 @@ public partial class Doorway : Node3D
         var player = PlayerController.Instance;
         if (player != null && !player.IsDead && player.GlobalPosition.DistanceTo(c) < TriggerRadius)
             return true;
-        foreach (var n in GetTree().GetNodesInGroup("enemies"))
-            if (n is Node3D e && e.GlobalPosition.DistanceTo(c) < TriggerRadius - 0.6f)
-                return true;
+        foreach (var group in OpenForGroups)
+            foreach (var n in GetTree().GetNodesInGroup(group))
+                if (n is Node3D e && e.GlobalPosition.DistanceTo(c) < GroupTriggerRadius)
+                    return true;
         return false;
     }
 

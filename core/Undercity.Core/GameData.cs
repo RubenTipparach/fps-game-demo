@@ -103,6 +103,9 @@ public sealed class GameData
     /// <summary>data/crowd.json.</summary>
     public required CrowdTable Crowd { get; init; }
 
+    /// <summary>data/doors.json.</summary>
+    public required DoorsTable Doors { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -150,6 +153,7 @@ public sealed class GameData
             Combat = JsonData.Load<Combat.CombatTable>(source, "combat.json"),
             CharacterLighting = JsonData.Load<CharacterLightingTable>(source, "character_lighting.json"),
             Crowd = JsonData.Load<CrowdTable>(source, "crowd.json"),
+            Doors = JsonData.Load<DoorsTable>(source, "doors.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,
@@ -166,7 +170,7 @@ public sealed class GameData
     /// <summary>Checks the references between files, adding a message per dangling id.</summary>
     public void CrossCheck(ICollection<string> errors)
     {
-        // Every district the gels name is one a level has (openspec/changes/character-lighting).
+        // Every district the gels name is one a level has (openspec/changes/archive/2026-09-29-character-lighting).
         var districts = Levels.Values.SelectMany(l => l.Districts).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
         foreach (var d in CharacterLighting.Gels.Keys.Where(d => !districts.Contains(d)))
         {

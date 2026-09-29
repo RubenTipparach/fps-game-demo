@@ -1,5 +1,5 @@
 // How characters are lit: the wrist-deck glow on the runner, and the conversation rig of a key
-// and two gels around the speaker's head (openspec/changes/character-lighting, design sections 2
+// and two gels around the speaker's head (openspec/changes/archive/2026-09-29-character-lighting, design sections 2
 // to 5 and 7), with the targets the captures are measured against.
 //
 // It lives in the core with the other tables because it is tuning (CLAUDE.md 5.5): committed,
@@ -147,6 +147,9 @@ public sealed class CharacterLightingTable : IValidated
 
     /// <summary>How a conversation is framed.</summary>
     public required FramingDef Framing { get; init; }
+
+    /// <summary>How characters wet in the rain and dry under a roof (design section 9).</summary>
+    public required WetnessDef Wetness { get; init; }
 
     /// <summary>
     /// The side the key goes on: the data's, or when it says "motivated", the side where the
@@ -299,5 +302,6 @@ public sealed class CharacterLightingTable : IValidated
         {
             errors.Add("framing.face_from_top must be between 0 and 1");
         }
+        Wetness.Validate(errors);
     }
 }

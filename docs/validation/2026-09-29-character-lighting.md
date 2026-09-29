@@ -3,7 +3,7 @@
 The owner, playtesting the hub on 2026-09-28: faces are too dark in conversation, skin needs
 normal maps, the runner needs a light source, and coloured gels suit cyberpunk. The survey
 accepted the design (I9 to I12) and built it third (I1). This record covers
-`openspec/changes/character-lighting`, built on branch `claude/elegant-gauss-qwjhk1`.
+`openspec/changes/archive/2026-09-29-character-lighting`, built on branch `claude/elegant-gauss-qwjhk1`.
 
 ## Environment
 
@@ -59,7 +59,7 @@ Each is in the design's section 8.
 - **The face box was in the wrong units**, and **the instrument was corrected** on the first
   captures: the face point is the eyes, the ratio is of light, the rim is what the rig adds to
   the head's edge, and the world is the frame outside the speaker.
-- **One key can't meet the face target across skin tones** (survey J1, open): the key that
+- **One key can't meet the face target across skin tones** (survey J1, since answered: the lighting stays, and skin follows where a character stands): the key that
   takes Tank's dark face to 95 would take Petra's pale one to about 216.
 
 ## The faces
@@ -88,7 +88,7 @@ What round 1 shows:
 - **No speaker reaches the 2:1 ratio.** In a dark place the wrist light, from the camera, fills
   the shadow side; in a lit place, the room's light is most of what a face gets.
 
-One key can't meet the targets across skin tones and places: survey J1 (open) asks how to
+One key can't meet the targets across skin tones and places: survey J1 asked how to
 expose each face. The energies stay at round 1 until the answer.
 
 ## What the checks establish
@@ -103,3 +103,85 @@ expose each face. The energies stay at round 1 until the answer.
 
 - **Frame cost.** Subsurface scattering is a screen-space pass and the rig adds three lights in
   conversation; lavapipe measures neither.
+
+## Dry indoors, wet in the rain (owner J1)
+
+The owner answered J1 on 2026-09-29: "tank looks fine with lighting, I think you made him too
+shiny, he's not wet in doors.... so you might have to tweak shaders based on where characters
+are." The energies stay at round 1; the face band and the ratio are recorded, not gated. Design
+section 9 says what was built. Same machine, Godot, .NET and seed as above.
+
+| Check | Command | Result |
+|---|---|---|
+| Core tests | `dotnet test core` | 201 of 201, 12 of them new: the shelter rule on the hub's real roofs (Tank at the bar dry, Dace at the checkpoint gate in the rain, a civilian under the Skyway and the middle of a shop awning dry, the Anchor's roof never sheltering the people on it), the step's rates (20 s to soak, 240 s to dry, a damaged value restarting from the place), and what validation refuses |
+| Materials | `python3 -m unittest discover -s tools/godot -p 'test_*.py'` | 7 of 7 material tests, 4 of them new: every parameter the generator writes is a uniform of its shader, both shaders take `wetness`, an instance uniform the skin and the outfit share sits at the same index in both, and every global a shader reads is declared in `project.godot` and set by name from data |
+| Level data | `python3 tools/levels/export_level_data.py`, then `git diff` | current: 414 shelters in `hub.json` |
+| Lighting test | `godot --headless --path game res://scenes/undercity/tests/lighting_test.tscn` | 24 of 24, 9 of them new (below) |
+| Fast checks | `scripts/check.sh --fast` | pass |
+| OpenSpec | `openspec validate --all` | all valid |
+
+### The lighting test's new checks
+
+| Check | Result |
+|---|---|
+| Tank and Dace are in the hub with bodies | wetness 0.00 and 1.00 |
+| Tank behind the Anchor's bar is under a roof and dry | sheltered, 0.00 at (99.3, 0.15, 55.5) |
+| Dace at the checkpoint gate is in the rain and soaked | not sheltered, 1.00 at (169, 0, 155.5) |
+| Every mesh of each body carries its wetness | 2 meshes each, at 0.00 and 1.00 |
+| Each skin is drawn by the skin shader | `tank_skin` and `dace_skin` are ShaderMaterials of `character_skin.gdshader` |
+| A soaked body under a roof dries at the data's rate | 0.9957 after 1 s (0.9948 to 0.9958 allowed, the step carrying up to one update's leftover time) |
+| And its meshes follow | 0.9957 |
+
+### What building found
+
+- **All five capture speakers stand under a roof.** Silk is in the Anchor's back room, Petra in
+  the depot, Lin in the shrine and Nguyen under the Skyway. Dace, at the checkpoint gate with
+  nothing overhead, joined the captures as the rain case.
+- **The first capture's skin ignored its wetness.** The skin and the outfit are surfaces of one
+  mesh instance, and each shader declared `wetness` at its own instance index; Godot warned 108
+  times that only the first would display correctly. Both now pin it at index 0, and a material
+  test refuses a shared instance uniform without one index. The rerun logged no such warning.
+- **Three civilians hold umbrellas under the Skyway** (civ_16, civ_26 and civ_27): the crowd's
+  umbrella flag doesn't know the deck. They are dry by the roof rule. Left as a follow-up.
+
+### The faces, before and after
+
+`docs/playtest/scripts/character_wetness.json`: the five conversations and Dace, rig on, first
+with the skin as it was (the AutoTest step `skin_before_wetness` sets the dry add to 0, which
+is the roughness mask everywhere), then as built. 1280 x 720, seed 7, 30 fps fixed.
+`tools/measure/face_luma.py` now also reports the highlight, the mean of the face box's
+brightest tenth.
+
+| Speaker | Wetness | Mean before / after | Highlight before / after | Lit/shadow before / after |
+|---|---|---|---|---|
+| Tank, the Anchor's bar | 0 | 59 / 53 | **148 / 101** | 1.51 / 1.23 |
+| Silk, the Anchor's back room | 0 | 112 / 111 | 185 / 177 | 1.51 / 1.50 |
+| Petra, the depot | 0 | 152 / 151 | 214 / 210 | 1.13 / 1.12 |
+| Nguyen, under the Skyway | 0 | 180 / 180 | 233 / 233 | 1.15 / 1.15 |
+| Lin, the shrine | 0 | 189 / 189 | 231 / 230 | 1.04 / 1.05 |
+| Dace, the checkpoint gate, in the rain | 1 | 60 / 60 | 140 / 139 | 2.69 / 2.76 |
+
+Stills: `docs/screenshots/character_lighting/wetness_<speaker>_before.png` and `_after.png`, and
+`wetness_faces_before_after.png`, the heads side by side. The rig-off and round-1 rig-on shots
+of the first captures are `rig_<speaker>_off.png` and `_on.png`.
+
+What it shows:
+- **Tank's shine is gone.** His highlight falls by a third with the key unchanged; the glint on
+  his forehead in the before shot is a soft sheen after.
+- **Faces lit near white barely move.** Nguyen's and Lin's brightest tenth sits near 230 under
+  the stall's and the shrine's lights, where diffuse light, not the specular, sets it.
+- **The rain case doesn't change.** Dace's face measures within a luma of before.
+
+### What these checks establish, and what they don't
+
+- They establish that the core decides who is under a roof from the plan's shapes, that every
+  NPC's body carries the core's value to both shaders, and that a speaker indoors now reads
+  matte while one in the rain reads as before.
+- They don't show the cloth change against the old look: the before pass resets only the skin,
+  so Dace's cloth is wet (darker, smoother) in both of Dace's shots, and the dry speakers' cloth
+  is as it was in both.
+- They don't show drying on screen. The drying rate is pinned by the core tests and the
+  lighting test, not a capture.
+- Frame cost is still unmeasured: the skin shader draws what the StandardMaterial3D drew, plus
+  one mix.
+

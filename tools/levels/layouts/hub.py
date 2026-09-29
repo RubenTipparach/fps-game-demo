@@ -161,10 +161,16 @@ MAP = {
          "fixtures": [("rect", 42 + i * 3, 16, 44.4 + i * 3, 19.5, "fix") for i in range(8)] +
                      [("rect", 42 + i * 3, 21.5, 44.4 + i * 3, 25, "fix") for i in range(8)] +
                      [("rect", 42, 29, 48, 30.2, "fix-lt")]},
+        # The three shells have one room each (owner K3, openspec/changes/hub-doorways, design section 3.7).
         {"id": "neon_koi", "name": "NEON KOI\nKARAOKE", "poly": [(72, 15), (94, 15), (94, 33), (72, 33)], "height_m": 12,
-         "fixtures": [("rect", 73, 32, 93, 32.6, "fix-neon")]},
+         "rooms": [{"name": "LOBBY", "rect": (72, 23, 94, 33)}], "doors": [(83, 33, 3)],
+         "fixtures": [("rect", 73, 32, 93, 32.6, "fix-band"), ("rect", 74, 25, 80, 26.2, "fix-lt"),
+                      ("circle", 85, 27, 1.2, "fix"), ("circle", 90, 27, 1.2, "fix"),
+                      ("rect", 76, 23.3, 90, 23.5, "fix-neon")]},
         {"id": "pachinko", "name": "PACHINKO\nSUNRISE", "poly": [(150, 15), (176, 15), (176, 33), (150, 33)], "height_m": 14,
-         "fixtures": [("rect", 151, 32.2, 175, 32.8, "fix-neon")]},
+         "rooms": [{"name": "FLOOR", "rect": (150, 21, 176, 33)}], "doors": [(162.5, 33, 3)],
+         "fixtures": [("rect", 151, 32.2, 175, 32.8, "fix-band")] +
+                     [("rect", 153 + i * 2.2, y, 154 + i * 2.2, y + 0.7, "fix-cyan") for y in (24, 28) for i in range(10)]},
         {"id": "rusty_anchor", "name": "THE RUSTY ANCHOR", "poly": [(68, 44), (112, 44), (112, 70), (68, 70)], "height_m": 10,
          "label_at": (84, 73.4),
          "rooms": [{"name": "MAIN HALL", "rect": (68, 50, 100, 70), "label_at": (88, 64.5)},
@@ -199,27 +205,29 @@ MAP = {
          "doors": [(174, 76, 4), (164, 94, 4), (184, 104, 3), (164, 108)],
          "fixtures": [("rect", 167 + (i % 3) * 5.5, 84 + (i // 3) * 6, 170.5 + (i % 3) * 5.5, 87 + (i // 3) * 6, "stall")
                       for i in range(12)]},
-        {"id": "depot", "name": "CITY SANITATION\nDEPOT", "poly": [(223, 104), (240, 104), (240, 122), (223, 122)], "height_m": 8.5,
+        {"id": "depot", "leaves": "steel", "name": "CITY SANITATION\nDEPOT", "poly": [(223, 104), (240, 104), (240, 122), (223, 122)], "height_m": 8.5,
          "label_at": (231.5, 126),
          "rooms": [{"name": "FRONT DESK", "rect": (223, 104, 231, 112)}, {"name": "LOCKERS", "rect": (231, 104, 240, 112)},
                    {"name": "MANAGER", "rect": (223, 112, 231, 122)}, {"name": "BAY", "rect": (231, 112, 240, 122)}],
          "doors": [(223, 108, 2), (231, 108), (227, 112), (235.5, 104, 4), (231, 117)],
          "fixtures": [("rect", 232, 106, 239, 107, "fix"), ("rect", 225, 116, 229, 118, "fix-lt")]},
-        {"id": "garage", "name": "KINGS' GARAGE", "poly": [(162, 113), (184, 113), (184, 126), (162, 126)], "height_m": 7.5,
+        {"id": "garage", "leaves": "hazard", "name": "KINGS' GARAGE", "poly": [(162, 113), (184, 113), (184, 126), (162, 126)], "height_m": 7.5,
          "label_at": (171, 116.2),
          "rooms": [{"name": "", "rect": (162, 113, 178, 126)}, {"name": "OFFICE", "rect": (178, 113, 184, 126)}],
          "doors": [(162, 119, 5), (178, 120)],
          "fixtures": [("orect", 170, 119.5, 4.4, 2, 90, "car"), ("rect", 165, 114, 175, 115, "fix")]},
         {"id": "shrine", "name": "TSANG SHRINE", "poly": [(86, 134), (98, 134), (98, 150), (86, 150)], "height_m": 7,
+         "frame_style": "shrine",
          "label_at": (92, 131.5),
          "rooms": [{"name": "HALL", "rect": (86, 138, 98, 150)}, {"name": "", "rect": (86, 134, 98, 138)}],
          "doors": [(98, 144, 2.5), (92, 138, 2)],
          "fixtures": [("rect", 89, 135, 95, 136.5, "fix-hot"), ("circle", 92, 146, 1.2, "fix-hot")]},
-        {"id": "checkpoint", "name": "MERSEC\nCHECKPOINT", "poly": [(174, 150), (184, 150), (184, 164), (174, 164)], "height_m": 4.5,
+        {"id": "checkpoint", "leaves": "steel", "name": "MERSEC\nCHECKPOINT", "poly": [(174, 150), (184, 150), (184, 164), (174, 164)], "height_m": 4.5,
          "label_at": (190.5, 158), "rot": -90,
-         "rooms": [{"name": "", "rect": (174, 150, 184, 164)}], "doors": [(174, 157, 2)],
+         # the door stands south of the boom, which meets the wall at y 157.4-158.2 (openspec/changes/hub-doorways)
+         "rooms": [{"name": "", "rect": (174, 150, 184, 164)}], "doors": [(174, 154, 2)],
          "fixtures": [("rect", 176, 152, 182, 153.2, "fix-lt")]},
-        {"id": "precinct", "name": "PRECINCT 9", "poly": [(224, 128), (240, 128), (240, 140), (224, 140)], "height_m": 9,
+        {"id": "precinct", "leaves": "steel", "name": "PRECINCT 9", "poly": [(224, 128), (240, 128), (240, 140), (224, 140)], "height_m": 9,
          "label_at": (232, 125.2),
          "rooms": [{"name": "FRONT DESK", "rect": (224, 128, 232, 140)}, {"name": "RECORDS", "rect": (232, 128, 240, 134)},
                    {"name": "CELLS", "rect": (232, 134, 240, 140)}],
@@ -227,7 +235,10 @@ MAP = {
          "fixtures": [("rect", 226, 130, 230, 131.2, "fix-lt"), ("rect", 238.2, 129, 239.6, 133, "fix-cyan")]},
         {"id": "mouse_den", "name": "", "label": False, "poly": [(36, 111), (46, 111), (46, 120), (36, 120)], "height_m": 5,
          "rooms": [{"name": "MOUSE'S DEN", "rect": (36, 111, 46, 120)}], "doors": [(36, 115, 1.4)]},
-        {"id": "laundromat", "name": "BUBBLE\nWASH", "poly": [(4, 46), (24, 46), (24, 58), (4, 58)], "height_m": 7},
+        {"id": "laundromat", "name": "BUBBLE\nWASH", "poly": [(4, 46), (24, 46), (24, 58), (4, 58)], "height_m": 7,
+         "rooms": [{"name": "", "rect": (4, 46, 24, 58)}], "doors": [(17.5, 46, 3)],    # between the parked cars
+         "fixtures": [("rect", 6 + i * 1.6, 56.3, 7.2 + i * 1.6, 57.5, "fix") for i in range(10)] +
+                     [("rect", 8, 50.5, 16, 51.3, "fix")]},
         {"id": "ferry", "name": "MV ANSELM", "label_at": (231, 40), "rot": -90,
          "poly": [(226, 24), (236, 24), (237, 46), (231, 57), (225, 46)]},
     ],
@@ -251,7 +262,8 @@ MAP = {
          ("rect", 125, 105, 128, 108.5, "fix-lt")] +             # Skyway service lift
         # parked cars on Lantern Row and Quay Road, trucks in the depot yard
         [("orect", 12 + i * 11.5, 43.3, 4.6, 2.0, 0, "car") for i in range(4)] +
-        [("orect", 150 + i * 9, 34.6, 4.6, 2.0, 0, "car") for i in range(3)] +
+        # no car in front of Pachinko Sunrise's entrance (openspec/changes/hub-doorways)
+        [("orect", 150 + i * 9, 34.6, 4.6, 2.0, 0, "car") for i in (0, 2)] +
         [("orect", 215, 80 + i * 8, 2.0, 4.6, 0, "car") for i in range(5)] +
         [("orect", 228, 80 + i * 7, 8.5, 2.8, 0, "car") for i in range(3)] +
         # freight wagons on the siding, crates in the freight yard

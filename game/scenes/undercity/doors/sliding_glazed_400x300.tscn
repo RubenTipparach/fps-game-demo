@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/World/SlidingDoorway.cs" id="1_SlidingDoorw"]
+[ext_resource type="Script" path="res://scripts/World/Door.cs" id="2_Door"]
+[ext_resource type="PackedScene" path="res://models/undercity/props/sliding_glazed_400x300.glb" id="3_sliding_glaz"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(2.05, 3.05, 0.05)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5"]
+size = Vector3(2.05, 3.05, 0.05)
+
+[node name="SlidingDoor" type="Node3D"]
+script = ExtResource("1_SlidingDoorw")
+
+[node name="LeafL" type="AnimatableBody3D" parent="."]
+position = Vector3(-0.975, 0.0, 0.175)
+collision_layer = 64
+script = ExtResource("2_Door")
+Controlled = true
+OpenOffset = Vector3(-2.05, 0.0, 0.0)
+
+[node name="Model" parent="LeafL" instance=ExtResource("3_sliding_glaz")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeafL"]
+position = Vector3(0.0, 1.525, 0.0)
+shape = SubResource("BoxShape3D_4")
+
+[node name="LeafR" type="AnimatableBody3D" parent="."]
+position = Vector3(0.975, 0.0, 0.235)
+collision_layer = 64
+script = ExtResource("2_Door")
+Controlled = true
+OpenOffset = Vector3(2.05, 0.0, 0.0)
+
+[node name="Model" parent="LeafR" instance=ExtResource("3_sliding_glaz")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeafR"]
+position = Vector3(0.0, 1.525, 0.0)
+shape = SubResource("BoxShape3D_5")

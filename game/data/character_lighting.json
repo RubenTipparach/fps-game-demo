@@ -1,4 +1,4 @@
-// How characters are lit (openspec/changes/character-lighting, design sections 2 to 5 and 7).
+// How characters are lit (openspec/changes/archive/2026-09-29-character-lighting, design sections 2 to 5 and 7).
 // "characters_layer" is the visual layer characters render on besides the world's; the new
 // lights reach only it. Colours are roles, named once here and used by name below. The wrist
 // light sits on the camera rig at "offset_m" (right, up, back). The conversation rig's lights are
@@ -7,7 +7,11 @@
 // large is soft. "gel" and "gel_accent" are the district's pair from "gels". The energies are
 // starting values: they are tuned on the captures to meet "targets" (tools/measure/face_luma.py).
 // "framing" is mockup D9's: the field of view narrows to "fov_deg" over "time_s", and the pitch
-// recentres so the face sits "face_from_top" of the way down the screen.
+// recentres so the face sits "face_from_top" of the way down the screen. "wetness" is design
+// section 9 (owner J1): a character wets over "wet_time_s" in the open and dries over
+// "dry_time_s" under a roof (a roof counts when its underside is "headroom_m" or more above their
+// feet), checked every "update_s". Dry skin is the roughness mask plus "skin_dry_roughness_add";
+// soaked cloth has "cloth_wet_roughness" and "cloth_wet_brightness" times its dry colour.
 {
   "characters_layer": 2,
   "colors": {"deck_glow": "#9fe8ff", "key_warm": "#ffe2c4", "magenta": "#ff3fa8", "cyan": "#35e0ff",
@@ -24,5 +28,7 @@
   "gels": {"lantern_row": ["magenta", "cyan"], "sump_market": ["cyan", "magenta"], "tin_stacks": ["amber", "blue"],
            "kiln": ["ember", "blue"], "drydock": ["sodium", "violet"], "spire_foundations": ["violet", "amber"]},
   "targets": {"face_mean_luma": [95, 150], "key_to_shadow": [2.0, 4.0], "rim_over_background_luma": 20, "world_luma_change_pct": 2.0},
-  "framing": {"fov_deg": 48, "time_s": 0.4, "face_from_top": 0.34}
+  "framing": {"fov_deg": 48, "time_s": 0.4, "face_from_top": 0.34},
+  "wetness": {"wet_time_s": 20, "dry_time_s": 240, "update_s": 0.25, "headroom_m": 1.0,
+              "skin_dry_roughness_add": 0.18, "cloth_wet_roughness": 0.45, "cloth_wet_brightness": 0.8}
 }

@@ -66,7 +66,7 @@ Prague geography, names or art are used.
 
 The owner sent Digital Camera magazine's poster "Lighting Guide: master pro portrait lighting
 with these 24 essential studio set-ups" (digitalcameraworld.com) and pointed at its COLOURED
-GELS set-up, for lighting faces in conversation. The set-ups `openspec/changes/character-lighting`
+GELS set-up, for lighting faces in conversation. The set-ups `openspec/changes/archive/2026-09-29-character-lighting`
 takes the shape of:
 
 - **LOOP:** one softbox high and to the side, so the nose's shadow loops towards the corner of

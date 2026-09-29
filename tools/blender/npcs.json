@@ -39,11 +39,11 @@
     "mask_dilate_px": 3
   },
   "skin_tone_strength": 1.0,
-  "_comment_skin_normal": "The skin's normal map, derived from its own colour map (openspec/changes/character-lighting): the luminance less its blur over blur_px source pixels is the height, and strength scales its slope. At 16 the median tilt is 3 degrees and the 95th percentile 15 (measured on middleage_african_male): pores, not stone.",
+  "_comment_skin_normal": "The skin's normal map, derived from its own colour map (openspec/changes/archive/2026-09-29-character-lighting): the luminance less its blur over blur_px source pixels is the height, and strength scales its slope. At 16 the median tilt is 3 degrees and the 95th percentile 15 (measured on middleage_african_male): pores, not stone.",
   "skin_normal": {"blur_px": 6.0, "strength": 16.0},
   "_comment_skin_roughness": "How rough skin is where (make_skin_roughness.py paints it into npc_skin_roughness.png, MakeHuman UV): the T-zone (forehead, nose, lips) oily, the cheeks and chin less, the rest dry; blurred over blur_px so the areas blend.",
   "skin_roughness": {"t_zone": 0.42, "cheeks": 0.55, "body": 0.62, "blur_px": 6.0},
-  "_comment_outfit_roughness": "How rough the outfit material is, in its normal map's alpha (openspec/changes/character-lighting, design section 8): the eyes share the outfit's atlas and material, so their tile is wet (a catchlight from the key) and the clothes and gear are cloth.",
+  "_comment_outfit_roughness": "How rough the outfit material is, in its normal map's alpha (openspec/changes/archive/2026-09-29-character-lighting, design section 8): the eyes share the outfit's atlas and material, so their tile is wet (a catchlight from the key) and the clothes and gear are cloth.",
   "outfit_roughness": {"cloth": 0.7, "eyes": 0.08},
   "texture_fixes": {
     "_comment": "Prints painted out of a CC0 texture before it is tinted, as UV rects [u0, v0, u1, v1] (origin bottom left). The plain tee carries the MakeHuman logo on its front, back and sleeve; the game shows no brand marks.",
