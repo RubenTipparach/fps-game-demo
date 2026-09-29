@@ -88,13 +88,17 @@ each lot by 0.3, 0.35, 0.45 or 0.7 m, so a lot can stand 1.2-1.6 m from any wall
 building, doors included. The placement test passes only because nobody stands in those gaps.
 
 **Before stills** (`docs/screenshots/hub_doorways/before_*.png`, AutoTest
-`docs/playtest/scripts/hub_doorways_before.json`, seed 7, 1600 x 900):
-- Lantern Row's shops without doors;
-- Wire Lane's dark recesses;
-- the Anchor's unframed entrance;
-- the Fish Hall's north entrance hidden behind lot 242, and the 1.35 m slot to it;
-- Precinct 9's door behind lot 11;
-- Neon Koi's lit false entrance.
+`docs/playtest/scripts/hub_doorways_before.json`, seed 7, 1600 x 900, the committed hub):
+
+| Still | Shows | Requirement it motivates |
+|---|---|---|
+| `before_01_lantern_row_shops_without_doors.png` | Lantern Row at Pachinko Sunrise: shop windows and parked cars, and not a door along the block | Every building on the street shows a door |
+| `before_02_wire_lane_blank_recesses.png` | Wire Lane: a shanty's dark recess beside a lit window, and a blank rust wall opposite | Every building on the street shows a door |
+| `before_03_anchor_entrance_unframed.png` | the Rusty Anchor's 3 m entrance under its sign: a rectangular hole in the stone, a thin `tech_panel` reveal, no jamb, lintel or lamp | Every doorway is framed |
+| `before_04_fish_hall_entrance_hidden.png` | from Clinic Lane toward the Fish Hall's north entrance: what stands there is lot 242's dark shop window, 2.5 m away | Every door opens onto ground a person can reach |
+| `before_05_fish_hall_entrance_slot.png` | the unlit 1.35 m slot between lot 242 and the hall, the only way to that entrance | Every door opens onto ground a person can reach |
+| `before_06_precinct_door_hidden.png` | from Quay Road toward Precinct 9's front door: lot 11's rust wall and loading door, with the precinct's corner behind it | Every door opens onto ground a person can reach |
+| `before_07_neon_koi_false_entrance.png` | Neon Koi's front under its sign: the lit 3 m recess in the middle stands in for an entrance, between a shutter and a lit shop window, and none of them opens | K3 |
 
 ## Goals / Non-Goals
 
