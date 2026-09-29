@@ -71,4 +71,39 @@ public sealed class CharacterLightingTests
         var ex = Assert.Throws<DataException>(() => Parse(ShippedText().Replace("\"characters_layer\": 2", "\"characters_layer\": 1", StringComparison.Ordinal)));
         Assert.Contains("characters_layer", ex.Message, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void The_key_goes_on_the_side_the_scene_is_lit_from()
+    {
+        var lights = new[] { new NearbyLight(Side: 3, DistanceM: 4, Energy: 2), new NearbyLight(Side: -2, DistanceM: 6, Energy: 2) };
+        Assert.Equal("right", Shipped.KeySide(lights));
+    }
+
+    [Fact]
+    public void A_light_beyond_the_motivation_radius_doesnt_count()
+    {
+        var far = Shipped.Conversation.MotivationRadiusM + 1;
+        var lights = new[] { new NearbyLight(Side: 5, DistanceM: far, Energy: 50), new NearbyLight(Side: -1, DistanceM: 3, Energy: 1) };
+        Assert.Equal("left", Shipped.KeySide(lights));
+    }
+
+    [Fact]
+    public void Every_hub_district_takes_its_gels_by_where_it_is()
+    {
+        var hub = TestData.Data.Levels["hub"];
+        Assert.Equal(hub.Districts.Select(d => d.Id).OrderBy(d => d, StringComparer.Ordinal),
+            Shipped.Gels.Keys.OrderBy(d => d, StringComparer.Ordinal));
+        // The Rusty Anchor (68-112 x 44-70) is on Lantern Row, as the design's gel table says.
+        Assert.Equal("lantern_row", hub.DistrictAt(90, 57));
+        Assert.Equal("sump_market", hub.DistrictAt(118, 97));
+        Assert.Null(hub.DistrictAt(203, 60));     // the Cut, between districts
+    }
+
+    [Fact]
+    public void A_speaker_between_districts_takes_the_nearest_ones_gels()
+    {
+        var hub = TestData.Data.Levels["hub"];
+        Assert.Equal("drydock", hub.DistrictNear(211, 60));     // the Cut's east quay, 2 m from the dry dock
+        Assert.Equal("sump_market", hub.DistrictNear(118, 97)); // inside one: that one
+    }
 }

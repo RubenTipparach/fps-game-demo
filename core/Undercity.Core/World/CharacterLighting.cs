@@ -99,6 +99,25 @@ public sealed class LightingTargets
     public required double WorldLumaChangePct { get; init; }
 }
 
+/// <summary>How a conversation is framed (mockup D9, approved by the owner, survey I11).</summary>
+public sealed class FramingDef
+{
+    /// <summary>The field of view narrows to this, degrees (vertical).</summary>
+    public required double FovDeg { get; init; }
+
+    /// <summary>Over this long, and back on close, seconds.</summary>
+    public required double TimeS { get; init; }
+
+    /// <summary>The pitch recentres so the face sits this far from the top of the screen, 0 to 1.</summary>
+    public required double FaceFromTop { get; init; }
+}
+
+/// <summary>A light of the level near a speaker, as the motivated key side weighs it.</summary>
+/// <param name="Side">How far to the camera's right of the speaker it is, metres (negative: left).</param>
+/// <param name="DistanceM">How far from the speaker's head it is, metres.</param>
+/// <param name="Energy">Its energy.</param>
+public readonly record struct NearbyLight(double Side, double DistanceM, double Energy);
+
 /// <summary>data/character_lighting.json.</summary>
 public sealed class CharacterLightingTable : IValidated
 {
@@ -125,6 +144,36 @@ public sealed class CharacterLightingTable : IValidated
 
     /// <summary>What the captures are measured against.</summary>
     public required LightingTargets Targets { get; init; }
+
+    /// <summary>How a conversation is framed.</summary>
+    public required FramingDef Framing { get; init; }
+
+    /// <summary>
+    /// The side the key goes on: the data's, or when it says "motivated", the side where the
+    /// level's lights within the motivation radius sum the most energy / distance², so the face
+    /// agrees with the scene it sits in (design section 4). A tie goes left.
+    /// </summary>
+    public string KeySide(IEnumerable<NearbyLight> lights)
+    {
+        if (Conversation.KeySide != "motivated")
+        {
+            return Conversation.KeySide;
+        }
+        double left = 0, right = 0;
+        foreach (var l in lights.Where(l => l.DistanceM <= Conversation.MotivationRadiusM && double.IsFinite(l.Energy)))
+        {
+            var w = l.Energy / Math.Max(l.DistanceM * l.DistanceM, 0.01);
+            if (l.Side > 0)
+            {
+                right += w;
+            }
+            else
+            {
+                left += w;
+            }
+        }
+        return right > left ? "right" : "left";
+    }
 
     /// <summary>A colour role's red, green and blue, 0 to 1 (sRGB, as the data writes it).</summary>
     public (double R, double G, double B) Rgb(string role)
@@ -241,5 +290,14 @@ public sealed class CharacterLightingTable : IValidated
         }
         Number("targets.rim_over_background_luma", t.RimOverBackgroundLuma, true);
         Number("targets.world_luma_change_pct", t.WorldLumaChangePct, false);
+        if (!double.IsFinite(Framing.FovDeg) || Framing.FovDeg is <= 1 or >= 179)
+        {
+            errors.Add("framing.fov_deg must be 1 to 179 degrees");
+        }
+        Number("framing.time_s", Framing.TimeS, true);
+        if (!double.IsFinite(Framing.FaceFromTop) || Framing.FaceFromTop is <= 0 or >= 1)
+        {
+            errors.Add("framing.face_from_top must be between 0 and 1");
+        }
     }
 }

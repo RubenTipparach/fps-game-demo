@@ -162,6 +162,12 @@ public sealed class GameData
     /// <summary>Checks the references between files, adding a message per dangling id.</summary>
     public void CrossCheck(ICollection<string> errors)
     {
+        // Every district the gels name is one a level has (openspec/changes/character-lighting).
+        var districts = Levels.Values.SelectMany(l => l.Districts).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
+        foreach (var d in CharacterLighting.Gels.Keys.Where(d => !districts.Contains(d)))
+        {
+            errors.Add($"character_lighting.json gels: no level has a district '{d}'");
+        }
         void Item(string? id, string where)
         {
             if (id is not null && !Items.Exists(id))

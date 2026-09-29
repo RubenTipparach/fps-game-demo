@@ -110,6 +110,16 @@ public sealed class StubLevelHost : ILevelHost
     }
 
     /// <inheritdoc/>
+    public void ConversationOpened(NpcActor speaker)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void ConversationClosed(NpcActor speaker)
+    {
+    }
+
+    /// <inheritdoc/>
     public bool TrySave(string slot, out string reason)
     {
         reason = Refusal;

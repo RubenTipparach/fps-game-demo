@@ -33,6 +33,15 @@ public partial class UndercityLevel : Node3D, ILevelHost
     /// <summary>The scene for items on the floor.</summary>
     [Export] public PackedScene WorldItemScene = GD.Load<PackedScene>("res://scenes/undercity/world_item.tscn");
 
+    /// <summary>The conversation rig (openspec/changes/character-lighting).</summary>
+    [Export] public PackedScene ConversationRigScene = GD.Load<PackedScene>("res://scenes/undercity/conversation_rig.tscn");
+
+    /// <summary>
+    /// For the AutoTest harness only: false takes conversations without the character lighting
+    /// (the rig and the wrist glow), as the hub was lit before it, for the before-and-after checks.
+    /// </summary>
+    public bool ConversationRigOn { get; set; } = true;
+
     /// <summary>Seconds between law and disguise checks.</summary>
     private const double WatchIntervalS = 0.2;
 
@@ -57,6 +66,8 @@ public partial class UndercityLevel : Node3D, ILevelHost
     private double _watchS;
     private bool _weaponSeenThisDraw;
     private int _drops;
+    private ConversationRig? _rig;
+    private Tween? _framing;
 
     /// <summary>
     /// Called by the composition root as the level enters the tree, before _Ready: the run, how to
@@ -465,6 +476,58 @@ public partial class UndercityLevel : Node3D, ILevelHost
         {
             npc.Provoke(Provocation.MurderSeen, from);
         }
+    }
+
+    // ------------------------------------------------------------------ conversations
+
+    /// <inheritdoc/>
+    public void ConversationOpened(NpcActor speaker)
+    {
+        var t = State.Data.CharacterLighting;
+        var cam = _player!.GetNode<Camera3D>("CameraRig/Camera3D");
+        var head = speaker.HeadCentre;
+        if (_player.GetNodeOrNull<Light3D>("CameraRig/Camera3D/Wrist") is { } wrist)
+        {
+            wrist.Visible = ConversationRigOn;
+        }
+        if (ConversationRigOn)
+        {
+            // The level's own lights near the speaker decide the key's side (the core's rule).
+            var right = cam.GlobalBasis.X;
+            var near = Descendants(this).OfType<Light3D>()
+                .Where(l => l.IsVisibleInTree() && !IsUnder(l, _player!) && l is not DirectionalLight3D)
+                .Select(l => new Undercity.Core.World.NearbyLight((l.GlobalPosition - head).Dot(right),
+                    l.GlobalPosition.DistanceTo(head), l.LightEnergy));
+            var district = Def.DistrictNear(head.X, head.Z) ?? t.Gels.Keys.Min(StringComparer.Ordinal)!;
+            _rig?.FadeOut(0);
+            _rig = ConversationRigScene.Instantiate<ConversationRig>();
+            AddChild(_rig);
+            _rig.Light(t, head, cam, t.KeySide(near), district);
+        }
+        // Mockup D9: the view narrows and the pitch recentres so the face sits face_from_top of the
+        // way down the screen. The camera doesn't move. (The body is paused while the dialog is open;
+        // when it resumes it sets the view's width from the options again.)
+        var f = t.Framing;
+        var eye = cam.GlobalPosition;
+        var flat = new Vector2(head.X - eye.X, head.Z - eye.Z).Length();
+        var toHeadDeg = Mathf.RadToDeg(Mathf.Atan2(head.Y - eye.Y, flat));
+        var aboveCentreDeg = Mathf.RadToDeg(Mathf.Atan((0.5f - (float)f.FaceFromTop) * 2 * Mathf.Tan(Mathf.DegToRad((float)f.FovDeg) / 2)));
+        var yawDeg = Mathf.RadToDeg(_player.Yaw);
+        _framing?.Kill();
+        _framing = CreateTween().SetParallel();
+        _framing.TweenProperty(cam, "fov", (float)f.FovDeg, f.TimeS);
+        _framing.TweenMethod(Callable.From<float>(p => _player.SetLook(yawDeg, p)), Mathf.RadToDeg(_player.Pitch),
+            toHeadDeg - aboveCentreDeg, f.TimeS);
+    }
+
+    /// <inheritdoc/>
+    public void ConversationClosed(NpcActor speaker)
+    {
+        var t = State.Data.CharacterLighting;
+        _rig?.FadeOut(t.Conversation.RampS);
+        _rig = null;
+        _framing?.Kill();
+        _framing = null;
     }
 
     /// <summary>The runner died: the screen fades out, then the newest save loads (or the title opens).</summary>

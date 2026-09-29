@@ -61,9 +61,11 @@ The set-ups this design takes the shape of:
 
 **The normal map comes from the skin's own detail**, at build time in `build_npcs.py`:
 1. Take the luminance `L` of the CC0 skin's 2048 px colour map.
-2. High-pass it: `H = L - blur(L, σ = 6 px)`, normalised by the local standard deviation and
-   clamped to ±2.5. Pores and fine creases are darker, so `h = -H` serves as height.
-3. Compute the tangent-space normal `n = normalize(-s · ∂h/∂x, -s · ∂h/∂y, 1)`, with s = 2.0.
+2. High-pass it: `H = L - blur(L, σ = 6 px)`. Pores and fine creases are darker, so `h = -H`
+   serves as height. (Designed with a normalisation by the local standard deviation; built
+   without it, see section 8.)
+3. Compute the tangent-space normal `n = normalize(-s · ∂h/∂x, -s · ∂h/∂y, 1)`, with s = 16
+   (designed 2.0 on the normalised height; section 8).
 4. Resample it into the body's 1024 px skin atlas, the way the albedo already is.
 
 The MakeHuman UV layout is shared by every body, so one authored mask can say where skin is
@@ -95,6 +97,8 @@ textures.
 | Roughness | 0.08 |
 | Specular | 0.5, a wet catchlight from the key |
 
+(Built as `character_outfit.tres`: the eyes share the outfit's material, section 8.)
+
 ### 2. Characters on their own visual layer
 
 NPC meshes render on layers 1 (the world) and 2 (characters), so the level's lights still light
@@ -124,8 +128,8 @@ the camera's side).
 | Light | Type | Where | Colour | Energy | Notes |
 |---|---|---|---|---|---|
 | Key | spot, 35° cone | 40° to the key side, 30° up, 1.4 m | `key_warm` #ffe2c4 | 2.0 | soft: size 0.25 m, shadows on |
-| Rim gel | omni | 140° (behind, the far side), 15° up, 1.2 m | the district's gel | 1.6 | hard: size 0.05 m |
-| Accent gel | omni | -150° (behind, the key's side), 5° up, 1.3 m | the district's complement | 0.7 | hard |
+| Rim gel | omni | -140° (behind, the far side), 15° up, 1.2 m | the district's gel | 1.6 | hard: size 0.05 m |
+| Accent gel | omni | 150° (behind, the key's side), 5° up, 1.3 m | the district's complement | 0.7 | hard |
 
 **The key side is motivated.** When the rig opens, it sums `energy / distance²` for the level's
 lights within 12 m on each side of the speaker, and puts the key on the brighter side. The face
@@ -186,14 +190,51 @@ role):
   "conversation": {
     "ramp_s": 0.3, "key_side": "motivated", "motivation_radius_m": 12.0,
     "key":    {"color": "key_warm", "energy": 2.0, "azimuth_deg": 40, "elevation_deg": 30, "distance_m": 1.4, "size_m": 0.25, "spot_angle_deg": 35, "shadow": true},
-    "rim":    {"color": "gel", "energy": 1.6, "azimuth_deg": 140, "elevation_deg": 15, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
-    "accent": {"color": "gel_accent", "energy": 0.7, "azimuth_deg": -150, "elevation_deg": 5, "distance_m": 1.3, "size_m": 0.05, "shadow": false}
+    "rim":    {"color": "gel", "energy": 1.6, "azimuth_deg": -140, "elevation_deg": 15, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
+    "accent": {"color": "gel_accent", "energy": 0.7, "azimuth_deg": 150, "elevation_deg": 5, "distance_m": 1.3, "size_m": 0.05, "shadow": false}
   },
   "gels": {"lantern_row": ["magenta", "cyan"], "sump_market": ["cyan", "magenta"], "tin_stacks": ["amber", "blue"],
            "kiln": ["ember", "blue"], "drydock": ["sodium", "violet"], "spire_foundations": ["violet", "amber"]},
   "targets": {"face_mean_luma": [95, 150], "key_to_shadow": [2.0, 4.0], "rim_over_background_luma": 20, "world_luma_change_pct": 2.0}
 }
 ```
+
+### 8. Found in building
+
+- **The gels' signs.** Angles are positive toward the key side. The table first gave the rim
+  +140° and the accent -150°, which put the rim behind the key's own side, against its
+  description ("behind, the far side"), the reference's loop with a rim light, and the rim check
+  (`face_luma.py` measures the rim outside the head's far edge). The rim is -140° and the accent
+  +150°.
+- **The skin's normal was far too strong as designed.** Normalised by the local standard
+  deviation and scaled by 2.0, the derived normal tilts a median 37 degrees (95th percentile 70):
+  every patch of skin reads as rough stone, oily lips as much as the scalp. Measured on
+  `middleage_african_male` at 2,048 px: without the normalisation and with a slope scale of 16,
+  the median tilt is 3 degrees and the 95th percentile 15, which shows pores and keeps skin.
+  `npcs.json`'s `skin_normal` holds the blur (6 px) and the scale (16).
+- **Framing is data.** Mockup D9's numbers (48°, 0.4 s, the face 34 % from the top) are
+  `character_lighting.json`'s `framing`.
+- **The eyes have no material of their own.** A body has three materials: skin, outfit and
+  hair (npc-characters' budget). The eyes are a tile of the outfit atlas and share the outfit
+  material, so a `character_eye.tres` would have nothing to replace. The eye's numbers go into
+  the outfit instead:
+  - `build_npcs.py` writes the outfit normal map's alpha as its roughness: 0.08 on the eyes'
+    tile, 0.7 on clothes and gear (`npcs.json`'s `outfit_roughness`; 0.7 is what the outfit had).
+  - `character_outfit.tres` reads it, with specular 0.5.
+
+  That is 3 materials and 5 textures still. Measured in silk's glb: alpha 20 (0.08) on the eye
+  tile and 179 (0.70) on cloth.
+- **The skin material's numbers had drifted from the table above.** The generator was first
+  written with specular 0.35 (an F0 of 0.020, not MakeHuman's 0.027), scattering 0.35 and
+  transmittance depth 0.08 with no boost. It now writes the table's 0.42, 0.30, 0.2 and 0.3,
+  from one `SKIN` dict.
+- **The face box was in the wrong units.** `Camera3D.UnprojectPosition` answers in the
+  viewport's own size, the project's 1920 x 1080 base stretched to the window, while a shot is
+  the window's pixels. At 1280 x 720 the first boxes sat 1.5 times too far right and down. The
+  `face_box` step now scales by the shot's size over the viewport's.
+- **Districts are level data.** `export_level_data.py` writes the layout's district outlines, and
+  the core finds a speaker's district with the same polygon rule as water (`LayoutPolygon`). A
+  data check refuses a gel pair for a district no level has.
 
 ## Risks / Trade-offs
 

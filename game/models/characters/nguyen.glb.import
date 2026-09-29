@@ -40,6 +40,18 @@ materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={
+"materials": {
+"nguyen_outfit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/nguyen_outfit.tres",
+"use_external/path": "res://materials/characters/nguyen_outfit.tres"
+},
+"nguyen_skin": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/nguyen_skin.tres",
+"use_external/path": "res://materials/characters/nguyen_skin.tres"
+}
+},
 "nodes": {
 "PATH:nguyen/Skeleton3D": {
 "retarget/bone_map": Resource("res://animations/bonemaps/mpfb_game_engine.tres"),

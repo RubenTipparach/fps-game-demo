@@ -848,6 +848,53 @@ def garment_pixels(obj, path, cloth, size, height, tint_cfg, palette, fixes):
     return px
 
 
+def blur(a, sigma):
+    """A Gaussian blur of sigma pixels, by FFT (Blender's Python has numpy and no scipy). It wraps
+    at the edges, where a MakeHuman skin's UV islands don't reach."""
+    h, w = a.shape
+    fy, fx = np.fft.fftfreq(h)[:, None], np.fft.fftfreq(w)[None, :]
+    return np.real(np.fft.ifft2(np.fft.fft2(a) * np.exp(-2.0 * (np.pi * sigma) ** 2 * (fx * fx + fy * fy))))
+
+
+SKIN_ROUGHNESS = os.path.join(HERE, "npc_skin_roughness.png")   # make_skin_roughness.py authors it
+
+
+def skin_normal_pixels(path, size, cfg):
+    """The skin's tangent-space normal map, derived from its own colour map at full resolution
+    (openspec/changes/character-lighting, design section 1): the luminance less its blur is the
+    height (pores and creases are darker, so lower), its slope scaled by cfg["strength"] tilts
+    the normal, and the result is resampled to size x size and renormalised. OpenGL convention
+    (+Y up the texture), as glTF's normalTexture wants. The alpha carries the skin's roughness
+    (npc_skin_roughness.png, in the MakeHuman UV layout every skin shares)."""
+    if not os.path.exists(SKIN_ROUGHNESS):
+        raise BuildError(f"{SKIN_ROUGHNESS} is missing: run tools/blender/make_skin_roughness.py")
+    img = bpy.data.images.load(path, check_existing=False)
+    img.colorspace_settings.name = 'Non-Color'
+    w, h = img.size
+    buf = np.empty(w * h * 4, np.float32)
+    img.pixels.foreach_get(buf)
+    px = buf.reshape(h, w, 4)
+    lum = luminance(px).astype(np.float64)
+    height = -(lum - blur(lum, cfg["blur_px"]))
+    k = cfg["strength"]
+    dx = (np.roll(height, -1, 1) - np.roll(height, 1, 1)) * 0.5
+    dy = (np.roll(height, -1, 0) - np.roll(height, 1, 0)) * 0.5
+    n = np.stack([-k * dx, -k * dy, np.ones_like(height)], axis=-1)
+    n /= np.linalg.norm(n, axis=-1, keepdims=True)
+    enc = np.concatenate([n * 0.5 + 0.5, np.ones((h, w, 1))], axis=-1).astype(np.float32)
+    img.pixels.foreach_set(enc.ravel())
+    img.scale(size, size)
+    out = np.empty(size * size * 4, np.float32)
+    img.pixels.foreach_get(out)
+    bpy.data.images.remove(img)
+    out = out.reshape(size, size, 4)
+    v = out[..., :3] * 2.0 - 1.0
+    v /= np.maximum(np.linalg.norm(v, axis=-1, keepdims=True), 1e-6)
+    out[..., :3] = v * 0.5 + 0.5
+    out[..., 3] = load_pixels(SKIN_ROUGHNESS, size)[..., 0]
+    return out
+
+
 def skin_pixels(path, size, tone, strength):
     """The skin texture with its mean colour moved to the row's skin tone (a per-channel gain)."""
     px = load_pixels(path, size)
@@ -1051,8 +1098,10 @@ def check_budget(npc_id, stats, budget):
 
 # ----------------------------------------------------------------------------- one body
 
-def build_body(table, body, m, allow, work, save_blend=None, verify=False):
-    t0 = time.time()
+def prepare_body(table, body, m, allow):
+    """A body's parts at rest, before gear and textures: the fitted MakeHuman body, its rig, the
+    meshes by kind with their source textures, the skin and the eyes. build_body goes on from
+    here; make_skin_roughness.py reads the skin's UVs and shape from it."""
     clean_scene()
     spec = resolve_body(table, body, m)
     resolve_assets(table, spec, m, allow)
@@ -1075,6 +1124,15 @@ def build_body(table, body, m, allow, work, save_blend=None, verify=False):
             decimate(o, ratio)
     skin = next(o for o in parts if kinds[o.name] == "Proxymeshes")
     eyes = next(o for o in parts if kinds[o.name] == "Eyes")
+    return {"spec": spec, "fitted_h": fitted_h, "rig": rig, "parts": parts, "kinds": kinds, "src": src,
+            "skin": skin, "eyes": eyes}
+
+
+def build_body(table, body, m, allow, work, save_blend=None, verify=False):
+    t0 = time.time()
+    b = prepare_body(table, body, m, allow)
+    spec, fitted_h, rig, parts, kinds, src, skin, eyes = (b[k] for k in ("spec", "fitted_h", "rig", "parts", "kinds",
+                                                                          "src", "skin", "eyes"))
     height = float(world_coords(skin)[:, 2].max())
     uv_name = skin.data.uv_layers.active.name
 
@@ -1109,23 +1167,38 @@ def build_body(table, body, m, allow, work, save_blend=None, verify=False):
         return lambda s: hair_pixels(src[o.name]["diffuse"], s, pal[want] if want else None, tint)
 
     flat_n = (0.5, 0.5, 1.0, 1.0)
+    rough = table["outfit_roughness"]
+
+    def with_roughness(pixels, r):
+        """The outfit normal's alpha is its roughness: the eyes wet, the clothes and gear cloth."""
+        def px(s):
+            out = np.array(pixels(s), np.float32)
+            out[..., 3] = r
+            return out
+        return px
+
     outfit_items = ([([o], garment(o)) for o in clothes]
                     + [([eyes], plain(src[eyes.name]["diffuse"], (0.2, 0.2, 0.2, 1)))])
-    normal_items = [([o], plain(src[o.name]["normal"], flat_n)) for o in clothes] + [([eyes], plain(None, flat_n))]
+    normal_items = ([([o], with_roughness(plain(src[o.name]["normal"], flat_n), rough["cloth"])) for o in clothes]
+                    + [([eyes], with_roughness(plain(None, flat_n), rough["eyes"]))])
     if gear:
         set_gear_uvs(gear, table["gear_style"])
         outfit_items.append((gear, lambda s: gear_tile(swatch_of, s, table["gear_style"], pal, body_seed(table, body))))
-        normal_items.append((gear, plain(None, flat_n)))
+        normal_items.append((gear, with_roughness(plain(None, flat_n), rough["cloth"])))
     def skin_px(s):
         return skin_pixels(src[skin.name]["diffuse"], s, tone, table["skin_tone_strength"])
 
+    def skin_n(s):
+        return skin_normal_pixels(src[skin.name]["diffuse"], s, table["skin_normal"])
+
     a_skin = build_atlas([([skin], skin_px)],
                          T1024, atlas_px, os.path.join(tex, "skin_albedo.png"), (0.5, 0.4, 0.35, 1), True)
+    n_skin = build_atlas([([skin], skin_n)], T1024, atlas_px, os.path.join(tex, "skin_normal.png"), flat_n, False)
     n_out = build_atlas(normal_items, T768, atlas_px, os.path.join(tex, "outfit_normal.png"), flat_n, False)
     a_out = build_atlas(outfit_items, T768, atlas_px, os.path.join(tex, "outfit_albedo.png"), (0.2, 0.2, 0.2, 1), True)
     a_hair = build_atlas([([o], hair_px(o)) for o in hair], T768, atlas_px, os.path.join(tex, "hair_albedo.png"),
                          (0.1, 0.08, 0.06, 0), True)
-    m_skin = make_material(spec["id"] + "_skin", a_skin)
+    m_skin = make_material(spec["id"] + "_skin", a_skin, normal=n_skin)
     m_out = make_material(spec["id"] + "_outfit", a_out, normal=n_out)
     m_hair = make_material(spec["id"] + "_hair", a_hair, alpha_clip=True)
     for group, mat in (([skin], m_skin), (clothes + [eyes] + gear, m_out), (hair, m_hair)):

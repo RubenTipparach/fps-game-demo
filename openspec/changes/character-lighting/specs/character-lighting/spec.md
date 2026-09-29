@@ -38,7 +38,9 @@ conversation ends.
 ### Requirement: Skin has normals, roughness and scattering
 Every NPC body's skin SHALL have a normal map derived at build time from its CC0 skin texture,
 a roughness from the shared MakeHuman-UV mask, subsurface scattering in skin mode and a specular
-of F0 0.028, and every body SHALL stay within its texture budget of 5.
+of F0 0.028; its eyes SHALL have a roughness of 0.08, carried in the outfit normal map's alpha
+because they share the outfit's material; and every body SHALL stay within its texture budget
+of 5.
 
 #### Scenario: Rebuilding the bodies
 - **WHEN** `build_npcs.py -- --verify` runs

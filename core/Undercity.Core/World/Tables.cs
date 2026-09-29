@@ -299,6 +299,18 @@ public sealed class LevelDef : IValidated
     /// <summary>The level's water bodies, from its layout (openspec/changes/water-and-swimming).</summary>
     public IReadOnlyList<WaterBody> Water { get; init; } = Array.Empty<WaterBody>();
 
+    /// <summary>The level's districts, from its layout; none for a level without.</summary>
+    public IReadOnlyList<DistrictDef> Districts { get; init; } = Array.Empty<DistrictDef>();
+
+    /// <summary>The id of the district the point (x, y) in layout metres lies in, or null outside them all.</summary>
+    public string? DistrictAt(double x, double y) => Districts.FirstOrDefault(d => d.Contains(x, y))?.Id;
+
+    /// <summary>
+    /// The district the point lies in, or else the nearest one (a quay between districts takes the
+    /// one beside it); null for a level without districts.
+    /// </summary>
+    public string? DistrictNear(double x, double y) => Districts.MinBy(d => LayoutPolygon.Distance(d.Poly, x, y))?.Id;
+
     /// <inheritdoc/>
     public void Validate(ICollection<string> errors)
     {
@@ -315,6 +327,14 @@ public sealed class LevelDef : IValidated
         foreach (var w in Water)
         {
             w.Validate(Id, errors);
+        }
+        foreach (var dup in Districts.GroupBy(d => d.Id).Where(g => g.Count() > 1))
+        {
+            errors.Add($"levels.{Id}: district id '{dup.Key}' is used twice");
+        }
+        foreach (var d in Districts.Where(d => !LayoutPolygon.IsValid(d.Poly)))
+        {
+            errors.Add($"levels.{Id}.districts.{d.Id}: poly needs 3 or more [x, y] points of finite metres");
         }
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {

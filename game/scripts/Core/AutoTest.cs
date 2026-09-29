@@ -12,6 +12,8 @@ namespace Brushfire;
 /// Steps:  {"wait": frames} | {"teleport": [x,y,z], "yaw": deg, "pitch": deg} | {"shot": "name.png"}
 ///         {"debug_draw": 1} (unshaded, for checking geometry before a bake) | {"freeze": true} (enemies)
 ///         {"render_scale": 0.67} (the 3D view's resolution scale, for long captures on lavapipe)
+///         {"shot": "tank.png", "face_box": "hub:tank"} (also writes tank.png.face.json: the head's box on screen)
+///         {"rig": false} (conversations without the character lighting, the rig and the wrist glow: before and after)
 ///         {"hold": "action" | ["action", ...], "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
@@ -162,6 +164,10 @@ public partial class AutoTest : Node
                          $"shots {s.ShotsHit}/{s.ShotsFired} player hp {p?.Health} armor {p?.Armor} pos {p?.GlobalPosition} " +
                          $"alive enemies {GetTree().GetNodesInGroup("enemies").Count} fps {Engine.GetFramesPerSecond()}");
             }
+            if (step.TryGetValue("render_stats", out _))    // what the last frame drew (hub-skyline's draw-call count)
+                GD.Print($"[AutoTest] render: draw calls {Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame)} " +
+                         $"primitives {Performance.GetMonitor(Performance.Monitor.RenderTotalPrimitivesInFrame)} " +
+                         $"objects {Performance.GetMonitor(Performance.Monitor.RenderTotalObjectsInFrame)}");
             if (step.TryGetValue("quit", out _))
             {
                 GetTree().Quit();
@@ -256,6 +262,10 @@ public partial class AutoTest : Node
             p.ResetPhysicsInterpolation();
             await Frames(3);
         }
+        if (step.TryGetValue("rig", out var rig))    // character lighting on or off, for the before-and-after checks
+            level.ConversationRigOn = rig.AsBool();
+        if (step.TryGetValue("face_box", out var fb))
+            WriteFaceBox(level, fb.AsString(), step.TryGetValue("shot", out var fs) ? fs.AsString() : null);
         if (step.TryGetValue("probe", out var probeId))
         {
             foreach (var n in level.Npcs().Where(n => n.NpcId == probeId.AsString()))
@@ -329,5 +339,41 @@ public partial class AutoTest : Node
             await Frames(1);
         await Frames(10);
         GD.Print($"[AutoTest] loaded level {index}: {Game.Levels[index].Title}");
+    }
+
+    // The instrument for openspec/changes/character-lighting (design section 5): the speaker's head
+    // box projected to the screen, written beside the step's shot for tools/measure/face_luma.py.
+    // The box is 0.24 m wide and runs 0.12 m below to 0.14 m above the head's middle
+    // (NpcActor.HeadCentre), in the camera's plane.
+    void WriteFaceBox(Undercity.Client.UndercityLevel level, string who, string shot)
+    {
+        var npc = level.Npcs().FirstOrDefault(n => n.StableId == who || n.NpcId == who);
+        var cam = GetViewport().GetCamera3D();
+        if (shot == null || cam == null || npc == null)
+        {
+            GD.PrintErr($"[AutoTest] face_box: no '{who}', no camera, or no shot in the step");
+            return;
+        }
+        var middle = npc.HeadCentre;
+        var right = cam.GlobalBasis.X;
+        var up = cam.GlobalBasis.Y;
+        // UnprojectPosition answers in the viewport's own size (the project's 1920 x 1080 base,
+        // stretched), the shot is the window's pixels: scale from one to the other.
+        var vp = GetViewport();
+        var toPixels = (Vector2)vp.GetTexture().GetSize() / vp.GetVisibleRect().Size;
+        var corners = new[] { (-0.12f, -0.12f), (0.12f, -0.12f), (-0.12f, 0.14f), (0.12f, 0.14f) }
+            .Select(c => cam.UnprojectPosition(middle + right * c.Item1 + up * c.Item2) * toPixels).ToArray();
+        var rig = GetTree().GetFirstNodeInGroup("conversation_rig");
+        var box = new Godot.Collections.Dictionary
+        {
+            ["who"] = npc.StableId,
+            ["box"] = new Godot.Collections.Array { corners.Min(c => c.X), corners.Min(c => c.Y), corners.Max(c => c.X), corners.Max(c => c.Y) },
+            // Which side the conversation rig put its key on; "none" before the rig exists.
+            ["key_side"] = rig != null && rig.HasMeta("key_side") ? rig.GetMeta("key_side").AsString() : "none",
+        };
+        string file = _out.PathJoin(shot + ".face.json");
+        using var f = FileAccess.Open(file, FileAccess.ModeFlags.Write);
+        f.StoreString(Json.Stringify(box));
+        GD.Print($"[AutoTest] face box {file}");
     }
 }

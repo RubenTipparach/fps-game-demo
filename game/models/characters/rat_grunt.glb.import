@@ -40,6 +40,18 @@ materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={
+"materials": {
+"rat_grunt_outfit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/rat_grunt_outfit.tres",
+"use_external/path": "res://materials/characters/rat_grunt_outfit.tres"
+},
+"rat_grunt_skin": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/rat_grunt_skin.tres",
+"use_external/path": "res://materials/characters/rat_grunt_skin.tres"
+}
+},
 "nodes": {
 "PATH:rat_grunt/Skeleton3D": {
 "retarget/bone_map": Resource("res://animations/bonemaps/mpfb_game_engine.tres"),

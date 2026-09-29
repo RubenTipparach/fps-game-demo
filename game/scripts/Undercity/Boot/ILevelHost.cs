@@ -76,4 +76,10 @@ public interface ILevelHost
 
     /// <summary><paramref name="victim"/> was killed by a shot from <paramref name="from"/>: their own who see it may fight.</summary>
     void Killed(NpcActor victim, Vector3 from);
+
+    /// <summary>A conversation with <paramref name="speaker"/> opened: the rig lights them and the view frames them.</summary>
+    void ConversationOpened(NpcActor speaker);
+
+    /// <summary>The conversation with <paramref name="speaker"/> closed: the rig fades and the view returns.</summary>
+    void ConversationClosed(NpcActor speaker);
 }

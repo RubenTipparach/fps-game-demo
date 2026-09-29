@@ -125,6 +125,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         LoadModel(ModelId(data));
         var weapon = _def?.Weapon is { } wid ? data.Weapons.Find(wid) : null;
         _held = Hold(weapon);
+        OnCharactersLayer(data.CharacterLighting.CharactersLayer);
         _combat = new NpcCombat(this, services, CombatRules.DefenceOf(_def, data.Npcs.Civilians, services.State.World.Seed, StableId),
             weapon, GetNodeOrNull<NavigationAgent3D>("Nav"), _held);
         ParsePatrol(Entity.Meta(this, "patrol"), Entity.Meta(this, "patrol_start", "0"));
@@ -235,6 +236,40 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
             .Aggregate(default(Aabb?), (a, b) => a is { } x ? x.Merge(b) : b);
         _heldMuzzle = box is { } bb ? new Vector3(0, bb.End.Y - 0.03f, bb.Position.Z) : new Vector3(0, 0.1f, -0.2f);
         return held;
+    }
+
+    /// <summary>
+    /// Puts the body's meshes (and what they hold) on the characters' visual layer as well as the
+    /// world's, so the wrist light and the conversation rig reach them and nothing else
+    /// (openspec/changes/character-lighting, design section 2).
+    /// </summary>
+    private void OnCharactersLayer(int layer)
+    {
+        if (GetNodeOrNull("Model") is not { } model)
+        {
+            return;
+        }
+        var bits = 1u | (1u << (layer - 1));
+        foreach (var g in model.FindChildren("*", "GeometryInstance3D", true, false).OfType<GeometryInstance3D>())
+        {
+            g.Layers = bits;
+        }
+    }
+
+    /// <summary>
+    /// The middle of their head, world space: 0.1 m up the head bone (the ragdoll's 0.2 m head),
+    /// or a standing head's height when the body has no skeleton. The conversation rig lights
+    /// around it and the face-box instrument measures it.
+    /// </summary>
+    public Vector3 HeadCentre
+    {
+        get
+        {
+            var sk = GetNodeOrNull("Model")?.FindChild("GeneralSkeleton", true, false) as Skeleton3D;
+            var head = sk?.FindBone("Head") ?? -1;
+            return head < 0 ? GlobalPosition + Vector3.Up * 1.62f
+                : sk!.GlobalTransform * sk.GetBoneGlobalPose(head) * new Vector3(0, 0.1f, 0);
+        }
     }
 
     /// <summary>Where their shots come from: the held weapon's muzzle, or chest height in front of them.</summary>
@@ -528,6 +563,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         var role = _def?.Role ?? "resident";
         _talking = true;
         _s.Screens.OpenDialog(session, new SpeakerView(DisplayName, role, judgement, Intelligence));
+        _s.Level.ConversationOpened(this);
         WaitForClose(session);
     }
 
@@ -538,5 +574,9 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         }
         _talking = false;
+        if (IsInstanceValid(this))
+        {
+            _s!.Level.ConversationClosed(this);
+        }
     }
 }

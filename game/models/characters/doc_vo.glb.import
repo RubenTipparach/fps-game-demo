@@ -40,6 +40,18 @@ materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={
+"materials": {
+"doc_vo_outfit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/doc_vo_outfit.tres",
+"use_external/path": "res://materials/characters/doc_vo_outfit.tres"
+},
+"doc_vo_skin": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/characters/doc_vo_skin.tres",
+"use_external/path": "res://materials/characters/doc_vo_skin.tres"
+}
+},
 "nodes": {
 "PATH:doc_vo/Skeleton3D": {
 "retarget/bone_map": Resource("res://animations/bonemaps/mpfb_game_engine.tres"),

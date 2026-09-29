@@ -180,6 +180,11 @@ TABLE_SCHEMA = Obj({
                  "legwear_below_frac": Num(0.3, 0.0, 0.6), "max_ratio": Num(2.0, 1.0, 20.0),
                  "mask_dilate_px": Int(3, 0, 32)}),
     "skin_tone_strength": Num(1.0, 0.0, 1.0),
+    # openspec/changes/character-lighting, design section 1 (and its found-in-building notes)
+    "skin_normal": Obj({"blur_px": Num(6.0, 0.5, 64.0), "strength": Num(16.0, 0.0, 200.0)}),
+    "skin_roughness": Obj({"t_zone": Num(0.42, 0.0, 1.0), "cheeks": Num(0.55, 0.0, 1.0), "body": Num(0.62, 0.0, 1.0),
+                           "blur_px": Num(6.0, 0.0, 64.0)}),
+    "outfit_roughness": Obj({"cloth": Num(0.7, 0.0, 1.0), "eyes": Num(0.08, 0.0, 1.0)}),
     "texture_fixes": Map(Obj({"paint_out_uv": List(Vec(4, lo=0.0, hi=1.0), min_len=1)}), {}),
     "gear_style": Obj({"noise": Num(0.06, 0.0, 0.5), "noise_cells": Int(6, 1, 64), "swatches_per_row": Int(8, 1, 32),
                        "sample_m": Num(0.01, 0.002, 0.1)}),

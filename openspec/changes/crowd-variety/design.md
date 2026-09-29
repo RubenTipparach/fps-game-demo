@@ -60,10 +60,15 @@ a pure function of its inputs, with no hash order, so a save and a replay agree.
 | Aspect | Range | Applied by |
 |---|---|---|
 | Body | the pool for the role, honouring the lookalike rule below | the model loaded |
-| Outfit palette | 8 palettes of hue shift and saturation, named in `crowd.json` | instance uniforms on `character_outfit.gdshader` |
+| Outfit palette | 8 palettes of hue shift and saturation, named in `crowd.json` | instance uniforms on `character_outfit.gdshader` (1) |
 | Accessories | 0-2 from the role's set, each tagged with its bone | `BoneAttachment3D` scenes |
 | Height scale | 0.95-1.05 | the model root |
 | Idle | from the role's set | the AnimationPlayer |
+
+(1) character-lighting already gives every body a generated `<id>_outfit.tres`
+(StandardMaterial3D, `gen_character_materials.py`), whose roughness is the outfit normal
+map's alpha: 0.08 on the eyes, which share the outfit's atlas, and 0.7 on cloth. The shader
+that replaces it keeps reading that alpha, or the eyes lose their catchlight.
 
 **Accessories** (Blender, `build_npc_props.py`, each within 800 triangles):
 

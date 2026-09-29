@@ -19,7 +19,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tscn import Scene, hexcolor, path, v2, v3  # noqa: E402
+from tscn import Raw, Scene, hexcolor, path, v2, v3  # noqa: E402
 
 GAME = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "game")
 PROPS = "res://models/undercity/props/"
@@ -42,7 +42,8 @@ def player():
     s.node("CollisionShape3D", "CollisionShape3D", ".", position=v3(0, 0.9, 0),
            shape=s.sub_res("CylinderShape3D", height=1.8, radius=0.4))
     s.node("CameraRig", "Node3D", ".")
-    s.node("Camera3D", "Camera3D", "CameraRig", current=True, fov=67.0, near=0.02, far=400.0)
+    # far 1,500 m: the hub's skyline stands up to 1.2 km out (openspec/changes/hub-skyline, section 3)
+    s.node("Camera3D", "Camera3D", "CameraRig", current=True, fov=67.0, near=0.02, far=1500.0)
     wm = s.node("WeaponManager", "Node3D", "CameraRig/Camera3D",
                 script=s.ext_res("Script", "res://scripts/Player/WeaponManager.cs"))
     s.node("ViewmodelRoot", "Node3D", wm)
@@ -58,6 +59,9 @@ def player():
     s.node("Water", "Node", ".", script=script(s, "Player/PlayerWater.cs"))
     # draws the belt's firearm into the WeaponManager and feeds it (openspec/changes/archive/2026-09-28-hub-combat)
     s.node("Weapons", "Node", ".", script=script(s, "Player/WeaponAdapter.cs"))
+    # the wrist-deck glow, characters only; WristLight.cs sets it from data/character_lighting.json
+    s.node("Wrist", "OmniLight3D", "CameraRig/Camera3D", light_bake_mode=0, shadow_enabled=False,
+           script=script(s, "Lighting/WristLight.cs"))
     s.save(out("player.tscn"))
 
 
@@ -233,6 +237,44 @@ def blood():
     s.save(out("blood.tscn"))
 
 
+def conversation_rig():
+    """The conversation rig (openspec/changes/character-lighting, design section 4): a spot key and
+    two omni gels. ConversationRig.cs places them around the speaker's head and sets their colour,
+    energy and reach from data/character_lighting.json; here they are dark and unbaked."""
+    s = Scene("ConversationRig", "Node3D")
+    s.nodes[0][3].update(script=script(s, "Lighting/ConversationRig.cs"))
+    s.node("Key", "SpotLight3D", ".", light_energy=0.0, light_bake_mode=0, shadow_enabled=True)
+    s.node("Rim", "OmniLight3D", ".", light_energy=0.0, light_bake_mode=0)
+    s.node("Accent", "OmniLight3D", ".", light_energy=0.0, light_bake_mode=0)
+    s.save(out("conversation_rig.tscn"))
+
+
+# A searchlight's cone (openspec/changes/hub-skyline, design section 3a): 900 m long, 3 degrees
+# wide, off a lamp 0.8 m across. The shader stands it on its base and sweeps it, so the node's box
+# is set to hold every place the sweep can reach (up to 35 degrees from vertical).
+BEAM_LENGTH_M = 900.0
+BEAM_WIDTH_DEG = 3.0
+BEAM_LAMP_RADIUS_M = 0.8
+BEAM_MAX_TILT_DEG = 35.0
+
+
+def searchlight():
+    """One searchlight beam: an open cone drawn by shaders/searchlight.gdshader, which casts no
+    light and no shadow. The level sets each beam's period, phase and tilt from the layout
+    (tools/levels/skyline.py searchlights) as instance shader parameters."""
+    top = BEAM_LAMP_RADIUS_M + BEAM_LENGTH_M * math.tan(math.radians(BEAM_WIDTH_DEG / 2))
+    reach = BEAM_LENGTH_M * math.sin(math.radians(BEAM_MAX_TILT_DEG)) + top
+    s = Scene("Searchlight", "MeshInstance3D")
+    beam = s.sub_res("ShaderMaterial", shader=s.ext_res("Shader", "res://shaders/searchlight.gdshader"),
+                      **{"shader_parameter/length_m": BEAM_LENGTH_M})
+    cone = s.sub_res("CylinderMesh", material=beam, top_radius=top, bottom_radius=BEAM_LAMP_RADIUS_M,
+                     height=BEAM_LENGTH_M, radial_segments=24, rings=1, cap_top=False, cap_bottom=False)
+    s.nodes[0][3].update(mesh=cone, cast_shadow=0, gi_mode=0,
+                         custom_aabb=Raw(f"AABB({-reach:.1f}, -1, {-reach:.1f}, {2 * reach:.1f}, "
+                                         f"{BEAM_LENGTH_M + 2:.1f}, {2 * reach:.1f})"))
+    s.save(out("searchlight.tscn"))
+
+
 def main():
     player()
     npc()
@@ -249,6 +291,8 @@ def main():
     splash()
     kestrel()
     blood()
+    conversation_rig()
+    searchlight()
     print("wrote", len(os.listdir(os.path.join(GAME, "scenes", "undercity"))), "scenes to game/scenes/undercity")
 
 

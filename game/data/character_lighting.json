@@ -6,6 +6,8 @@
 // positive toward the key side), "elevation_deg" above the head, "distance_m" from it; "size_m"
 // large is soft. "gel" and "gel_accent" are the district's pair from "gels". The energies are
 // starting values: they are tuned on the captures to meet "targets" (tools/measure/face_luma.py).
+// "framing" is mockup D9's: the field of view narrows to "fov_deg" over "time_s", and the pitch
+// recentres so the face sits "face_from_top" of the way down the screen.
 {
   "characters_layer": 2,
   "colors": {"deck_glow": "#9fe8ff", "key_warm": "#ffe2c4", "magenta": "#ff3fa8", "cyan": "#35e0ff",
@@ -15,11 +17,12 @@
     "ramp_s": 0.3, "key_side": "motivated", "motivation_radius_m": 12.0,
     "key":    {"color": "key_warm", "energy": 2.0, "azimuth_deg": 40, "elevation_deg": 30, "distance_m": 1.4, "size_m": 0.25,
                "spot_angle_deg": 35, "shadow": true},
-    "rim":    {"color": "gel", "energy": 1.6, "azimuth_deg": 140, "elevation_deg": 15, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
-    "accent": {"color": "gel_accent", "energy": 0.7, "azimuth_deg": -150, "elevation_deg": 5, "distance_m": 1.3, "size_m": 0.05,
+    "rim":    {"color": "gel", "energy": 1.6, "azimuth_deg": -140, "elevation_deg": 15, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
+    "accent": {"color": "gel_accent", "energy": 0.7, "azimuth_deg": 150, "elevation_deg": 5, "distance_m": 1.3, "size_m": 0.05,
                "shadow": false}
   },
   "gels": {"lantern_row": ["magenta", "cyan"], "sump_market": ["cyan", "magenta"], "tin_stacks": ["amber", "blue"],
            "kiln": ["ember", "blue"], "drydock": ["sodium", "violet"], "spire_foundations": ["violet", "amber"]},
-  "targets": {"face_mean_luma": [95, 150], "key_to_shadow": [2.0, 4.0], "rim_over_background_luma": 20, "world_luma_change_pct": 2.0}
+  "targets": {"face_mean_luma": [95, 150], "key_to_shadow": [2.0, 4.0], "rim_over_background_luma": 20, "world_luma_change_pct": 2.0},
+  "framing": {"fov_deg": 48, "time_s": 0.4, "face_from_top": 0.34}
 }

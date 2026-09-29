@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "character_outfit"
+roughness = 1.0
+roughness_texture_channel = 3
+metallic_specular = 0.5
+normal_enabled = true
+normal_scale = 1.0

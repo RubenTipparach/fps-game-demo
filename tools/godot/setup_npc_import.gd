@@ -19,6 +19,7 @@ const LIBRARIES := {
 	"res://animations/undercity_clips.glb": "ual",
 }
 const MPFB_MAP := "res://animations/bonemaps/mpfb_game_engine.tres"
+const SKIN_DIR := "res://materials/characters"
 const UAL_MAP := "res://animations/bonemaps/ual_rigify_def.tres"
 const SIDES := {"Left": ["_l", ".L"], "Right": ["_r", ".R"]}
 
@@ -133,7 +134,19 @@ func patch(glb: String, bonemap: BoneMap, as_library: bool) -> void:
 		"retarget/rest_fixer/fix_silhouette/threshold": 15.0,
 		"retarget/remove_tracks/unmapped_bones": true,
 	}
-	cf.set_value("params", "_subresources", {"nodes": {"PATH:" + skel_path: opts}})
+	var subs := {"nodes": {"PATH:" + skel_path: opts}}
+	# A body's skin and outfit take their generated materials (tools/godot/gen_character_materials.py):
+	# openspec/changes/character-lighting, design sections 1 and 8.
+	if not as_library:
+		var id := glb.get_file().get_basename()
+		var mats := {}
+		for part in ["skin", "outfit"]:
+			var path := SKIN_DIR.path_join("%s_%s.tres" % [id, part])
+			if FileAccess.file_exists(path):
+				mats["%s_%s" % [id, part]] = {"use_external/enabled": true, "use_external/path": path}
+		if not mats.is_empty():
+			subs["materials"] = mats
+	cf.set_value("params", "_subresources", subs)
 	if as_library:
 		cf.set_value("remap", "importer", "animation_library")
 		cf.set_value("remap", "type", "AnimationLibrary")
@@ -161,4 +174,24 @@ func _init() -> void:
 			patch(glb, ual, true)
 		else:
 			print("[setup_npc_import] %s: not built yet, skipped" % glb)
+	for f in bodies:
+		if f.ends_with("_normal.webp"):
+			keep_alpha(BODIES_DIR.path_join(f))
 	quit(1 if _failed else 0)
+
+
+## A body's normal maps carry roughness in their alpha (openspec/changes/character-lighting,
+## design sections 1 and 8). They stay lossless, and the editor's "detect 3D" is off: it would
+## switch them to VRAM compression, whose normal-map format drops the alpha.
+func keep_alpha(texture: String) -> void:
+	var ip := texture + ".import"
+	var cf := ConfigFile.new()
+	if cf.load(ip) != OK:
+		print("[setup_npc_import] %s: not imported yet, skipped" % texture)
+		return
+	cf.set_value("params", "compress/mode", 0)
+	cf.set_value("params", "detect_3d/compress_to", 0)
+	if cf.save(ip) != OK:
+		fail("can't write %s" % ip)
+		return
+	print("[setup_npc_import] %s: lossless, alpha kept" % texture)

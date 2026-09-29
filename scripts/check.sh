@@ -22,6 +22,9 @@ step "Level plans: z-fighting, carved rooms, ways out of the water, people clear
 python3 tools/levels/city_plan.py hub --stats >/dev/null
 python3 -m unittest discover -s tools/levels -p 'test_*.py'
 
+step "Generated materials are current (character-lighting)"
+python3 -m unittest discover -s tools/godot -p 'test_*.py'
+
 step "Generated level data is current"
 python3 tools/levels/export_level_data.py >/dev/null
 git diff --exit-code -- game/data/levels/ || { echo "game/data/levels changed: commit the regenerated files"; exit 1; }
@@ -51,6 +54,10 @@ if [[ $FAST == 0 ]]; then
   step "Combat: the Kestrel, damage by the rule, fleeing and cowering, MerSec, death (combat_test.tscn)"
   (cd game && flock /tmp/undercity-godot.lock timeout 900 godot --headless --path . \
       res://scenes/undercity/tests/combat_test.tscn 2>&1 | grep -E "FAIL|combat_test\] [0-9]")
+
+  step "Character lighting: the characters layer, the wrist light, the conversation rig (lighting_test.tscn)"
+  (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
+      res://scenes/undercity/tests/lighting_test.tscn 2>&1 | grep -E "FAIL|lighting_test\] [0-9]")
 
   step "Design maps and page"
   python3 tools/levels/render_map.py

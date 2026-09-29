@@ -26,7 +26,11 @@ def export(level_id):
     layout = importlib.import_module(f"layouts.{level_id}").MAP
     title = layout["title"].title()
     out = {"id": level_id, "title": title, "spawns": [],
-           **{v: {} for v in KINDS.values()}, "npcs": {}, "water": []}
+           **{v: {} for v in KINDS.values()}, "npcs": {}, "water": [], "districts": []}
+    # The layout's districts, for the conversation rig's gels (openspec/changes/character-lighting).
+    for d in layout.get("districts", []):
+        out["districts"].append({"id": d["name"].lower().replace(" ", "_"),
+                                 "poly": [[float(x), float(y)] for x, y in d["poly"]]})
     # The layout's water bodies, for the core's water rule (openspec/changes/water-and-swimming).
     for w in layout.get("water", []):
         if "id" not in w:

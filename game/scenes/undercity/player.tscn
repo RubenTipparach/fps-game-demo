@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/Undercity/Player/Interactor.cs" id="7_Interactor"]
 [ext_resource type="Script" path="res://scripts/Undercity/Player/PlayerWater.cs" id="8_PlayerWater"]
 [ext_resource type="Script" path="res://scripts/Undercity/Player/WeaponAdapter.cs" id="9_WeaponAdapte"]
+[ext_resource type="Script" path="res://scripts/Undercity/Lighting/WristLight.cs" id="10_WristLight"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2"]
 height = 1.8
@@ -30,7 +31,7 @@ shape = SubResource("CylinderShape3D_2")
 current = true
 fov = 67.0
 near = 0.02
-far = 400.0
+far = 1500.0
 
 [node name="WeaponManager" type="Node3D" parent="CameraRig/Camera3D"]
 script = ExtResource("3_WeaponManage")
@@ -64,3 +65,8 @@ script = ExtResource("8_PlayerWater")
 
 [node name="Weapons" type="Node" parent="."]
 script = ExtResource("9_WeaponAdapte")
+
+[node name="Wrist" type="OmniLight3D" parent="CameraRig/Camera3D"]
+light_bake_mode = 0
+shadow_enabled = false
+script = ExtResource("10_WristLight")

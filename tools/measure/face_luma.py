@@ -5,8 +5,9 @@ design section 5): the four numbers the targets are set on.
     python3 tools/measure/face_luma.py shot.png [--off shot_rig_off.png]
 
 It reads the shot and the box the AutoTest `face_box` step wrote beside it (shot.png.face.json:
-{"who": "hub:tank", "box": [x0, y0, x1, y1], "key_side": "left" | "right"}, pixels, the head
-bone's box projected to the screen) and prints:
+{"who": "hub:tank", "box": [x0, y0, x1, y1], "key_side": "left" | "right" | "none"}, pixels,
+the head bone's box projected to the screen; "none" before the conversation rig exists, when the
+brighter half counts as the lit one) and prints:
 
   mean       the face box's mean luma
   lit/shadow the key side's half over the other half
@@ -59,13 +60,15 @@ def measure(shot, face, off=None):
     box = y[y0:y1, x0:x1]
     mid = (x1 - x0) // 2
     left, right = box[:, :mid].mean(), box[:, mid:].mean()
-    lit, shadow = (left, right) if face["key_side"] == "left" else (right, left)
+    # Before the conversation rig exists there is no key side: the brighter half is the lit one.
+    key = face["key_side"] if face["key_side"] in ("left", "right") else ("left" if left >= right else "right")
+    lit, shadow = (left, right) if key == "left" else (right, left)
     out = {"who": face.get("who", "?"), "mean": box.mean(), "lit_over_shadow": lit / max(shadow, 1.0)}
 
     # The rim: outside the far edge, over the upper two thirds of the box where the hair and ears are.
     s = max(3, int(round((x1 - x0) * RIM_STRIP)))
     top, bottom = y0, y0 + (y1 - y0) * 2 // 3
-    if face["key_side"] == "left":
+    if key == "left":
         rim, bg = y[top:bottom, x1:x1 + s], y[top:bottom, x1 + 2 * s:x1 + 3 * s]
     else:
         rim, bg = y[top:bottom, max(0, x0 - s):x0], y[top:bottom, max(0, x0 - 3 * s):max(0, x0 - 2 * s)]

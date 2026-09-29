@@ -27,24 +27,12 @@ public sealed class WaterBody
     public required IReadOnlyList<IReadOnlyList<double>> Poly { get; init; }
 
     /// <summary>True when the point (x, y) in layout metres lies inside the outline.</summary>
-    public bool Contains(double x, double y)
-    {
-        var inside = false;
-        for (int i = 0, j = Poly.Count - 1; i < Poly.Count; j = i++)
-        {
-            double xi = Poly[i][0], yi = Poly[i][1], xj = Poly[j][0], yj = Poly[j][1];
-            if ((yi > y) != (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi)
-            {
-                inside = !inside;
-            }
-        }
-        return inside;
-    }
+    public bool Contains(double x, double y) => LayoutPolygon.Contains(Poly, x, y);
 
     /// <summary>Adds a message per problem: fewer than 3 points, a non-finite value, a bed above the surface.</summary>
     public void Validate(string level, ICollection<string> errors)
     {
-        if (Poly.Count < 3 || Poly.Any(p => p.Count != 2 || !double.IsFinite(p[0]) || !double.IsFinite(p[1])))
+        if (!LayoutPolygon.IsValid(Poly))
         {
             errors.Add($"levels.{level}.water.{Id}: poly needs 3 or more [x, y] points of finite metres");
         }
