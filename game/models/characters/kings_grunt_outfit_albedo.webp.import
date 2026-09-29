@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bw0mxjj35sybm"
-path="res://.godot/imported/kings_grunt_outfit_albedo.webp-4780c529da4ca73c9abbe63264d005e0.ctex"
+path.s3tc="res://.godot/imported/kings_grunt_outfit_albedo.webp-4780c529da4ca73c9abbe63264d005e0.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "e83402610042567b19b2033d2f6946d7"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://models/characters/kings_grunt_outfit_albedo.webp"
-dest_files=["res://.godot/imported/kings_grunt_outfit_albedo.webp-4780c529da4ca73c9abbe63264d005e0.ctex"]
+dest_files=["res://.godot/imported/kings_grunt_outfit_albedo.webp-4780c529da4ca73c9abbe63264d005e0.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

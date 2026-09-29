@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf62ob2rovfqv"
-path="res://.godot/imported/civ_l_skin_albedo.webp-5b42189123fe13f5a632ca6ec82e5e7f.ctex"
+path.s3tc="res://.godot/imported/civ_l_skin_albedo.webp-5b42189123fe13f5a632ca6ec82e5e7f.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "b1c066aa2d5a84b981655123e54e3d2d"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://models/characters/civ_l_skin_albedo.webp"
-dest_files=["res://.godot/imported/civ_l_skin_albedo.webp-5b42189123fe13f5a632ca6ec82e5e7f.ctex"]
+dest_files=["res://.godot/imported/civ_l_skin_albedo.webp-5b42189123fe13f5a632ca6ec82e5e7f.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
