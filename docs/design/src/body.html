@@ -51,6 +51,8 @@
   <a href="#hubcombat"><b>F18</b>The Kestrel</a>
   <a href="#doorways"><b>F19</b>Doorways</a>
   <a href="#puddles"><b>F20</b>Puddles</a>
+  <a href="#vehicles"><b>F21</b>Vehicles</a>
+  <a href="#ads"><b>F22</b>Street ads</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -129,6 +131,8 @@
         <tr><td><span class="chip proposed">In progress</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, and a clear approach to every entrance. Decided (K1 to K3): no prompt on doors that never open, automatic sliding doors on the public entrances, a room in each named shell. The plan is built and checked (46 framed doors, 244 dressing doors, 15 lots cut back); the sliding doors, the rebake and the captures are next.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs, and become decals placed where water gathers: gutters, drip edges, gullies. Asked: L1 to L3.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Vehicles (F21): the hub's 14 box cars become generated sedans, taxis, vans and trucks from the prop kit, placed by the plan. Decided (M1 to M3): our own generator, parked only.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
       </tbody></table></div>
     </div>
   </div>
@@ -1337,6 +1341,56 @@
         <tr><td>Never</td><td colspan="2">under a roof, on a kerb top, a stair, a bridge or the rails, within 0.3 m of a wall or a prop, or over another puddle</td></tr>
       </tbody></table></div>
     <p class="note">Decals darken the ground and make it glossy through their albedo and ORM maps, fade out beyond 35-45 m, and are no surface, so nothing can z-fight. They can't run a shader, so rain ripples would be a later change to the ground shaders (L3).</p>
+  </div>
+</section>
+
+<!-- ========================================================= F21 -->
+<section id="vehicles">
+  <div class="sh"><span class="key">F21</span><h2>Vehicles</h2><span class="spec">openspec/changes/street-vehicles</span></div>
+  <p class="intro">Owner, 2026-09-29: better car modelling. Today every parked car is a box with a smaller box on top and four wheels, about 170 triangles, painted in wall materials. The proposal builds sedans, taxis, vans and trucks in the prop kit from a table, and the plan places them on the same 14 spots.</p>
+  <div class="controls"><span class="chip proposed">Proposed · decided (M1 to M3)</span><span class="chip">Measured on the committed plan, seed 7</span></div>
+  <div class="sub">
+    <h3>The models</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Type</th><th>Variants</th><th>Spot</th><th class="n">Budget</th></tr></thead>
+      <tbody>
+        <tr><td>Sedan</td><td>maroon, teal, grey, black</td><td>4.6 x 2.0 m</td><td class="n">2,500 triangles</td></tr>
+        <tr><td>Taxi</td><td>cream with a chequer band, a lit roof sign</td><td>4.6 x 2.0 m</td><td class="n">2,500</td></tr>
+        <tr><td>Compact van</td><td>white, olive, rust</td><td>4.6 x 2.0 m</td><td class="n">2,500</td></tr>
+        <tr><td>Box truck</td><td>two invented cargo firms</td><td>8.5 x 2.8 m</td><td class="n">3,500</td></tr>
+      </tbody></table></div>
+    <p class="note">Built with the prop kit's own pieces: a side profile extruded into nose, sill and tail with the wheel arches between, a raked glass greenhouse with pillars, bumpers, lenses and plates. The first sedan is rendered beside a Kenney and a Quaternius sedan (both CC0) before the rest are built, so the look can be overruled on sight. Parked only (M3); the Yard's wrecks come later from these vehicles (M2).</p>
+  </div>
+</section>
+
+<!-- ========================================================= F22 -->
+<section id="ads">
+  <div class="sh"><span class="key">F22</span><h2>Street ads</h2><span class="spec">openspec/changes/street-ads</span></div>
+  <p class="intro">Owner, 2026-09-29: "generate more advertisement signs on the streets", with Hong Kong's night streets as the reference: signs hung out over the pavement at every height, stacked up the facades, a Latin and a Chinese-script name, a picture beside the words. Today the hub has 27 street signs on 1,641 m of street frontage: one per 61 m.</p>
+  <div class="controls"><span class="chip proposed">Proposed · decided (M4 to M7)</span><span class="chip">Measured on the committed plan, seed 7</span></div>
+  <div class="sub">
+    <h3>Seven kinds, one builder</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Kind</th><th>Where</th><th>Size</th></tr></thead>
+      <tbody>
+        <tr><td>Name (today)</td><td>over a named building's door</td><td>text 0.4-1.0 m high</td></tr>
+        <tr><td>Blade (today)</td><td>a vertical sign 1.3 m out from a street front</td><td>1.6-6 m tall</td></tr>
+        <tr><td>Lightbox</td><td>on a steel arm over the pavement, from 4.0 m up, stacked every 1.8 m</td><td>1.2-3.0 x 0.6-1.4 m</td></tr>
+        <tr><td>Panel</td><td>flat on the side of a building</td><td>up to 6 x 8 m</td></tr>
+        <tr><td>Billboard</td><td>on a roof, on a frame, facing the street</td><td>4-12 x 2-5 m</td></tr>
+        <tr><td>Banner, poster</td><td>stall fronts; clusters on blank walls</td><td>0.6 x 0.9 m posters</td></tr>
+        <tr><td>Holo</td><td>the market's main corners, scrolling</td><td>2-4 m wide</td></tr>
+      </tbody></table></div>
+  </div>
+  <div class="sub">
+    <h3>How many</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Streets</th><th class="n">Frontage</th><th>Street-level signs</th><th>Rooftop billboards</th></tr></thead>
+      <tbody>
+        <tr><td>Market: Lantern Row, Sump Market</td><td class="n">679 m</td><td>one per 5 m (about 136)</td><td>one roof in two facing a street (15)</td></tr>
+        <tr><td>The rest: Tin Stacks, Kiln, Drydock</td><td class="n">962 m</td><td>one per 15 m (about 64)</td><td>one roof in six (14)</td></tr>
+      </tbody></table></div>
+    <p class="note">About 230 signs from an invented-brand catalogue: food, casinos, shops and lingerie (M4) among pawn, mahjong, karaoke, saunas and noodles. One in eight names a real hub place, vendor or faction (M6). About one lit sign in three flickers, chases or scrolls (M7). Fonts are pinned under the Open Font License and used only at build time.</p>
   </div>
 </section>
 
