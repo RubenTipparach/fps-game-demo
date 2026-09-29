@@ -1,4 +1,4 @@
-// How characters are lit (openspec/changes/character-lighting, design sections 2 to 5 and 7).
+// How characters are lit (openspec/changes/archive/2026-09-29-character-lighting, design sections 2 to 5 and 7).
 // "characters_layer" is the visual layer characters render on besides the world's; the new
 // lights reach only it. Colours are roles, named once here and used by name below. The wrist
 // light sits on the camera rig at "offset_m" (right, up, back). The conversation rig's lights are

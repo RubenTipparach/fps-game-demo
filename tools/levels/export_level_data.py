@@ -48,7 +48,7 @@ def crowd_place(e, layout, covers):
 
 def shelters(level_id, plan):
     """Every roof the plan registered (Plan.shelter), for the core's wetness rule
-    (openspec/changes/character-lighting, design section 9): its label, its footprint in layout
+    (openspec/changes/archive/2026-09-29-character-lighting, design section 9): its label, its footprint in layout
     metres and the height of its underside. The core's polygon rule has no holes, so a footprint
     with one is refused rather than written as if it were solid."""
     out = []
@@ -66,7 +66,7 @@ def export(level_id):
     title = layout["title"].title()
     out = {"id": level_id, "title": title, "spawns": [],
            **{v: {} for v in KINDS.values()}, "npcs": {}, "crowd": {}, "water": [], "districts": []}
-    # The layout's districts, for the conversation rig's gels (openspec/changes/character-lighting).
+    # The layout's districts, for the conversation rig's gels (openspec/changes/archive/2026-09-29-character-lighting).
     for d in layout.get("districts", []):
         out["districts"].append({"id": d["name"].lower().replace(" ", "_"),
                                  "poly": [[float(x), float(y)] for x, y in d["poly"]]})

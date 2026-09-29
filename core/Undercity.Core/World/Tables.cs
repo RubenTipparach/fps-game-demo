@@ -306,7 +306,7 @@ public sealed class LevelDef : IValidated
     public IReadOnlyList<DistrictDef> Districts { get; init; } = Array.Empty<DistrictDef>();
 
     /// <summary>
-    /// The level's roofs, from its plan (openspec/changes/character-lighting, design section 9);
+    /// The level's roofs, from its plan (openspec/changes/archive/2026-09-29-character-lighting, design section 9);
     /// none for a level without rain.
     /// </summary>
     public IReadOnlyList<ShelterDef> Shelters { get; init; } = Array.Empty<ShelterDef>();

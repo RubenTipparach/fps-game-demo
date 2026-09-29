@@ -238,7 +238,7 @@ def blood():
 
 
 def conversation_rig():
-    """The conversation rig (openspec/changes/character-lighting, design section 4): a spot key and
+    """The conversation rig (openspec/changes/archive/2026-09-29-character-lighting, design section 4): a spot key and
     two omni gels. ConversationRig.cs places them around the speaker's head and sets their colour,
     energy and reach from data/character_lighting.json; here they are dark and unbaked."""
     s = Scene("ConversationRig", "Node3D")

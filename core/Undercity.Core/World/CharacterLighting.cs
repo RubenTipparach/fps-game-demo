@@ -1,5 +1,5 @@
 // How characters are lit: the wrist-deck glow on the runner, and the conversation rig of a key
-// and two gels around the speaker's head (openspec/changes/character-lighting, design sections 2
+// and two gels around the speaker's head (openspec/changes/archive/2026-09-29-character-lighting, design sections 2
 // to 5 and 7), with the targets the captures are measured against.
 //
 // It lives in the core with the other tables because it is tuning (CLAUDE.md 5.5): committed,

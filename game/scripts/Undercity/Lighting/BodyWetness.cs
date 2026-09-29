@@ -1,4 +1,4 @@
-// How wet a person's body is, carried to its shaders (openspec/changes/character-lighting,
+// How wet a person's body is, carried to its shaders (openspec/changes/archive/2026-09-29-character-lighting,
 // design section 9; the owner, survey J1: "he's not wet in doors"). Every update it asks the
 // core whether a roof is over the person's feet, steps the wetness by the core's rule and sets
 // the "wetness" instance uniform on every mesh of the body: the skin and outfit shaders read it,

@@ -39,5 +39,7 @@
 
 ## 4. Records
 
-- [ ] 4.1 Before and after stills of the five conversations with their measured numbers, the
+- [x] 4.1 Before and after stills of the five conversations with their measured numbers, the
   highlight (brightest tenth) among them; a validation record; the design page; archive.
+  `docs/screenshots/character_lighting/`, `docs/validation/2026-09-29-character-lighting.md`:
+  Tank's highlight 148 to 101, Dace in the rain 140 to 139.

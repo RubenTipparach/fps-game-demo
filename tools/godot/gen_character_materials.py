@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the NPC skin and outfit materials (openspec/changes/character-lighting, design
+"""Generate the NPC skin and outfit materials (openspec/changes/archive/2026-09-29-character-lighting, design
 sections 1 and 8).
 
     python3 tools/godot/gen_character_materials.py

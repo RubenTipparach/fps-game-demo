@@ -1,5 +1,5 @@
 // The characters' shader globals: dry skin's roughness add, and soaked cloth's roughness and
-// brightness (openspec/changes/character-lighting, design section 9). The skin and outfit shaders
+// brightness (openspec/changes/archive/2026-09-29-character-lighting, design section 9). The skin and outfit shaders
 // read them; project.godot declares them with neutral values, and this sets them from
 // data/character_lighting.json "wetness" when a level starts.
 //

@@ -1,4 +1,4 @@
-"""The NPC skin and outfit materials (openspec/changes/character-lighting, "Skin has normals,
+"""The NPC skin and outfit materials (openspec/changes/archive/2026-09-29-character-lighting, "Skin has normals,
 roughness and scattering" and "Characters are dry under a roof and wet in the rain"): the
 committed .tres files are what gen_character_materials.py writes, one skin and one outfit per body
 in npcs.json; the skin's specular gives MakeHuman's F0; every parameter the generator writes is a

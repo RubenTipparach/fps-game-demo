@@ -1,6 +1,6 @@
 // How wet a character is: 0 dry to 1 soaked. It rises in the open, where the hub's rain falls,
 // and falls under a roof, linearly at the rates in data/character_lighting.json "wetness"
-// (openspec/changes/character-lighting, design section 9; the owner, survey J1: "he's not wet in
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 9; the owner, survey J1: "he's not wet in
 // doors").
 //
 // It lives in the core because where the rain reaches and how fast a character dries are rules

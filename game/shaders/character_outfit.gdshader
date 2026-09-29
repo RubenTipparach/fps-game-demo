@@ -1,6 +1,6 @@
 // A body's outfit: its clothes, gear and eyes, which share one atlas and material (tools/blender/
 // build_npcs.py). The outfit normal map's alpha is its roughness: 0.08 on the eyes, 0.7 on cloth
-// (openspec/changes/character-lighting, design section 8). A civilian's palette shifts the
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 8). A civilian's palette shifts the
 // clothes' hue and saturation per instance (openspec/changes/archive/2026-09-29-crowd-variety, design section 2),
 // set by NpcActor from the crowd rule; the eyes are left as they are, found by that same alpha,
 // and the skin and hair are other materials. Wet cloth (owner J1, design section 9) is smoother

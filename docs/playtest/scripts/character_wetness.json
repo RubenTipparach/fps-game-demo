@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_wetness", "god": true,
  "steps": [
-  {"log": "dry indoors, wet in the rain (openspec/changes/character-lighting, design section 9; owner J1): the five conversations and Dace at the checkpoint gate in the rain, rig on, first with the skin as it was (the roughness mask everywhere), then as built; each shot writes its face box and the speaker's wetness for tools/measure/face_luma.py (run with --fixed-fps 30: a wait of 15 frames is 0.5 s, past the rig's ramp and the framing)"},
+  {"log": "dry indoors, wet in the rain (openspec/changes/archive/2026-09-29-character-lighting, design section 9; owner J1): the five conversations and Dace at the checkpoint gate in the rain, rig on, first with the skin as it was (the roughness mask everywhere), then as built; each shot writes its face box and the speaker's wetness for tools/measure/face_luma.py (run with --fixed-fps 30: a wait of 15 frames is 0.5 s, past the rig's ramp and the framing)"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"wait": 20},
   {"rig": true},

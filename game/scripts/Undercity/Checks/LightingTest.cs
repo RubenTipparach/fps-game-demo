@@ -1,5 +1,5 @@
 // The character lighting check (scenes/undercity/tests/lighting_test.tscn): loads the hub and checks
-// what a capture can't pin (openspec/changes/character-lighting, "New lights touch only
+// what a capture can't pin (openspec/changes/archive/2026-09-29-character-lighting, "New lights touch only
 // characters" and "The conversation rig is motivated and coloured by district"): every person's
 // meshes are on the characters layer as well as the world's, the runner's own view isn't, the
 // wrist light and the rig light only that layer, a conversation with Silk in Lantern Row wears

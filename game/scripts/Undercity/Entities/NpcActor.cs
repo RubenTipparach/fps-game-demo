@@ -13,7 +13,7 @@
 // palette, accessories, height and idle are the core's crowd pick (ILevelHost.Crowd,
 // openspec/changes/archive/2026-09-29-crowd-variety), applied here. Its body is wet in the rain and
 // dry under a roof by the core's rule, carried to its meshes by BodyWetness
-// (openspec/changes/character-lighting, design section 9).
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 9).
 
 #nullable enable
 using System;
@@ -274,7 +274,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
     /// <summary>
     /// Puts the body's meshes (and what they hold) on the characters' visual layer as well as the
     /// world's, so the wrist light and the conversation rig reach them and nothing else
-    /// (openspec/changes/character-lighting, design section 2).
+    /// (openspec/changes/archive/2026-09-29-character-lighting, design section 2).
     /// </summary>
     private void OnCharactersLayer(int layer)
     {

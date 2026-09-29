@@ -1,5 +1,5 @@
 // A level's districts (data/levels/<id>.json "districts", exported from the layout): named areas
-// the conversation rig takes its gels from (openspec/changes/character-lighting, design
+// the conversation rig takes its gels from (openspec/changes/archive/2026-09-29-character-lighting, design
 // section 4).
 //
 // It lives in the core with the level's other data: the layout (tools/levels/layouts/<id>.py

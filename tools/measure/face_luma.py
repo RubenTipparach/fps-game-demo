@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measures how a face reads in a conversation shot (openspec/changes/character-lighting,
+"""Measures how a face reads in a conversation shot (openspec/changes/archive/2026-09-29-character-lighting,
 design section 5): the four numbers the targets are set on.
 
     python3 tools/measure/face_luma.py shot.png [--off shot_rig_off.png]

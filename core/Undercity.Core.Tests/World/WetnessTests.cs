@@ -1,4 +1,4 @@
-// Dry indoors, wet in the rain (openspec/changes/character-lighting, design section 9; the owner,
+// Dry indoors, wet in the rain (openspec/changes/archive/2026-09-29-character-lighting, design section 9; the owner,
 // survey J1): the shelter rule on the hub's exported roofs, the wetness step's rates, and what
 // validation refuses. The places are the hub's real ones: named NPCs from
 // tools/levels/layouts/hub_entities.py, civilians from the level data's crowd block, ground

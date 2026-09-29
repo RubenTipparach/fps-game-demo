@@ -1,7 +1,7 @@
 // A level's shelters (data/levels/<id>.json "shelters", exported from the level's plan): every
 // roof the rain can't pass, by its footprint and the height of its underside. A building's
 // footprint, an awning, a kiosk's roof, the Skyway's deck and a walkway are each one
-// (openspec/changes/character-lighting, design section 9).
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 9).
 //
 // It lives in the core because whether a character stands in the rain is a rule the wetness step,
 // its tests and a future save must agree about (CLAUDE.md 5.1, 5.2). The plan

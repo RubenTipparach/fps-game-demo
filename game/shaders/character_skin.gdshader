@@ -1,4 +1,4 @@
-// A body's skin (openspec/changes/character-lighting, design sections 1 and 9). It draws what
+// A body's skin (openspec/changes/archive/2026-09-29-character-lighting, design sections 1 and 9). It draws what
 // the StandardMaterial3D skin drew, one for one: the skin atlas, the normal derived from it
 // (tools/blender/build_npcs.py) with the roughness mask in its alpha (0.42 on the T-zone, 0.55 on
 // the cheeks, 0.62 on the body), specular 0.42 (F0 0.028), and subsurface scattering in skin mode

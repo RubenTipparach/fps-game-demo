@@ -265,7 +265,7 @@ public partial class AutoTest : Node
         }
         if (step.TryGetValue("rig", out var rig))    // character lighting on or off, for the before-and-after checks
             level.ConversationRigOn = rig.AsBool();
-        // Skin as it was before wetness (openspec/changes/character-lighting, design section 9):
+        // Skin as it was before wetness (openspec/changes/archive/2026-09-29-character-lighting, design section 9):
         // with no dry add, every skin is the roughness mask, wet or dry. For before-and-after shots.
         if (step.TryGetValue("skin_before_wetness", out var before))
         {
@@ -351,7 +351,7 @@ public partial class AutoTest : Node
         GD.Print($"[AutoTest] loaded level {index}: {Game.Levels[index].Title}");
     }
 
-    // The instrument for openspec/changes/character-lighting (design section 5): the speaker's head
+    // The instrument for openspec/changes/archive/2026-09-29-character-lighting (design section 5): the speaker's head
     // box projected to the screen, written beside the step's shot for tools/measure/face_luma.py.
     // The box is 0.24 m wide and runs 0.12 m below to 0.14 m above the head's middle
     // (NpcActor.FaceCentre), in the camera's plane.
