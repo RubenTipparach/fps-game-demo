@@ -211,5 +211,68 @@ class DoorsAreFramedShownAndReachable(unittest.TestCase):
             self.assertLessEqual(f["tris"], 180 if f["kind"] == "portal" else 72, f"{bid} door {i}")
 
 
+class PuddlesLieWhereWaterGathers(unittest.TestCase):
+    """openspec/changes/street-puddles: "Puddles lie where water gathers". The hub's puddles pass
+    the check, a puddle forced into the wrong place is refused by name, and placing them moves
+    nothing else in the level."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.city = built_hub()
+
+    def forced(self, g, z=CP.STREET_Z):
+        return {"id": "forced_001", "kind": "gutter", "at": (g.centroid.x, g.centroid.y), "ground_m": z, "g": g}
+
+    def refusal(self, puddle):
+        with self.assertRaises(SystemExit) as caught:
+            self.city.check_puddles(self.city.puddle_list + [puddle])
+        return str(caught.exception)
+
+    def test_the_hub_passes_and_holds_the_amount_the_owner_chose(self):
+        self.city.check_puddles()
+        ground = sum(g.area for _, g, _, _ in self.city.puddle_ground()["ground"].values())
+        share = sum(p["g"].area for p in self.city.puddle_list) / ground
+        self.assertTrue(0.02 <= share <= 0.03, f"survey L2 chose about 2.6 % of the ground; the plan puts {share:.2%}")
+        self.assertEqual({p["kind"] for p in self.city.puddle_list}, {"gully", "gutter", "drip"})
+
+    def test_a_puddle_under_the_skyway_is_refused_naming_it_and_the_deck(self):
+        deck = next(g for label, g, _ in self.city.P.shelters if label == "Skyway deck")
+        road = self.city.puddle_ground()["ground"][CP.STREET_Z][2]
+        spot = deck.intersection(road).buffer(-1.0).representative_point()
+        message = self.refusal(self.forced(CP.ellipse(spot.x, spot.y, 2.0, 0.6, 0.0)))
+        self.assertIn("forced_001 lies under a roof, the Skyway deck", message)
+
+    def test_a_puddle_over_a_kerb_is_refused_naming_it(self):
+        key, line = max(self.city.kerbs(), key=lambda kl: kl[1].length)
+        (x, y), t, _ = self.city.kerb_frame(line, line.length / 2)
+        message = self.refusal(self.forced(CP.ellipse(x, y, 2.0, 0.6, math.atan2(t[1], t[0]))))
+        self.assertIn("forced_001 runs off its road", message, "half of it lies on the kerb's top")
+
+    def test_puddles_keep_apart(self):
+        first = self.city.puddle_list[0]
+        twin = dict(first, id="forced_001")
+        self.assertIn(f"forced_001 is 0.00 m from {first['id']}", self.refusal(twin))
+
+    def test_every_long_kerb_has_a_gully_and_gutter_puddles(self):
+        for key, line in self.city.kerbs():
+            if line.length < 40.0:
+                continue
+            kinds = [p["kind"] for p in self.city.puddle_list if p["g"].distance(line) < 0.2]
+            self.assertGreaterEqual(kinds.count("gully"), 1, f"the kerb from {key}, {line.length:.0f} m")
+            self.assertGreaterEqual(kinds.count("gutter"), 3, f"the kerb from {key}, {line.length:.0f} m")
+
+    def test_placing_puddles_moves_nothing_else(self):
+        m, ents = CP.load("hub")
+        dry = CP.City(m, ents)
+        with mock.patch.object(CP.City, "place_puddles", lambda self: None), \
+                contextlib.redirect_stdout(io.StringIO()):
+            dry.build()
+        wet, dry = self.city.P.to_json(), dry.P.to_json()
+        for s in wet["sectors"]:
+            s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_gully_")]
+        del wet["stats"], dry["stats"]    # counts of what's compared, gullies included
+        self.assertTrue(wet == dry, "puddles draw from their own seeded streams, so nothing else in the plan moves")
+
+
 if __name__ == "__main__":
     unittest.main()

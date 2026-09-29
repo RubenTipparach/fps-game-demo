@@ -41,14 +41,16 @@ doors on the public entrances, and one room in each named shell.
   one at each public entrance, leaves on the inside face.
 - [x] 3.3 `check_sliding_room` in `city_plan.py`: each leaf's open position is clear of walls,
   fixtures and other doors.
-- [ ] 3.4 `door_test.tscn`: the runner walks up to the Anchor's entrance and it opens, walks
+- [x] 3.4 `door_test.tscn`: the runner walks up to the Anchor's entrance and it opens, walks
   away and it closes; a civilian walks through a closed entrance on the navmesh.
 
 ## 4. The built level
 
-- [ ] 4.1 Rebuild the eight sectors, the design map and the page; re-run the z-fighting check.
-- [ ] 4.2 Export the approaches in the level data. `placement_test.tscn` walks the navmesh from
+- [x] 4.1 Rebuild the eight sectors, the design map and the page; re-run the z-fighting check.
+- [x] 4.2 Export the approaches in the level data. `placement_test.tscn` walks the navmesh from
   every exterior door to the spawn.
+  It also checks that every person stands on the navmesh, which found Tank's aisle behind the
+  Anchor's bar cut off (design section 3.11); the bar's short leg ends at x 98.5 now.
 - [ ] 4.3 Rebake the lightmaps and the navmesh.
 - [ ] 4.4 Placement, ragdoll, combat, swim, door and UI tests.
 

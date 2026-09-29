@@ -317,6 +317,12 @@ public sealed class LevelDef : IValidated
     /// </summary>
     public IReadOnlyList<ApproachDef> Approaches { get; init; } = Array.Empty<ApproachDef>();
 
+    /// <summary>
+    /// The level's puddles and their mask, from its plan (openspec/changes/street-puddles); null for
+    /// a level without rain.
+    /// </summary>
+    public PuddlesDef? Puddles { get; init; }
+
     /// <summary>The id of the district the point (x, y) in layout metres lies in, or null outside them all.</summary>
     public string? DistrictAt(double x, double y) => Districts.FirstOrDefault(d => d.Contains(x, y))?.Id;
 
@@ -382,6 +388,7 @@ public sealed class LevelDef : IValidated
         {
             a.Validate(Id, errors);
         }
+        Puddles?.Validate(Id, errors);
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {
             errors.Add($"levels.{Id}: stable id '{id}' must start with '{Id}:'");

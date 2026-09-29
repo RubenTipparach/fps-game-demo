@@ -55,11 +55,11 @@ type="CompressedTexture2D"
 
 [deps]
 
-source_file="res://textures/{file}"
+source_file="{res_dir}/{file}"
 
 [params]
 
-compress/mode=2
+compress/mode={mode}
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -85,13 +85,14 @@ detect_3d/compress_to=0
 """
 
 
-def write_import(tex_dir, file, normal=False):
+def write_import(tex_dir, file, normal=False, lossless=False, res_dir="res://textures"):
+    """Seed a texture's import preset: VRAM-compressed, or lossless (mode 0) for a map whose exact
+    values matter (a decal, the puddle mask's distances). Godot owns the file afterwards."""
     path = os.path.join(tex_dir, file + ".import")
-    # Only seed the import preset; Godot owns the file afterwards.
     if os.path.exists(path):
         return
     with open(path, "w") as f:
-        f.write(IMPORT_TEMPLATE.format(file=file, normal=1 if normal else 0))
+        f.write(IMPORT_TEMPLATE.format(file=file, normal=1 if normal else 0, mode=0 if lossless else 2, res_dir=res_dir))
 
 
 def shader_value(v):
@@ -112,31 +113,62 @@ def shader_uniforms(game, res_path):
         return set(re.findall(r"^\s*(?:instance\s+)?uniform\s+\w+\s+(\w+)", f.read(), re.M))
 
 
-def write_shader_material(mat_dir, name, spec):
-    """A material drawn by its own shader (materials.json "shader"): the normal map is its
-    normal_map parameter, and "shader_params" set the rest by uniform name. A parameter the
-    shader doesn't declare is refused (CLAUDE.md 5.6: a misspelt or stale knob would silently do
-    nothing)."""
+# The rain's ring numbers (shaders/rain_ripples.gdshaderinc). They are set once, on the water; a
+# material that names "ripples_from" takes that material's (openspec/changes/street-puddles, design
+# section 3.3: one set of numbers for all the rain).
+RIPPLES = ("ripple_cell_m", "ripple_rate_hz", "ripple_strength", "ripple_wave_per_m", "ripple_falloff_per_m")
+
+
+def shader_params(name, spec, manifest):
+    """A shader material's parameters: its own "shader_params", and, when it names "ripples_from",
+    that material's ripple numbers and its normal depth as ripple_normal_depth. A material that
+    takes its ripples from another may not also set them itself, or the two would drift."""
+    params = dict(spec.get("shader_params", {}))
+    src = spec.get("ripples_from")
+    if src is None:
+        return params
+    other = (manifest or {}).get(src, {})
+    if not all(k in other.get("shader_params", {}) for k in RIPPLES):
+        raise SystemExit(f"materials.json {name}: ripples_from '{src}' names no material with the ripple numbers")
+    clash = sorted(set(params) & {*RIPPLES, "ripple_normal_depth"})
+    if clash:
+        raise SystemExit(f"materials.json {name}: sets {', '.join(clash)} itself, but takes its ripples from {src}")
+    params.update({k: other["shader_params"][k] for k in RIPPLES})
+    params["ripple_normal_depth"] = other.get("normal_scale", 1.0)
+    return params
+
+
+def write_shader_material(mat_dir, name, spec, manifest=None):
+    """A material drawn by its own shader (materials.json "shader"). Its maps go to the uniforms
+    the shader declares for them (albedo_map, orm_map; normal_map always), tile_m when the shader
+    tiles its own maps, normal_scale to normal_strength, and "shader_params" (with any
+    "ripples_from", shader_params()) set the rest by uniform name. A parameter the shader doesn't
+    declare is refused (CLAUDE.md 5.6: a misspelt or stale knob would silently do nothing)."""
     declared = shader_uniforms(os.path.dirname(mat_dir), spec["shader"])
-    unknown = sorted({"normal_map", "tile_m", "normal_strength", *spec.get("shader_params", {})} - declared)
+    params = shader_params(name, spec, manifest)
+    maps = [(u, f"res://textures/{f}") for u, f in (("albedo_map", f"{name}.png"), ("orm_map", f"{name}_orm.png"),
+                                                    ("normal_map", f"{name}_normal.png"))
+            if u in declared or u == "normal_map"]
+    unknown = sorted({"normal_map", "normal_strength", *params} - declared)
     if unknown:
         raise SystemExit(f"materials.json {name}: {spec['shader']} has no uniform {', '.join(unknown)}")
     lines = ['[gd_resource type="ShaderMaterial" format=3]', "",
-             f'[ext_resource type="Shader" path="{spec["shader"]}" id="1"]',
-             f'[ext_resource type="Texture2D" path="res://textures/{name}_normal.png" id="2"]',
-             "", "[resource]", f'resource_name = "{name}"', 'shader = ExtResource("1")',
-             'shader_parameter/normal_map = ExtResource("2")',
-             f"shader_parameter/tile_m = {float(spec.get('tile_m', 1.0))}",
-             f"shader_parameter/normal_strength = {float(spec.get('normal_scale', 1.0))}"]
-    for key, value in sorted(spec.get("shader_params", {}).items()):
+             f'[ext_resource type="Shader" path="{spec["shader"]}" id="1"]']
+    lines += [f'[ext_resource type="Texture2D" path="{path}" id="{i}"]' for i, (_, path) in enumerate(maps, 2)]
+    lines += ["", "[resource]", f'resource_name = "{name}"', 'shader = ExtResource("1")']
+    lines += [f'shader_parameter/{u} = ExtResource("{i}")' for i, (u, _) in enumerate(maps, 2)]
+    if "tile_m" in declared:
+        lines.append(f"shader_parameter/tile_m = {float(spec.get('tile_m', 1.0))}")
+    lines.append(f"shader_parameter/normal_strength = {float(spec.get('normal_scale', 1.0))}")
+    for key, value in sorted(params.items()):
         lines.append(f"shader_parameter/{key} = {shader_value(value)}")
     with open(os.path.join(mat_dir, name + ".tres"), "w") as f:
         f.write("\n".join(lines) + "\n")
 
 
-def write_material(mat_dir, name, spec, has_emission):
+def write_material(mat_dir, name, spec, has_emission, manifest=None):
     if "shader" in spec:
-        write_shader_material(mat_dir, name, spec)
+        write_shader_material(mat_dir, name, spec, manifest)
         return
     lines = ['[gd_resource type="ORMMaterial3D" format=3]', ""]
     res = [("albedo", f"res://textures/{name}.png"),
@@ -224,7 +256,7 @@ def process(raw, game, only=()):
         if has_emission:
             resize(load(src + "_emission.png")).save(os.path.join(tex_dir, f"{name}_emission.png"), optimize=True)
             write_import(tex_dir, f"{name}_emission.png")
-        write_material(mat_dir, name, spec, has_emission)
+        write_material(mat_dir, name, spec, has_emission, manifest)
         print(f"{name}: ok{' (emissive)' if has_emission else ''}")
 
 

@@ -151,6 +151,9 @@ public partial class PlacementTest : Node3D
     /// <summary>A walk ends at the spawn when the navmesh path's last point is this near it, metres.</summary>
     private const float ReachedM = 1.0f;
 
+    /// <summary>The frames the navmesh has to reach the navigation map before the walks give up.</summary>
+    private const int NavSyncFrames = 600;
+
     // Every exterior door's approach reaches the runner's spawn on the level's baked navmesh: the
     // walk starts 1 m outside the door, on the navmesh there, and must end at the spawn.
     private async Task CheckApproaches()
@@ -163,10 +166,6 @@ public partial class PlacementTest : Node3D
         }
         var region = new NavigationRegion3D { NavigationMesh = GD.Load<NavigationMesh>($"{LevelDir}/{level}_navmesh.res") };
         AddChild(region);
-        for (var i = 0; i < 3; i++)
-        {
-            await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
-        }
         var map = GetWorld3D().NavigationMap;
         var spawn = GetTree().GetNodesInGroup("ent_spawn").OfType<Node3D>().FirstOrDefault(n => n.Name == "spawn_start")
                     ?? GetTree().GetNodesInGroup("ent_spawn").OfType<Node3D>().FirstOrDefault();
@@ -175,7 +174,20 @@ public partial class PlacementTest : Node3D
             Fail("approaches: the level has no spawn to walk to");
             return;
         }
-        var goal = NavigationServer3D.MapGetClosestPoint(map, spawn.GlobalPosition);
+        // Godot syncs a region into its map on a worker thread, over several frames for a mesh this
+        // size (12 for the hub's 5,000 polygons). Until then every query answers the origin, so wait
+        // until the spawn's floor is on the map.
+        var goal = Vector3.Zero;
+        for (var i = 0; i < NavSyncFrames && goal.DistanceTo(spawn.GlobalPosition) > ReachedM; i++)
+        {
+            await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
+            goal = NavigationServer3D.MapGetClosestPoint(map, spawn.GlobalPosition);
+        }
+        if (goal.DistanceTo(spawn.GlobalPosition) > ReachedM)
+        {
+            Fail($"approaches: after {NavSyncFrames} frames the navmesh is still {goal.DistanceTo(spawn.GlobalPosition):0.00} m from the spawn");
+            return;
+        }
         foreach (var a in def.Approaches)
         {
             _people++;
@@ -200,7 +212,27 @@ public partial class PlacementTest : Node3D
                 GD.Print($"PASS [placement_test] door {a.Door} ({a.Kind}): {at} reaches the spawn in {path.Length} points");
             }
         }
+        // Everyone stands on the navmesh: a person who fights, flees or cowers moves on it, and one
+        // whose spot fell off it (Tank's aisle behind the Anchor's bar, once the door beside it was
+        // framed) stands frozen. Where they can walk from there isn't asserted: the baked mesh
+        // treats a locked door as a wall (Silk's back room), and the Pit's floor isn't joined to the
+        // street (docs/validation/2026-09-29-hub-doorways.md, found while building).
+        foreach (var npc in People("ent_npc").Concat(People("ent_civ")))
+        {
+            _people++;
+            var feet = npc.GlobalPosition;
+            var on = NavigationServer3D.MapGetClosestPoint(map, feet);
+            var off = new Vector2(on.X - feet.X, on.Z - feet.Z).Length();
+            if (off > NavStandM)
+            {
+                Fail($"{npc.Name} at ({feet.X:0.#}, {feet.Z:0.#}): the navmesh is {off:0.00} m away, at ({on.X:0.#}, {on.Z:0.#})");
+            }
+        }
     }
+
+    /// <summary>A person stands on the navmesh when it is this near their feet, metres: the mesh
+    /// keeps its agent's 0.4 m off walls, and a person may stand closer.</summary>
+    private const float NavStandM = 0.5f;
 
     /// <summary>How far under the water's surface a ladder's foot must reach, metres: a floating
     /// swimmer's hands are there (openspec/changes/archive/2026-09-29-water-and-swimming, task 4.2).</summary>

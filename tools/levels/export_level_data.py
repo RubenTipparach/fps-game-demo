@@ -21,6 +21,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "levels"))
 
 import city_plan  # noqa: E402  (the plan knows the awnings a civilian stands under)
+import puddle_mask  # noqa: E402
 
 # How far an open umbrella reaches from its holder, metres: the canopy's 0.5 m radius, held 0.45 m
 # forward and 0.18 m to the side (tools/blender/build_undercity_props.py, umbrella; the torch_l
@@ -79,6 +80,23 @@ def approaches(layout):
     return out
 
 
+def puddles(level_id, city):
+    """The level's puddles (city_plan.py City.puddles(), openspec/changes/street-puddles), for the
+    core's check that each lies in the rain, and the numbers the level hands the ground's shader to
+    read the mask. The mask itself (puddle_mask.py) is written here too, from the same plan, so the
+    list and the mask can't disagree."""
+    puddle_mask.write(level_id, city)
+    out = []
+    for p in city.puddle_list:
+        pg = p["g"].simplify(0.02)
+        if pg.interiors or not pg.contains(Point(*p["at"])):
+            raise SystemExit(f"{level_id}: puddle {p['id']} has a hole, or its point lies outside it")
+        out.append({"id": p["id"], "kind": p["kind"], "at": [round(v, 3) for v in p["at"]], "ground_m": p["ground_m"],
+                    "poly": [[round(x, 3), round(y, 3)] for x, y in list(pg.exterior.coords)[:-1]]})
+    return {"mask": puddle_mask.res_path(level_id), "rect_m": [0.0, 0.0, float(city.P.W), float(city.P.H)],
+            "range_m": puddle_mask.RANGE_M, "height_m": list(puddle_mask.HEIGHT_M), "list": out}
+
+
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
     layout = importlib.import_module(f"layouts.{level_id}").MAP
@@ -100,10 +118,12 @@ def export(level_id):
     covers = []
     if layout.get("base", "city") == "city":
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            plan = city_plan.build(level_id)
+            city = city_plan.City(*city_plan.load(level_id))
+            plan = city.build()
         covers = plan.covers
         out["shelters"] = shelters(level_id, plan)
         out["approaches"] = approaches(layout)
+        out["puddles"] = puddles(level_id, city)
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

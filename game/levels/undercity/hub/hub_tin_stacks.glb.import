@@ -124,6 +124,7 @@ _subresources={
 },
 "crate": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/crate.tres",
 "use_external/path": "res://materials/crate.tres"
 },
 "crate_large": {
@@ -216,6 +217,7 @@ _subresources={
 },
 "light_panel": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/light_panel.tres",
 "use_external/path": "res://materials/light_panel.tres"
 },
 "megahealth": {
@@ -233,6 +235,7 @@ _subresources={
 },
 "neon_pink": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/neon_pink.tres",
 "use_external/path": "res://materials/neon_pink.tres"
 },
 "paint_grimy": {

@@ -115,10 +115,16 @@ public partial class DoorTest : Node3D
         Check("the Fish Hall's entrance is shut before the walk", leaves.All(l => l.OpenAmount == 0),
             string.Join(", ", leaves.Select(l => $"{l.Name} {l.OpenAmount:0.00}")));
 
-        // The walker: the NPC scene's own capsule, in the group the doors open for.
-        var npc = GD.Load<PackedScene>(NpcScene).Instantiate<Node3D>();
+        // The walker: the NPC scene's own body, in the group the doors open for. It takes the scene's
+        // capsule and the floor the scene walks on: at 1.0149 rad a 0.35 m capsule rides up a 0.15 m
+        // kerb, where a bare body's 45 degrees stops at it as at a wall.
+        var npc = GD.Load<PackedScene>(NpcScene).Instantiate<CharacterBody3D>();
         var shape = npc.GetChildren().OfType<CollisionShape3D>().First();
-        var walker = new CharacterBody3D { Name = "Walker", CollisionLayer = Layers.Enemy, CollisionMask = Layers.World };
+        var walker = new CharacterBody3D
+        {
+            Name = "Walker", CollisionLayer = Layers.Enemy, CollisionMask = Layers.World,
+            FloorMaxAngle = npc.FloorMaxAngle, FloorSnapLength = npc.FloorSnapLength,
+        };
         walker.AddChild(new CollisionShape3D { Shape = shape.Shape, Position = shape.Position });
         npc.Free();
         AddChild(walker);
@@ -134,6 +140,7 @@ public partial class DoorTest : Node3D
         var last = walker.GlobalPosition;
         var k = 1;
         var limit = 40.0;
+        var blocker = "nothing";
         while (k < path.Length && limit > 0)
         {
             await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
@@ -146,8 +153,19 @@ public partial class DoorTest : Node3D
                 k++;
                 continue;
             }
-            walker.Velocity = to2.Normalized() * WalkMps + Vector3.Down * 2f;
+            // Falling as an NPC falls: not at all on the floor. A downward push there would slide the
+            // body back off a kerb's edge instead of up it.
+            var fall = walker.IsOnFloor() ? 0f : walker.Velocity.Y - NpcActor.Gravity * dt;
+            walker.Velocity = to2.Normalized() * WalkMps + Vector3.Up * fall;
             walker.MoveAndSlide();
+            for (var c = 0; c < walker.GetSlideCollisionCount(); c++)
+            {
+                var hit = walker.GetSlideCollision(c);
+                if (hit.GetNormal().Y < 0.99f)
+                {
+                    blocker = $"{(hit.GetCollider() as Node)?.Name ?? "?"} at {Where(hit.GetPosition())}, normal {Where(hit.GetNormal())}";
+                }
+            }
             var plane = (walker.GlobalPosition - hall.GlobalPosition).Dot(outward);
             if (openAtDoor < 0 && plane < 0.6f)
             {
@@ -164,10 +182,15 @@ public partial class DoorTest : Node3D
         var arrived = (walker.GlobalPosition - to) with { Y = 0 };
         Check("the entrance is open before the person reaches it", openAtDoor >= 0.999f,
             openAtDoor < 0 ? "never reached the doorway" : $"leaves {openAtDoor:0.00} open 0.6 m from the doorway");
-        Check("the person walks through without stopping", stuckS <= 1.0f && arrived.Length() < 0.8f,
-            $"{arrived.Length():0.00} m from the goal inside, stopped for {stuckS:0.0} s");
+        var walked = stuckS <= 1.0f && arrived.Length() < 0.8f;
+        Check("the person walks through without stopping", walked, walked
+            ? $"{arrived.Length():0.00} m from the goal inside"
+            : $"{arrived.Length():0.00} m from the goal inside, stopped for {stuckS:0.0} s at {Where(walker.GlobalPosition)} against {blocker}, "
+              + $"from {Where(from)} on a path of {path.Length} points: {string.Join(" ", path.Select(Where))}");
         walker.QueueFree();
     }
+
+    private static string Where(Vector3 p) => $"({p.X:0.0}, {p.Y:0.00}, {p.Z:0.0})";
 
     private async Task Frames(int n)
     {
