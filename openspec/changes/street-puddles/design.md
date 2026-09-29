@@ -1,8 +1,18 @@
-# Design: puddles where water gathers, as decals
+# Design: puddles where water gathers, rippling in the rain
 
 ## Context
 
 The owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?"
+
+The survey's answers, 2026-09-29:
+- **L1** (where puddles form): "recommended". Gutters, drip edges and gullies.
+- **L2** (how much): "recommended". About 2.6 % of the ground, by the rules.
+- **L3** (ripples): "ripples would be awesome, this should just be a shader effect, simple cheap".
+
+L3 decides the method. A Godot `Decal` projects texture maps and runs no shader, so a decal
+puddle can't ripple (section 3.2). The puddles are therefore drawn by the ground's own shader,
+from a mask the plan writes, and they ripple with the same rain rings the canal already has.
+The placement rules and the amount are the ones proposed.
 
 The hub always rains. Since `character-lighting`, a roof (a building, an awning, a kiosk, the
 Skyway's deck, a walkway) keeps a character dry: the plan registers 414 of them
@@ -21,7 +31,9 @@ run):
   30 % darker, roughness down by 0.28.
 
 Every face takes world-space UVs (`blendkit.world_uv`: a top face's u is x / tile, v is y /
-tile), so the mask repeats on a 4 m and a 2 m grid across the whole hub.
+tile), so the mask repeats on a 4 m and a 2 m grid across the whole hub. Both are
+`ORMMaterial3D`s (`game/materials/asphalt.tres`, `paving_wet.tres`), written by
+`tools/material_maker/postprocess.py` from `materials.json`.
 
 ## 2. Measured
 
@@ -49,17 +61,26 @@ The mockup (`tools/design/mockup_puddles.py`, the page's F20) draws x 144-192, y
 the garage: today's grid runs straight under the deck; the rules below leave the deck dry and
 put the water along the kerbs and the deck's edges.
 
+**The canal already ripples.** `game/shaders/water.gdshader` (from `water-and-swimming`) draws
+rain rings procedurally: one drop at a time in each 0.9 m cell, 0.7 drops a second, each ring a
+damped sine that widens across its cell and fades as it ages (`ripples()`, a 3 x 3 loop over
+the neighbouring cells, no texture read). Its five numbers are the water's `shader_params` in
+`materials.json`.
+
 ## Goals / Non-Goals
 
 **Goals:**
 - A puddle is where rain would gather: in the gutters, under drip edges, round drains.
 - None under a roof, on a kerb top, on a stair, or against a wall.
 - No repeating pattern.
+- Every puddle ripples in the rain, the same rain as the canal's.
 - The map and the level agree, and a check refuses a puddle in the wrong place.
 
 **Non-Goals:**
-- Animated ripples (survey L3; a decal can't run a shader).
-- Puddles in the other levels (the Drains, the Yard): they have no rain yet.
+- Puddles in the other levels (the Drains, the Yard): they have no rain yet. With no mask set,
+  the ground shader draws no puddles.
+- Dry ground under roofs. The ground there keeps the wet sheen; the same mask could carry a
+  "sheltered" channel later.
 - Characters' footsteps splashing: a separate audio change.
 
 ## Decisions
@@ -74,41 +95,79 @@ put the water along the kerbs and the deck's edges.
 A texture test reads the committed ORM maps and refuses any texel under roughness 0.2 in either
 (CLAUDE.md 5.6, "validate the real artifact").
 
-### 3.2 Puddles are decals
+### 3.2 Puddles are drawn by the ground's shader, not decals
 
-Godot's `Decal` projects albedo, normal, ORM and emission maps onto whatever lies inside its box.
-The ORM's effect is multiplied by the albedo's alpha (Godot manual, "Using decals"). Decals work
-in Forward+, which the game uses (no `rendering_method` is set). They are counted with the
-omni lights, spot lights and reflection probes against the view's clustered elements, 512 by
-default.
+Godot's `Decal` projects albedo, normal, ORM and emission maps onto whatever lies inside its box
+(Godot manual, "Using decals"). It takes textures, not a shader, so a decal puddle is a still
+mirror. A ripple would need its normal map animated from outside the decal, which is the
+opposite of the owner's "just a shader effect, simple cheap" (L3).
 
-Why decals rather than the alternatives:
-- **No z-fighting by construction.** A decal is not a surface, so there is nothing to keep 1 cm
-  off the road (CLAUDE.md 7.2). A puddle mesh would be a coplanar sheet over the asphalt.
-- **No UV grid.** Each puddle has its own shape, size and angle.
-- **Lightmaps stand.** The decal is drawn at runtime over the baked ground, so moving a puddle
-  doesn't need a bake. (Removing the texture puddles does, once, section 3.8.)
+So the two ground materials become one shader, `game/shaders/city_ground.gdshader`, and the
+puddles are a term in it:
 
-**The puddle maps**, written by `generate_city_materials.py` (seeded):
-- **6 shapes**, 512 x 512 px: 3 round (for gullies and drip ends), 3 elongated (for gutters and
-  drip lines). Each is a soft-edged mask (a 6 % feather), with a thin darker rim where wet edges
-  collect grime.
-- **Albedo:** RGB near black-blue (the ground seen through 1-2 cm of water); alpha is the mask.
-  With the decal's `albedo_mix` at 0.6, the ground shows through, darkened.
-- **ORM:** roughness 0.04 inside the mask (a mirror to screen-space reflections and the
-  probes); occlusion 1; metallic 0.
-- **Normal:** flat, with a faint 1 % ripple noise, so the reflection isn't glass-perfect.
-- **The gully grate:** a 0.45 x 0.25 m cast-iron grate (albedo, normal and ORM; metallic 0.8),
-  drawn over the centre of its round puddle.
+1. **It draws the ground exactly as the `ORMMaterial3D` does today:** the albedo map, the ORM map
+   (roughness from green, metallic from blue, occlusion from red, `ao_light_affect` 0.2), the
+   normal map at the material's `normal_scale` (0.8 asphalt, 0.9 paving), specular 0.5,
+   anisotropic mipmapped filtering, the mesh's own UVs. A capture checks the two agree
+   (section 3.7).
+2. **It reads the puddle mask** at the fragment's world x and z (section 3.4). Inside a puddle,
+   by `wet` from 0 to 1:
+   - the albedo darkens to 0.65 of itself on asphalt and 0.7 on paving (today's texture numbers);
+   - the roughness falls to 0.04, a mirror to the screen-space reflections and the probes;
+   - the ground's normal fades to flat, and the rain rings are added (section 3.3).
+3. **Only where the puddle lies:** the fragment must face up (its world normal's y over 0.9) and
+   sit within 0.03 m of the puddle's own height (the mask's second channel). A kerb top
+   (0.15 m up), a kerb face or a deck over the same x and z is drawn dry even where the mask's
+   soft edge reaches it.
+4. **An organic edge:** `wet` is a smoothstep over 0.04 m of the distance, after a small value
+   noise (0.05 m, on a 0.3 m wavelength) moves the edge, so no puddle reads as a perfect ellipse.
 
-**Each decal:**
-- `size` from the plan (x and z the puddle's footprint; y, the projection depth, 0.3 m);
-- `normal_fade` 0.5, so walls and kerb faces inside the box are left alone;
-- `upper_fade` and `lower_fade` 0.3;
-- `distance_fade_enabled`, beginning at 35 m and fading over 10 m;
-- `cull_mask` layer 1 only, so characters walking through a puddle aren't painted.
+Its numbers are the materials' `shader_params` in `materials.json`, written into the `.tres` by
+`postprocess.py` as the water's already are; `write_shader_material` gains the albedo and ORM
+maps for a shader that declares them. Nothing is tuned inline.
 
-### 3.3 Where water gathers
+The shader does the puddle work only inside a puddle: outside, `wet` is 0 and it skips the
+ripples' loop. Puddles cover 2.6 % of the ground, so for most of the ground the cost over today
+is one texture read and a compare.
+
+**The gully grate stays a decal.** It doesn't move, a decal can't z-fight, and it draws over the
+puddle beneath it (Godot applies decals after the material's fragment). There are 66 of them;
+with the lights and probes in view, far under the 512 clustered elements.
+
+### 3.3 One ripple for all the rain
+
+The canal's `ripples()` moves into `game/shaders/rain_ripples.gdshaderinc`, taking its numbers as
+arguments, and both `water.gdshader` and `city_ground.gdshader` include it (CLAUDE.md 5.1: the
+same behaviour, the same code). The canal's picture doesn't change; a capture of the canal before
+and after is compared pixel for pixel.
+
+The five numbers (`ripple_cell_m` 0.9, `ripple_rate_hz` 0.7, `ripple_strength` 0.35,
+`ripple_wave_per_m` 40, `ripple_falloff_per_m` 18) stay once, in the water's entry. The ground
+materials name `"ripples_from": "water"`, and `postprocess.py` copies them, so a drop on a
+puddle and a drop on the canal can't drift apart.
+
+### 3.4 The puddle mask
+
+The plan writes it with the level: `game/levels/undercity/hub/hub_puddles.png`.
+
+- **Grid:** 0.125 m a texel over the hub's 240 x 170 m: 1920 x 1360. Plan (x, y) is Godot
+  (x, z) (the Blender build writes y as -y, and glTF turns Blender's -y into Godot's z).
+- **Grey: the signed distance to the nearest puddle's edge,** negative inside, clamped to
+  ±0.5 m, 3.9 mm a step. A distance, not a coverage: filtered between texels, it keeps a
+  0.4 m gutter puddle's shape at any view distance (a coverage mask that fine would blur).
+- **Alpha: the height of the ground the puddle lies on,** -1 to 3 m, 1.6 cm a step. Outside a
+  puddle it holds the nearest puddle's height, so filtering never blends two heights at an
+  edge.
+- **Imported lossless, with mipmaps.** A VRAM-compressed distance would move the edges. It is
+  5.2 MB in memory.
+
+**Two shader globals** carry it: `puddle_mask` (the texture) and `puddle_rect_m` (x, z, width,
+depth). `project.godot` declares them with an empty rect, so the editor and any level without
+puddles draw none. The level sets them when it loads, from its level data, the way
+`CharacterShading.Apply` sets the skin's globals. The lightmap bake runs in the editor and so sees no
+puddles; they darken the ground by a few per cent, which the bounce wouldn't show.
+
+### 3.5 Where water gathers
 
 The plan places every puddle from its own shapes, after the ground is built. It uses a seeded
 stream of its own (`f"{seed}:puddles:{place}"`), so nothing else in the hub moves (the lesson of
@@ -116,93 +175,85 @@ stream of its own (`f"{seed}:puddles:{place}"`), so nothing else in the hub move
 
 | Rule | Where | Size | Spacing |
 |---|---|---|---|
-| **Gutter** | on the road, along a kerb in the rain, its long side 0.05 m off the kerb face | 1.5-3.5 m long, 0.4-0.7 m wide, an elongated shape turned along the kerb | a gap of 4-9 m between puddles |
+| **Gutter** | on the road, along a kerb in the rain, its long side 0.05 m off the kerb face | 1.5-3.5 m long, 0.4-0.7 m wide, an ellipse turned along the kerb | a gap of 4-9 m between puddles |
 | **Gully** | a grate on the road at the kerb, and a round puddle round it | 1.0-1.4 m across | every 25 m of kerb, half a step in from each end |
 | **Drip** | on open ground just outside the outer edge of an awning or the Skyway's deck, 0.05-0.35 m out | 1.0-2.5 m long, 0.4-0.6 m wide, along the edge | a gap of 1.5-4 m |
 
 **Never:**
 - under a roof (any `Plan.shelter` with 1 m or more of headroom over the ground, the same test
   the core's wetness rule uses);
-- over a kerb top: gutter puddles stay on the road side, and every box's projection depth is
-  0.3 m, lower than the 0.15 m kerb plus its fade;
+- over a kerb top: gutter puddles stay on the road side, and the shader's height test keeps the
+  kerb dry (section 3.2);
 - on a stair tread, a bridge deck, the rail tracks or the Pit's floor;
 - within 0.3 m of a building, a lot, a fixture or a prop's footprint;
 - overlapping another puddle (the later one is dropped, never moved, so the rule stays
   predictable).
 
-**Expected**, from section 2's lengths: 184 gutter puddles, 66 gullies and 135 drip puddles:
-**about 385 decals, 451 m², 2.6 % of the ground**, against 2,432 m² and 14.2 % today.
+**Expected** (L2, the recommended amount), from section 2's lengths: 184 gutter puddles, 66
+gullies and 135 drip puddles: **about 385 puddles, 451 m², 2.6 % of the ground**, against
+2,432 m² and 14.2 % today.
 
-**In view:** the hub is 240 x 170 m; at about one puddle per 45 m² of open ground, a 45 m view
-(the fade's end) holds about 30-40 puddles. With the lights and probes in the same view, that is
-well under 512. The capture counts the clustered elements in its heaviest view (section 3.7).
-
-### 3.4 One rule each
+### 3.6 One rule each
 
 - **"Is there a roof over this spot":** the plan tests its own `Plan.shelters` with the core's
   headroom (1.0 m, `data/character_lighting.json`, read by the plan), the same shapes the core's
-  `Wetness.Sheltered` tests at runtime. The in-engine check asks the core itself (section 3.6),
+  `Wetness.Sheltered` tests at runtime. The in-engine check asks the core itself (section 3.7),
   so the two can't drift apart unnoticed.
 - **The kerb:** the plan's `street` and `paved` shapes, which the ground's own kerb stones come
   from.
-- **Placement:** one function, `City.puddles()`. The plan's check, the design map and the level's
-  `ENT_puddle` empties all read its output.
+- **Placement:** one function, `City.puddles()`. The plan's check, the design map, the mask and
+  the level data all read its output.
 
-### 3.5 In the pipeline
-
-- The plan writes an entity per puddle, `ENT_puddle_<n>` (extras: `shape`, `size` "w,d", angle
-  in the empty's heading), and per gully, `ENT_gully_<n>`.
-- The importer (`blender_level_import.gd`) turns them into `scenes/undercity/decals/puddle_<k>.tscn`
-  and `gully.tscn`, sizing the `Decal` from `size`.
-- `gen_undercity_scenes.py` writes those scenes: a `Decal` with its maps and the settings above.
-
-### 3.6 Checks
+### 3.7 Checks
 
 | Check | Where | On today's plan | After |
 |---|---|---|---|
 | The ground textures hold no standing water | `tools/fx` test on the committed ORM maps | fails: 27.6 % and 10.6 % of texels | passes |
 | Every puddle is on open ground in the rain, clear of walls and kerbs, and overlaps no other | `city_plan.check_puddles` | (no puddles) | clean |
 | A puddle forced under the Skyway, or onto a kerb, is refused, naming it | `test_city_plan.py` | | passes |
-| Every puddle in the built level is in the rain by the core's rule | `placement_test.tscn` (`Wetness.Sheltered` on each `puddle` decal) | | about 385 of 385 |
+| The committed mask agrees with the plan: each puddle's centre reads inside at its height; 0.3 m outside every puddle reads dry | a `tools/levels` test on `hub_puddles.png` | | passes |
+| The canal and the ground include the one ripple function, neither defines its own, and the ground's ripple numbers equal the water's | a `tools/godot` test on the shader and `.tres` files | | passes |
+| Every puddle in the built level is in the rain by the core's rule | `placement_test.tscn` (`Wetness.Sheltered` at each puddle's centre and ends, from the level data) | | about 385 of 385 |
 | The map and the level agree | the design map draws `City.puddles()` | | |
 
-### 3.7 Captures
+### 3.8 Captures
 
-Before and after stills from the same places:
-- Lantern Row at night;
-- Clinic Lane's kerb with a gully;
-- under the Skyway at the garage, which must read dry;
-- the drip line of a row of stall awnings in the market.
+- **The shader reproduces the material.** The same street view with the old `ORMMaterial3D` and
+  with `city_ground.gdshader` with no mask set (both on the new textures): the mean difference
+  must be under 1 luma level.
+- **The canal is unchanged.** A canal view before and after the ripple moves into its include:
+  identical pixels at a fixed time step.
+- **Before and after stills** from the same places, at seed 7:
+  - Lantern Row at night;
+  - Clinic Lane's kerb with a gully;
+  - under the Skyway at the garage, which must read dry;
+  - the drip line of a row of stall awnings in the market.
+- **A video of the rain on the puddles** (a capture sequence encoded with ffmpeg, CLAUDE.md 9:
+  motion is the point): Lantern Row's gutter under a neon sign, 6 s.
 
-Each still is taken at seed 7. The heaviest view's clustered elements (lights, probes and
-decals in the frustum) are counted and recorded. Whether screen-space reflections see a decal's
-roughness is checked on the Lantern Row still: a puddle under a neon sign should show the sign.
-If it doesn't, the reflection probes carry the puddles, and the record says so.
+Whether screen-space reflections show the neon in a puddle is checked on the Lantern Row still;
+the puddle is the ground itself now, so they should. The heaviest view's clustered elements are
+counted and recorded.
 
-### 3.8 Rebuild
+### 3.9 Rebuild
 
 The ground textures change, so every sector's lightmap is baked again; it is the ground's albedo
-that the bake bounces. The puddles themselves are runtime decals and need no bake. This change
-lands after `hub-doorways`' rebuild, and its bake is one more pass of the same eight sectors
-(about 70 minutes on lavapipe).
+that the bake bounces. The puddles are drawn at runtime and need no bake. This change lands
+after `hub-doorways`' rebuild, and its bake is one more pass of the same eight sectors (about
+70 minutes on lavapipe).
 
 ## Risks / Trade-offs
 
-- **Screen-space reflections and decals.** If SSR doesn't see a decal's roughness, a puddle
-  reflects only the probes. It still reads as wet, but it won't mirror a neon sign. This is
-  checked on the first capture (section 3.7), not assumed.
-- **Decal cost.** Each decal is per-pixel work where it overlaps the screen. About 30-40 in view,
-  each a few square metres, is small, but lavapipe can't measure frame time; the owner's machine
-  is the place for that.
+- **The ground's cost.** Every ground pixel reads the mask; a puddle's pixels run the 3 x 3 ripple
+  loop too. That is small next to the lighting, but lavapipe can't measure frame time; the
+  owner's machine is the place for that.
+- **A branch per pixel.** The shader skips the ripples outside a puddle. Puddles are whole
+  regions of the screen, so neighbouring pixels take the same branch, which is what makes a
+  branch cheap on a GPU.
+- **The shader must match the material it replaces.** An `ORMMaterial3D` has defaults a
+  hand-written shader could miss. The equivalence capture (section 3.8) is the check, and
+  anything it finds is fixed before the puddles go in.
+- **The mask is 2D.** A deck, a stair or a kerb over the same x and z would take the puddle
+  without the height and facing tests (section 3.2, point 3).
 - **Less water.** 2.6 % of the ground is far less than 14.2 %. The street may read drier as a
-  whole even though each puddle reads better. Survey L2 lets the owner choose more.
-- **Static water in constant rain.** Without ripples a puddle is a still mirror. Survey L3.
-
-## Owner questions (survey, section L)
-
-- **L1** Where puddles form: gutters, drip edges and gullies (recommended); also potholes in the
-  road; also downpipe outfalls at building corners.
-- **L2** How much: about 2.6 % of the ground by the rules (recommended); about double, with more
-  gutter puddles and some potholes; today's 14 %, but placed by the rules.
-- **L3** Ripples: static decals now, with ripples as a later change to the ground shaders
-  (recommended); ripples in this change, which means ground shaders instead of decals.
+  whole even though each puddle reads better. The owner chose this amount (L2).
