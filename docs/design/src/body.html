@@ -49,6 +49,7 @@
   <a href="#faces"><b>F16</b>Faces, gels</a>
   <a href="#crowd"><b>F17</b>Crowd</a>
   <a href="#hubcombat"><b>F18</b>The Kestrel</a>
+  <a href="#doorways"><b>F19</b>Doorways</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -75,6 +76,7 @@
     <span class="chip enforced">Enforced: level geometry spec</span>
     <span class="chip proposed">Proposed: the Drains, the Yard, combat, augmentations</span>
     <span class="chip proposed">Proposed after playtest 2: skyline, faces, crowd</span>
+    <span class="chip proposed">Proposed after playtest 3: doorways</span>
   </div>
 </header>
 
@@ -123,6 +125,7 @@
         <tr><td><span class="chip built">Built</span></td><td>The crowd (F17): 18 civilian bodies and 3 MerSec faces; each civilian's body, palette, accessories, height and idle picked for the whole crowd by one rule in the core, with no lookalikes within 15 m; four talking pairs. See <code>docs/validation/2026-09-29-crowd-variety.md</code>.</td></tr>
         <tr><td><span class="chip proposed">In progress</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig are built and tested; the faces are being tuned, and survey J1 asks how one key meets every skin tone and place.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, and a clear approach to every entrance. Waiting on survey K1 to K3.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
       </tbody></table></div>
     </div>
@@ -878,6 +881,7 @@
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>hub-doorways</code></td><td>every door framed, a door on every building on the street, clear approaches</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, talking pairs, the body pool</td><td class="n">4</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -1078,7 +1082,7 @@
   <div class="sub">
     <h3>D9 · Conversation framing <small>approved (I11); today the view just freezes</small></h3>
     <div class="diagram" role="img" aria-label="Two conversation frames: today's 67 degree view and a 48 degree framing with the face above the dialog band">
-      <svg viewBox="0 0 1600 480">
+      <svg viewBox="0 0 1600 490">
         <rect width="1600" height="480" fill="#0a0f14"/>
         <g transform="translate(40 30)">
           <rect width="720" height="405" fill="#161c23" stroke="#1f2c37"/>
@@ -1155,13 +1159,127 @@
   </div>
 </section>
 
+<!-- ========================================================= F19 -->
+<section id="doorways">
+  <div class="sh"><span class="key">F19</span><h2>Doorways</h2><span class="spec">openspec/changes/hub-doorways</span></div>
+  <p class="intro">Owner, 2026-09-29: "a lot of buildings are missing door ways or doors, review guidelines for level design that we did in e1 m3". They are: 214 of the 225 buildings that face a street, lane or passage show no way in, and the 11 that do show a bare hole. E1M3's door rules (a carved opening at the frame's size, a frame standing proud, a lit lintel, nothing standing in front) never reached the hub's plan. This change builds every door by them, at the hub's own sizes, gives every building a door, and clears the ground in front of each entrance.</p>
+  <div class="controls"><span class="chip proposed">Proposed: waiting on survey K1 to K3</span><span class="chip">Measured on the committed plan, seed 7</span><span class="chip">Stills: docs/screenshots/hub_doorways/</span></div>
+  <div class="sub">
+    <h3>What the street sees today <small>225 buildings with a wall of 2.2 m or more on walkable ground</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Shows</th><th class="n">Buildings</th><th>Becomes</th></tr></thead>
+      <tbody>
+        <tr><td>A blank wall</td><td class="n">80</td><td>a door in the building's style on its longest walkable wall</td></tr>
+        <tr><td>A dark 1.0 x 2.15 m recess, no frame, no door (shanties)</td><td class="n">78</td><td>a framed plank or sheet door, some boarded, some padlocked</td></tr>
+        <tr><td>Shop windows and shutters, no way into the shop</td><td class="n">28</td><td>a glazed door in every shop bay; a residents' door on two floors or more</td></tr>
+        <tr><td>A roll-up or loading door painted on a recess</td><td class="n">25</td><td>a steel man door beside it; the shutter gains a hood box and guide rails</td></tr>
+        <tr><td>A lit 3 x 2.85 m recess you can't enter (Neon Koi, Pachinko Sunrise, Bubble Wash)</td><td class="n">3</td><td>one enterable room each, or a door behind a shutter (K3)</td></tr>
+        <tr><td>A real entrance, carved as a bare hole</td><td class="n">11</td><td>framed; entrances 2 m and wider get a portal with a lit lintel</td></tr>
+      </tbody></table></div>
+    <p class="note">The enterable buildings have 43 doors, 21 of them exterior. None is framed, and only the 5 locked doors have a leaf. Ten exterior doors open onto a gap 1.20-1.35 m wide facing a filler building's wall, the Fish Hall's two 4 m entrances, Precinct 9's front and the checkpoint's among them. Lots keep 0.9 m from named buildings and then shrink 0.3-0.7 m, and nothing kept a door's approach clear.</p>
+  </div>
+  <div class="sub">
+    <h3>The doors <small>elevations; 80 px = 1 m; clear openings are the layout's widths</small></h3>
+    <div class="diagram" role="img" aria-label="Elevations of five door kinds: a framed door with a leaf, an entrance portal with a lit lintel, a shop bay with a glazed door, a residents' door with a buzzer and lamp, and a boarded shanty door">
+      <svg viewBox="0 0 1600 490">
+        <rect width="1600" height="490" fill="#070b10"/>
+        <rect x="0" y="60" width="1600" height="340" fill="#26303a"/>
+        <rect x="0" y="400" width="1600" height="8" fill="#3a4550"/>
+        <!-- A: locked door with a leaf, 1.4 x 2.4 clear -->
+        <path d="M124 184 H276 V400 H264 V200 H136 V400 H124 Z" fill="#7d8b97"/>
+        <rect x="136" y="200" width="8" height="200" fill="#566370"/><rect x="256" y="200" width="8" height="200" fill="#566370"/><rect x="136" y="200" width="128" height="8" fill="#566370"/>
+        <rect x="145" y="209" width="110" height="191" fill="#3a4652"/>
+        <rect x="152" y="218" width="96" height="70" fill="#34404b" stroke="#2a343d"/><rect x="152" y="300" width="96" height="90" fill="#34404b" stroke="#2a343d"/>
+        <rect x="236" y="296" width="10" height="4" fill="#f2b33d"/><circle cx="241" cy="310" r="2.5" fill="#ff5b4f"/>
+        <rect x="124" y="397" width="152" height="3" fill="#8a98a4"/>
+        <!-- B: entrance portal, 3.0 x 3.0 clear -->
+        <rect x="440" y="160" width="240" height="240" fill="#0a0f14"/>
+        <rect x="440" y="360" width="240" height="40" fill="#141c24"/>
+        <rect x="432" y="152" width="8" height="248" fill="#566370"/><rect x="680" y="152" width="8" height="248" fill="#566370"/><rect x="432" y="152" width="256" height="8" fill="#566370"/>
+        <rect x="404" y="152" width="28" height="248" fill="#7d8b97"/><rect x="688" y="152" width="28" height="248" fill="#7d8b97"/>
+        <rect x="400" y="356" width="36" height="44" fill="#8a98a4"/><rect x="684" y="356" width="36" height="44" fill="#8a98a4"/>
+        <rect x="400" y="136" width="36" height="16" fill="#8a98a4"/><rect x="684" y="136" width="36" height="16" fill="#8a98a4"/>
+        <rect x="392" y="108" width="336" height="28" fill="#98a6b2"/>
+        <rect x="440" y="136" width="240" height="3" fill="#ffd28a"/>
+        <path d="M440 139 L420 360 H700 L680 139 Z" fill="#ffd28a" opacity=".07"/>
+        <circle cx="560" cy="140" r="16" fill="#ffd28a" opacity=".25"/>
+        <text x="560" y="94" fill="#ff4fa3" font-family="IBM Plex Mono, monospace" font-size="22" text-anchor="middle" letter-spacing="3">THE RUSTY ANCHOR</text>
+        <!-- C: shop bay, a window and a glazed door in one frame -->
+        <path d="M808 144 H1152 V400 H1140 V156 H820 V400 H808 Z" fill="#7d8b97"/>
+        <rect x="820" y="156" width="320" height="244" fill="#1b232b"/>
+        <rect x="836" y="224" width="80" height="176" fill="#566370"/><rect x="842" y="230" width="68" height="170" fill="#2b4a52" opacity=".9"/><rect x="842" y="230" width="68" height="170" fill="#f2b33d" opacity=".18"/>
+        <rect x="846" y="318" width="60" height="5" fill="#b9c6d1"/>
+        <rect x="928" y="232" width="200" height="152" fill="#f2b33d" opacity=".55"/><rect x="928" y="232" width="200" height="152" fill="none" stroke="#566370" stroke-width="6"/>
+        <path d="M800 140 L1160 140 L1180 112 L780 112 Z" fill="#b24b6e"/>
+        <!-- D: residents' door, buzzer, lamp above -->
+        <path d="M1188 188 H1292 V400 H1280 V216 H1200 V400 H1188 Z" fill="#7d8b97"/>
+        <rect x="1200" y="216" width="80" height="184" fill="#566370"/><rect x="1208" y="224" width="72" height="176" fill="#3a4652"/><rect x="1268" y="306" width="8" height="4" fill="#b9c6d1"/>
+        <rect x="1300" y="296" width="10" height="24" fill="#35e0ff" opacity=".85"/>
+        <rect x="1232" y="130" width="16" height="10" fill="#b9c6d1"/><circle cx="1240" cy="144" r="18" fill="#ffd28a" opacity=".3"/><circle cx="1240" cy="144" r="5" fill="#fff4d8"/>
+        <!-- E: shanty door, boarded -->
+        <path d="M1394 212 H1506 V400 H1494 V232 H1406 V400 H1394 Z" fill="#5d4a3a"/>
+        <rect x="1406" y="232" width="88" height="168" fill="#4a3b30"/><rect x="1414" y="240" width="72" height="160" fill="#6b4f36"/>
+        <rect x="1400" y="286" width="100" height="12" fill="#8a6a48" transform="rotate(-14 1450 292)"/><rect x="1400" y="340" width="100" height="12" fill="#8a6a48" transform="rotate(10 1450 346)"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="14" fill="#8a9bab" text-anchor="middle">
+          <text x="200" y="428">locked door: a leaf</text><text x="200" y="446">1.4 x 2.4 clear</text><text x="200" y="464">carved 1.6 x 2.5</text><text x="560" y="428">entrance, 2 m and wider</text><text x="560" y="446">a portal, a lit lintel</text><text x="560" y="464">the sign above it</text><text x="980" y="428">shop bay</text><text x="980" y="446">window and glazed door</text><text x="980" y="464">one frame round both</text><text x="1244" y="428">residents' door</text><text x="1244" y="446">buzzer, lamp over it</text><text x="1450" y="428">shanty door</text><text x="1450" y="446">0.9 x 2.0</text><text x="1450" y="464">some boarded</text>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#d9e2e9">
+          <text x="286" y="206">REVEAL 0.1</text><text x="286" y="224">architrave 0.15,</text><text x="286" y="240">0.1 proud</text>
+          <text x="384" y="128" text-anchor="end">lintel 0.35</text><text x="392" y="380" text-anchor="end">plinth 0.55</text>
+        </g>
+      </svg>
+    </div>
+    <p class="note">One frame builder (<code>detailing.door_frame</code>) makes every one of them from boxes in the sector mesh: liners fill the 0.1 m reveals and an architrave or portal stands proud of each face, all registered with the z-fighting check. The layout's width stays the clear opening, so the door leaf and every door entity keep their size. Under K2 as recommended, only a door with a lock has a leaf; the rest are open, framed doorways.</p>
+  </div>
+  <div class="sub">
+    <h3>A clear approach <small>the Fish Hall's north entrance in plan; 24 px = 1 m</small></h3>
+    <div class="diagram" role="img" aria-label="Plan of the Fish Hall's north entrance before and after: a filler building 1.35 m in front of it, then the approach cut through to Clinic Lane">
+      <svg viewBox="0 0 1000 380">
+        <rect width="1000" height="380" fill="#070b10"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="14" fill="#8a9bab">
+          <text x="240" y="24" text-anchor="middle" fill="#d9e2e9">TODAY</text><text x="760" y="24" text-anchor="middle" fill="#d9e2e9">WITH THE APPROACH</text>
+        </g>
+        <!-- before panel: x 166..182 m, y 66..80 m; origin (48, 40) -->
+        <rect x="48" y="40" width="384" height="96" fill="#1c252e"/><text x="240" y="92" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">CLINIC LANE</text>
+        <rect x="48" y="136" width="384" height="144" fill="#161e26"/>
+        <rect x="149" y="136" width="197" height="110" fill="#3b4652"/><text x="247" y="196" fill="#b9c6d1" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">lot 242</text>
+        <rect x="48" y="280" width="384" height="96" fill="#2c3c49"/><text x="240" y="340" fill="#d9e2e9" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">HARBOR FISH HALL</text>
+        <rect x="192" y="276" width="96" height="8" fill="#ff5b4f"/>
+        <text x="300" y="268" fill="#ff5b4f" font-family="IBM Plex Mono, monospace" font-size="13">1.35 m</text>
+        <!-- after panel, origin (568, 40) -->
+        <rect x="568" y="40" width="384" height="96" fill="#1c252e"/><text x="760" y="92" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">CLINIC LANE</text>
+        <rect x="568" y="136" width="384" height="144" fill="#161e26"/>
+        <rect x="683" y="136" width="146" height="144" fill="#35e0ff" opacity=".12"/><rect x="683" y="136" width="146" height="144" fill="none" stroke="#35e0ff" stroke-dasharray="6 5"/>
+        <text x="756" y="214" fill="#35e0ff" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">approach</text><text x="756" y="232" fill="#35e0ff" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">6.1 x 6 m</text>
+        <rect x="568" y="280" width="384" height="96" fill="#2c3c49"/><text x="760" y="340" fill="#d9e2e9" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">HARBOR FISH HALL</text>
+        <rect x="712" y="276" width="96" height="8" fill="#6fd08c"/>
+        <text x="840" y="160" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="12">lot 242: both</text><text x="840" y="176" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="12">remnants under</text><text x="840" y="192" fill="#8a9bab" font-family="IBM Plex Mono, monospace" font-size="12">1.5 m, paved</text>
+      </svg>
+    </div>
+    <p class="note">An entrance (2 m and wider) gets a strip 0.6 m wider than its frame on each side, straight out to a street, lane or square, at most 12 m. A service door gets a 2.0 m landing (the leaf's swing and a body beside it) joined to the street by ground at least 1.2 m wide. The approaches are cut from the lots after they are split, so only the ten lots that stood in front of a door change, and the design map and the build still agree.</p>
+  </div>
+  <div class="sub">
+    <h3>Checks <small>each names its fault on the old plan</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Check</th><th>Where</th><th>Old plan</th></tr></thead>
+      <tbody>
+        <tr><td>Every door carved at its frame's size and framed</td><td><code>city_plan.check_doors</code></td><td>43 doors</td></tr>
+        <tr><td>Every building on walkable ground shows a door</td><td><code>city_plan.check_building_doors</code></td><td>214 buildings</td></tr>
+        <tr><td>Every exterior door's approach is clear and reaches the street</td><td><code>city_plan.check_door_approaches</code></td><td>10 doors</td></tr>
+        <tr><td>The doors add at most 30,000 triangles (about 22,000 planned)</td><td><code>city_plan</code> stats</td><td></td></tr>
+        <tr><td>The navmesh reaches the runner's spawn from outside every exterior door</td><td><code>placement_test.tscn</code></td><td></td></tr>
+      </tbody></table></div>
+    <p class="note">Survey K1 asks what a closed door on a building with no inside does when used, K2 whether public entrances are open doorways or doors you open, K3 what the three named shells become.</p>
+  </div>
+</section>
+
 <!-- ========================================================= questions -->
 <section id="questions">
   <div class="sh"><span class="key">?</span><h2>Open questions</h2><span class="spec">owner survey</span></div>
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag y">J1 faces</span><span class="tag y">K1 to K3 doorways</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>
