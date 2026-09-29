@@ -247,6 +247,13 @@ kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `EXIT_GRID_M` 1, `LADDER_
 
 - **Transparent water loses screen-space reflections** in Godot. The probes and a fresnel mix
   stand in. A still will show whether that reads well enough.
+  - Found in building: it didn't. No probe covered any water body, so at swimming height the
+    surface reflected the black sky, and the first video showed the lower half of the view
+    black, with the floating body lost in it.
+  - Now every water body carries outdoor, box-projected probes (`gen_level_hub.py`
+    `water_probes`): one per 40 m of its length, 4 m past each side and 20 m tall, capturing
+    0.7 m above the surface, where a swimmer's eyes are.
+  - The body is filmed from the quay.
 - **A point-in-polygon test per body per tick** replaces the Area3D. The hub has three water
   bodies of 4 to 8 points, so it costs nothing that matters; a level with many would want a
   grid.

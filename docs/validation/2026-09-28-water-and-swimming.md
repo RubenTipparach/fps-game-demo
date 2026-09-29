@@ -91,6 +91,12 @@ Each of these is in the design's "found in building" notes.
   freeze caught a rising body 1.5 m under the surface.
 - **Dropped items now fall to the floor** everywhere; before, a drop hung where it was dropped.
 
+- **The first video showed black water from swimming height** (the design's named risk:
+  transparent water gets no screen-space reflections, and no probe covered the water). A body
+  floating 7.5 m away was lost in it. Six outdoor probes now cover the Cut, the dry dock and the
+  gate channel, and the video is captured again with them. The body is now filmed from the quay,
+  looking down on it.
+
 The longest swim to a way out is 20.6 m in the Cut, 15.2 m in the dry dock and 15.3 m in the
 dock gate channel. The hub has 17 ladders.
 
