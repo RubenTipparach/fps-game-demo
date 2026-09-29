@@ -1,0 +1,80 @@
+{
+ "out": "/tmp/undercity_bob",
+ "god": true,
+ "steps": [
+  {
+   "log": "weapon bob (openspec/changes/weapon-bob, design section 2): the Kestrel drawn, a walk and a sprint east along Lantern Row, traced frame by frame. Run at --fixed-fps 60"
+  },
+  {
+   "scene": "res://levels/undercity/hub/hub.tscn"
+  },
+  {
+   "wait": 20
+  },
+  {
+   "teleport": [
+    96.0,
+    0.3,
+    38.0
+   ],
+   "yaw": -90,
+   "pitch": 0
+  },
+  {
+   "wait": 20
+  },
+  {
+   "key": "2"
+  },
+  {
+   "wait": 40
+  },
+  {
+   "face": [
+    170.0,
+    1.6,
+    38.0
+   ]
+  },
+  {
+   "wait": 5
+  },
+  {
+   "trace": "walk.csv",
+   "frames": 150
+  },
+  {
+   "wait": 30
+  },
+  {
+   "teleport": [
+    96.0,
+    0.3,
+    38.0
+   ],
+   "yaw": -90,
+   "pitch": 0
+  },
+  {
+   "wait": 30
+  },
+  {
+   "face": [
+    170.0,
+    1.6,
+    38.0
+   ]
+  },
+  {
+   "wait": 5
+  },
+  {
+   "trace": "sprint.csv",
+   "frames": 110,
+   "sprint": true
+  },
+  {
+   "quit": true
+  }
+ ]
+}

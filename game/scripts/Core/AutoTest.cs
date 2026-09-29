@@ -47,6 +47,41 @@ public partial class AutoTest : Node
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
     }
 
+    /// <summary>
+    /// A measurement instrument (openspec/changes/weapon-bob, design section 2): holds forward (and
+    /// sprint, with "sprint": true) for "frames" rendered frames and writes a CSV row per frame to
+    /// the out folder: seconds, ground speed m/s, the bob's phase (rad) and weight, the camera's
+    /// height over the feet (m), and the view weapon's offset (m) and turn (rad) from the camera.
+    /// </summary>
+    async Task TraceWalk(PlayerController player, string file, Godot.Collections.Dictionary step)
+    {
+        int frames = step.TryGetValue("frames", out var f) ? f.AsInt32() : 180;
+        bool sprint = step.TryGetValue("sprint", out var s) && s.AsBool();
+        var cam = player.GetNode<Node3D>("CameraRig/Camera3D");
+        var vm = player.GetNode<Node3D>("CameraRig/Camera3D/WeaponManager/ViewmodelRoot");
+        var rows = new System.Text.StringBuilder("t_s,speed_mps,phase_rad,weight,cam_y_m,vm_x_m,vm_y_m,vm_pitch_rad,vm_yaw_rad,vm_roll_rad\n");
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        Input.ActionPress("move_forward");
+        if (sprint)
+            Input.ActionPress("sprint");
+        double t = 0;
+        for (int i = 0; i < frames; i++)
+        {
+            await Frames(1);
+            t += GetProcessDeltaTime();
+            var v = player.Velocity with { Y = 0 };
+            var local = cam.GlobalTransform.AffineInverse() * vm.GlobalTransform;
+            var rot = local.Basis.GetEuler();
+            rows.Append(string.Join(",", new[] { t, v.Length(), player.BobPhase, player.BobWeight,
+                cam.GlobalPosition.Y - player.GlobalPosition.Y, local.Origin.X, local.Origin.Y, rot.X, rot.Y, rot.Z }
+                .Select(x => x.ToString("0.#####", inv)))).Append('\n');
+        }
+        Input.ActionRelease("move_forward");
+        Input.ActionRelease("sprint");
+        FileAccess.Open(_out.PathJoin(file), FileAccess.ModeFlags.Write).StoreString(rows.ToString());
+        GD.Print($"[AutoTest] trace {_out.PathJoin(file)}: {frames} frames");
+    }
+
     async Task Run(string scriptPath)
     {
         var text = FileAccess.GetFileAsString(scriptPath);
@@ -113,6 +148,8 @@ public partial class AutoTest : Node
                 }
                 Input.ActionRelease("move_forward");
             }
+            if (step.TryGetValue("trace", out var tr) && player != null)
+                await TraceWalk(player, tr.AsString(), step);
             if (step.TryGetValue("give", out _) && player != null)
             {
                 player.Weapons.GiveWeapon(2, 200);
