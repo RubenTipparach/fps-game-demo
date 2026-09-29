@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Lighting/ConversationRig.cs" id="1_Conversation"]
+
+[node name="ConversationRig" type="Node3D"]
+script = ExtResource("1_Conversation")
+
+[node name="Key" type="SpotLight3D" parent="."]
+light_energy = 0.0
+light_bake_mode = 0
+shadow_enabled = true
+
+[node name="Rim" type="OmniLight3D" parent="."]
+light_energy = 0.0
+light_bake_mode = 0
+
+[node name="Accent" type="OmniLight3D" parent="."]
+light_energy = 0.0
+light_bake_mode = 0

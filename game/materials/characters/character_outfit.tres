@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/character_outfit.gdshader" id="0_shader"]
+
+[resource]
+resource_name = "character_outfit"
+shader = ExtResource("0_shader")
+shader_parameter/specular = 0.5
+shader_parameter/normal_strength = 1.0
+shader_parameter/eye_roughness_below = 0.3

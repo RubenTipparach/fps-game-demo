@@ -1,0 +1,56 @@
+// Named NPCs and the civilian pool (openspec/changes/sump-market-hub, design section 2), with
+// their health, resistances, defence and weapon (openspec/changes/archive/2026-09-28-hub-combat, design section 4).
+{
+  "npcs": [
+    {"id": "silk", "name": "Silk", "role": "the fixer", "faction": "residents", "intelligence": 3, "dialog": "silk", "model": "silk", "idle": "idle", "health": 90, "resist_pct": {"ballistic": 10}, "defence": "surrender"},
+    {"id": "tank", "name": "Tank", "role": "the Anchor's bouncer", "faction": "residents", "intelligence": 2, "dialog": "tank", "model": "tank", "idle": "guard", "health": 150, "resist_pct": {"ballistic": 15}, "defence": "fight", "weapon": "tank_baton"},
+    {"id": "mags", "name": "Mags", "role": "bartender", "faction": "residents", "intelligence": 2, "dialog": "mags", "model": "mags", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "kessler", "name": "Kessler", "role": "pawnbroker", "faction": "residents", "intelligence": 3, "dialog": "kessler", "model": "kessler", "idle": "idle", "health": 80, "defence": "fight", "weapon": "scattergun"},
+    {"id": "doc_vo", "name": "Doc Vo", "role": "street doctor", "faction": "residents", "intelligence": 3, "dialog": "doc_vo", "model": "doc_vo", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "nguyen", "name": "Nguyen", "role": "noodle vendor", "faction": "residents", "intelligence": 1, "dialog": "nguyen", "model": "nguyen", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "rivet", "name": "Rivet", "role": "scavenger and fence", "faction": "residents", "intelligence": 2, "dialog": "rivet", "model": "rivet", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "mouse", "name": "Mouse", "role": "street kid", "faction": "residents", "intelligence": 1, "dialog": "mouse", "model": "mouse", "idle": "idle", "health": 50, "defence": "flee"},
+    {"id": "petra", "name": "Petra", "role": "sanitation worker", "faction": "sanitation", "intelligence": 2, "dialog": "petra", "model": "petra", "idle": "idle", "health": 70, "defence": "flee"},
+    {"id": "dace", "name": "Officer Dace", "role": "MerSec sergeant", "faction": "mersec", "intelligence": 3, "dialog": "dace", "model": "dace", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "skiv", "name": "Skiv", "role": "Drain Rats scout", "faction": "drain_rats", "intelligence": 1, "dialog": "skiv", "model": "skiv", "idle": "idle", "health": 90, "defence": "flee"},
+    {"id": "jax", "name": "Jax", "role": "Scrap Kings recruiter", "faction": "scrap_kings", "intelligence": 2, "dialog": "jax", "model": "jax", "idle": "idle", "health": 90, "defence": "flee"},
+    {"id": "lin", "name": "Sister Lin", "role": "shrine keeper", "faction": "residents", "intelligence": 2, "dialog": "lin", "model": "lin", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "oracle", "name": "The Oracle", "role": "data broker", "faction": "residents", "intelligence": 3, "dialog": "oracle", "model": "civ_f", "idle": "idle", "health": 70, "defence": "cower"},
+    {"id": "mersec_station", "name": "MerSec trooper", "role": "station guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_patrol_a", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_b", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_patrol_b", "name": "MerSec trooper", "role": "patrol", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_c", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_desk", "name": "MerSec trooper", "role": "Precinct 9 desk", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_c", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"},
+    {"id": "mersec_gate", "name": "MerSec trooper", "role": "checkpoint guard", "faction": "mersec", "intelligence": 2, "dialog": "mersec", "model": "mersec_b", "idle": "guard", "law": true, "health": 120, "resist_pct": {"ballistic": 35}, "defence": "fight", "weapon": "mersec_pistol"}
+  ],
+  "civilians": {
+    "dialog": "civilian",
+    "health": 60,
+    "defences": {"flee": 70, "cower": 30},
+    "small_talk": [
+      "Rain hasn't stopped since the Spire went up. Forty years, give or take.",
+      "Skyway's running late again. Not that it stops down here.",
+      "Nguyen's broth is the only honest thing in the Sump.",
+      "MerSec only comes down when someone upstairs is paying.",
+      "Don't drink the tap water. Don't drink the canal either.",
+      "The Anchor's got a new band on Thursdays. They're terrible.",
+      "My cousin works the depot. Says the pumps are older than the city.",
+      "Neon's cheaper than streetlights. That's why it's everywhere.",
+      "Somebody's been buying up the Tin Stacks. Nobody knows who.",
+      "You new? You look new. Keep your hands where Tank can see them.",
+      "Pachinko Sunrise pays out once a year. Everybody's waiting for it.",
+      "The ferry in the dry dock used to run to the outer islands. Now it's a flophouse."
+    ],
+    "rumours": [
+      "The Rats come up through the canal outfall when the tide's out. There's a grate there.",
+      "Rats all breathe through masks down there. Gas won't touch them.",
+      "Dace takes a cut from every crate that goes through his checkpoint. Everyone knows. Nobody can prove it.",
+      "The freight tunnel under Kiln runs all the way to the Yard. The gate's on a cheap lock.",
+      "Nguyen knows the storm drain code. Buy a cup and ask nicely.",
+      "The Scrap Kings keep robot dogs. Clothes won't fool a nose.",
+      "Mouse knows every roof in the Tin Stacks. Every vent too.",
+      "Kessler keeps a safe in his office. He'd know if you touched it.",
+      "There's a crawl vent from the sanitation break room right over the Rats' camp.",
+      "Sister Lin's offering box has seen more credits than Kessler's till."
+    ]
+  }
+}

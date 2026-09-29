@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/LootContainer.cs" id="1_LootContaine"]
+[ext_resource type="PackedScene" path="res://models/undercity/props/tool_box.glb" id="2_tool_box"]
+
+[node name="Container" type="Node3D"]
+script = ExtResource("1_LootContaine")
+
+[node name="Model" parent="." instance=ExtResource("2_tool_box")]

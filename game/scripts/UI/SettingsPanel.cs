@@ -18,14 +18,14 @@ public partial class SettingsPanel : PanelContainer
         AddChild(v);
         v.AddChild(UiTheme.MakeLabel("OPTIONS", 44, UiTheme.Accent));
 
-        AddSlider(v, "Mouse sensitivity", 0.1, 4.0, 0.05, s.MouseSensitivity, x => s.MouseSensitivity = (float)x);
-        AddSlider(v, "Gamepad sensitivity", 0.2, 3.0, 0.05, s.GamepadSensitivity, x => s.GamepadSensitivity = (float)x);
+        AddSlider(v, "Mouse sensitivity", GameSettings.MouseSensitivityRange, s.MouseSensitivity, x => s.MouseSensitivity = (float)x);
+        AddSlider(v, "Gamepad sensitivity", GameSettings.GamepadSensitivityRange, s.GamepadSensitivity, x => s.GamepadSensitivity = (float)x);
         AddCheck(v, "Invert mouse Y", s.InvertY, x => s.InvertY = x);
-        AddSlider(v, "Field of view (horizontal)", 80, 130, 1, s.Fov, x => s.Fov = (float)x, "0");
+        AddSlider(v, "Field of view (horizontal)", GameSettings.FovRange, s.Fov, x => s.Fov = (float)x, "0");
         AddCheck(v, "Head bob", s.HeadBob, x => s.HeadBob = x);
-        AddSlider(v, "Master volume", 0, 1, 0.01, s.MasterVolume, x => { s.MasterVolume = (float)x; s.Apply(); });
-        AddSlider(v, "Effects volume", 0, 1, 0.01, s.SfxVolume, x => { s.SfxVolume = (float)x; s.Apply(); });
-        AddSlider(v, "Music volume", 0, 1, 0.01, s.MusicVolume, x => { s.MusicVolume = (float)x; s.Apply(); });
+        AddSlider(v, "Master volume", GameSettings.VolumeRange, s.MasterVolume, x => { s.MasterVolume = (float)x; s.Apply(); });
+        AddSlider(v, "Effects volume", GameSettings.VolumeRange, s.SfxVolume, x => { s.SfxVolume = (float)x; s.Apply(); });
+        AddSlider(v, "Music volume", GameSettings.VolumeRange, s.MusicVolume, x => { s.MusicVolume = (float)x; s.Apply(); });
         AddCheck(v, "Fullscreen (F11)", s.Fullscreen, x => { s.Fullscreen = x; s.Apply(); });
         AddCheck(v, "Retro texture filtering", s.RetroFiltering, x => { s.RetroFiltering = x; MaterialFilter.Apply(x); });
         AddCheck(v, "Show FPS", s.ShowFps, x => s.ShowFps = x);
@@ -40,7 +40,7 @@ public partial class SettingsPanel : PanelContainer
         back.CallDeferred(Control.MethodName.GrabFocus);
     }
 
-    static void AddSlider(Container parent, string label, double min, double max, double step, double value,
+    static void AddSlider(Container parent, string label, SettingRange range, double value,
         Action<double> onChanged, string format = "0.00")
     {
         var row = new HBoxContainer();
@@ -49,7 +49,7 @@ public partial class SettingsPanel : PanelContainer
         row.AddChild(l);
         var slider = new HSlider
         {
-            MinValue = min, MaxValue = max, Step = step, Value = value,
+            MinValue = range.Min, MaxValue = range.Max, Step = range.Step, Value = value,
             SizeFlagsHorizontal = SizeFlags.ExpandFill, CustomMinimumSize = new Vector2(280, 32),
             SizeFlagsVertical = SizeFlags.ShrinkCenter,
         };

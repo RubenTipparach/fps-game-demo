@@ -11,12 +11,24 @@ namespace Brushfire;
 /// Script: { "level": 0, "out": "/tmp/shots", "god": true, "steps": [ step, ... ] }
 /// Steps:  {"wait": frames} | {"teleport": [x,y,z], "yaw": deg, "pitch": deg} | {"shot": "name.png"}
 ///         {"debug_draw": 1} (unshaded, for checking geometry before a bake) | {"freeze": true} (enemies)
-///         {"hold": "action", "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
+///         {"render_scale": 0.67} (the 3D view's resolution scale, for long captures on lavapipe)
+///         {"shot": "tank.png", "face_box": "hub:tank"} (also writes tank.png.face.json: the head's box on screen)
+///         {"rig": false} (conversations without the character lighting, the rig and the wrist glow: before and after)
+///         {"hold": "action" | ["action", ...], "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
+/// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
+///         {"goto": "hub:tank", "distance": m} (stand facing a stable entity) | {"talk": "tank"}
+///         {"setup": {"credits": n, "items": ["id:n"], "wear": ["id"], "flags": [..], "skills": {"persuasion": 2},
+///                    "quests": [..], "health": n, "breath": s, "stamina": n}} | {"state": true} (log the run and the water)
+///         {"click": "SaveHere"} (press a button by node name: title, pause, save rows by slot)
+///         {"kill": "tank" | "hub:civ_01", "at": [x,y,z]} (the NPC dies and its body falls, from "at" if given;
+///                    test only until combat lands) | {"look": [yaw, pitch]} (turn without moving)
+///         {"face": [x,y,z]} (look at a point) | {"walk_to": [x,z], "within": m, "max": frames} (steer there, forward held)
 /// </summary>
 public partial class AutoTest : Node
 {
-    public static bool Active { get; private set; }
+    /// <summary>True while a script drives the game: here, or the headless water test (Undercity's SwimTest).</summary>
+    public static bool Active { get; internal set; }
     public static bool God { get; private set; }
 
     string _out = "user://autotest";
@@ -52,6 +64,9 @@ public partial class AutoTest : Node
             var player = PlayerController.Instance;
             if (step.TryGetValue("level", out var li))
                 await LoadLevel(li.AsInt32());
+            if (step.TryGetValue("scene", out var sc))
+                await LoadScene(sc.AsString());
+            await UndercityStep(step);
             if (step.TryGetValue("wait", out var w))
                 await Frames(w.AsInt32());
             if (step.TryGetValue("teleport", out var tp) && player != null)
@@ -64,6 +79,39 @@ public partial class AutoTest : Node
                 player.ResetPhysicsInterpolation();
                 await Frames(3);
             }
+            if (step.TryGetValue("look", out var lk) && player != null)
+            {
+                var a = lk.AsGodotArray();
+                player.SetLook((float)a[0], (float)a[1]);
+            }
+            if (step.TryGetValue("face", out var fc) && player != null)
+            {
+                // look at a point: [x, y, z]
+                var a = fc.AsGodotArray();
+                var d = new Vector3((float)a[0], (float)a[1], (float)a[2]) - player.EyePosition;
+                player.SetLook(Mathf.RadToDeg(Mathf.Atan2(-d.X, -d.Z)),
+                    Mathf.RadToDeg(Mathf.Atan2(d.Y, new Vector2(d.X, d.Z).Length())));
+            }
+            if (step.TryGetValue("walk_to", out var wt) && player != null)
+            {
+                // steer toward [x, z] with forward held (walking or swimming) until within "within" metres
+                var a = wt.AsGodotArray();
+                var goal = new Vector2((float)a[0], (float)a[1]);
+                float within = step.TryGetValue("within", out var wv) ? (float)wv.AsDouble() : 0.5f;
+                int max = step.TryGetValue("max", out var mv) ? mv.AsInt32() : 600;
+                float pitchDeg = Mathf.RadToDeg(player.Pitch);
+                Input.ActionPress("move_forward");
+                for (int i = 0; i < max; i++)
+                {
+                    var here = new Vector2(player.GlobalPosition.X, player.GlobalPosition.Z);
+                    var to = goal - here;
+                    if (to.Length() <= within)
+                        break;
+                    player.SetLook(Mathf.RadToDeg(Mathf.Atan2(-to.X, -to.Y)), pitchDeg);
+                    await Frames(1);
+                }
+                Input.ActionRelease("move_forward");
+            }
             if (step.TryGetValue("give", out _) && player != null)
             {
                 player.Weapons.GiveWeapon(2, 200);
@@ -74,10 +122,16 @@ public partial class AutoTest : Node
                 player.Weapons.SwitchTo(player.Weapons.All.FirstOrDefault(x => x.Slot == ws.AsInt32()));
             if (step.TryGetValue("hold", out var action))
             {
+                // one action, or several held together: {"hold": ["move_forward", "crouch"]}
                 int frames = step.TryGetValue("frames", out var f) ? f.AsInt32() : 30;
-                Input.ActionPress(action.AsString());
+                var actions = action.VariantType == Variant.Type.Array
+                    ? action.AsGodotArray().Select(a => a.AsString()).ToArray()
+                    : new[] { action.AsString() };
+                foreach (var a in actions)
+                    Input.ActionPress(a);
                 await Frames(frames);
-                Input.ActionRelease(action.AsString());
+                foreach (var a in actions)
+                    Input.ActionRelease(a);
             }
             if (step.TryGetValue("press", out var pa))
             {
@@ -98,6 +152,8 @@ public partial class AutoTest : Node
                     ((Node)e).ProcessMode = ProcessModeEnum.Disabled;
             if (step.TryGetValue("debug_draw", out var dd))    // 0 normal, 1 unshaded (geometry checks before a bake)
                 GetViewport().DebugDraw = (Viewport.DebugDrawEnum)dd.AsInt32();
+            if (step.TryGetValue("render_scale", out var rs))  // the 3D view's resolution scale; the UI stays sharp (lavapipe captures)
+                GetViewport().Scaling3DScale = (float)rs.AsDouble();
             if (step.TryGetValue("log", out var msg))
                 GD.Print($"[AutoTest] {msg}");
             if (step.TryGetValue("stats", out _))
@@ -108,6 +164,10 @@ public partial class AutoTest : Node
                          $"shots {s.ShotsHit}/{s.ShotsFired} player hp {p?.Health} armor {p?.Armor} pos {p?.GlobalPosition} " +
                          $"alive enemies {GetTree().GetNodesInGroup("enemies").Count} fps {Engine.GetFramesPerSecond()}");
             }
+            if (step.TryGetValue("render_stats", out _))    // what the last frame drew (hub-skyline's draw-call count)
+                GD.Print($"[AutoTest] render: draw calls {Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame)} " +
+                         $"primitives {Performance.GetMonitor(Performance.Monitor.RenderTotalPrimitivesInFrame)} " +
+                         $"objects {Performance.GetMonitor(Performance.Monitor.RenderTotalObjectsInFrame)}");
             if (step.TryGetValue("quit", out _))
             {
                 GetTree().Quit();
@@ -115,6 +175,160 @@ public partial class AutoTest : Node
             }
         }
         GetTree().Quit();
+    }
+
+    async Task LoadScene(string path)
+    {
+        GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, path);
+        await Frames(10);
+        while (PlayerController.Instance == null)
+            await Frames(1);
+        await Frames(10);
+        GD.Print($"[AutoTest] loaded scene {path}");
+    }
+
+    /// <summary>Undercity steps. The runner is a test harness, so it reads the level's state directly.</summary>
+    async Task UndercityStep(Godot.Collections.Dictionary step)
+    {
+        var level = GetTree().CurrentScene as Undercity.Client.UndercityLevel;
+        var state = level?.AutoTestState;
+        if (step.TryGetValue("key", out var k))
+        {
+            var code = OS.FindKeycodeFromString(k.AsString());
+            Input.ParseInputEvent(new InputEventKey { Keycode = code, PhysicalKeycode = code, Pressed = true });
+            await Frames(2);
+            Input.ParseInputEvent(new InputEventKey { Keycode = code, PhysicalKeycode = code, Pressed = false });
+            await Frames(2);
+        }
+        if (step.TryGetValue("click", out var click))
+        {
+            // Presses a button by node name anywhere in the current scene: menus, the pause screen, save rows.
+            var button = GetTree().CurrentScene?.FindChild(click.AsString(), true, false) as BaseButton;
+            if (button == null)
+                GD.PrintErr($"[AutoTest] no button named '{click}'");
+            else if (button.Disabled)
+                GD.Print($"[AutoTest] '{click}' is disabled");
+            else
+                button.EmitSignal(BaseButton.SignalName.Pressed);
+            await Frames(4);
+        }
+        if (level == null || state == null)
+            return;
+        if (step.TryGetValue("setup", out var su))
+        {
+            var d = su.AsGodotDictionary();
+            if (d.TryGetValue("credits", out var cr))
+                state.Inventory.Earn(cr.AsInt32());
+            if (d.TryGetValue("health", out var hp))
+                state.Health.Set(hp.AsDouble());
+            if (d.TryGetValue("breath", out var br))
+                state.Breath.Set(br.AsDouble());
+            if (d.TryGetValue("stamina", out var st))
+                state.Stamina.Set(st.AsDouble());
+            if (d.TryGetValue("items", out var items))
+                foreach (var spec in items.AsGodotArray())
+                {
+                    var (id, n) = Undercity.Core.GameState.ParseSpec(spec.AsString());
+                    state.PickUp(id, n);
+                }
+            if (d.TryGetValue("wear", out var wear))
+                foreach (var id in wear.AsGodotArray())
+                    state.Inventory.Wear(state.Data.Items.Get(id.AsString()));
+            if (d.TryGetValue("flags", out var flags))
+                foreach (var f in flags.AsGodotArray())
+                    state.World.SetFlag(f.AsString());
+            if (d.TryGetValue("quests", out var quests))
+                foreach (var q in quests.AsGodotArray())
+                    state.Quests.Start(q.AsString());
+            if (d.TryGetValue("skills", out var skills))
+                foreach (var (name, rank) in skills.AsGodotDictionary())
+                {
+                    var skill = System.Enum.Parse<Undercity.Core.Progression.Skill>(name.AsString(), true);
+                    state.Character.AddSkillPoints(20);
+                    while (state.Character.Rank(skill) < rank.AsInt32() && state.Character.Raise(skill)) { }
+                }
+        }
+        if (step.TryGetValue("goto", out var g) && level.FindStable(g.AsString()) is { } target)
+        {
+            float dist = step.TryGetValue("distance", out var dv) ? (float)dv.AsDouble() : 1.8f;
+            var fwd = -target.GlobalBasis.Z;
+            fwd.Y = 0;
+            fwd = fwd.LengthSquared() > 0 ? fwd.Normalized() : Vector3.Forward;
+            var p = PlayerController.Instance;
+            p.GlobalPosition = target.GlobalPosition + fwd * dist + Vector3.Up * 0.05f;
+            p.Velocity = Vector3.Zero;
+            var yaw = Mathf.RadToDeg(Mathf.Atan2(fwd.X, fwd.Z));
+            p.SetLook(yaw, step.TryGetValue("pitch", out var pv) ? (float)pv.AsDouble() : -10f);
+            p.ResetPhysicsInterpolation();
+            await Frames(3);
+        }
+        if (step.TryGetValue("rig", out var rig))    // character lighting on or off, for the before-and-after checks
+            level.ConversationRigOn = rig.AsBool();
+        if (step.TryGetValue("face_box", out var fb))
+            WriteFaceBox(level, fb.AsString(), step.TryGetValue("shot", out var fs) ? fs.AsString() : null);
+        if (step.TryGetValue("probe", out var probeId))
+        {
+            foreach (var n in level.Npcs().Where(n => n.NpcId == probeId.AsString()))
+            {
+                var model = n.GetNodeOrNull<Node3D>("Model");
+                var p = PlayerController.Instance;
+                GD.Print($"[AutoTest] probe {n.StableId}: rot {n.RotationDegrees} global {n.GlobalRotationDegrees} " +
+                         $"fwd {-n.GlobalBasis.Z} det {n.GlobalBasis.Determinant():0.00} parent {n.GetParent().Name} " +
+                         $"parent_det {(n.GetParent() as Node3D)?.GlobalBasis.Determinant():0.00} model_fwd {(model != null ? model.GlobalBasis.Z : Vector3.Zero)} " +
+                         $"to_player {(p.GlobalPosition - n.GlobalPosition).Normalized()}");
+                if (model?.FindChildren("*", "Skeleton3D", true, false).FirstOrDefault() is Skeleton3D sk)
+                    foreach (var bone in new[] { "root", "pelvis", "chest", "head" })
+                    {
+                        int i = sk.FindBone(bone);
+                        if (i >= 0)
+                            GD.Print($"[AutoTest]   {bone}: global fwd {(sk.GlobalTransform * sk.GetBoneGlobalPose(i)).Basis.Z}");
+                    }
+            }
+        }
+        if (step.TryGetValue("talk", out var npcId))
+        {
+            var npc = level.Npcs().FirstOrDefault(n => n.NpcId == npcId.AsString());
+            npc?.Use();
+            await Frames(3);
+        }
+        if (step.TryGetValue("kill", out var killId))
+        {
+            // Test harness: the NPC is dead in the world, under its target key, and its body falls.
+            // A shot kills through the damage rule; this skips the shooting.
+            var npc = level.Npcs().FirstOrDefault(n => n.NpcId == killId.AsString() || n.StableId == killId.AsString());
+            if (npc == null)
+                GD.PrintErr($"[AutoTest] no npc '{killId}'");
+            else
+            {
+                if (step.TryGetValue("at", out var at))
+                {
+                    var a = at.AsGodotArray();
+                    npc.GlobalPosition = new Vector3((float)a[0], (float)a[1], (float)a[2]);
+                    await Frames(2);
+                }
+                state.World.SetNpc(npc.TargetKey, Undercity.Core.World.NpcStatus.Dead);
+                var away = npc.GlobalPosition - PlayerController.Instance.GlobalPosition;
+                away.Y = 0;
+                npc.Collapse(away.Normalized() * 40f);
+                GD.Print($"[AutoTest] {npc.StableId} collapses");
+            }
+            await Frames(2);
+        }
+        if (step.TryGetValue("state", out _))
+        {
+            var c = state.Character;
+            GD.Print($"[AutoTest] state: level {c.Level} xp {c.Xp}/{c.XpToNext} points {c.SkillPoints} credits {state.Inventory.Credits} " +
+                     $"health {state.Health.Value:0}/{state.Health.Max:0} drawn {state.Drawn ?? "-"} " +
+                     $"rounds {(state.Rounds is { } r ? $"{r.Loaded}/{r.Reserve}" : "-")}{(state.Reloading ? " reloading" : "")} " +
+                     $"law {(state.Law.Hostile ? "hostile" : "calm")}{(state.Dead ? " DEAD" : "")}");
+            var p = PlayerController.Instance;
+            GD.Print($"[AutoTest] water: {state.Water} breath {state.Breath.Value:0.0}/{state.Breath.Max:0} " +
+                     $"stamina {state.Stamina.Value:0.0}/{state.Stamina.Max:0} feet {p?.GlobalPosition}");
+            GD.Print($"[AutoTest] pack: {string.Join(", ", state.Inventory.Pack.Stacks.Select(x => $"{x.Def.Id}x{x.Count}{(x.StolenFrom != null ? "(stolen)" : "")}"))}");
+            GD.Print($"[AutoTest] flags: {string.Join(", ", state.World.Flags)}");
+            GD.Print($"[AutoTest] quests: {string.Join(", ", state.Quests.Table.Quests.Where(q => state.Quests.State(q.Id) != Undercity.Core.Quests.QuestState.NotStarted).Select(q => $"{q.Id}={state.Quests.State(q.Id)}"))}");
+            GD.Print($"[AutoTest] rep: {string.Join(", ", state.Data.Factions.Factions.Select(f => $"{f.Id} {state.Reputation.Get(f.Id)}"))}");
+        }
     }
 
     async Task LoadLevel(int index)
@@ -125,5 +339,51 @@ public partial class AutoTest : Node
             await Frames(1);
         await Frames(10);
         GD.Print($"[AutoTest] loaded level {index}: {Game.Levels[index].Title}");
+    }
+
+    // The instrument for openspec/changes/character-lighting (design section 5): the speaker's head
+    // box projected to the screen, written beside the step's shot for tools/measure/face_luma.py.
+    // The box is 0.24 m wide and runs 0.12 m below to 0.14 m above the head's middle
+    // (NpcActor.FaceCentre), in the camera's plane.
+    void WriteFaceBox(Undercity.Client.UndercityLevel level, string who, string shot)
+    {
+        var npc = level.Npcs().FirstOrDefault(n => n.StableId == who || n.NpcId == who);
+        var cam = GetViewport().GetCamera3D();
+        if (shot == null || cam == null || npc == null)
+        {
+            GD.PrintErr($"[AutoTest] face_box: no '{who}', no camera, or no shot in the step");
+            return;
+        }
+        var middle = npc.FaceCentre;
+        var right = cam.GlobalBasis.X;
+        var up = cam.GlobalBasis.Y;
+        // UnprojectPosition answers in the viewport's visible rectangle (the project's 1920 x 1080
+        // base, stretched); the shot is the image the viewport's texture gives, the window's pixels.
+        // Scale by that image's own size: the texture's reported size isn't it (854 x 480 in a
+        // 1280 x 720 window, measured), and the box must land where the shot's pixels are.
+        var vp = GetViewport();
+        var toPixels = (Vector2)vp.GetTexture().GetImage().GetSize() / vp.GetVisibleRect().Size;
+        // Metres from the eyes, measured on the conversation shots: the face runs from the chin
+        // 0.12 m below to the hairline 0.07 m above and is 0.15 m wide; the head, ears and crown
+        // included, 0.22 m wide from 0.14 m below to 0.14 m above.
+        Godot.Collections.Array Box(float halfWidth, float below, float above)
+        {
+            var c = new[] { (-halfWidth, -below), (halfWidth, -below), (-halfWidth, above), (halfWidth, above) }
+                .Select(o => cam.UnprojectPosition(middle + right * o.Item1 + up * o.Item2) * toPixels).ToArray();
+            return new Godot.Collections.Array { c.Min(p => p.X), c.Min(p => p.Y), c.Max(p => p.X), c.Max(p => p.Y) };
+        }
+        var rig = GetTree().GetFirstNodeInGroup("conversation_rig");
+        var box = new Godot.Collections.Dictionary
+        {
+            ["who"] = npc.StableId,
+            ["box"] = Box(0.075f, 0.12f, 0.07f),
+            ["head"] = Box(0.11f, 0.14f, 0.14f),
+            // Which side the conversation rig put its key on; "none" before the rig exists.
+            ["key_side"] = rig != null && rig.HasMeta("key_side") ? rig.GetMeta("key_side").AsString() : "none",
+        };
+        string file = _out.PathJoin(shot + ".face.json");
+        using var f = FileAccess.Open(file, FileAccess.ModeFlags.Write);
+        f.StoreString(Json.Stringify(box));
+        GD.Print($"[AutoTest] face box {file}");
     }
 }

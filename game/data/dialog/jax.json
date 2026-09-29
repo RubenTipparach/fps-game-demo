@@ -1,0 +1,32 @@
+// Jax, Scrap Kings recruiter (hub POI 15). [Deception 2] cons him out of a gang pass; gives
+// S1 Kingmaker.
+{
+  "id": "jax", "name": "Jax",
+  "starts": [{"node": "garage"}],
+  "nodes": {
+    "garage": {
+      "say": ["Kings' Garage. You want in, or you want out?"],
+      "choices": [
+        {"text": "Crusher sent me. Said you'd have my pass ready.", "if": [{"no_item": "gang_pass"}, {"not_flag": "jax_conned"}],
+         "check": {"skill": "deception", "dc": 2}, "pass": "conned"},
+        {"text": "What does a pass cost?", "if": [{"no_item": "gang_pass"}], "next": "cost"},
+        {"text": "You look like a man with a problem.", "if": [{"quest": "s1_kingmaker", "state": "not_started"}], "next": "kingmaker"},
+        {"text": "Out.", "exit": true}
+      ]
+    },
+    "conned": {"say": ["He did? He never tells me anything. Here. Don't lose it; I sign for those."],
+               "do": [{"give": "gang_pass"}, {"flag": "jax_conned"}], "next": "garage"},
+    "cost": {"say": ["Loyalty. Blood. Or a favour, done quiet."], "next": "garage"},
+    "kingmaker": {
+      "say": [
+        "Crusher's old. Soft. Sits in that office counting other people's money while the Kings go hungry.",
+        "The Kings need a new king. Make it happen, out in the Yard, and there's five hundred in it."
+      ],
+      "choices": [
+        {"text": "I'll think about Crusher.", "do": [{"start_quest": "s1_kingmaker"}], "next": "garage"},
+        {"text": "Not my fight.", "next": "garage"}
+      ]
+    }
+  },
+  "barks": {"greeting": ["Yeah?", "Kings' business."]}
+}

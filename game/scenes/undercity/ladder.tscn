@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/Ladder.cs" id="1_Ladder"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(1.0, 1.2, 0.9)
+
+[node name="Ladder" type="Node3D"]
+script = ExtResource("1_Ladder")
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+position = Vector3(0.0, 0.4, -0.15)
+shape = SubResource("BoxShape3D_2")

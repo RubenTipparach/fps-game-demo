@@ -1,0 +1,102 @@
+# water-and-swimming Specification
+
+## Purpose
+What the hub's water guarantees today: every water body comes from the level's layout with its
+surface and bed; the runner wades, floats, swims, dives and holds their breath by one set of
+rules in the core, tires slowly, can't fight while swimming, and climbs out by ladders and
+ledges; ragdolls float half out of the water and dropped things sink to the bed. Pinned by the
+core's water tests, `tools/levels/test_city_plan.py` and `swim_test.tscn`
+(openspec/changes/archive/2026-09-29-water-and-swimming).
+
+## Requirements
+
+### Requirement: Water comes from the layout
+Every water body in a level's layout SHALL be carried into the level's data
+(`data/levels/<id>.json` "water") with its polygon and its surface and bed heights, so the water
+the map draws, the water the level shows and the water the game simulates are one entry. One
+rule in `Undercity.Core` SHALL say which water a point is in and how deep a body is in it, for
+the player, ragdolls and dropped items alike.
+
+#### Scenario: The Cut
+- **WHEN** the hub's data is exported from `tools/levels/layouts/hub.py`
+- **THEN** it holds the Cut with surface -2.2 m and bed -4.5 m, and each other water body in the
+  layout, and a point in the canal is in the Cut while a point on the quay is in no water
+
+### Requirement: The player wades and swims
+The player SHALL wade where the water at their feet is 0.1-1.2 m deep, at 0.6 x their ground
+speed, and SHALL swim where it is deeper: no gravity, 3.0 m/s along the look direction, rising
+at 2.0 m/s and diving at 2.4 m/s, floating with the eyes 0.15 m above the surface. The numbers
+SHALL come from `data/water.json`.
+
+#### Scenario: Falling in
+- **WHEN** the runner walks off the quay into the Cut
+- **THEN** within 2 s they float with their eyes 0.10-0.20 m above the surface, and swimming
+  forward moves them at 2.9-3.1 m/s
+
+### Requirement: Breath runs out under water
+Breath SHALL drain one second per second while the player's eyes are under a water surface,
+from `breath_s` (45 s), and SHALL refill to full in `breath_refill_s` (3 s) at the surface. With
+no breath left the player SHALL take `drown_damage_per_s` (8) damage each second through the
+health rule. One rule in `Undercity.Core` SHALL serve every water body, the Drains' bypass
+included.
+
+#### Scenario: Staying down too long
+- **WHEN** a player with 100 health stays under water for 50 s
+- **THEN** their breath is 0 and their health is 60
+
+#### Scenario: Coming up for air
+- **WHEN** a player with no breath left surfaces for 3 s
+- **THEN** their breath is full again
+
+### Requirement: Swimming tires the swimmer
+Swimming SHALL drain stamina at `swim_stamina_per_s` (0.8) from `stamina_max` (100), and a
+swimmer with none left SHALL move at `tired_speed_factor` (0.5) of their swimming speeds.
+Stamina SHALL refill at `stamina_regen_per_s` (12) while wading or dry. Drowning, not stamina,
+does damage.
+
+#### Scenario: A long swim
+- **WHEN** the runner swims without stopping for 130 s
+- **THEN** their stamina is 0, they swim at 1.4-1.6 m/s, and their health is unchanged by it
+
+#### Scenario: A rest on the quay
+- **WHEN** a tired runner climbs out and stands on the quay for 9 s
+- **THEN** their stamina is full again
+
+### Requirement: Ladders and ledges lead out of the water
+A ladder SHALL be climbable at 3.0 m/s by facing it and moving forward, and SHALL put the player
+on the floor at its landing, stepping over any kerb on the way; from that floor, using it SHALL
+climb down it. A ledge whose top is 0.2-1.0 m above the water surface, within 0.6 m in front of
+a swimming player and with room to stand, SHALL be climbable by jumping.
+
+#### Scenario: Out by the ladder
+- **WHEN** the runner swims to a quay ladder in the Cut and holds forward while facing it
+- **THEN** they climb out and stand on the quay within 2 s
+
+#### Scenario: Back down
+- **WHEN** the runner stands at a quay ladder's landing, uses the ladder and holds back
+- **THEN** they climb down it and let go floating at the surface
+
+#### Scenario: Onto a boat
+- **WHEN** the runner swims up to a moored boat whose deck is 0.5 m above the surface and jumps
+- **THEN** they end up standing on its deck
+
+### Requirement: No weapon while swimming
+Entering the swimming state SHALL holster a drawn weapon, and the belt SHALL refuse to draw one
+until the player is wading or dry.
+
+#### Scenario: Drawing in deep water
+- **WHEN** the runner presses the Kestrel's belt key while swimming
+- **THEN** nothing is drawn and the feed says "Not while swimming."
+
+### Requirement: Bodies float and things sink
+A ragdoll in water SHALL float, pushed up in proportion to how much of each bone is under the
+surface, with water damping, and SHALL NOT be frozen while it is in the water; a dropped item
+SHALL fall to the floor under it, sinking through water to the bed, and stay usable there.
+
+#### Scenario: A body in the Cut
+- **WHEN** an NPC dies falling into the Cut
+- **THEN** the body floats at the surface and comes to rest there within 8 s
+
+#### Scenario: A dropped medkit
+- **WHEN** the runner drops a medkit while swimming
+- **THEN** it sinks to the bed and can be picked up there

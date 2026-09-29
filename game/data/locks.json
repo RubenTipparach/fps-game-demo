@@ -1,0 +1,9 @@
+// Lock timings (openspec/changes/world-interaction, design section 2). The held timer stands in
+// for the lockpicking and hacking minigames until their mockups are approved (survey E1, E2).
+{
+  "pick_time_per_tier_s": 1.0,
+  "hack_time_per_tier_s": 1.5,
+  "code_time_s": 1.0,
+  "safe_pick_mult": 2.0,
+  "noise_m": {"key": 5, "code": 1, "pick": 3, "hack": 2}
+}

@@ -1,0 +1,54 @@
+// Quests (openspec/changes/sump-market-hub, the-drains, scrap-kings-yard). Mission payments come
+// from Silk's dialog, because they depend on the outcome.
+{
+  "quests": [
+    {"id": "t0_arrival", "title": "Low Harbor", "giver": "silk", "level": "hub",
+     "summary": "New in the Sump. Silk, the fixer, works out of the Rusty Anchor's back room. Tank won't let just anyone through.",
+     "objectives": [
+       {"id": "meet_silk", "text": "Find Silk in the Rusty Anchor's back room.", "xp": 100},
+       {"id": "gear_up", "text": "See what Kessler's Pawn and Doc Vo's clinic have.", "xp": 50, "optional": true}
+     ], "xp": 0},
+    {"id": "m1_rat_trap", "title": "Rat Trap", "giver": "silk", "level": "drains",
+     "summary": "The Drain Rats hold two sanitation workers in the Drains' pump station. Silk pays 800 cr for both, alive.",
+     "objectives": [
+       {"id": "petra", "text": "Talk to Petra at the Sanitation depot.", "xp": 50, "optional": true},
+       {"id": "enter", "text": "Get into the Drains: the storm drain in the Pit, or the canal outfall.", "xp": 100},
+       {"id": "find", "text": "Find the hostages.", "xp": 150, "hidden": true},
+       {"id": "free", "text": "Free the hostages.", "xp": 400},
+       {"id": "out", "text": "Get them out.", "xp": 300},
+       {"id": "safe", "text": "Open Mother Rat's safe.", "xp": 150, "optional": true, "hidden": true}
+     ], "xp": 0},
+    {"id": "m2_chop_job", "title": "Chop Job", "giver": "silk", "level": "yard",
+     "summary": "Steal the prototype nav core from Crusher's office safe in the Scrap Kings' yard. Silk pays 1,200 cr.",
+     "objectives": [
+       {"id": "enter", "text": "Get into Scrap King's Yard: the checkpoint, the freight tunnel, or over the jersey blocks.", "xp": 150},
+       {"id": "find", "text": "Find the nav core.", "xp": 100, "hidden": true},
+       {"id": "steal", "text": "Steal the nav core.", "xp": 600},
+       {"id": "out", "text": "Get out.", "xp": 250}
+     ], "xp": 0},
+    {"id": "s1_kingmaker", "title": "Kingmaker", "giver": "jax", "level": "yard",
+     "summary": "Jax wants Crusher, the Scrap Kings' boss, dead, and pays 500 cr. Or you could tell Crusher.",
+     "objectives": [
+       {"id": "deal", "text": "Deal with Crusher, or with Jax.", "xp": 400}
+     ], "xp": 0},
+    {"id": "s2_ledger", "title": "The Ledger", "giver": "petra", "level": "yard",
+     "summary": "The Kings' ledger names the MerSec officers on their payroll. Petra wants it.",
+     "objectives": [
+       {"id": "get", "text": "Take or copy the Kings' ledger.", "xp": 300}
+     ], "xp": 0},
+    {"id": "s3_mouses_debt", "title": "Mouse's Debt", "giver": "mouse", "level": "hub",
+     "summary": "Mouse owes Officer Dace 300 cr, and Dace is squeezing. Pay it, talk Dace down, or find something on him.",
+     "objectives": [
+       {"id": "ask", "text": "Ask Dace about Mouse's debt.", "xp": 50},
+       {"id": "evidence", "text": "Find proof of Dace's bribes: Precinct 9's terminal.", "xp": 100, "optional": true, "hidden": true},
+       {"id": "settle", "text": "Settle Mouse's debt.", "xp": 250},
+       {"id": "tell", "text": "Tell Mouse.", "xp": 0}
+     ], "xp": 0},
+    {"id": "s4_last_call", "title": "Last Call", "giver": "mags", "level": "drains",
+     "summary": "Mags' whisky shipment went down the drain. The Rats are drinking it.",
+     "objectives": [
+       {"id": "find", "text": "Find Mags' whisky in the Drains.", "xp": 200},
+       {"id": "tell", "text": "Tell Mags where it went.", "xp": 0}
+     ], "xp": 0}
+  ]
+}

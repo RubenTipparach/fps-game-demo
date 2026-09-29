@@ -1,0 +1,29 @@
+// Skiv, Drain Rats scout (hub POI 14, Intelligence 1). [Persuasion 2] or 100 cr buys a parley with
+// the Rats.
+{
+  "id": "skiv", "name": "Skiv",
+  "starts": [
+    {"if": [{"parley": "drain_rats"}], "node": "parleyed"},
+    {"node": "pit"}
+  ],
+  "nodes": {
+    "pit": {
+      "say": ["Nothing down here for you, topsider."],
+      "choices": [
+        {"text": "I'm not here to fight. I want a word with Mother Rat, face to face.",
+         "check": {"skill": "persuasion", "dc": 2}, "pass": "parley"},
+        {"text": "Buy yourself something nice, and put in a word for me.", "if": [{"credits": 100}],
+         "do": [{"credits": -100}], "next": "parley"},
+        {"text": "The sanitation workers.", "if": [{"quest": "m1_rat_trap"}], "next": "hostages"},
+        {"text": "Why the masks?", "next": "masks"},
+        {"text": "Just passing.", "exit": true}
+      ]
+    },
+    "parley": {"say": ["...Fine. You walk in, you walk in slow, hands empty. Mother'll hear you out. Once."],
+               "do": [{"parley": "drain_rats"}, {"say": "The Drain Rats will parley."}], "exit": true},
+    "hostages": {"say": ["Mother's business. Mother's price. The city didn't pay it."], "next": "pit"},
+    "masks": {"say": ["Gas down there'll kill you before we do. We all breathe filtered. You won't put us to sleep that way."], "next": "pit"},
+    "parleyed": {"say": ["Slow, hands empty. Mother's waiting."], "exit": true}
+  },
+  "barks": {"greeting": ["Topsider.", "Keep walking."]}
+}

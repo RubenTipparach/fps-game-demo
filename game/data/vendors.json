@@ -1,0 +1,31 @@
+// Vendors (openspec/changes/sump-market-hub, design section 3). Stock counts reset when a mission completes.
+{
+  "sell_mult": 0.4,
+  "stolen_sell_mult": 0.3,
+  "vendors": [
+    {"id": "kessler", "name": "Kessler's Pawn", "faction": "residents", "buy_mult": 1.0, "buys": true, "stock": [
+      {"item": "ammo_10mm", "count": 120}, {"item": "lockpick", "count": 10}, {"item": "multitool", "count": 6},
+      {"item": "dart_pistol", "count": 1}, {"item": "ammo_darts", "count": 20}, {"item": "emp_grenade", "count": 3},
+      {"item": "frag_grenade", "count": 2}, {"item": "kevlar_vest", "count": 1}, {"item": "pistol", "count": 1},
+      {"item": "whisper", "count": 1, "requires_flag": "m1_done"}, {"item": "smg", "count": 1, "requires_flag": "m1_done"},
+      {"item": "shotgun", "count": 1, "requires_flag": "m2_done"}, {"item": "ammo_shells", "count": 24, "requires_flag": "m2_done"}
+    ]},
+    {"id": "doc_vo", "name": "Doc Vo's Clinic", "faction": "residents", "buy_mult": 1.0, "stock": [
+      {"item": "medkit", "count": 6}, {"item": "stim", "count": 6}
+    ]},
+    {"id": "mags", "name": "The Rusty Anchor", "faction": "residents", "buy_mult": 1.0, "stock": [
+      {"item": "synth_whisky", "count": 6}, {"item": "noodles", "count": 4}
+    ]},
+    {"id": "nguyen", "name": "Nguyen's Noodle Bar", "faction": "residents", "buy_mult": 0.8, "stock": [
+      {"item": "noodles", "count": 20}
+    ]},
+    {"id": "fish_hall", "name": "Harbor Fish Hall", "buy_mult": 1.2, "buys": true, "buys_stolen": true, "stock": [
+      {"item": "gas_grenade", "count": 3}, {"item": "noise_maker", "count": 5},
+      {"item": "lockpick", "count": 10}, {"item": "soft_soles", "count": 1}
+    ]},
+    {"id": "oracle", "name": "The Oracle", "buy_mult": 1.0, "buys": true, "buys_stolen": true, "stock": []},
+    {"id": "lin", "name": "Tsang Shrine", "faction": "residents", "buy_mult": 1.0, "stock": [
+      {"item": "silver_lighter", "count": 1}
+    ]}
+  ]
+}

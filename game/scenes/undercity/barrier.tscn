@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/LockedDoor.cs" id="1_LockedDoor"]
+[ext_resource type="PackedScene" path="res://models/undercity/props/barrier.glb" id="2_barrier"]
+
+[node name="Barrier" type="Node3D"]
+script = ExtResource("1_LockedDoor")
+Moving = NodePath("Model/arm")
+OpenRotationDeg = Vector3(0.0, 0.0, 80.0)
+OpenTimeS = 1.6
+
+[node name="Model" parent="." instance=ExtResource("2_barrier")]

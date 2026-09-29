@@ -75,7 +75,7 @@ public partial class Projectile : Node3D
                 Knockback = dir * Knockback * 0.5f,
             });
             if (_shooter is PlayerController p)
-                p.Hud.ShowHitMarker(target.IsDead);
+                p.Hud?.ShowHitMarker(target.IsDead);
         }
         Vector3 center = point + normal * 0.15f;
         if (Explodes)

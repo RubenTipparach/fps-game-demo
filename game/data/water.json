@@ -1,0 +1,19 @@
+// Water: wading, swimming, breath, stamina, exits and water physics (openspec/changes/archive/2026-09-29-water-and-swimming,
+// design sections 2-7). Read by Undercity.Core (breath, stamina, the belt) and the Godot layer (the swim
+// motor, ladders, buoyancy). Every key is required; an unknown key is an error.
+{
+  "wade_depth_m": 0.1, "swim_depth_m": 1.2, "wade_speed_factor": 0.6,
+  "swim_speed_mps": 3.0, "dive_speed_mps": 2.4, "rise_speed_mps": 2.0,
+  "accel_per_s": 4.0, "drag_per_s": 3.0, "surface_pitch_dead_zone_deg": 20.0,
+  "float_eye_above_m": 0.15, "float_stiffness_per_s2": 18.0, "float_damping_per_s": 7.0,
+  "entry_keep_fraction": 0.3,
+  "breath_s": 45.0, "breath_refill_s": 3.0, "drown_damage_per_s": 8.0,
+  "stamina_max": 100.0, "swim_stamina_per_s": 0.8, "stamina_regen_per_s": 12.0, "tired_speed_factor": 0.5,
+  "stamina_low_fraction": 0.25, "stroke_s": 0.9, "tired_stroke_s": 1.3,
+  "breath_low_fraction": 0.25, "air_bar_fade_s": 1.0, "gasp_below_breath_fraction": 0.5,
+  "mantle_reach_m": 0.6, "mantle_min_rise_m": 0.2, "mantle_max_rise_m": 1.0, "mantle_time_s": 0.45,
+  "ladder_speed_mps": 3.0, "ladder_facing_dot": 0.3, "ladder_reach_m": 0.5, "ladder_side_reach_m": 0.3,
+  "ladder_push_off_mps": 3.0, "ladder_top_step_m": 0.7, "ladder_top_step_s": 0.3,
+  "body_buoyancy_ratio": 1.8, "body_linear_damp_per_s": 2.5, "body_angular_damp_per_s": 3.0,
+  "item_sink_mps": 0.6
+}

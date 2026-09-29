@@ -1,0 +1,71 @@
+// Kessler, the pawnbroker (hub POI 2). Weapons, ammo and gear; buys clean loot, never stolen.
+{
+  "id": "kessler", "name": "Kessler", "vendor": "kessler",
+  "starts": [
+    {"if": [{"not_flag": "met_kessler"}], "node": "first"},
+    {"node": "shop"}
+  ],
+  "nodes": {
+    "first": {
+      "say": ["Kessler's. Hardware, ammunition, no questions. Questions cost extra."],
+      "do": [{"flag": "met_kessler"}, {"objective": "t0_arrival/gear_up"}],
+      "next": "shop"
+    },
+    "shop": {
+      "say": ["Buying or selling?"],
+      "choices": [
+        {"text": "Show me weapons.", "next": "weapons"},
+        {"text": "Ammunition and tools.", "next": "supplies"},
+        {"text": "Grenades and armour.", "next": "gear"},
+        {"text": "I've got things to sell.", "next": "sell"},
+        {"text": "I'll be back every week. Throw in a box of rounds and make sure of it.", "once": true,
+         "check": {"skill": "persuasion", "dc": 2}, "pass": "sweetener"},
+        {"text": "Just looking.", "exit": true}
+      ]
+    },
+    "weapons": {
+      "say": ["All clean. Mostly."],
+      "choices": [
+        {"text": "Kestrel pistol.", "if": [{"can_afford": "pistol"}], "do": [{"buy": "pistol"}], "next": "weapons"},
+        {"text": "Dart pistol.", "if": [{"can_afford": "dart_pistol"}], "do": [{"buy": "dart_pistol"}], "next": "weapons"},
+        {"text": "Whisper, suppressed.", "if": [{"flag": "m1_done"}, {"can_afford": "whisper"}], "do": [{"buy": "whisper"}], "next": "weapons"},
+        {"text": "Submachine gun.", "if": [{"flag": "m1_done"}, {"can_afford": "smg"}], "do": [{"buy": "smg"}], "next": "weapons"},
+        {"text": "Scattergun.", "if": [{"flag": "m2_done"}, {"can_afford": "shotgun"}], "do": [{"buy": "shotgun"}], "next": "weapons"},
+        {"text": "Something else.", "next": "shop"}
+      ]
+    },
+    "supplies": {
+      "say": ["Rounds by the box. Picks and multitools by the piece."],
+      "choices": [
+        {"text": "10mm rounds, box of 12.", "if": [{"can_afford": "ammo_10mm", "count": 12}], "do": [{"buy": "ammo_10mm", "count": 12}], "next": "supplies"},
+        {"text": "Tranquilliser darts, box of 4.", "if": [{"can_afford": "ammo_darts", "count": 4}], "do": [{"buy": "ammo_darts", "count": 4}], "next": "supplies"},
+        {"text": "Shells, box of 8.", "if": [{"flag": "m2_done"}, {"can_afford": "ammo_shells", "count": 8}], "do": [{"buy": "ammo_shells", "count": 8}], "next": "supplies"},
+        {"text": "Lockpick.", "if": [{"can_afford": "lockpick"}], "do": [{"buy": "lockpick"}], "next": "supplies"},
+        {"text": "Multitool.", "if": [{"can_afford": "multitool"}], "do": [{"buy": "multitool"}], "next": "supplies"},
+        {"text": "Something else.", "next": "shop"}
+      ]
+    },
+    "gear": {
+      "say": ["Things that go bang, and things that stop it."],
+      "choices": [
+        {"text": "EMP grenade.", "if": [{"can_afford": "emp_grenade"}], "do": [{"buy": "emp_grenade"}], "next": "gear"},
+        {"text": "Frag grenade.", "if": [{"can_afford": "frag_grenade"}], "do": [{"buy": "frag_grenade"}], "next": "gear"},
+        {"text": "Kevlar vest.", "if": [{"can_afford": "kevlar_vest"}], "do": [{"buy": "kevlar_vest"}], "next": "gear"},
+        {"text": "Something else.", "next": "shop"}
+      ]
+    },
+    "sell": {
+      "say": ["Let's see it. If it came out of somebody's locker, it goes back out that door with you."],
+      "choices": [
+        {"text": "Scrap electronics, {sell:scrap_electronics} each.", "if": [{"item": "scrap_electronics"}], "do": [{"sell": "scrap_electronics"}], "next": "sell"},
+        {"text": "Data shards, {sell:data_shard} each.", "if": [{"item": "data_shard"}], "do": [{"sell": "data_shard"}], "next": "sell"},
+        {"text": "Synth-whisky, {sell:synth_whisky} each.", "if": [{"item": "synth_whisky"}], "do": [{"sell": "synth_whisky"}], "next": "sell"},
+        {"text": "Silver Lighter, {sell:silver_lighter}.", "if": [{"item": "silver_lighter"}], "do": [{"sell": "silver_lighter"}], "next": "sell"},
+        {"text": "Combat knife, {sell:combat_knife}.", "if": [{"item": "combat_knife"}], "do": [{"sell": "combat_knife"}], "next": "sell"},
+        {"text": "That's all.", "next": "shop"}
+      ]
+    },
+    "sweetener": {"say": ["...Loyalty. Haven't seen that in a while. Here."], "do": [{"give": "ammo_10mm", "count": 12}], "next": "shop"}
+  },
+  "barks": {"greeting": ["Kessler's.", "Don't touch the glass."]}
+}

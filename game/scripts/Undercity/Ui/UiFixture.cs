@@ -1,0 +1,242 @@
+// Test support for the UI checks (ui_size_test.tscn, ui_capture.tscn): a run on the real data, a
+// level host that is only a stub, and a staged mid-game state (disguised, a weapon drawn, quests
+// under way) so every screen has something real to show.
+//
+// It lives beside the screens because it builds exactly what the level loader hands them
+// (Services); nothing in it is used in play.
+
+#nullable enable
+using System.Collections.Generic;
+using System.Linq;
+using Godot;
+using Undercity.Core;
+using Undercity.Core.Perception;
+using Undercity.Core.Progression;
+using Undercity.Core.World;
+
+namespace Undercity.Client;
+
+/// <summary>An application that only records what the menus asked of it.</summary>
+public sealed class StubShell : IShell
+{
+    /// <summary>What was asked, in order: "new_game", "load:quick", "to_title", "quit".</summary>
+    public List<string> Calls { get; } = new();
+
+    /// <inheritdoc/>
+    public Brushfire.GameSettings Settings { get; } = new();
+
+    /// <inheritdoc/>
+    public void NewGame() => Calls.Add("new_game");
+
+    /// <inheritdoc/>
+    public bool Load(string slot)
+    {
+        Calls.Add("load:" + slot);
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public void ToTitle() => Calls.Add("to_title");
+
+    /// <inheritdoc/>
+    public void Quit() => Calls.Add("quit");
+}
+
+/// <summary>A level with no scene: it records drops and is never witnessed.</summary>
+public sealed class StubLevelHost : ILevelHost
+{
+    /// <summary>A stub for <paramref name="def"/>, with its water under <paramref name="table"/>.</summary>
+    public StubLevelHost(LevelDef def, Undercity.Core.Vitals.WaterTable table)
+    {
+        Def = def;
+        Water = new LevelWater(def.Water, table);
+    }
+
+    /// <summary>What was dropped: item id and count.</summary>
+    public List<(string Item, int Count)> Dropped { get; } = new();
+
+    /// <inheritdoc/>
+    public string Id => Def.Id;
+
+    /// <inheritdoc/>
+    public LevelDef Def { get; }
+
+    /// <inheritdoc/>
+    public LevelWater Water { get; }
+
+    /// <summary>No civilians are placed.</summary>
+    public IReadOnlyDictionary<string, CrowdLook> Crowd { get; } = new Dictionary<string, CrowdLook>();
+
+    /// <summary>No body: the HUD's compass stays where it is.</summary>
+    public Brushfire.PlayerController Player => null!;
+
+    /// <inheritdoc/>
+    public Vector3 PlayerEye => Vector3.Zero;
+
+    /// <inheritdoc/>
+    public void Travel(ExitDef exit)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void DropAtPlayer(string itemId, int count, string? stolenFrom) => Dropped.Add((itemId, count));
+
+    /// <inheritdoc/>
+    public double RestrictedS => 0;
+
+    /// <inheritdoc/>
+    public void SetRestricted(string zoneId, double seconds)
+    {
+    }
+
+    /// <inheritdoc/>
+    public bool CrimeWitnessed(out string witness)
+    {
+        witness = "";
+        return false;
+    }
+
+    /// <summary>The refusal <see cref="SaveRefusal"/> reports, so a check can show the greyed save buttons.</summary>
+    public string Refusal { get; set; } = "";
+
+    /// <inheritdoc/>
+    public string SaveRefusal() => Refusal;
+
+    /// <inheritdoc/>
+    public void ShotHeard(Vector3 at, float radiusM, bool byRunner)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void Killed(NpcActor victim, Vector3 from)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void ConversationOpened(NpcActor speaker)
+    {
+    }
+
+    /// <inheritdoc/>
+    public void ConversationClosed(NpcActor speaker)
+    {
+    }
+
+    /// <inheritdoc/>
+    public bool TrySave(string slot, out string reason)
+    {
+        reason = Refusal;
+        return reason.Length == 0;
+    }
+}
+
+/// <summary>Builds the services and the staged state for the UI checks.</summary>
+public static class UiFixture
+{
+    /// <summary>The seed of the staged run.</summary>
+    public const ulong Seed = 7;
+
+    /// <summary>A new run on the real data (seed <see cref="Seed"/>), in the hub, wired to <paramref name="screens"/>.</summary>
+    public static Services NewServices(IScreens screens)
+    {
+        var data = GameData.Load(new GodotDataSource());
+        var state = GameState.NewGame(data, Seed);
+        var saves = new SaveStore(ProjectSettings.GlobalizePath("user://ui_check_saves"));
+        return new Services(state, new StubLevelHost(data.Levels["hub"], data.Water), screens, saves, new StubShell());
+    }
+
+    /// <summary>
+    /// Fills the check's save folder like the D6 mockup: a quicksave 2 minutes old, the autosave
+    /// 21 minutes old and slot 1 an hour old, the other slots empty.
+    /// </summary>
+    public static void StageSaves(Services services)
+    {
+        var folder = ProjectSettings.GlobalizePath("user://ui_check_saves");
+        foreach (var f in System.IO.Directory.GetFiles(folder, "*.json"))
+        {
+            System.IO.File.Delete(f);
+        }
+        var now = System.DateTime.UtcNow;
+        foreach (var (slot, playS, ageMin) in new[] { ("quick", 6000.0, 2), ("auto", 4860.0, 21), ("slot_1", 2280.0, 64) })
+        {
+            var save = services.State.Save();
+            save.World = new WorldState { Seed = Seed, CurrentLevel = "hub", PlayTimeS = playS };
+            services.Saves.Write(slot, save);
+            System.IO.File.SetLastWriteTimeUtc(System.IO.Path.Combine(folder, slot + ".json"), now.AddMinutes(-ageMin));
+        }
+    }
+
+    /// <summary>
+    /// Stages the run like the mockups' "In the Drains, disguised": the Drain Rats outfit worn,
+    /// level 3, Deception 2, the Kestrel drawn, some damage taken, quests under way.
+    /// </summary>
+    public static void Stage(GameState s)
+    {
+        foreach (var (id, n) in new[]
+        {
+            ("rat_jacket", 1), ("rat_respirator", 1), ("rat_goggles", 1), ("dart_pistol", 1), ("ammo_darts", 9),
+            ("emp_grenade", 2), ("noodles", 2), ("data_shard", 1), ("synth_whisky", 1), ("sewer_service_key", 1),
+            ("pump_room_key", 1), ("neural_chip", 1), ("ammo_10mm", 12),
+        })
+        {
+            s.PickUp(id, n);
+        }
+        foreach (var id in new[] { "rat_jacket", "rat_respirator" })
+        {
+            s.Inventory.Equip(s.Inventory.Pack.Stacks.First(x => x.Def.Id == id));
+        }
+        s.Inventory.SetBelt(5, "lockpick");
+        s.Inventory.SetBelt(6, "multitool");
+        s.Character.AddXp(1850, "ui_check", "staged");
+        s.Character.Raise(Skill.Deception);
+        s.Character.Raise(Skill.Stealth);
+        s.Character.Raise(Skill.Lockpicking);
+        s.Quests.Start("t0_arrival");
+        s.CompleteObjective("t0_arrival/meet_silk");
+        s.CompleteQuest("t0_arrival");
+        s.Quests.Start("m1_rat_trap");
+        s.CompleteObjective("m1_rat_trap/petra");
+        s.CompleteObjective("m1_rat_trap/enter");
+        s.Quests.Reveal("m1_rat_trap/find");
+        s.Quests.Start("s3_mouses_debt");
+        s.UseBelt(1);
+        s.Health.Lose(28);
+    }
+
+    /// <summary>The HUD's level-driven parts as in the F11 mockup: Twitch looking twice, a lock in front.</summary>
+    public static void StageHud(Services services)
+    {
+        var s = services.State;
+        var twitch = s.Judge(new Observer("drain_rats", 3), new Situation(7));
+        services.Screens.ShowDisguise(new DisguiseView(UiText.Faction(s.Data, "drain_rats"), twitch, "Twitch", 3, 7));
+        services.Screens.ShowPrompt("Pick cage, tier 2 (hold 2.0 s)", true);
+        services.Screens.ShowHold(0.4);
+        services.Screens.Bark("Twitch", "Oi. Where'd Mother say you were posted?");
+        services.Screens.ShowAlert("MerSec: Put it away.");
+    }
+
+    /// <summary>Every node under <paramref name="root"/>, depth first, including ones added at runtime.</summary>
+    public static IEnumerable<Node> Descendants(Node root)
+    {
+        foreach (var c in root.GetChildren())
+        {
+            yield return c;
+            foreach (var d in Descendants(c))
+            {
+                yield return d;
+            }
+        }
+    }
+
+    /// <summary>A terminal with every part filled: several pages, a long body and actions.</summary>
+    public static TerminalDef BusyTerminal(GameData data)
+    {
+        var real = data.Levels["hub"].Terminals["hub:capsule_terminal"];
+        return new TerminalDef
+        {
+            Title = real.Title,
+            Pages = real.Pages,
+            Actions = new[] { new TerminalAction { Label = "Open the locker" }, new TerminalAction { Label = "Print the rent slip" } },
+        };
+    }
+}

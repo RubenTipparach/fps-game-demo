@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/Bed.cs" id="1_Bed"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(2.6, 2.2, 3.8)
+
+[node name="Bed" type="Node3D"]
+script = ExtResource("1_Bed")
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+position = Vector3(0.0, 1.1, 0.0)
+shape = SubResource("BoxShape3D_2")

@@ -102,7 +102,9 @@ def make_materials():
     MAT["stripe_yellow"] = glow_mat("materials/props/stripe_yellow.tres", "#ffc21a", 1.5)
     MAT["status_light"] = glow_mat("materials/props/status_light.tres", "#ff2010", 5.0)
     # UT99-style corona: additive soft glow billboard that fades out when you get close.
-    for name, hexc in (("corona_warm", "#ffb070"), ("corona_cool", "#7ac8ff"), ("corona_green", "#60ff90")):
+    # pink and cyan: Undercity's neon accent pair (openspec/changes/sump-market-hub/design.md)
+    for name, hexc in (("corona_warm", "#ffb070"), ("corona_cool", "#7ac8ff"), ("corona_green", "#60ff90"),
+                       ("corona_pink", "#ff4fa3"), ("corona_cyan", "#35e0ff")):
         r = Resource("StandardMaterial3D")
         r.props = dict(transparency=1, blend_mode=1, shading_mode=0, billboard_mode=1, billboard_keep_scale=True,
                        albedo_color=hexcolor(hexc, 0.55),

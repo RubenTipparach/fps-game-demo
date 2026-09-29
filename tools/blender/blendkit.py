@@ -4,6 +4,8 @@ world-aligned UV projection at the texel density from materials.json)."""
 import json
 import math
 import os
+import re
+import struct
 
 import bmesh
 import bpy
@@ -321,3 +323,91 @@ def export_level(glb):
                               export_animations=False)
     tris = sum(len(p.vertices) - 2 for p in me.polygons)
     print(f"[cistern] exported {glb}: ~{tris} triangles, {len(me.materials)} materials")
+
+
+# ----------------------------------------------------------------------------- reproducible .blend
+
+def _dna_offsets(data):
+    """Parse a .blend's DNA1 block; returns {struct name: (sdna index, size, {field: offset})}."""
+    pos = 17
+    while True:
+        code = data[pos:pos + 4]
+        length = struct.unpack("<q", data[pos + 16:pos + 24])[0]
+        if code == b"DNA1":
+            dna = data[pos + 32:pos + 32 + length]
+            break
+        if code == b"ENDB":
+            raise ValueError("no DNA1 block")
+        pos += 32 + length
+
+    def strings(p, tag):
+        assert dna[p:p + 4] == tag
+        n = struct.unpack("<i", dna[p + 4:p + 8])[0]
+        p += 8
+        out = []
+        for _ in range(n):
+            e = dna.index(b"\0", p)
+            out.append(dna[p:e].decode())
+            p = e + 1
+        return out, (p + 3) & ~3
+
+    names, p = strings(4, b"NAME")
+    types, p = strings(p, b"TYPE")
+    assert dna[p:p + 4] == b"TLEN"
+    tlen = struct.unpack(f"<{len(types)}h", dna[p + 4:p + 4 + 2 * len(types)])
+    p = (p + 4 + 2 * len(types) + 3) & ~3
+    assert dna[p:p + 4] == b"STRC"
+    count = struct.unpack("<i", dna[p + 4:p + 8])[0]
+    p += 8
+    out = {}
+    for index in range(count):
+        t, nf = struct.unpack("<hh", dna[p:p + 4])
+        p += 4
+        offset, fields = 0, {}
+        for _ in range(nf):
+            ft, fn = struct.unpack("<hh", dna[p:p + 4])
+            p += 4
+            name = names[fn]
+            size = 8 if name.startswith(("*", "(*")) else tlen[ft]
+            for dim in re.findall(r"\[(\d+)\]", name):
+                size *= int(dim)
+            fields[re.sub(r"[\[*(].*|\W", "", name.lstrip("*("))] = offset
+            offset += size
+        out[types[t]] = (index, tlen[t], fields)
+    return out
+
+
+def save_reproducible(path):
+    """Save the open file so that the same scene always gives the same bytes.
+
+    Two things in a plain save change from run to run. Blender seeds every mesh's
+    face_sets_color_seed and every shader node's identifier from the clock, and neither has a
+    Python setter. The screen layout is written with raw memory addresses. So the scenes are
+    written without any UI (bpy.data.libraries.write), uncompressed. Those two fields are then
+    rewritten through the offsets in the file's own DNA: seed 0, and identifiers numbered in file
+    order, which keeps them unique per node tree. Finally the patched file is reopened and
+    written again, compressed. Blender opens the result with its default layout."""
+    tmp = path + ".tmp.blend"
+    bpy.data.libraries.write(tmp, set(bpy.data.scenes), path_remap="RELATIVE", compress=False)
+    data = bytearray(open(tmp, "rb").read())
+    if not data.startswith(b"BLENDER17-01"):
+        raise ValueError(f"{tmp}: unexpected .blend header {bytes(data[:17])!r}")
+    dna = _dna_offsets(data)
+    mesh_i, mesh_size, mesh_f = dna["Mesh"]
+    node_i, node_size, node_f = dna["bNode"]
+    pos, ident = 17, 1
+    while data[pos:pos + 4] != b"ENDB":
+        sdna = struct.unpack("<i", data[pos + 4:pos + 8])[0]
+        length, nr = struct.unpack("<qq", data[pos + 16:pos + 32])
+        body = pos + 32
+        for k in range(nr):
+            if sdna == mesh_i and length == mesh_size * nr:
+                struct.pack_into("<i", data, body + k * mesh_size + mesh_f["face_sets_color_seed"], 0)
+            elif sdna == node_i and length == node_size * nr:
+                struct.pack_into("<i", data, body + k * node_size + node_f["identifier"], ident)
+                ident += 1
+        pos = body + length
+    open(tmp, "wb").write(data)
+    bpy.ops.wm.open_mainfile(filepath=tmp)
+    bpy.data.libraries.write(path, set(bpy.data.scenes), path_remap="RELATIVE", compress=True)
+    os.remove(tmp)

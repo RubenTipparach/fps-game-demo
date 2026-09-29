@@ -1,0 +1,58 @@
+// Skills, ranks and perks (openspec/changes/character-progression, design section 2).
+// A stat ending in _mult multiplies, _add adds, anything else is a flag.
+{
+  "rank_costs": [1, 1, 2, 2, 2],
+  "max_check_value": 6,
+  "max_item_bonus": 1,
+  "skills": [
+    {"id": "firearms", "name": "Firearms", "blurb": "Spread, recoil, reloads.", "perks": [
+      {"name": "Steady Hands", "text": "Spread -20 %.", "effects": [{"stat": "spread_mult", "value": 0.8}]},
+      {"name": "Quick Reload", "text": "Reloads 25 % faster.", "effects": [{"stat": "reload_time_mult", "value": 0.75}]},
+      {"name": "Headhunter", "text": "Headshots x3 instead of x2.", "effects": [{"stat": "headshot_mult", "value": 1.5}]},
+      {"name": "Recoil Control", "text": "Recoil -40 %.", "effects": [{"stat": "recoil_mult", "value": 0.6}]},
+      {"name": "Deadeye", "text": "Crouched and still for 1 s: next shot has no spread and x1.5 damage.", "effects": [{"stat": "deadeye", "value": 1}], "requires": {"skill": "stealth", "rank": 1}}
+    ]},
+    {"id": "melee", "name": "Melee", "blurb": "Melee damage and takedowns.", "perks": [
+      {"name": "Clubber", "text": "Melee damage +25 %.", "effects": [{"stat": "melee_damage_mult", "value": 1.25}]},
+      {"name": "Silent Takedown", "text": "Takedowns make no noise.", "effects": [{"stat": "takedown_noise_mult", "value": 0}]},
+      {"name": "Quick Hands", "text": "Takedowns take half the time.", "effects": [{"stat": "takedown_time_mult", "value": 0.5}]},
+      {"name": "Heavy Hitter", "text": "Take down heavies from behind.", "effects": [{"stat": "takedown_heavies", "value": 1}]},
+      {"name": "One-Punch", "text": "Knock out unaware or suspicious enemies up to I 3 from the front.", "effects": [{"stat": "one_punch", "value": 1}], "requires": {"skill": "stealth", "rank": 2}}
+    ]},
+    {"id": "stealth", "name": "Stealth", "blurb": "Noise and visibility.", "perks": [
+      {"name": "Soft Steps", "text": "Footsteps -30 %.", "effects": [{"stat": "footstep_mult", "value": 0.7}]},
+      {"name": "Low Profile", "text": "Crouch at 3.0 m/s; crouched visibility x0.45.", "effects": [{"stat": "crouch_speed_mult", "value": 1.36}, {"stat": "crouch_visibility_mult", "value": 0.75}]},
+      {"name": "Shadow", "text": "Visibility x0.5 in the dark.", "effects": [{"stat": "shadow_mult", "value": 0.5}]},
+      {"name": "Ghost", "text": "Sprinting is as quiet as walking.", "effects": [{"stat": "silent_sprint", "value": 1}]},
+      {"name": "Vanish", "text": "Searches for you end twice as fast.", "effects": [{"stat": "search_mult", "value": 0.5}]}
+    ]},
+    {"id": "hacking", "name": "Hacking", "blurb": "Terminals, cameras, turrets.", "perks": [
+      {"name": "Script Kiddie", "text": "Hack tier 1 devices.", "effects": []},
+      {"name": "Operator", "text": "Hack tier 2; hacks 20 % faster.", "effects": [{"stat": "hack_time_mult", "value": 0.8}]},
+      {"name": "Root Access", "text": "Hack tier 3; turn turrets on their owners.", "effects": [{"stat": "turn_turrets", "value": 1}]},
+      {"name": "Loop Master", "text": "Camera loops last 120 s.", "effects": [{"stat": "camera_loop_mult", "value": 2}]},
+      {"name": "Ghost Login", "text": "Multitools are never used up; hack from 6 m.", "effects": [{"stat": "keeps_multitools", "value": 1}]}
+    ]},
+    {"id": "lockpicking", "name": "Lockpicking", "blurb": "Doors and safes.", "perks": [
+      {"name": "Rake", "text": "Pick tier 1 locks.", "effects": []},
+      {"name": "Tension", "text": "Pick tier 2 locks.", "effects": []},
+      {"name": "Master Picks", "text": "Pick tier 3 locks.", "effects": []},
+      {"name": "Fast Picks", "text": "Picking takes half the time.", "effects": [{"stat": "pick_time_mult", "value": 0.5}]},
+      {"name": "Safecracker", "text": "Lockpicks are never used up; safes take half the time.", "effects": [{"stat": "keeps_lockpicks", "value": 1}, {"stat": "safe_time_mult", "value": 0.5}]}
+    ]},
+    {"id": "deception", "name": "Deception", "blurb": "Disguises and lies.", "perks": [
+      {"name": "Passing Glance", "text": "Disguises work.", "effects": []},
+      {"name": "Fast Talk", "text": "One chance to talk down a blown disguise.", "effects": [{"stat": "fast_talk", "value": 1}]},
+      {"name": "Master of Disguise", "text": "A drawn weapon is tolerated for 2 s; light armour never clashes.", "effects": [{"stat": "weapon_grace_s_add", "value": 2}, {"stat": "light_armor_ok", "value": 1}], "requires": {"skill": "stealth", "rank": 2}},
+      {"name": "Silver Tongue", "text": "Suspicion fills 25 % slower.", "effects": [{"stat": "suspicion_mult", "value": 0.75}]},
+      {"name": "Doppelganger", "text": "Scrutiny range halved.", "effects": [{"stat": "scrutiny_mult", "value": 0.5}]}
+    ]},
+    {"id": "persuasion", "name": "Persuasion", "blurb": "Charm, threats and prices.", "perks": [
+      {"name": "Friendly", "text": "Rumours; reputation gains +25 %.", "effects": [{"stat": "rep_gain_mult", "value": 1.25}]},
+      {"name": "Haggler", "text": "Buy 15 % cheaper, sell 15 % dearer.", "effects": [{"stat": "buy_price_mult", "value": 0.85}, {"stat": "sell_price_mult", "value": 1.15}]},
+      {"name": "Intimidate", "text": "Threaten; wounded enemies may surrender.", "effects": [{"stat": "intimidate", "value": 1}]},
+      {"name": "Negotiator", "text": "Bribes cost 40 % less.", "effects": [{"stat": "bribe_mult", "value": 0.6}]},
+      {"name": "Kingmaker", "text": "Turn lieutenants against their bosses.", "effects": [{"stat": "kingmaker", "value": 1}], "requires": {"skill": "deception", "rank": 3}}
+    ]}
+  ]
+}

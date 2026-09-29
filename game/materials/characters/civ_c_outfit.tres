@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://shaders/character_outfit.gdshader" id="0_shader"]
+[ext_resource type="Texture2D" path="res://models/characters/civ_c_outfit_albedo.webp" id="1_albedo"]
+[ext_resource type="Texture2D" path="res://models/characters/civ_c_outfit_normal.webp" id="2_normal"]
+
+[resource]
+resource_name = "civ_c_outfit"
+shader = ExtResource("0_shader")
+shader_parameter/specular = 0.5
+shader_parameter/normal_strength = 1.0
+shader_parameter/eye_roughness_below = 0.3
+shader_parameter/albedo_texture = ExtResource("1_albedo")
+shader_parameter/normal_texture = ExtResource("2_normal")

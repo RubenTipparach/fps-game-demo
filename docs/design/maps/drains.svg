@@ -1,0 +1,409 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1912 1080" data-map="drains" role="img" aria-label="THE DRAINS map">
+<style>svg[data-map="drains"] .m-lbl{font-family:'Barlow Condensed','Arial Narrow',sans-serif;}
+svg[data-map="drains"] .m-mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+svg[data-map="drains"] .lot{stroke:#45535f;stroke-width:0.7}
+svg[data-map="drains"] .roofbox{fill:#35414e;stroke:#3a4654;stroke-width:0.6}
+svg[data-map="drains"] .bld{fill:#27313c;stroke:#6b7f92;stroke-width:1.3}
+svg[data-map="drains"] .bld-enter{fill:#1a232c;stroke:#6b7f92;stroke-width:1.3}
+svg[data-map="drains"] .floor{fill:#141b22}
+svg[data-map="drains"] .wall{fill:#9fb3c4}
+svg[data-map="drains"] .fix{fill:#2f3b48;stroke:#56697b;stroke-width:0.7}
+svg[data-map="drains"] .fix-lt{fill:#3b4a59;stroke:#7a8fa3;stroke-width:0.7}
+svg[data-map="drains"] .fix-neon{fill:none;stroke:#ff4fa3;stroke-width:1.4;stroke-opacity:.85}
+svg[data-map="drains"] .fix-cyan{fill:none;stroke:#35e0ff;stroke-width:1.4;stroke-opacity:.8}
+svg[data-map="drains"] .fix-hot{fill:#4a2a14;stroke:#ff9e2e;stroke-width:0.8}
+svg[data-map="drains"] .fix-dark{fill:#0b0f13;stroke:#3a4654;stroke-width:0.7}
+svg[data-map="drains"] .car{fill:#303c49;stroke:#5a6d80;stroke-width:0.7}
+svg[data-map="drains"] .crate{fill:#3a3322;stroke:#6f6040;stroke-width:0.6}
+svg[data-map="drains"] .container{fill:#3b4b3a;stroke:#0b0f13;stroke-width:0.8}
+svg[data-map="drains"] .stall{fill:#34302a;stroke:#8a7456;stroke-width:0.7}
+svg[data-map="drains"] .pillar{fill:#56687a;stroke:#8fa3b5;stroke-width:0.6}
+svg[data-map="drains"] .bridge{fill:#1c252e;stroke:#6b7f92;stroke-width:1}
+svg[data-map="drains"] .rail{fill:none;stroke:#46525e;stroke-width:1.2}
+svg[data-map="drains"] .sleepers{fill:none;stroke:#2c353f;stroke-width:5;stroke-dasharray:1.2 3.4}
+svg[data-map="drains"] .viaduct{fill:#8fb4d0;fill-opacity:.07;stroke:#6f93ad;stroke-width:1.1;stroke-dasharray:10 5}
+svg[data-map="drains"] .walkway{fill:none;stroke:#35e0ff;stroke-width:1.6;stroke-dasharray:5 4;stroke-opacity:.8}
+svg[data-map="drains"] .vent{fill:none;stroke:#b78cff;stroke-width:1.8;stroke-dasharray:2 4;stroke-linecap:round}
+svg[data-map="drains"] .catwalk{fill:#35e0ff;fill-opacity:.07;stroke:#35e0ff;stroke-width:1;stroke-opacity:.6;stroke-dasharray:4 3}
+svg[data-map="drains"] .water-lower{fill:url(#hatch-water-drains);fill-opacity:.75;stroke:#35e0ff;stroke-opacity:.55;stroke-width:1;stroke-dasharray:3 3}
+svg[data-map="drains"] .cage{fill:url(#hatch-grate-drains);stroke:#f2b33d;stroke-width:1.2}
+svg[data-map="drains"] .trip{fill:none;stroke:#ff5b4f;stroke-width:1.4;stroke-dasharray:1.5 1.5}
+svg[data-map="drains"] .stairs{fill:none;stroke:#6b7f92;stroke-width:1}
+svg[data-map="drains"] .pump{fill:#23303b;stroke:#8fa3b5;stroke-width:1.2}
+svg[data-map="drains"] .boom{fill:#f2b33d;fill-opacity:.08;stroke:#f2b33d;stroke-opacity:.7;stroke-width:1;stroke-dasharray:2 2}
+svg[data-map="drains"] .lid2{fill:#fff;fill-opacity:.10;stroke:none}
+svg[data-map="drains"] .lid3{fill:#fff;fill-opacity:.20;stroke:none}
+svg[data-map="drains"] .stack1{fill:#3a2f2a;stroke:#6e5a4c;stroke-width:.6}
+svg[data-map="drains"] .stack2{fill:#46382f;stroke:#86705e;stroke-width:.6}
+svg[data-map="drains"] .stack3{fill:#524237;stroke:#a08672;stroke-width:.6}
+svg[data-map="drains"] .pipe{fill:none;stroke:#4c5a3a;stroke-width:3;stroke-opacity:.8}
+svg[data-map="drains"] .fence{fill:none;stroke:#8a98a6;stroke-width:1.2;stroke-dasharray:1 2.5}
+svg[data-map="drains"] .wallsolid{fill:none;stroke:#8fa3b5;stroke-width:2.2}
+svg[data-map="drains"] .route-stealth{fill:none;stroke:#b78cff;stroke-width:2.2;stroke-dasharray:1 5;stroke-linecap:round}
+svg[data-map="drains"] .route-social{fill:none;stroke:#4aa8ff;stroke-width:2.2;stroke-dasharray:9 5}
+svg[data-map="drains"] .route-force{fill:none;stroke:#ff5b4f;stroke-width:2.2;stroke-dasharray:14 4 2 4}
+svg[data-map="drains"] .route-tech{fill:none;stroke:#35e0ff;stroke-width:2.2;stroke-dasharray:6 3 1 3}
+svg[data-map="drains"] .route-main{fill:none;stroke:#f2b33d;stroke-width:2.2;stroke-dasharray:12 5}
+svg[data-map="drains"] .patrol{fill:none;stroke:#ff5b4f;stroke-width:1.3;stroke-dasharray:2 3;stroke-opacity:.9}
+svg[data-map="drains"] .ladder{fill:#0a0e13;stroke:#35e0ff;stroke-width:1.4}
+svg[data-map="drains"] .ladder-rung{stroke:#35e0ff;stroke-width:1.2}
+svg[data-map="drains"] .cone{fill:#ff5b4f;fill-opacity:.13;stroke:#ff5b4f;stroke-opacity:.5;stroke-width:.8}
+svg[data-map="drains"] .cone-light{fill:#fff3b0;fill-opacity:.10;stroke:#fff3b0;stroke-opacity:.45;stroke-width:.8}
+svg[data-map="drains"] .restricted{fill:url(#hatch-restricted-drains);stroke:#ff5b4f;stroke-opacity:.6;stroke-width:1;stroke-dasharray:4 3}
+svg[data-map="drains"] .lbl-district{fill:#8193a4;fill-opacity:.62;font-size:22px;letter-spacing:7px;font-weight:600}
+svg[data-map="drains"] .lbl-street{fill:#6c7e8f;font-size:9px;letter-spacing:2.2px;font-weight:600}
+svg[data-map="drains"] .lbl-bld{fill:#dbe4ec;font-size:10.5px;letter-spacing:1.2px;font-weight:600}
+svg[data-map="drains"] .lbl-room{fill:#7d8e9e;font-size:7.5px;letter-spacing:.6px}
+svg[data-map="drains"] .lbl-water{fill:#3c8a9c;font-size:13px;letter-spacing:6px;font-style:italic}
+svg[data-map="drains"] .lbl-note{fill:#9aaaba;font-size:8.5px;letter-spacing:.4px}
+svg[data-map="drains"] .lbl-warn{fill:#ff8a7f;font-size:8.5px;letter-spacing:.4px;font-weight:600}
+svg[data-map="drains"] .lbl-grid{fill:#3d4b58;font-size:10px;letter-spacing:1px}
+svg[data-map="drains"] .gridline{stroke:#1a232c;stroke-width:.6}
+svg[data-map="drains"] .poi circle{stroke:#05080b;stroke-width:1.6}
+svg[data-map="drains"] .num{fill:#05080b;font-size:9px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+svg[data-map="drains"] .poi,svg[data-map="drains"] .mission,svg[data-map="drains"] .enemy{cursor:pointer}
+svg[data-map="drains"] .poi.hl circle{stroke:#fff;stroke-width:3}
+svg[data-map="drains"] .mission.hl rect{stroke:#fff;stroke-width:3}
+svg[data-map="drains"] .leader{stroke:#f2b33d;stroke-width:1;stroke-dasharray:2 2;fill:none}
+svg[data-map="drains"] .enemy path{stroke:#05080b;stroke-width:1}
+svg[data-map="drains"] .lg-h{fill:#7d8e9e;font-size:11px;letter-spacing:3px;font-weight:600}
+svg[data-map="drains"] .lg-t{fill:#dbe4ec;font-size:11.5px;letter-spacing:.3px}
+svg[data-map="drains"] .lg-n{fill:#7d8e9e;font-size:9.5px}</style>
+<defs>
+<pattern id="hatch-water-drains" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+  <rect width="7" height="7" fill="#0a2630"/><line x1="0" y1="0" x2="0" y2="7" stroke="#123c48" stroke-width="1.2"/></pattern>
+<pattern id="hatch-rock-drains" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+  <rect width="6" height="6" fill="#090c10"/><line x1="0" y1="0" x2="0" y2="6" stroke="#18212a" stroke-width="1"/></pattern>
+<pattern id="hatch-restricted-drains" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  <line x1="0" y1="0" x2="0" y2="8" stroke="#ff5b4f" stroke-opacity="0.35" stroke-width="2"/></pattern>
+<pattern id="hatch-grate-drains" width="4" height="4" patternUnits="userSpaceOnUse">
+  <rect width="4" height="4" fill="#1a232c"/><line x1="0" y1="0" x2="4" y2="0" stroke="#3c4a57" stroke-width="1"/></pattern>
+<marker id="arrow-drains" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+  <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+</defs>
+<rect width="1912" height="1080" fill="#05070a"/>
+<rect x="36" y="36" width="1280" height="880" fill="url(#hatch-rock-drains)"/>
+<g data-layer="ground">
+<path class="floor" d="M820.0,60.0 L644.0,60.0 L644.0,148.0 L728.0,148.0 L728.0,204.0 L484.0,204.0 L484.0,164.0 L436.0,164.0 L436.0,204.0 L308.0,204.0 L308.0,316.0 L676.0,316.0 L676.0,356.0 L724.0,356.0 L724.0,316.0 L884.0,316.0 L884.0,204.0 L748.0,204.0 L748.0,148.0 L820.0,148.0 Z M84.0,52.0 L84.0,196.0 L148.0,196.0 L148.0,52.0 Z M532.0,868.0 L532.0,724.0 L596.0,724.0 L596.0,852.0 L1092.0,852.0 L1092.0,564.0 L996.0,564.0 L996.0,468.1 L1003.8,468.1 L1060.1,411.8 L1060.1,396.0 L1156.0,396.0 L1156.0,468.0 L1284.0,468.0 L1284.0,396.0 L1316.0,396.0 L1316.0,340.0 L1284.0,340.0 L1284.0,260.0 L1156.0,260.0 L1156.0,332.0 L1059.9,332.0 L1003.8,275.9 L924.2,275.9 L867.9,332.2 L867.9,411.8 L924.2,468.1 L932.0,468.1 L932.0,564.0 L596.0,564.0 L596.0,660.0 L532.0,660.0 L532.0,500.0 L180.0,500.0 L180.0,868.0 Z"/>
+</g>
+<g data-layer="grid">
+<line class="gridline" x1="36" y1="36" x2="36" y2="916"/>
+<text class="lbl-grid m-mono" x="116.0" y="24" text-anchor="middle">A</text>
+<line class="gridline" x1="196" y1="36" x2="196" y2="916"/>
+<text class="lbl-grid m-mono" x="276.0" y="24" text-anchor="middle">B</text>
+<line class="gridline" x1="356" y1="36" x2="356" y2="916"/>
+<text class="lbl-grid m-mono" x="436.0" y="24" text-anchor="middle">C</text>
+<line class="gridline" x1="516" y1="36" x2="516" y2="916"/>
+<text class="lbl-grid m-mono" x="596.0" y="24" text-anchor="middle">D</text>
+<line class="gridline" x1="676" y1="36" x2="676" y2="916"/>
+<text class="lbl-grid m-mono" x="756.0" y="24" text-anchor="middle">E</text>
+<line class="gridline" x1="836" y1="36" x2="836" y2="916"/>
+<text class="lbl-grid m-mono" x="916.0" y="24" text-anchor="middle">F</text>
+<line class="gridline" x1="996" y1="36" x2="996" y2="916"/>
+<text class="lbl-grid m-mono" x="1076.0" y="24" text-anchor="middle">G</text>
+<line class="gridline" x1="1156" y1="36" x2="1156" y2="916"/>
+<text class="lbl-grid m-mono" x="1236.0" y="24" text-anchor="middle">H</text>
+<line class="gridline" x1="1316" y1="36" x2="1316" y2="916"/>
+<line class="gridline" x1="36" y1="36" x2="1316" y2="36"/>
+<text class="lbl-grid m-mono" x="24" y="120.0" text-anchor="middle">1</text>
+<line class="gridline" x1="36" y1="196" x2="1316" y2="196"/>
+<text class="lbl-grid m-mono" x="24" y="280.0" text-anchor="middle">2</text>
+<line class="gridline" x1="36" y1="356" x2="1316" y2="356"/>
+<text class="lbl-grid m-mono" x="24" y="440.0" text-anchor="middle">3</text>
+<line class="gridline" x1="36" y1="516" x2="1316" y2="516"/>
+<text class="lbl-grid m-mono" x="24" y="600.0" text-anchor="middle">4</text>
+<line class="gridline" x1="36" y1="676" x2="1316" y2="676"/>
+<text class="lbl-grid m-mono" x="24" y="760.0" text-anchor="middle">5</text>
+<line class="gridline" x1="36" y1="836" x2="1316" y2="836"/>
+<text class="lbl-grid m-mono" x="24" y="920.0" text-anchor="middle">6</text>
+</g>
+<g data-layer="water"><path fill="url(#hatch-water-drains)" stroke="#1d5664" stroke-width="1.2" d="M724.0,140.0 L724.0,100.0 L668.0,100.0 L668.0,140.0 Z M868.0,244.0 L308.0,244.0 L308.0,276.0 L868.0,276.0 Z M1236.0,260.0 L1204.0,260.0 L1204.0,468.0 L1236.0,468.0 Z M977.8,338.7 L950.2,338.7 L930.7,358.2 L930.7,385.8 L950.2,405.3 L977.8,405.3 L997.3,385.8 L997.3,358.2 Z M932.0,644.0 L756.0,644.0 L756.0,756.0 L932.0,756.0 Z M500.0,772.0 L356.0,772.0 L356.0,852.0 L500.0,852.0 Z"/></g>
+<g data-layer="water"><path class="water-lower" d="M792.9,448.0 L808.0,644.9 L832.0,643.1 L815.1,424.0 L576.0,424.0 L576.0,316.0 L552.0,316.0 L552.0,448.0 Z M1038.0,520.6 L923.0,652.1 L941.0,667.9 L1050.0,543.4 L1192.0,526.7 L1192.0,468.0 L1168.0,468.0 L1168.0,505.3 Z"><title>Flooded, one level down</title></path></g>
+<path class="wall" d="M750.8,201.2 L750.8,150.8 L822.8,150.8 L822.8,57.2 L641.2,57.2 L641.2,150.8 L725.2,150.8 L725.2,201.2 L486.8,201.2 L486.8,161.2 L433.2,161.2 L433.2,201.2 L305.2,201.2 L305.2,228.8 L310.8,228.8 L310.8,206.8 L438.8,206.8 L438.8,166.8 L481.2,166.8 L481.2,206.8 L730.8,206.8 L730.8,145.2 L646.8,145.2 L646.8,62.8 L817.2,62.8 L817.2,145.2 L745.2,145.2 L745.2,206.8 L881.2,206.8 L881.2,313.2 L721.2,313.2 L721.2,353.2 L678.8,353.2 L678.8,313.2 L310.8,313.2 L310.8,243.2 L305.2,243.2 L305.2,318.8 L673.2,318.8 L673.2,358.8 L726.8,358.8 L726.8,318.8 L877.4,318.8 L865.1,331.0 L865.1,413.0 L923.0,470.9 L929.2,470.9 L929.2,561.2 L593.2,561.2 L593.2,657.2 L534.8,657.2 L534.8,497.2 L177.2,497.2 L177.2,870.8 L534.8,870.8 L534.8,726.8 L593.2,726.8 L593.2,854.8 L1094.8,854.8 L1094.8,561.2 L998.8,561.2 L998.8,470.9 L1005.0,470.9 L1062.9,413.0 L1062.9,398.8 L1153.2,398.8 L1153.2,470.8 L1286.8,470.8 L1286.8,398.8 L1318.8,398.8 L1318.8,337.2 L1286.8,337.2 L1286.8,257.2 L1153.2,257.2 L1153.2,329.2 L1061.0,329.2 L1005.0,273.1 L923.0,273.1 L886.8,309.4 L886.8,201.2 Z M182.8,502.8 L529.2,502.8 L529.2,662.8 L598.8,662.8 L598.8,566.8 L934.8,566.8 L934.8,465.3 L925.4,465.3 L870.7,410.6 L870.7,333.4 L885.3,318.8 L886.8,318.8 L886.8,317.3 L925.4,278.7 L1002.6,278.7 L1058.7,334.8 L1158.8,334.8 L1158.8,262.8 L1281.2,262.8 L1281.2,342.8 L1313.2,342.8 L1313.2,393.2 L1281.2,393.2 L1281.2,465.2 L1158.8,465.2 L1158.8,393.2 L1057.3,393.2 L1057.3,410.6 L1002.6,465.3 L993.2,465.3 L993.2,566.8 L1089.2,566.8 L1089.2,849.2 L598.8,849.2 L598.8,721.2 L529.2,721.2 L529.2,865.2 L182.8,865.2 Z M100.0,198.8 L100.0,193.2 L86.8,193.2 L86.8,54.8 L145.2,54.8 L145.2,193.2 L132.0,193.2 L132.0,198.8 L150.8,198.8 L150.8,49.2 L81.2,49.2 L81.2,198.8 Z"/>
+<g data-layer="bridges">
+<path class="bridge" d="M532.0,236.0 L532.0,284.0 L500.0,284.0 L500.0,236.0 Z"/>
+<path class="bridge" d="M788.0,236.0 L788.0,284.0 L756.0,284.0 L756.0,236.0 Z"/>
+<path class="bridge" d="M1244.0,356.0 L1244.0,380.0 L1196.0,380.0 L1196.0,356.0 Z"/>
+</g>
+<g data-layer="props">
+<path class="stairs" d="M92.0,68.0 L140.0,68.0"/>
+<path class="stairs" d="M92.0,80.8 L140.0,80.8"/>
+<path class="stairs" d="M92.0,93.6 L140.0,93.6"/>
+<path class="stairs" d="M92.0,106.4 L140.0,106.4"/>
+<path class="stairs" d="M92.0,119.2 L140.0,119.2"/>
+<path class="stairs" d="M92.0,132.0 L140.0,132.0"/>
+<path class="stairs" d="M92.0,144.8 L140.0,144.8"/>
+<path class="stairs" d="M92.0,157.6 L140.0,157.6"/>
+<path class="stairs" d="M92.0,170.4 L140.0,170.4"/>
+<path class="stairs" d="M92.0,183.2 L140.0,183.2"/>
+<path class="pillar" d="M684.0,604.0 L684.0,620.0 L668.0,620.0 L668.0,604.0 Z"/>
+<path class="pillar" d="M684.0,700.0 L684.0,716.0 L668.0,716.0 L668.0,700.0 Z"/>
+<path class="pillar" d="M684.0,796.0 L684.0,812.0 L668.0,812.0 L668.0,796.0 Z"/>
+<path class="pillar" d="M796.0,604.0 L796.0,620.0 L780.0,620.0 L780.0,604.0 Z"/>
+<path class="pillar" d="M796.0,796.0 L796.0,812.0 L780.0,812.0 L780.0,796.0 Z"/>
+<path class="pillar" d="M908.0,604.0 L908.0,620.0 L892.0,620.0 L892.0,604.0 Z"/>
+<path class="pillar" d="M908.0,796.0 L908.0,812.0 L892.0,812.0 L892.0,796.0 Z"/>
+<path class="pillar" d="M1020.0,604.0 L1020.0,620.0 L1004.0,620.0 L1004.0,604.0 Z"/>
+<path class="pillar" d="M1020.0,700.0 L1020.0,716.0 L1004.0,716.0 L1004.0,700.0 Z"/>
+<path class="pillar" d="M1020.0,796.0 L1020.0,812.0 L1004.0,812.0 L1004.0,796.0 Z"/>
+<path class="stall" d="M658.5,586.8 L656.6,607.5 L629.5,605.2 L631.4,584.5 Z"/>
+<path class="stall" d="M656.0,631.8 L658.9,652.4 L632.0,656.2 L629.1,635.6 Z"/>
+<path class="stall" d="M723.5,764.7 L719.1,785.0 L692.5,779.3 L696.9,759.0 Z"/>
+<path class="stall" d="M753.6,809.6 L753.6,830.4 L726.4,830.4 L726.4,809.6 Z"/>
+<path class="stall" d="M832.4,792.2 L834.6,812.9 L807.6,815.8 L805.4,795.1 Z"/>
+<path class="stall" d="M994.3,586.6 L992.8,607.3 L965.7,605.4 L967.2,584.7 Z"/>
+<path class="stall" d="M1054.4,657.6 L1033.6,657.6 L1033.6,630.4 L1054.4,630.4 Z"/>
+<path class="stall" d="M1056.6,767.6 L1036.1,771.2 L1031.4,744.4 L1051.9,740.8 Z"/>
+<path class="stall" d="M978.9,811.6 L976.0,832.2 L949.1,828.4 L952.0,807.8 Z"/>
+<path class="fix-hot" d="M731.2,612.0 L731.2,611.3 L731.1,610.6 L730.9,609.9 L730.7,609.2 L730.3,608.6 L730.0,608.0 L729.6,607.4 L729.1,606.9 L728.6,606.4 L728.0,606.0 L727.4,605.7 L726.8,605.3 L726.1,605.1 L725.4,604.9 L724.7,604.8 L724.0,604.8 L723.3,604.8 L722.6,604.9 L721.9,605.1 L721.2,605.3 L720.6,605.7 L720.0,606.0 L719.4,606.4 L718.9,606.9 L718.4,607.4 L718.0,608.0 L717.7,608.6 L717.3,609.2 L717.1,609.9 L716.9,610.6 L716.8,611.3 L716.8,612.0 L716.8,612.7 L716.9,613.4 L717.1,614.1 L717.3,614.8 L717.7,615.4 L718.0,616.0 L718.4,616.6 L718.9,617.1 L719.4,617.6 L720.0,618.0 L720.6,618.3 L721.2,618.7 L721.9,618.9 L722.6,619.1 L723.3,619.2 L724.0,619.2 L724.7,619.2 L725.4,619.1 L726.1,618.9 L726.8,618.7 L727.4,618.3 L728.0,618.0 L728.6,617.6 L729.1,617.1 L729.6,616.6 L730.0,616.0 L730.3,615.4 L730.7,614.8 L730.9,614.1 L731.1,613.4 L731.2,612.7 Z"/>
+<path class="fix-hot" d="M843.2,596.0 L843.2,595.3 L843.1,594.6 L842.9,593.9 L842.7,593.2 L842.3,592.6 L842.0,592.0 L841.6,591.4 L841.1,590.9 L840.6,590.4 L840.0,590.0 L839.4,589.7 L838.8,589.3 L838.1,589.1 L837.4,588.9 L836.7,588.8 L836.0,588.8 L835.3,588.8 L834.6,588.9 L833.9,589.1 L833.2,589.3 L832.6,589.7 L832.0,590.0 L831.4,590.4 L830.9,590.9 L830.4,591.4 L830.0,592.0 L829.7,592.6 L829.3,593.2 L829.1,593.9 L828.9,594.6 L828.8,595.3 L828.8,596.0 L828.8,596.7 L828.9,597.4 L829.1,598.1 L829.3,598.8 L829.7,599.4 L830.0,600.0 L830.4,600.6 L830.9,601.1 L831.4,601.6 L832.0,602.0 L832.6,602.3 L833.2,602.7 L833.9,602.9 L834.6,603.1 L835.3,603.2 L836.0,603.2 L836.7,603.2 L837.4,603.1 L838.1,602.9 L838.8,602.7 L839.4,602.3 L840.0,602.0 L840.6,601.6 L841.1,601.1 L841.6,600.6 L842.0,600.0 L842.3,599.4 L842.7,598.8 L842.9,598.1 L843.1,597.4 L843.2,596.7 Z"/>
+<path class="fix-hot" d="M1003.2,708.0 L1003.2,707.3 L1003.1,706.6 L1002.9,705.9 L1002.7,705.2 L1002.3,704.6 L1002.0,704.0 L1001.6,703.4 L1001.1,702.9 L1000.6,702.4 L1000.0,702.0 L999.4,701.7 L998.8,701.3 L998.1,701.1 L997.4,700.9 L996.7,700.8 L996.0,700.8 L995.3,700.8 L994.6,700.9 L993.9,701.1 L993.2,701.3 L992.6,701.7 L992.0,702.0 L991.4,702.4 L990.9,702.9 L990.4,703.4 L990.0,704.0 L989.7,704.6 L989.3,705.2 L989.1,705.9 L988.9,706.6 L988.8,707.3 L988.8,708.0 L988.8,708.7 L988.9,709.4 L989.1,710.1 L989.3,710.8 L989.7,711.4 L990.0,712.0 L990.4,712.6 L990.9,713.1 L991.4,713.6 L992.0,714.0 L992.6,714.3 L993.2,714.7 L993.9,714.9 L994.6,715.1 L995.3,715.2 L996.0,715.2 L996.7,715.2 L997.4,715.1 L998.1,714.9 L998.8,714.7 L999.4,714.3 L1000.0,714.0 L1000.6,713.6 L1001.1,713.1 L1001.6,712.6 L1002.0,712.0 L1002.3,711.4 L1002.7,710.8 L1002.9,710.1 L1003.1,709.4 L1003.2,708.7 Z"/>
+<path class="fix-hot" d="M683.2,740.0 L683.2,739.3 L683.1,738.6 L682.9,737.9 L682.7,737.2 L682.3,736.6 L682.0,736.0 L681.6,735.4 L681.1,734.9 L680.6,734.4 L680.0,734.0 L679.4,733.7 L678.8,733.3 L678.1,733.1 L677.4,732.9 L676.7,732.8 L676.0,732.8 L675.3,732.8 L674.6,732.9 L673.9,733.1 L673.2,733.3 L672.6,733.7 L672.0,734.0 L671.4,734.4 L670.9,734.9 L670.4,735.4 L670.0,736.0 L669.7,736.6 L669.3,737.2 L669.1,737.9 L668.9,738.6 L668.8,739.3 L668.8,740.0 L668.8,740.7 L668.9,741.4 L669.1,742.1 L669.3,742.8 L669.7,743.4 L670.0,744.0 L670.4,744.6 L670.9,745.1 L671.4,745.6 L672.0,746.0 L672.6,746.3 L673.2,746.7 L673.9,746.9 L674.6,747.1 L675.3,747.2 L676.0,747.2 L676.7,747.2 L677.4,747.1 L678.1,746.9 L678.8,746.7 L679.4,746.3 L680.0,746.0 L680.6,745.6 L681.1,745.1 L681.6,744.6 L682.0,744.0 L682.3,743.4 L682.7,742.8 L682.9,742.1 L683.1,741.4 L683.2,740.7 Z"/>
+<path class="fix" d="M676.0,676.0 L676.0,724.0 L612.0,724.0 L612.0,676.0 Z"/>
+<path class="fix" d="M1076.0,788.0 L1076.0,836.0 L1012.0,836.0 L1012.0,788.0 Z"/>
+<path class="fix-lt" d="M900.0,580.0 L900.0,600.0 L852.0,600.0 L852.0,580.0 Z"/>
+<path class="crate" d="M1076.0,572.0 L1076.0,596.0 L1028.0,596.0 L1028.0,572.0 Z"/>
+<path class="fix-lt" d="M996.0,487.2 L996.0,496.8 L932.0,496.8 L932.0,487.2 Z"/>
+<path class="trip" d="M936.0,524.0 L992.0,524.0"/>
+<path class="trip" d="M356.0,312.0 L388.0,312.0"/>
+<path class="trip" d="M600.0,740.0 L600.0,788.0"/>
+<path class="pump" d="M296.0,676.0 L295.8,672.5 L295.3,669.0 L294.4,665.5 L293.3,662.2 L291.7,659.0 L289.9,656.0 L287.8,653.2 L285.5,650.5 L282.8,648.2 L280.0,646.1 L277.0,644.3 L273.8,642.7 L270.5,641.6 L267.0,640.7 L263.5,640.2 L260.0,640.0 L256.5,640.2 L253.0,640.7 L249.5,641.6 L246.2,642.7 L243.0,644.3 L240.0,646.1 L237.2,648.2 L234.5,650.5 L232.2,653.2 L230.1,656.0 L228.3,659.0 L226.7,662.2 L225.6,665.5 L224.7,669.0 L224.2,672.5 L224.0,676.0 L224.2,679.5 L224.7,683.0 L225.6,686.5 L226.7,689.8 L228.3,693.0 L230.1,696.0 L232.2,698.8 L234.5,701.5 L237.2,703.8 L240.0,705.9 L243.0,707.7 L246.2,709.3 L249.5,710.4 L253.0,711.3 L256.5,711.8 L260.0,712.0 L263.5,711.8 L267.0,711.3 L270.5,710.4 L273.8,709.3 L277.0,707.7 L280.0,705.9 L282.8,703.8 L285.5,701.5 L287.8,698.8 L289.9,696.0 L291.7,693.0 L293.3,689.8 L294.4,686.5 L295.3,683.0 L295.8,679.5 Z"/>
+<path class="pump" d="M392.0,676.0 L391.8,672.5 L391.3,669.0 L390.4,665.5 L389.3,662.2 L387.7,659.0 L385.9,656.0 L383.8,653.2 L381.5,650.5 L378.8,648.2 L376.0,646.1 L373.0,644.3 L369.8,642.7 L366.5,641.6 L363.0,640.7 L359.5,640.2 L356.0,640.0 L352.5,640.2 L349.0,640.7 L345.5,641.6 L342.2,642.7 L339.0,644.3 L336.0,646.1 L333.2,648.2 L330.5,650.5 L328.2,653.2 L326.1,656.0 L324.3,659.0 L322.7,662.2 L321.6,665.5 L320.7,669.0 L320.2,672.5 L320.0,676.0 L320.2,679.5 L320.7,683.0 L321.6,686.5 L322.7,689.8 L324.3,693.0 L326.1,696.0 L328.2,698.8 L330.5,701.5 L333.2,703.8 L336.0,705.9 L339.0,707.7 L342.2,709.3 L345.5,710.4 L349.0,711.3 L352.5,711.8 L356.0,712.0 L359.5,711.8 L363.0,711.3 L366.5,710.4 L369.8,709.3 L373.0,707.7 L376.0,705.9 L378.8,703.8 L381.5,701.5 L383.8,698.8 L385.9,696.0 L387.7,693.0 L389.3,689.8 L390.4,686.5 L391.3,683.0 L391.8,679.5 Z"/>
+<path class="pump" d="M488.0,676.0 L487.8,672.5 L487.3,669.0 L486.4,665.5 L485.3,662.2 L483.7,659.0 L481.9,656.0 L479.8,653.2 L477.5,650.5 L474.8,648.2 L472.0,646.1 L469.0,644.3 L465.8,642.7 L462.5,641.6 L459.0,640.7 L455.5,640.2 L452.0,640.0 L448.5,640.2 L445.0,640.7 L441.5,641.6 L438.2,642.7 L435.0,644.3 L432.0,646.1 L429.2,648.2 L426.5,650.5 L424.2,653.2 L422.1,656.0 L420.3,659.0 L418.7,662.2 L417.6,665.5 L416.7,669.0 L416.2,672.5 L416.0,676.0 L416.2,679.5 L416.7,683.0 L417.6,686.5 L418.7,689.8 L420.3,693.0 L422.1,696.0 L424.2,698.8 L426.5,701.5 L429.2,703.8 L432.0,705.9 L435.0,707.7 L438.2,709.3 L441.5,710.4 L445.0,711.3 L448.5,711.8 L452.0,712.0 L455.5,711.8 L459.0,711.3 L462.5,710.4 L465.8,709.3 L469.0,707.7 L472.0,705.9 L474.8,703.8 L477.5,701.5 L479.8,698.8 L481.9,696.0 L483.7,693.0 L485.3,689.8 L486.4,686.5 L487.3,683.0 L487.8,679.5 Z"/>
+<path class="pipe" d="M260.0,640.0 L260.0,596.0"/>
+<path class="pipe" d="M356.0,640.0 L356.0,596.0"/>
+<path class="pipe" d="M452.0,640.0 L452.0,596.0"/>
+<path class="pipe" d="M196.0,596.0 L516.0,596.0"/>
+<path class="cage" d="M300.0,740.0 L300.0,828.0 L204.0,828.0 L204.0,740.0 Z"/>
+<path class="stairs" d="M412.0,516.0 L412.0,580.0"/>
+<path class="stairs" d="M421.6,516.0 L421.6,580.0"/>
+<path class="stairs" d="M431.2,516.0 L431.2,580.0"/>
+<path class="stairs" d="M440.8,516.0 L440.8,580.0"/>
+<path class="stairs" d="M450.4,516.0 L450.4,580.0"/>
+<path class="stairs" d="M460.0,516.0 L460.0,580.0"/>
+<path class="stairs" d="M469.6,516.0 L469.6,580.0"/>
+<path class="stairs" d="M479.2,516.0 L479.2,580.0"/>
+<path class="fix-hot" d="M1244.0,308.0 L1244.0,316.0 L1196.0,316.0 L1196.0,308.0 Z"/>
+<path class="fix-hot" d="M1244.0,412.0 L1244.0,420.0 L1196.0,420.0 L1196.0,412.0 Z"/>
+<path class="fix-cyan" d="M1276.0,276.0 L1276.0,292.0 L1252.0,292.0 L1252.0,276.0 Z"/>
+<path class="fix-hot" d="M804.0,68.0 L804.0,84.0 L756.0,84.0 L756.0,68.0 Z"/>
+<path class="fix-dark" d="M1156.0,564.0 L1156.0,580.0 L1140.0,580.0 L1140.0,564.0 Z"/>
+</g>
+<g data-layer="buildings">
+<path class="bld-enter" d="M84.0,196.0 L308.0,196.0 L308.0,364.0 L84.0,364.0 Z"><title>SANITATION
+MAINTENANCE</title></path>
+<path class="floor" d="M84.0,276.0 L84.0,364.0 L180.0,364.0 L308.0,364.0 L308.0,276.0 L308.0,196.0 L196.0,196.0 L84.0,196.0 Z"/>
+<path class="wall" d="M181.8,365.8 L309.8,365.8 L309.8,277.8 L309.8,274.2 L309.8,243.2 L306.2,243.2 L306.2,274.2 L249.6,274.2 L249.6,277.8 L306.2,277.8 L306.2,362.2 L181.8,362.2 L181.8,277.8 L194.2,277.8 L197.8,277.8 L238.4,277.8 L238.4,274.2 L197.8,274.2 L197.8,241.6 L194.2,241.6 L194.2,274.2 L181.8,274.2 L178.2,274.2 L137.6,274.2 L137.6,277.8 L178.2,277.8 L178.2,362.2 L85.8,362.2 L85.8,277.8 L126.4,277.8 L126.4,274.2 L85.8,274.2 L85.8,197.8 L100.0,197.8 L100.0,194.2 L82.2,194.2 L82.2,274.2 L82.2,277.8 L82.2,365.8 L178.2,365.8 Z M309.8,194.2 L197.8,194.2 L194.2,194.2 L132.0,194.2 L132.0,197.8 L194.2,197.8 L194.2,230.4 L197.8,230.4 L197.8,197.8 L306.2,197.8 L306.2,228.8 L309.8,228.8 Z"/>
+<path class="fix" d="M300.0,204.0 L300.0,213.6 L204.0,213.6 L204.0,204.0 Z"/>
+<path class="fix-lt" d="M300.0,324.0 L300.0,336.0 L260.0,336.0 L260.0,324.0 Z"/>
+<path class="fix" d="M132.0,324.0 L132.0,348.0 L100.0,348.0 L100.0,324.0 Z"/>
+<path class="fix-dark" d="M164.0,292.0 L164.0,308.0 L140.0,308.0 L140.0,292.0 Z"/>
+<text class="lbl-room m-lbl" x="140.0" y="236.0" text-anchor="middle">LANDING</text>
+<text class="lbl-room m-lbl" x="252.0" y="236.0" text-anchor="middle">LOCKERS</text>
+<text class="lbl-room m-lbl" x="132.0" y="320.0" text-anchor="middle">BREAK ROOM</text>
+<text class="lbl-room m-lbl" x="244.0" y="320.0" text-anchor="middle">OFFICE</text>
+</g>
+<g data-layer="restricted">
+<path class="restricted" d="M404.0,508.0 L404.0,588.0 L188.0,588.0 L188.0,508.0 Z"><title>Restricted: Mother Rat's nest</title></path>
+<path class="restricted" d="M312.0,728.0 L312.0,840.0 L192.0,840.0 L192.0,728.0 Z"><title>Restricted: Hostage cage</title></path>
+</g>
+<g data-layer="elevated">
+<path class="catwalk" d="M607.2,575.2 L607.2,840.8 L1080.8,840.8 L1080.8,575.2 Z M624.8,592.8 L1063.2,592.8 L1063.2,823.2 L624.8,823.2 Z"><title>Camp catwalk ring (+6 m)</title></path>
+<path class="catwalk" d="M188.0,508.0 L404.0,508.0 L404.0,588.0 L188.0,588.0 Z"><title>Mother Rat's nest, mezzanine (+5 m)</title></path>
+<path class="walkway" d="M876.0,388.0 L884.0,516.0 L916.0,576.0"><title>Junction ladder to the catwalk ring</title></path>
+<path class="vent" d="M132.0,316.0 L132.0,436.0 L228.0,468.0 L276.0,504.0 L308.0,548.0"><title>Crawl vent: break room to the pump station (one way, a 3 m drop)</title></path>
+<path class="vent" d="M228.0,468.0 L212.0,504.0"><title>Vent branch to the nest</title></path>
+</g>
+<g data-layer="security">
+<path class="cone" d="M964.0,508.0 L916.7,406.5 L925.7,402.8 L935.0,399.8 L944.6,397.7 L954.2,396.4 L964.0,396.0 L973.8,396.4 L983.4,397.7 L993.0,399.8 L1002.3,402.8 L1011.3,406.5 Z"><title>Scrap turret (Hacking 2 turns it)</title></path>
+<circle cx="964.0" cy="508.0" r="2.6" fill="#ff5b4f"/>
+<path class="patrol" d="M356.0,296.0 L852.0,296.0 L852.0,224.0 L356.0,224.0 L356.0,296.0"><title>Patrol: Rat scavenger, collector walkways</title></path>
+<path class="patrol" d="M620.0,588.0 L1068.0,588.0 L1068.0,828.0 L620.0,828.0 L620.0,588.0"><title>Patrol: Rat lookout, camp catwalk ring</title></path>
+<path class="patrol" d="M340.0,772.0 L500.0,740.0 L500.0,548.0 L340.0,724.0 L340.0,772.0"><title>Patrol: Rat gunner, pump station</title></path>
+<g class="enemy" data-enemy="0"><title>Rat scavenger (I1), pipe</title><path d="M603.0,296.0 L591.1,291.1 L593.5,296.0 L591.1,300.9 Z" fill="#ff5b4f" transform="rotate(0 596.0 296.0)"/>
+</g>
+<g class="enemy" data-enemy="1"><title>Rat gunner (I2), checkpoint</title><path d="M951.0,476.0 L939.1,471.1 L941.5,476.0 L939.1,480.9 Z" fill="#ff5b4f" transform="rotate(-90 944.0 476.0)"/>
+</g>
+<g class="enemy" data-enemy="2"><title>Rat gunner (I2), checkpoint</title><path d="M991.0,476.0 L979.1,471.1 L981.5,476.0 L979.1,480.9 Z" fill="#ff5b4f" transform="rotate(-90 984.0 476.0)"/>
+</g>
+<g class="enemy" data-enemy="3"><title>Scrap turret (Hacking 2)</title><path d="M958.4,510.4 h11.2 v11.2 h-11.2 z M964.0,516.0 L974.4,516.0" fill="#ff9e2e" stroke="#ff9e2e" stroke-width="2" transform="rotate(-90 964.0 516.0)"/>
+</g>
+<g class="enemy" data-enemy="4"><title>Rat lookout (I1), whistle</title><path d="M1051.0,372.0 L1039.1,367.1 L1041.5,372.0 L1039.1,376.9 Z" fill="#ff5b4f" transform="rotate(180 1044.0 372.0)"/>
+</g>
+<g class="enemy" data-enemy="5"><title>Rat at the fire (I1)</title><path d="M843.0,612.0 L831.1,607.1 L833.5,612.0 L831.1,616.9 Z" fill="#ff5b4f" transform="rotate(90 836.0 612.0)"/>
+</g>
+<g class="enemy" data-enemy="6"><title>Rat asleep (I1)</title><path d="M715.0,796.0 L703.1,791.1 L705.5,796.0 L703.1,800.9 Z" fill="#ff5b4f" transform="rotate(0 708.0 796.0)"/>
+<text class="lbl-warn m-lbl" x="718.0" y="789.0">zzz</text>
+</g>
+<g class="enemy" data-enemy="7"><title>Rat asleep (I1)</title><path d="M1035.0,740.0 L1023.1,735.1 L1025.5,740.0 L1023.1,744.9 Z" fill="#ff5b4f" transform="rotate(180 1028.0 740.0)"/>
+<text class="lbl-warn m-lbl" x="1038.0" y="733.0">zzz</text>
+</g>
+<g class="enemy" data-enemy="8"><title>Old Wick, Rat trader (I2): trades with anyone</title><path d="M871.8,604.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
+</g>
+<g class="enemy" data-enemy="9"><title>Lug, Skiv's cousin (I1): talkable</title><path d="M655.8,612.0 a4.2,4.2 0 1,0 8.4,0 a4.2,4.2 0 1,0 -8.4,0" fill="#4aa8ff"/>
+</g>
+<g class="enemy" data-enemy="10"><title>Rat lookout on the catwalk (I2)</title><path d="M1003.0,588.0 L991.1,583.1 L993.5,588.0 L991.1,592.9 Z" fill="#ff5b4f" transform="rotate(180 996.0 588.0)"/>
+</g>
+<g class="enemy" data-enemy="11"><title>Twitch (I3), SMG: executes a hostage on alarm</title><path d="M333.0,724.0 L317.7,717.7 L320.9,724.0 L317.7,730.3 Z" fill="#ff5b4f" transform="rotate(180 324.0 724.0)"/>
+<text class="lbl-warn m-lbl" x="336.0" y="715.0">TWITCH</text>
+</g>
+<g class="enemy" data-enemy="12"><title>Rat gunner (I2)</title><path d="M443.0,756.0 L431.1,751.1 L433.6,756.0 L431.1,760.9 Z" fill="#ff5b4f" transform="rotate(180 436.0 756.0)"/>
+</g>
+<g class="enemy" data-enemy="13"><title>Mother Rat (I4), shotgun and gas</title><path d="M287.0,540.0 L268.3,532.3 L272.1,540.0 L268.3,547.7 Z" fill="#ff2d6f" transform="rotate(90 276.0 540.0)"/>
+<text class="lbl-warn m-lbl" x="290.0" y="529.0">MOTHER RAT</text>
+</g>
+<g class="enemy" data-enemy="14"><title>Hatchet, bodyguard (I3)</title><path d="M381.0,548.0 L365.7,541.7 L368.9,548.0 L365.7,554.3 Z" fill="#ff5b4f" transform="rotate(180 372.0 548.0)"/>
+</g>
+<g class="enemy" data-enemy="15"><title>Tomas Petrov, sanitation worker</title><path d="M231.1,772.0 a4.9,4.9 0 1,0 9.8,0 a4.9,4.9 0 1,0 -9.8,0" fill="#f2b33d"/>
+</g>
+<g class="enemy" data-enemy="16"><title>Anil Das, sanitation worker</title><path d="M255.1,800.0 a4.9,4.9 0 1,0 9.8,0 a4.9,4.9 0 1,0 -9.8,0" fill="#f2b33d"/>
+</g>
+</g>
+<g data-layer="routes">
+<path class="route-force" marker-end="url(#arrow-drains)" d="M116.0,84.0 L116.0,228.0 L276.0,232.0 L836.0,232.0 L932.0,324.0 L964.0,436.0 L964.0,548.0 L836.0,788.0 L580.0,700.0 L388.0,740.0"><title>Force: through the checkpoint and the camp</title></path>
+<path class="route-social" marker-end="url(#arrow-drains)" d="M132.0,244.0 L300.0,240.0 L868.0,300.0 L996.0,420.0 L988.0,556.0 L740.0,644.0 L564.0,676.0 L340.0,692.0"><title>Social: Rat disguise, talk past the checkpoint, then Twitch or Mother Rat</title></path>
+<path class="route-stealth" marker-end="url(#arrow-drains)" d="M548.0,324.0 L548.0,420.0 L788.0,420.0 L804.0,628.0"><title>Stealth: the flooded bypass, or the crawl vent</title></path>
+</g>
+<g data-layer="labels">
+<text class="lbl-bld m-lbl" x="196.0" y="386.0" text-anchor="middle" transform="rotate(0 196.0 392.0)">SANITATION</text>
+<text class="lbl-bld m-lbl" x="196.0" y="398.0" text-anchor="middle" transform="rotate(0 196.0 392.0)">MAINTENANCE</text>
+<text class="lbl-note m-lbl" x="116.0" y="48.8" text-anchor="middle" transform="rotate(0 116.0 48.8)">up to the Pit (hub)</text>
+<text class="lbl-note m-lbl" x="1252.0" y="328.0" text-anchor="middle" transform="rotate(0 1252.0 328.0)">to the hub's canal outfall</text>
+<text class="lbl-note m-lbl" x="676.0" y="461.6" text-anchor="middle" transform="rotate(0 676.0 461.6)">FLOODED BYPASS  (level -2, swim 35 s, or drain it at the sluice)</text>
+<text class="lbl-warn m-lbl" x="892.0" y="504.0" text-anchor="middle" transform="rotate(-90 892.0 504.0)">CHECKPOINT</text>
+<text class="lbl-note m-lbl" x="244.0" y="526.4" text-anchor="middle" transform="rotate(0 244.0 526.4)">NEST (+5 m)</text>
+<text class="lbl-warn m-lbl" x="252.0" y="730.4" text-anchor="middle" transform="rotate(0 252.0 730.4)">HOSTAGE CAGE</text>
+<text class="lbl-district m-lbl" x="844.0" y="874.4" text-anchor="middle" transform="rotate(0 844.0 874.4)">RAT CAMP</text>
+<text class="lbl-district m-lbl" x="356.0" y="479.2" text-anchor="middle" transform="rotate(0 356.0 479.2)">PUMP STATION</text>
+<text class="lbl-street m-lbl" x="596.0" y="189.6" text-anchor="middle" transform="rotate(0 596.0 189.6)">COLLECTOR TUNNEL</text>
+<text class="lbl-street m-lbl" x="964.0" y="256.0" text-anchor="middle" transform="rotate(0 964.0 256.0)">THE JUNCTION</text>
+<text class="lbl-street m-lbl" x="1220.0" y="248.8" text-anchor="middle" transform="rotate(0 1220.0 248.8)">SLUICE ROOM</text>
+<text class="lbl-street m-lbl" x="732.0" y="50.4" text-anchor="middle" transform="rotate(0 732.0 50.4)">DROWNED CHAPEL</text>
+<text class="lbl-note m-lbl" x="844.0" y="708.0" text-anchor="middle" transform="rotate(0 844.0 708.0)">cistern pool</text>
+<text class="lbl-note m-lbl" x="428.0" y="820.0" text-anchor="middle" transform="rotate(0 428.0 820.0)">pump sump</text>
+</g>
+<g data-layer="ladders">
+</g>
+<g data-layer="pois">
+<g class="poi" data-poi="drains-1"><title>1. The hostages: Tomas and Anil, in the cage</title><circle cx="332.0" cy="796.0" r="8" fill="#f2b33d"/><text class="num m-lbl" x="332.0" y="796.5">1</text></g>
+<g class="poi" data-poi="drains-2"><title>2. Mother Rat: pump room key on her desk; talk, pay or fight</title><circle cx="308.0" cy="564.0" r="8" fill="#f2b33d"/><text class="num m-lbl" x="308.0" y="564.5">2</text></g>
+<g class="poi" data-poi="drains-3"><title>3. Storm drain stairs: from the Pit; the way out with the hostages</title><circle cx="68.0" cy="132.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="68.0" y="132.5">3</text></g>
+<g class="poi" data-poi="drains-4"><title>4. Service door: sewer service key (Petra) or Lockpicking 2</title><circle cx="332.0" cy="216.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="332.0" y="216.5">4</text></g>
+<g class="poi" data-poi="drains-5"><title>5. Crawl vent: break room ceiling to the pump station</title><circle cx="108.0" cy="300.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="108.0" y="300.5">5</text></g>
+<g class="poi" data-poi="drains-6"><title>6. Overflow pipe: into the flooded bypass</title><circle cx="564.0" cy="344.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="564.0" y="344.5">6</text></g>
+<g class="poi" data-poi="drains-7"><title>7. Junction ladder: up to the camp catwalk ring</title><circle cx="852.0" cy="404.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="852.0" y="404.5">7</text></g>
+<g class="poi" data-poi="drains-8"><title>8. Outfall tunnel: from the hub canal (grate, Lockpicking 1)</title><circle cx="1292.0" cy="420.0" r="8" fill="#dfe7ee"/><text class="num m-lbl" x="1292.0" y="420.5">8</text></g>
+<g class="poi" data-poi="drains-9"><title>9. Maintenance terminal: sewer map; the Rats' password</title><circle cx="280.0" cy="344.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="280.0" y="344.5">9</text></g>
+<g class="poi" data-poi="drains-10"><title>10. Sluice terminal: Hacking 1: drain the bypass</title><circle cx="1264.0" cy="308.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="1264.0" y="308.5">10</text></g>
+<g class="poi" data-poi="drains-11"><title>11. Scrap turret: Hacking 2: turn it on the checkpoint</title><circle cx="1012.0" cy="516.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="1012.0" y="516.5">11</text></g>
+<g class="poi" data-poi="drains-12"><title>12. Cage lock: pump room key or Lockpicking 2</title><circle cx="316.0" cy="764.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="316.0" y="764.5">12</text></g>
+<g class="poi" data-poi="drains-13"><title>13. Mother Rat's safe: Lockpicking 3, or the code (nest terminal)</title><circle cx="204.0" cy="532.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="204.0" y="532.5">13</text></g>
+<g class="poi" data-poi="drains-14"><title>14. Nest terminal: Hacking 2: safe code, ransom emails</title><circle cx="380.0" cy="528.0" r="8" fill="#ff9e2e"/><text class="num m-lbl" x="380.0" y="528.5">14</text></g>
+<g class="poi" data-poi="drains-15"><title>15. Sanitation locker: overalls and cap: City Sanitation disguise</title><circle cx="228.0" cy="224.0" r="8" fill="#3fd1c7"/><text class="num m-lbl" x="228.0" y="224.5">15</text></g>
+<g class="poi" data-poi="drains-16"><title>16. Rat stash: respirator and goggles: the full Rat outfit</title><circle cx="644.0" cy="700.0" r="8" fill="#3fd1c7"/><text class="num m-lbl" x="644.0" y="700.5">16</text></g>
+<g class="poi" data-poi="drains-17"><title>17. Whisky crates: S4 Last Call: tag them or carry one out</title><circle cx="1052.0" cy="616.0" r="8" fill="#3fd1c7"/><text class="num m-lbl" x="1052.0" y="616.5">17</text></g>
+<g class="poi" data-poi="drains-18"><title>18. Alcove: medkit, 10mm rounds</title><circle cx="460.0" cy="184.0" r="8" fill="#3fd1c7"/><text class="num m-lbl" x="460.0" y="184.5">18</text></g>
+<g class="poi" data-poi="drains-19"><title>19. Lug: Skiv's cousin; talks if you name Skiv</title><circle cx="660.0" cy="640.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="660.0" y="640.5">19</text></g>
+<g class="poi" data-poi="drains-20"><title>20. Old Wick: Rat trader; sells to the disguised</title><circle cx="876.0" cy="632.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="876.0" y="632.5">20</text></g>
+<g class="poi" data-poi="drains-21"><title>21. Twitch: I3; [Deception 2] 'Mother says let them go'</title><circle cx="356.0" cy="700.0" r="8" fill="#4aa8ff"/><text class="num m-lbl" x="356.0" y="700.5">21</text></g>
+<g class="poi" data-poi="drains-22"><title>22. Drowned Chapel: through the crack; data shard, neural chip</title><circle cx="740.0" cy="112.0" r="8" fill="#b78cff"/><text class="num m-lbl" x="740.0" y="112.5">22</text></g>
+<g class="poi" data-poi="drains-23"><title>23. Catwalk cache: frag grenade, stim</title><circle cx="1084.0" cy="568.0" r="8" fill="#b78cff"/><text class="num m-lbl" x="1084.0" y="568.5">23</text></g>
+<g class="poi" data-poi="drains-24"><title>24. Tripwire: can rattle: noise 18 m; step over or cut</title><circle cx="916.0" cy="536.0" r="8" fill="#ff5b4f"/><text class="num m-lbl" x="916.0" y="536.5">24</text></g>
+<g class="poi" data-poi="drains-25"><title>25. Tripwire: shotgun trap: Hacking 1 or multitool</title><circle cx="368.0" cy="332.0" r="8" fill="#ff5b4f"/><text class="num m-lbl" x="368.0" y="332.5">25</text></g>
+</g>
+<g data-layer="missions">
+<path class="leader" d="M132.0,788.0 L212.0,780.0"/><circle cx="212.0" cy="780.0" r="2.5" fill="#f2b33d"/>
+<g class="mission" data-poi="drains-M1"><title>M1 Free the hostages: </title><rect x="122.0" y="778.0" width="20" height="20" fill="#f2b33d" stroke="#05080b" stroke-width="1.6" transform="rotate(45 132.0 788.0)"/><text class="num m-lbl" x="132.0" y="788.5">M1</text></g>
+<path class="leader" d="M212.0,100.0 L148.0,100.0"/><circle cx="148.0" cy="100.0" r="2.5" fill="#f2b33d"/>
+<g class="mission" data-poi="drains-X"><title>X Get them out: </title><rect x="202.0" y="90.0" width="20" height="20" fill="#f2b33d" stroke="#05080b" stroke-width="1.6" transform="rotate(45 212.0 100.0)"/><text class="num m-lbl" x="212.0" y="100.5">X</text></g>
+<path class="leader" d="M100.0,548.0 L192.0,532.0"/><circle cx="192.0" cy="532.0" r="2.5" fill="#f2b33d"/>
+<g class="mission" data-poi="drains-B"><title>B Mother Rat's safe: </title><rect x="90.0" y="538.0" width="20" height="20" fill="#f2b33d" stroke="#05080b" stroke-width="1.6" transform="rotate(45 100.0 548.0)"/><text class="num m-lbl" x="100.0" y="548.5">B</text></g>
+<path class="leader" d="M1140.0,644.0 L1076.0,596.0"/><circle cx="1076.0" cy="596.0" r="2.5" fill="#f2b33d"/>
+<g class="mission" data-poi="drains-S4"><title>S4 Last Call: </title><rect x="1130.0" y="634.0" width="20" height="20" fill="#f2b33d" stroke="#05080b" stroke-width="1.6" transform="rotate(45 1140.0 644.0)"/><text class="num m-lbl" x="1140.0" y="644.5">S4</text></g>
+</g>
+<g data-layer="scale">
+<rect x="62" y="880" width="444" height="30" fill="#06090c" fill-opacity=".8"/>
+<rect x="68.0" y="900" width="80.0" height="4" fill="#dbe4ec"/>
+<rect x="148.0" y="900" width="120.0" height="4" fill="#4a5a69"/>
+<rect x="268.0" y="900" width="200.0" height="4" fill="#dbe4ec"/>
+<text class="lbl-grid m-mono" x="68.0" y="895" text-anchor="middle">0</text>
+<text class="lbl-grid m-mono" x="148.0" y="895" text-anchor="middle">10</text>
+<text class="lbl-grid m-mono" x="268.0" y="895" text-anchor="middle">25</text>
+<text class="lbl-grid m-mono" x="468.0" y="895" text-anchor="middle">50</text>
+<text class="lbl-grid m-mono" x="480.0" y="905">m</text>
+<circle cx="1290" cy="66" r="16" fill="#06090c" fill-opacity=".8" stroke="#35414e"/><path d="M1290,53 L1295,70 L1290,66 L1285,70 Z" fill="#ff9e2e"/><text class="lbl-grid m-lbl" x="1290" y="46" text-anchor="middle" fill="#dbe4ec">N</text>
+</g>
+<g data-layer="legend" transform="translate(1352,0)">
+<rect x="0" y="0" width="560" height="1080" fill="#0a0e13"/><line x1="0" y1="0" x2="0" y2="1080" stroke="#1f2933"/>
+<rect x="24" y="30" width="4" height="46" fill="#ff9e2e"/>
+<text class="m-lbl" x="38" y="58" fill="#e8eef3" font-size="34" font-weight="700" letter-spacing="5">THE DRAINS</text>
+<text class="m-lbl" x="39" y="76" fill="#7d8e9e" font-size="12" letter-spacing="3.5">M1 RAT TRAP  ·  UNDER THE SUMP  ·  160 x 110 m</text>
+<text class="lg-n m-lbl" x="24" y="104">Brick collectors, a flooded bypass and an overflow cistern the Drain Rats</text>
+<text class="lg-n m-lbl" x="24" y="117">turned into a camp. Two sanitation workers are caged in the pump station.</text>
+<text class="lg-n m-lbl" x="24" y="130">Levels: -1 tunnels (plan), -2 flooded bypass (dashed), +1 catwalks and nest (cyan).</text>
+<text class="lg-h m-lbl" x="24" y="151">MISSIONS</text>
+<g class="mission lg" data-poi-ref="drains-M1"><rect x="28" y="160" width="13" height="13" fill="#f2b33d" transform="rotate(45 34.5 166.5)"/><text class="lg-t m-lbl" x="50" y="171"><tspan font-weight="700">M1</tspan>  Free the hostages</text><text class="lg-n m-lbl" x="536" y="171" text-anchor="end">Rat Trap</text></g>
+<g class="mission lg" data-poi-ref="drains-X"><rect x="28" y="179" width="13" height="13" fill="#f2b33d" transform="rotate(45 34.5 185.5)"/><text class="lg-t m-lbl" x="50" y="190"><tspan font-weight="700">X</tspan>  Get them out</text><text class="lg-n m-lbl" x="536" y="190" text-anchor="end">the stairs or the outfall</text></g>
+<g class="mission lg" data-poi-ref="drains-B"><rect x="28" y="198" width="13" height="13" fill="#f2b33d" transform="rotate(45 34.5 204.5)"/><text class="lg-t m-lbl" x="50" y="209"><tspan font-weight="700">B</tspan>  Mother Rat's safe</text><text class="lg-n m-lbl" x="536" y="209" text-anchor="end">bonus</text></g>
+<g class="mission lg" data-poi-ref="drains-S4"><rect x="28" y="217" width="13" height="13" fill="#f2b33d" transform="rotate(45 34.5 223.5)"/><text class="lg-t m-lbl" x="50" y="228"><tspan font-weight="700">S4</tspan>  Last Call</text><text class="lg-n m-lbl" x="536" y="228" text-anchor="end">Mags' whisky</text></g>
+<rect x="24" y="255" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="269" fill="#f2b33d">OBJECTIVES</text>
+<g class="poi lg" data-poi-ref="drains-1"><circle cx="32" cy="277" r="7" fill="#f2b33d"/><text class="num m-lbl" x="32" y="277.5">1</text><text class="lg-t m-lbl" x="45" y="281">The hostages<tspan class="lg-n" dx="8">Tomas and Anil, in the cage</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-2"><circle cx="32" cy="293" r="7" fill="#f2b33d"/><text class="num m-lbl" x="32" y="293.5">2</text><text class="lg-t m-lbl" x="45" y="297">Mother Rat<tspan class="lg-n" dx="8">pump room key on her desk; talk, pay or fight</tspan></text></g>
+<rect x="24" y="311" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="325" fill="#4aa8ff">CONTACTS</text>
+<g class="poi lg" data-poi-ref="drains-19"><circle cx="32" cy="333" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="333.5">19</text><text class="lg-t m-lbl" x="45" y="337">Lug<tspan class="lg-n" dx="8">Skiv's cousin; talks if you name Skiv</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-20"><circle cx="32" cy="349" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="349.5">20</text><text class="lg-t m-lbl" x="45" y="353">Old Wick<tspan class="lg-n" dx="8">Rat trader; sells to the disguised</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-21"><circle cx="32" cy="365" r="7" fill="#4aa8ff"/><text class="num m-lbl" x="32" y="365.5">21</text><text class="lg-t m-lbl" x="45" y="369">Twitch<tspan class="lg-n" dx="8">I3; [Deception 2] 'Mother says let them go'</tspan></text></g>
+<rect x="24" y="383" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="397" fill="#dfe7ee">ACCESS</text>
+<g class="poi lg" data-poi-ref="drains-3"><circle cx="32" cy="405" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="405.5">3</text><text class="lg-t m-lbl" x="45" y="409">Storm drain stairs<tspan class="lg-n" dx="8">from the Pit; the way out with the hostages</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-4"><circle cx="32" cy="421" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="421.5">4</text><text class="lg-t m-lbl" x="45" y="425">Service door<tspan class="lg-n" dx="8">sewer service key (Petra) or Lockpicking 2</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-5"><circle cx="32" cy="437" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="437.5">5</text><text class="lg-t m-lbl" x="45" y="441">Crawl vent<tspan class="lg-n" dx="8">break room ceiling to the pump station</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-6"><circle cx="32" cy="453" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="453.5">6</text><text class="lg-t m-lbl" x="45" y="457">Overflow pipe<tspan class="lg-n" dx="8">into the flooded bypass</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-7"><circle cx="32" cy="469" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="469.5">7</text><text class="lg-t m-lbl" x="45" y="473">Junction ladder<tspan class="lg-n" dx="8">up to the camp catwalk ring</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-8"><circle cx="32" cy="485" r="7" fill="#dfe7ee"/><text class="num m-lbl" x="32" y="485.5">8</text><text class="lg-t m-lbl" x="45" y="489">Outfall tunnel<tspan class="lg-n" dx="8">from the hub canal (grate, Lockpicking 1)</tspan></text></g>
+<rect x="24" y="503" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="517" fill="#ff9e2e">LOCKS AND TERMINALS</text>
+<g class="poi lg" data-poi-ref="drains-9"><circle cx="32" cy="525" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="525.5">9</text><text class="lg-t m-lbl" x="45" y="529">Maintenance terminal<tspan class="lg-n" dx="8">sewer map; the Rats' password</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-10"><circle cx="32" cy="541" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="541.5">10</text><text class="lg-t m-lbl" x="45" y="545">Sluice terminal<tspan class="lg-n" dx="8">Hacking 1: drain the bypass</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-11"><circle cx="32" cy="557" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="557.5">11</text><text class="lg-t m-lbl" x="45" y="561">Scrap turret<tspan class="lg-n" dx="8">Hacking 2: turn it on the checkpoint</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-12"><circle cx="32" cy="573" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="573.5">12</text><text class="lg-t m-lbl" x="45" y="577">Cage lock<tspan class="lg-n" dx="8">pump room key or Lockpicking 2</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-13"><circle cx="32" cy="589" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="589.5">13</text><text class="lg-t m-lbl" x="45" y="593">Mother Rat's safe<tspan class="lg-n" dx="8">Lockpicking 3, or the code (nest terminal)</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-14"><circle cx="32" cy="605" r="7" fill="#ff9e2e"/><text class="num m-lbl" x="32" y="605.5">14</text><text class="lg-t m-lbl" x="45" y="609">Nest terminal<tspan class="lg-n" dx="8">Hacking 2: safe code, ransom emails</tspan></text></g>
+<rect x="24" y="623" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="637" fill="#3fd1c7">LOOT</text>
+<g class="poi lg" data-poi-ref="drains-15"><circle cx="32" cy="645" r="7" fill="#3fd1c7"/><text class="num m-lbl" x="32" y="645.5">15</text><text class="lg-t m-lbl" x="45" y="649">Sanitation locker<tspan class="lg-n" dx="8">overalls and cap: City Sanitation disguise</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-16"><circle cx="32" cy="661" r="7" fill="#3fd1c7"/><text class="num m-lbl" x="32" y="661.5">16</text><text class="lg-t m-lbl" x="45" y="665">Rat stash<tspan class="lg-n" dx="8">respirator and goggles: the full Rat outfit</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-17"><circle cx="32" cy="677" r="7" fill="#3fd1c7"/><text class="num m-lbl" x="32" y="677.5">17</text><text class="lg-t m-lbl" x="45" y="681">Whisky crates<tspan class="lg-n" dx="8">S4 Last Call: tag them or carry one out</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-18"><circle cx="32" cy="693" r="7" fill="#3fd1c7"/><text class="num m-lbl" x="32" y="693.5">18</text><text class="lg-t m-lbl" x="45" y="697">Alcove<tspan class="lg-n" dx="8">medkit, 10mm rounds</tspan></text></g>
+<rect x="24" y="711" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="725" fill="#b78cff">SECRETS</text>
+<g class="poi lg" data-poi-ref="drains-22"><circle cx="32" cy="733" r="7" fill="#b78cff"/><text class="num m-lbl" x="32" y="733.5">22</text><text class="lg-t m-lbl" x="45" y="737">Drowned Chapel<tspan class="lg-n" dx="8">through the crack; data shard, neural chip</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-23"><circle cx="32" cy="749" r="7" fill="#b78cff"/><text class="num m-lbl" x="32" y="749.5">23</text><text class="lg-t m-lbl" x="45" y="753">Catwalk cache<tspan class="lg-n" dx="8">frag grenade, stim</tspan></text></g>
+<rect x="24" y="767" width="508" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="781" fill="#ff5b4f">SECURITY</text>
+<g class="poi lg" data-poi-ref="drains-24"><circle cx="32" cy="789" r="7" fill="#ff5b4f"/><text class="num m-lbl" x="32" y="789.5">24</text><text class="lg-t m-lbl" x="45" y="793">Tripwire<tspan class="lg-n" dx="8">can rattle: noise 18 m; step over or cut</tspan></text></g>
+<g class="poi lg" data-poi-ref="drains-25"><circle cx="32" cy="805" r="7" fill="#ff5b4f"/><text class="num m-lbl" x="32" y="805.5">25</text><text class="lg-t m-lbl" x="45" y="809">Tripwire<tspan class="lg-n" dx="8">shotgun trap: Hacking 1 or multitool</tspan></text></g>
+<rect x="24" y="874" width="512" height="1" fill="#1f2933"/>
+<text class="lg-h m-lbl" x="24" y="890">KEY</text>
+<g transform="translate(24.0,908)"><path class="route-force" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="58.0" y="912">Route: force</text>
+<g transform="translate(288.0,908)"><path class="route-social" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="322.0" y="912">Route: social</text>
+<g transform="translate(24.0,926)"><path class="route-stealth" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="58.0" y="930">Route: stealth</text>
+<g transform="translate(288.0,926)"><path class="patrol" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="322.0" y="930">Patrol</text>
+<g transform="translate(24.0,944)"><path d="M20,0 L8,-7 L12,0 L8,7 Z" fill="#ff5b4f"/></g><text class="lg-n m-lbl" x="58.0" y="948">Hostile (facing)</text>
+<g transform="translate(288.0,944)"><path d="M22,0 L6,-9 L11,0 L6,9 Z" fill="#ff2d6f"/></g><text class="lg-n m-lbl" x="322.0" y="948">Named or boss</text>
+<g transform="translate(24.0,962)"><rect x="7" y="-5" width="10" height="10" fill="#ff9e2e"/></g><text class="lg-n m-lbl" x="58.0" y="966">Scrap turret</text>
+<g transform="translate(288.0,962)"><circle cx="13" cy="0" r="5" fill="#f2b33d"/></g><text class="lg-n m-lbl" x="322.0" y="966">Hostage</text>
+<g transform="translate(24.0,980)"><circle cx="13" cy="0" r="4.5" fill="#4aa8ff"/></g><text class="lg-n m-lbl" x="58.0" y="984">Neutral NPC</text>
+<g transform="translate(288.0,980)"><path class="cone" d="M0,0 L26,-7 L26,7 Z"/></g><text class="lg-n m-lbl" x="322.0" y="984">Camera or turret view</text>
+<g transform="translate(24.0,998)"><rect x="0" y="-4" width="26" height="8" class="catwalk"/></g><text class="lg-n m-lbl" x="58.0" y="1002">Catwalk</text>
+<g transform="translate(288.0,998)"><path class="vent" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="322.0" y="1002">Vent or crawlspace</text>
+<g transform="translate(24.0,1016)"><path class="walkway" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="58.0" y="1020">Upper walkway, roofs</text>
+<g transform="translate(288.0,1016)"><rect x="0" y="-6" width="26" height="12" fill="url(#hatch-water-drains)"/></g><text class="lg-n m-lbl" x="322.0" y="1020">Water</text>
+<g transform="translate(24.0,1034)"><rect x="0" y="-5" width="26" height="10" class="water-lower"/></g><text class="lg-n m-lbl" x="58.0" y="1038">Flooded, one level down</text>
+<g transform="translate(288.0,1034)"><path class="trip" d="M0,0 H26"/></g><text class="lg-n m-lbl" x="322.0" y="1038">Tripwire or can rattle</text>
+<g transform="translate(24.0,1052)"><rect x="4" y="-6" width="18" height="12" class="cage"/></g><text class="lg-n m-lbl" x="58.0" y="1056">Cage</text>
+<g transform="translate(288.0,1052)"><rect x="0" y="-6" width="26" height="12" class="restricted"/></g><text class="lg-n m-lbl" x="322.0" y="1056">Restricted zone</text>
+</g>
+</svg>

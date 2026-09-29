@@ -69,5 +69,67 @@
     "normal_scale": 1.0,
     "source": "alias of crate (2 m crates)",
     "alias": "crate"
+  },
+  "asphalt": {
+    "tile_m": 4.0,
+    "normal_scale": 0.8,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "paving_wet": {
+    "tile_m": 2.0,
+    "normal_scale": 0.9,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_lit_warm": {
+    "tile_m": 1.5,
+    "normal_scale": 0.0,
+    "emission_energy": 2.2,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_lit_cool": {
+    "tile_m": 1.5,
+    "normal_scale": 0.0,
+    "emission_energy": 2.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "window_dark": {
+    "tile_m": 1.5,
+    "normal_scale": 0.3,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "glass": {
+    "tile_m": 2.0,
+    "normal_scale": 0.3,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "neon_pink": {
+    "tile_m": 1.0,
+    "normal_scale": 0.0,
+    "emission_energy": 6.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "neon_cyan": {
+    "tile_m": 1.0,
+    "normal_scale": 0.0,
+    "emission_energy": 6.0,
+    "source": "procedural: tools/fx/generate_city_materials.py"
+  },
+  "water": {
+    "tile_m": 6.0,
+    "normal_scale": 0.6,
+    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/water.gdshader (openspec/changes/archive/2026-09-29-water-and-swimming)",
+    "shader": "res://shaders/water.gdshader",
+    "shader_params": {
+      "color": "#0b2327",
+      "flow_a_mps": [0.035, 0.012], "flow_b_mps": [-0.022, 0.028],
+      "ripple_cell_m": 0.9, "ripple_rate_hz": 0.7, "ripple_strength": 0.35,
+      "ripple_wave_per_m": 40.0, "ripple_falloff_per_m": 18.0,
+      "surface_roughness": 0.05
+    }
+  },
+  "awning": {
+    "tile_m": 1.0,
+    "normal_scale": 0.5,
+    "source": "procedural: tools/fx/generate_city_materials.py"
   }
 }

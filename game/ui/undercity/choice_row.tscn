@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/ChoiceRowView.cs" id="2_script"]
+
+[node name="ChoiceRow" type="Button"]
+custom_minimum_size = Vector2(1400, 36)
+custom_maximum_size = Vector2(1400, 36)
+propagate_maximum_size = true
+clip_contents = true
+offset_right = 1400.0
+offset_bottom = 36.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_theme")
+theme_type_variation = &"ChoiceRow"
+script = ExtResource("2_script")
+
+[node name="Row" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_right = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Number" type="Label" parent="Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_type_variation = &"ChoiceNum"
+text = "1."
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Requirement" type="Label" parent="Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ChoiceReq"
+text = "[Persuasion 2]"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Text" type="Label" parent="Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ChoiceText"
+text = "Choice"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3

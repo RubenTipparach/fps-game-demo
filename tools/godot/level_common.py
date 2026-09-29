@@ -39,13 +39,18 @@ ENTITY_SCENES = {
 }
 
 
-def setup_root(scene, title):
-    scene.nodes[0][3].update(script=scene.ext_res("Script", "res://scripts/World/LevelRoot.cs"), LevelTitle=title)
+def setup_root(scene, title=None, script="res://scripts/World/LevelRoot.cs", **props):
+    """The root node's script and exported properties (Brushfire's LevelRoot and its title by default)."""
+    if title is not None:
+        props = {"LevelTitle": title, **props}
+    scene.nodes[0][3].update(script=scene.ext_res("Script", script), **props)
 
 
-def add_environment(scene, fog_color="#20232a", fog_density=0.006, exposure=1.35, sky_color="#0a0b0e"):
-    env = scene.sub_res(
-        "Environment",
+def add_environment(scene, fog_color="#20232a", fog_density=0.006, exposure=1.35, sky_color="#0a0b0e", sky=None,
+                    **overrides):
+    """The shared environment recipe. `sky` (ProceduralSkyMaterial properties) gives the level a sky
+    instead of a clear colour; `overrides` replace or add Environment properties."""
+    props = dict(
         background_mode=1,                       # clear colour; interiors don't see the sky
         background_color=hexcolor(sky_color),
         ambient_light_source=1,                   # disabled: lightmaps + probes provide ambient
@@ -66,14 +71,23 @@ def add_environment(scene, fog_color="#20232a", fog_density=0.006, exposure=1.35
         fog_density=fog_density,
         fog_sky_affect=0.0,
     )
+    if sky is not None:
+        mat = scene.sub_res("ProceduralSkyMaterial", **sky)
+        props.update(background_mode=2, sky=scene.sub_res("Sky", sky_material=mat))
+    props.update(overrides)
+    env = scene.sub_res("Environment", **props)
     scene.node("WorldEnvironment", "WorldEnvironment", ".", environment=env)
 
 
-def add_lightmap(scene, texel_scale=1.0, quality=1, bounces=3, probes_subdiv=2):
-    scene.node("LightmapGI", "LightmapGI", ".",
-               quality=quality, bounces=bounces, directional=True, interior=True,
-               use_denoiser=True, denoiser_strength=0.12, texel_scale=texel_scale,
-               generate_probes_subdiv=probes_subdiv, environment_mode=0)
+def add_lightmap(scene, texel_scale=1.0, quality=1, bounces=3, probes_subdiv=2, parent=".", name="LightmapGI",
+                 interior=True, **extra):
+    """A LightmapGI. It bakes the meshes and lights under its parent, so a level split into
+    sectors gives each sector node its own."""
+    props = dict(quality=quality, bounces=bounces, directional=True, interior=interior,
+                 use_denoiser=True, denoiser_strength=0.12, texel_scale=texel_scale,
+                 generate_probes_subdiv=probes_subdiv, environment_mode=0)
+    props.update(extra)
+    scene.node(name, "LightmapGI", parent, **props)
 
 
 def add_probes(scene, points, parent="LightProbes"):
@@ -82,16 +96,16 @@ def add_probes(scene, points, parent="LightProbes"):
         scene.node(f"Probe{i}", "LightmapProbe", parent, position=v3(*p))
 
 
-def add_reflection_probes(scene, boxes, parent="ReflectionProbes"):
-    """boxes: (name, (x0, x1), (y0, y1), (z0, z1))."""
-    scene.node(parent, "Node3D", ".")
+def add_reflection_probes(scene, boxes, parent="ReflectionProbes", at=".", interior=True):
+    """boxes: (name, (x0, x1), (y0, y1), (z0, z1)). Outdoor probes (interior=False) see the sky."""
+    parent = scene.node(parent, "Node3D", at)
     for name, (x0, x1), (y0, y1), (z0, z1) in boxes:
         cx, cy, cz = (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2
         # capture from eye height
         eye = y0 + 1.7
         scene.node(name, "ReflectionProbe", parent, position=v3(cx, eye, cz),
                    size=v3(x1 - x0, y1 - y0, z1 - z0), origin_offset=v3(0, cy - eye, 0),
-                   box_projection=True, interior=True, update_mode=0, ambient_mode=0,
+                   box_projection=True, interior=interior, update_mode=0, ambient_mode=0,
                    max_distance=max(x1 - x0, y1 - y0, z1 - z0) * 1.5, intensity=1.0)
 
 
@@ -122,23 +136,23 @@ def add_trigger(scene, name, kind, box_min, box_max, parent="Triggers", **props)
                shape=scene.sub_res("BoxShape3D", size=v3(x1 - x0, y1 - y0, z1 - z0)))
 
 
-def add_fill_lights(scene, lights, parent="FillLights"):
+def add_fill_lights(scene, lights, parent="FillLights", at=".", **extra):
     """Big, soft coloured fills (UT99-style warm/cool contrast). lights: (pos, hex, energy, range)."""
-    scene.node(parent, "Node3D", ".")
+    parent = scene.node(parent, "Node3D", at)
     for i, (pos, hexc, energy, rng) in enumerate(lights):
         scene.node(f"Fill{i}", "OmniLight3D", parent, position=v3(*pos), light_color=hexcolor(hexc),
                    light_energy=energy, light_indirect_energy=1.2, omni_range=rng, omni_attenuation=0.8,
-                   light_size=1.5, light_bake_mode=1, shadow_enabled=True)
+                   light_size=1.5, light_bake_mode=1, shadow_enabled=True, **extra)
 
 
-def add_zone_ambient(scene, rooms, color="#3b5aa8", energy=0.45, parent="ZoneAmbient"):
+def add_zone_ambient(scene, rooms, color="#3b5aa8", energy=0.45, parent="ZoneAmbient", at="."):
     """UT99 zone ambient (docs/ut99_reference.md, lighting): shadows go dark blue, never black.
 
     Unreal gave every zone a flat AmbientBrightness/Hue; the lightmapper here has no per-room
     ambient, so each room gets soft, flat-falloff (attenuation 0) static omni lights that are
     baked like any other light. The lightmapper always traces shadows, so the fill stays inside
     its room like a zone. rooms: ((x0, x1), (y0, y1), (z0, z1)) boxes."""
-    scene.node(parent, "Node3D", ".")
+    parent = scene.node(parent, "Node3D", at)
     i = 0
     for (x0, x1), (y0, y1), (z0, z1) in rooms:
         dx, dy, dz = x1 - x0, y1 - y0, z1 - z0
@@ -167,8 +181,18 @@ def add_surface_animator(scene, material, scroll=(0.03, 0.0), pulse=0.0, pulse_s
                PulseSpeed=float(pulse_speed))
 
 
-def add_navigation(scene, parent_name="Navigation"):
-    nav = scene.sub_res("NavigationMesh", agent_height=1.8, agent_radius=0.4, agent_max_climb=0.5,
-                        agent_max_slope=46.0, cell_size=0.2, cell_height=0.1,
-                        geometry_parsed_geometry_type=1, geometry_collision_mask=1)
+def add_navigation(scene, parent_name="Navigation", baked=None, **overrides):
+    """A NavigationRegion3D baked from static colliders (its children, or a source group via overrides).
+
+    baked is the res:// path the editor's bake saves the mesh to (plugin.gd, "<scene>_navmesh.res").
+    When that file exists the region links it, so writing the scene again keeps the last bake; the
+    next bake rebuilds it with the settings here."""
+    game = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "game")
+    if baked and os.path.exists(os.path.join(game, baked[len("res://"):])):
+        nav = scene.ext_res("NavigationMesh", baked)
+    else:
+        nav = scene.sub_res("NavigationMesh", **{**dict(agent_height=1.8, agent_radius=0.4, agent_max_climb=0.5,
+                                                        agent_max_slope=46.0, cell_size=0.2, cell_height=0.1,
+                                                        geometry_parsed_geometry_type=1, geometry_collision_mask=1),
+                                                 **overrides})
     return scene.node(parent_name, "NavigationRegion3D", ".", navigation_mesh=nav)

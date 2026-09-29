@@ -1,0 +1,55 @@
+// Officer Dace, MerSec sergeant (hub POI 11, Intelligence 3). Owns the checkpoint to the Yard:
+// the gang pass, 150 cr, [Persuasion 3], or blackmail with the S3 evidence ([Persuasion 2]).
+{
+  "id": "dace", "name": "Officer Dace",
+  "starts": [
+    {"if": [{"flag": "dace_waves"}], "node": "waved"},
+    {"node": "gate"}
+  ],
+  "nodes": {
+    "gate": {
+      "say": ["Scrapyard Road is closed, citizen. Unless you've got business in the Yard."],
+      "choices": [
+        {"text": "I'm with the Kings.", "if": [{"item": "gang_pass"}], "next": "pass"},
+        {"text": "Business. Here's the paperwork.", "if": [{"credits": 150}], "do": [{"credits": -150}], "next": "bribed"},
+        {"text": "Sergeant, the Kings don't pay you enough to stand between me and that road.",
+         "check": {"skill": "persuasion", "dc": 3}, "pass": "talked"},
+        {"text": "City Sanitation. There's a blocked culvert under the Yard, and it's backing up into your precinct.",
+         "check": {"skill": "deception", "dc": 2}, "pass": "talked"},
+        {"text": "About Mouse's debt.", "if": [{"quest": "s3_mouses_debt"}, {"not_objective": "s3_mouses_debt/settle"}], "next": "debt"},
+        {"text": "Never mind.", "exit": true}
+      ]
+    },
+    "pass": {"say": ["Crusher's new pet. Go on, then, and keep it on a leash."],
+             "do": [{"flag": "dace_waves"}, {"open": "hub:checkpoint_barrier"}], "exit": true},
+    "bribed": {"say": ["Paperwork's in order. Barrier's up. I didn't see you."],
+               "do": [{"flag": "dace_waves"}, {"open": "hub:checkpoint_barrier"}], "exit": true},
+    "talked": {"say": ["...Go on, then. And if anyone asks, you had a pass."],
+               "do": [{"flag": "dace_waves"}, {"open": "hub:checkpoint_barrier"}], "exit": true},
+    "debt": {
+      "say": ["The kid owes me three hundred. The kid pays me three hundred. That's the whole story."],
+      "do": [{"objective": "s3_mouses_debt/ask"}],
+      "choices": [
+        {"text": "Here. His debt's paid.", "if": [{"credits": 300}],
+         "do": [{"credits": -300}, {"objective": "s3_mouses_debt/settle"}, {"flag": "mouse_debt_settled"}], "next": "paid"},
+        {"text": "He's a kid. Let it go, and I'll remember you did.",
+         "check": {"skill": "persuasion", "dc": 3}, "pass": "let_go"},
+        {"text": "Your checkpoint ledger makes interesting reading, Sergeant. Four hundred a week from the Kings.",
+         "if": [{"flag": "dace_evidence"}], "check": {"skill": "persuasion", "dc": 2}, "pass": "blackmail"},
+        {"text": "Forget it.", "next": "gate"}
+      ]
+    },
+    "paid": {"say": ["Pleasure doing business. Tell the kid he's clean."], "next": "gate"},
+    "let_go": {"say": ["...Fine. It was never about the money. Tell him he's clean."],
+               "do": [{"objective": "s3_mouses_debt/settle"}, {"flag": "mouse_debt_settled"}], "next": "gate"},
+    "blackmail": {
+      "say": ["...Where did you get that? No. Don't tell me.",
+              "The kid's debt is gone. And you walk through my barrier whenever you like. Quietly. We never spoke."],
+      "do": [{"objective": "s3_mouses_debt/settle"}, {"flag": "mouse_debt_settled"}, {"flag": "dace_waves"},
+             {"open": "hub:checkpoint_barrier"}],
+      "exit": true
+    },
+    "waved": {"say": ["Go on through."], "do": [{"open": "hub:checkpoint_barrier"}], "exit": true}
+  },
+  "barks": {"greeting": ["Citizen.", "Move along."], "weapon_warning": ["Put it away. Now."], "alarm": ["Shots fired! All units!"]}
+}

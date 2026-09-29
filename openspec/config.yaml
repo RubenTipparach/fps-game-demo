@@ -1,0 +1,53 @@
+schema: spec-driven
+
+# Read CLAUDE.md before planning anything. It is the only copy of this project's
+# rules, and this field points at it rather than restating it: a summary here
+# would be a second copy to keep in step.
+context: |
+  Read CLAUDE.md at the repository root first. It is the single source for this
+  project's owner direction, architecture boundaries, level design rules and
+  verification rules, and it takes precedence over any summary.
+
+  Godot 4.7 .NET (C#, net8.0). Gameplay rules belong in Undercity.Core, a plain
+  C# library with no Godot reference, tested headless with dotnet test; the
+  Godot layer only adapts it. Levels are Blender builds whose layout comes from
+  one data module under tools/levels/layouts, shared with the design map.
+
+  openspec/specs holds what the game actually does today, and every requirement
+  in it is pinned by a passing check. Work that is designed but not built
+  belongs in openspec/changes, never in specs.
+
+  No em or en dashes in any artifact. Tuning values carry units and live in
+  data files, not code. Before claiming anything is done: dotnet build,
+  dotnet test, openspec validate --all, and a capture the owner can check.
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

@@ -1,0 +1,17 @@
+// Perception, disguise and the hub's law (openspec/changes/perception-and-disguise).
+{
+  "disguise": {"scrutiny_base_m": 2, "scrutiny_per_intelligence_m": 2, "restricted_warning_s": 3, "suspicion_fill_per_s": 0.35},
+  "detection": {
+    "base_rate_per_s": 1.2, "drain_per_s": 0.25, "far_cone_mult": 0.4, "suspicious_at": 0.3,
+    "lost_after_s": 3, "search_s": 30, "suspicious_look_s": 12, "wary_s": 120, "wary_fill_mult": 1.25,
+    "stance": {"standing": 1.0, "crouched": 0.6},
+    "motion": {"still": 0.6, "walking": 1.0, "sprinting": 1.5},
+    "shadow_light_below": 0.25
+  },
+  "law": {"warning_window_s": 60, "backup_delay_s": 60, "crime_rep_penalty": 5, "crime_rep_faction": "residents"},
+  "noise_m": {
+    "crouch_walk": 1, "walk": 4, "sprint": 10, "landing": 6, "wading": 8, "swimming": 6, "door": 5, "takedown": 6, "body_drop": 5,
+    "lockpicking": 3, "hacking": 2, "kestrel": 20, "whisper": 5, "dart": 3, "rattler": 25, "scattergun": 30,
+    "frag": 35, "emp": 12, "noise_maker": 15, "glass": 12, "can_rattle": 18
+  }
+}

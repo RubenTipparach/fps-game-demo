@@ -1,0 +1,19 @@
+// MerSec troopers in the hub (station guard, checkpoint trooper, patrol pair).
+{
+  "id": "mersec", "name": "MerSec trooper",
+  "starts": [{"node": "stop"}],
+  "nodes": {
+    "stop": {
+      "say": ["Move along, citizen."],
+      "choices": [
+        {"text": "What's past the checkpoint?", "next": "checkpoint"},
+        {"text": "When does the station reopen?", "next": "station"},
+        {"text": "Moving.", "exit": true}
+      ]
+    },
+    "checkpoint": {"say": ["Scrapyard Road. Restricted. Take it up with the sergeant."], "next": "stop"},
+    "station": {"say": ["When the Spire says so."], "next": "stop"}
+  },
+  "barks": {"greeting": ["Citizen.", "Move along."], "weapon_warning": ["Put it away.", "Weapon down. Now."],
+            "alarm": ["Shots fired!", "Hostile in the Sump!"], "spotted": ["Hold it!"]}
+}

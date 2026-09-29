@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/water.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://textures/water_normal.png" id="2"]
+
+[resource]
+resource_name = "water"
+shader = ExtResource("1")
+shader_parameter/normal_map = ExtResource("2")
+shader_parameter/tile_m = 6.0
+shader_parameter/normal_strength = 0.6
+shader_parameter/color = Color(0.0431, 0.1373, 0.1529, 1)
+shader_parameter/flow_a_mps = Vector2(0.035, 0.012)
+shader_parameter/flow_b_mps = Vector2(-0.022, 0.028)
+shader_parameter/ripple_cell_m = 0.9
+shader_parameter/ripple_falloff_per_m = 18.0
+shader_parameter/ripple_rate_hz = 0.7
+shader_parameter/ripple_strength = 0.35
+shader_parameter/ripple_wave_per_m = 40.0
+shader_parameter/surface_roughness = 0.05

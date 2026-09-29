@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Undercity/Entities/RestrictedZone.cs" id="1_RestrictedZo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(4.0, 6.0, 4.0)
+
+[node name="Zone" type="Area3D"]
+script = ExtResource("1_RestrictedZo")
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 3.0, 0.0)
+shape = SubResource("BoxShape3D_2")

@@ -1,0 +1,180 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/undercity/undercity_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Undercity/Ui/TerminalScreen.cs" id="2_terminal"]
+[ext_resource type="PackedScene" path="res://ui/undercity/page_row.tscn" id="3_page"]
+[ext_resource type="PackedScene" path="res://ui/undercity/terminal_action.tscn" id="4_action"]
+
+[node name="Terminal" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_terminal")
+PageRowScene = ExtResource("3_page")
+ActionScene = ExtResource("4_action")
+
+[node name="Scrim" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Scrim"
+
+[node name="Frame" type="PanelContainer" parent="."]
+clip_contents = true
+custom_minimum_size = Vector2(1180, 660)
+custom_maximum_size = Vector2(1180, 660)
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -330.0
+offset_right = 590.0
+offset_bottom = 330.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"DeckFrame"
+
+[node name="Screen" type="PanelContainer" parent="Frame"]
+layout_mode = 2
+theme_type_variation = &"DeckScreen"
+
+[node name="Body" type="VBoxContainer" parent="Frame/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleBar" type="PanelContainer" parent="Frame/Screen/Body"]
+layout_mode = 2
+theme_type_variation = &"TabsBar"
+
+[node name="TitleRow" type="HBoxContainer" parent="Frame/Screen/Body/TitleBar"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Frame/Screen/Body/TitleBar/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TerminalTitle"
+text = "Terminal"
+uppercase = true
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Close" type="Button" parent="Frame/Screen/Body/TitleBar/TitleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "Close"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Main" type="HBoxContainer" parent="Frame/Screen/Body"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Pages" type="PanelContainer" parent="Frame/Screen/Body/Main"]
+clip_contents = true
+custom_minimum_size = Vector2(360, 548)
+custom_maximum_size = Vector2(360, 548)
+propagate_maximum_size = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+
+[node name="PagesScroll" type="ScrollContainer" parent="Frame/Screen/Body/Main/Pages"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="PagesList" type="VBoxContainer" parent="Frame/Screen/Body/Main/Pages/PagesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PageRows" type="VBoxContainer" parent="Frame/Screen/Body/Main/Pages/PagesScroll/PagesList"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="PagesEmpty" type="Label" parent="Frame/Screen/Body/Main/Pages/PagesScroll/PagesList"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "No messages."
+
+[node name="Page" type="PanelContainer" parent="Frame/Screen/Body/Main"]
+clip_contents = true
+custom_minimum_size = Vector2(740, 548)
+custom_maximum_size = Vector2(740, 548)
+propagate_maximum_size = true
+layout_mode = 2
+theme_type_variation = &"DeckBox"
+
+[node name="PageBody" type="VBoxContainer" parent="Frame/Screen/Body/Main/Page"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Subject" type="Label" parent="Frame/Screen/Body/Main/Page/PageBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+text = "Subject"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="From" type="Label" parent="Frame/Screen/Body/Main/Page/PageBody"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenCaps"
+text = "From"
+uppercase = true
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Rule" type="Panel" parent="Frame/Screen/Body/Main/Page/PageBody"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Rule"
+
+[node name="BodyScroll" type="ScrollContainer" parent="Frame/Screen/Body/Main/Page/PageBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Body" type="Label" parent="Frame/Screen/Body/Main/Page/PageBody/BodyScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TerminalBody"
+autowrap_mode = 3
+
+[node name="Actions" type="ScrollContainer" parent="Frame/Screen/Body/Main/Page/PageBody"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(716, 40)
+custom_maximum_size = Vector2(716, 40)
+propagate_maximum_size = true
+layout_mode = 2
+vertical_scroll_mode = 0
+
+[node name="ActionRow" type="HBoxContainer" parent="Frame/Screen/Body/Main/Page/PageBody/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8

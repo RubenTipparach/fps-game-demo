@@ -7,9 +7,9 @@ public enum EnemyKind { Grunt, Brute, Drone }
 
 /// <summary>
 /// Data-driven enemy AI with three archetypes:
-///  * Grunt  – walks the navmesh, telegraphs, then fires a hitscan burst.
-///  * Brute  – heavy melee charger that roars and lunges.
-///  * Drone  – hovering turret that circles the player and lobs plasma.
+///  * Grunt: walks the navmesh, telegraphs, then fires a hitscan burst.
+///  * Brute: heavy melee charger that roars and lunges.
+///  * Drone: hovering turret that circles the player and lobs plasma.
 /// Perception: sight cone + line of sight, and hearing (gunfire/explosions emit noise).
 /// Visuals are rigid parts under "Rig" animated procedurally; on death each part becomes a
 /// physics gib, old-school style.

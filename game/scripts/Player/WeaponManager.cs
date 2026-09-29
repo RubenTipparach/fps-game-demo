@@ -43,6 +43,12 @@ public partial class WeaponManager : Node3D
     float _landDip;
     bool _wasOnFloor = true;
 
+    /// <summary>
+    /// Where rounds come from, when not the manager's own counts: Undercity's pack and magazines
+    /// (openspec/changes/archive/2026-09-28-hub-combat). Null for Brushfire's reference maps.
+    /// </summary>
+    public IAmmoSource AmmoSource { get; set; }
+
     public Weapon Current => _current;
     public IReadOnlyList<Weapon> All => _weapons;
     public int GetAmmo(AmmoType t) => _ammo[t];
@@ -66,6 +72,37 @@ public partial class WeaponManager : Node3D
         _switchT = 0f;
         _lastYaw = _player.Yaw;
         _lastPitch = _player.Pitch;
+    }
+
+    /// <summary>Takes a weapon made at runtime into the hand (Undercity draws from its belt), raising it.</summary>
+    public void Adopt(Weapon w)
+    {
+        if (w.GetParent() != _root)
+            _root.AddChild(w);
+        w.Manager = this;
+        w.Owned = true;
+        if (!_weapons.Contains(w))
+            _weapons.Add(w);
+        _current?.OnHolster();
+        if (_current != null && _current != w)
+            _current.Visible = false;
+        _current = w;
+        _pending = null;
+        w.Visible = true;
+        _state = SwitchState.Raising;
+        _switchT = 0f;
+    }
+
+    /// <summary>Puts away and frees a weapon taken with <see cref="Adopt"/>.</summary>
+    public void Release(Weapon w)
+    {
+        _weapons.Remove(w);
+        if (_current == w)
+            _current = null;
+        if (_pending == w)
+            _pending = null;
+        w.OnHolster();
+        w.QueueFree();
     }
 
     public bool TakeAmmo(AmmoType t, int amount)
@@ -196,8 +233,8 @@ public partial class WeaponManager : Node3D
         {
             bool trigger = canUse && _state == SwitchState.Ready && Input.IsActionPressed("fire");
             _current.Tick(dt, trigger, Input.IsActionJustPressed("fire") && canUse && _state == SwitchState.Ready);
-            // Out of ammo: pick the best weapon that still has some.
-            if (_state == SwitchState.Ready && !_current.HasAmmo && _current.ReadyToFire && trigger)
+            // Out of ammo: pick the best weapon that still has some (Brushfire's own counts only).
+            if (AmmoSource == null && _state == SwitchState.Ready && !_current.HasAmmo && _current.ReadyToFire && trigger)
             {
                 var next = _weapons.Where(w => w.Owned && w.HasAmmo).OrderByDescending(w => w.Slot).FirstOrDefault();
                 if (next != null)

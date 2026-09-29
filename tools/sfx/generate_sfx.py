@@ -562,6 +562,51 @@ def lava_burn():
     return bp(noise(d), 1000, 7000) * env_exp(d, 0.1) + sine_sweep(300, 120, d) * env_exp(d, 0.08) * 0.3
 
 
+# ----------------------------------------------------------------------------- water (Undercity)
+# openspec/changes/archive/2026-09-29-water-and-swimming, design sections 2, 3a and 6.
+
+def bubbles(d, count, f_lo, f_hi):
+    """Bubble plinks: short upward sine chirps scattered over d seconds."""
+    out = np.zeros(int(d * SR))
+    for _ in range(count):
+        t0 = rng.uniform(0, d * 0.75)
+        f = rng.uniform(f_lo, f_hi)
+        bd = rng.uniform(0.02, 0.06)
+        b = sine_sweep(f, f * 1.7, bd, 0.5) * env_exp(bd, bd * 0.4, 0.002) * rng.uniform(0.2, 0.6)
+        out += at(b, t0, d)
+    return out
+
+
+def water_splash(i):
+    """Falling into water: a slap, a spray and bubbles, bigger for later variants."""
+    d = 0.9 + 0.1 * i
+    slap = sine_sweep(120, 45, 0.22) * env_exp(0.22, 0.05) * 0.8
+    body = lp(noise(d), 2200 + 300 * i) * env_exp(d, 0.16 + 0.03 * i, 0.004)
+    spray = bp(noise(d), 2500, 9000) * env_exp(d, 0.08, 0.002) * 0.45
+    return mix(pad(slap, d), body, spray, bubbles(d, 14 + 5 * i, 350, 1300) * 0.7)
+
+
+def swim_stroke(i):
+    """One arm stroke: water pushed and dripping."""
+    d = 0.5
+    swish = sweep_lp(noise(d), 450 + 60 * i, 2000, 0.7) * env_adsr(d, 0.12, 0.12, 0.3, 0.2)
+    return mix(swish * 0.8, bubbles(d, 5, 700, 1800) * 0.35)
+
+
+def swim_stroke_tired(i):
+    """A slower stroke with a heavy breath: stamina is low."""
+    d = 0.7
+    breath = formant_voice(150, 118, 0.55, ((450, 0.9), (1300, 0.3)), breath=1.6) * env_adsr(0.55, 0.08, 0.15, 0.5, 0.25)
+    return mix(pad(swim_stroke(i), d) * 0.7, at(breath * 0.5, 0.12, d))
+
+
+def breath_gasp():
+    """Surfacing short of air."""
+    d = 0.7
+    inhale = formant_voice(210, 260, d, ((700, 1.0), (1600, 0.4), (2800, 0.15)), breath=2.0)
+    return drive(inhale * env_adsr(d, 0.03, 0.1, 0.6, 0.3), 1.5) * 0.7
+
+
 # ----------------------------------------------------------------------------- ambience / music
 
 def ambience_industrial():
@@ -628,6 +673,37 @@ def music_loop():
     return looped
 
 
+# ----------------------------------------------------------------------------- hub combat
+# (openspec/changes/archive/2026-09-28-hub-combat, design section 8)
+
+def kestrel_fire():
+    """The Kestrel 10mm: a pistol's short, bright crack with a hard slap and a small room tail."""
+    return reverb(gunshot(0.16, 110, 5200, 1.2, 0.3, 3.2), wet=0.14, room=0.45, tail=0.4)
+
+
+def mersec_pistol_fire():
+    """MerSec's service pistol: the same class of round, a touch duller, so the runner can tell
+    whose shot it was."""
+    return reverb(gunshot(0.18, 95, 4200, 1.0, 0.35, 3.0), wet=0.16, room=0.5, tail=0.45)
+
+
+def kestrel_reload():
+    """Magazine out, a new one seated with a slap, the slide let go: three metal clicks over 1.2 s."""
+    d = 1.3
+    out_ = mix(metal_hit(1700, 0.1, 0.025) * 0.5, bp(noise(0.05), 1500, 6000) * env_exp(0.05, 0.012))
+    seat = mix(metal_hit(1100, 0.14, 0.035) * 0.7, bp(noise(0.06), 800, 5000) * env_exp(0.06, 0.01) * 1.2)
+    slide = mix(bp(noise(0.08), 2500, 9000) * env_adsr(0.08, 0.005, 0.03, 0.3, 0.03) * 0.4,
+                metal_hit(2100, 0.12, 0.03) * 0.6)
+    return mix(at(out_, 0.05, d), at(seat, 0.6, d), at(slide, 1.05, d))
+
+
+def baton_swing():
+    """A baton cutting the air: a quick band-passed whoosh that rises and falls."""
+    d = 0.35
+    whoosh = sweep_lp(noise(d), 400, 2600, 0.6) * env_adsr(d, 0.08, 0.12, 0.3, 0.12)
+    return hp(whoosh, 150) * 0.8
+
+
 def main():
     save("shotgun_fire", shotgun_fire())
     save("shotgun_pump", shotgun_pump())
@@ -679,6 +755,18 @@ def main():
     save("lava_burn", lava_burn())
     save_loop("ambience_industrial", ambience_industrial(), peak=0.6, xfade=1.5)
     save_exact_loop("music_loop", music_loop(), peak=0.7)
+    # water, last so the seeded sounds above stay as they were
+    for i in range(3):
+        save(f"water_splash_{i + 1}", water_splash(i))
+        save(f"swim_stroke_{i + 1}", swim_stroke(i), peak=0.6)
+    for i in range(2):
+        save(f"swim_stroke_tired_{i + 1}", swim_stroke_tired(i), peak=0.65)
+    save("breath_gasp", breath_gasp(), peak=0.7)
+    # hub combat, after water for the same reason
+    save("kestrel_fire", kestrel_fire())
+    save("mersec_pistol_fire", mersec_pistol_fire())
+    save("kestrel_reload", kestrel_reload(), peak=0.7)
+    save("baton_swing", baton_swing(), peak=0.6)
 
 
 if __name__ == "__main__":

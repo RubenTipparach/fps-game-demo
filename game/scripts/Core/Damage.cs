@@ -12,6 +12,8 @@ public struct DamageInfo
     public Vector3 Direction;   // direction the damage travels (from attacker to victim)
     public Vector3 Knockback;   // velocity change applied to the victim
     public Node3D Source;       // attacker (may be null)
+    public string WeaponId;     // the weapon's id in Undercity's data/weapons.json, or null (Brushfire's weapons)
+    public int Hits;            // pellets or rounds this damage sums; 1 when unset
 
     public DamageInfo(float amount, DamageKind kind, Vector3 point, Vector3 direction, Node3D source = null)
     {
@@ -21,6 +23,8 @@ public struct DamageInfo
         Direction = direction;
         Knockback = Vector3.Zero;
         Source = source;
+        WeaponId = null;
+        Hits = 1;
     }
 }
 
@@ -29,6 +33,15 @@ public interface IDamageable
 {
     bool IsDead { get; }
     void TakeDamage(DamageInfo info);
+}
+
+/// <summary>
+/// Something hurt that shows its own hits: Undercity's people bleed where Brushfire's robots
+/// spark. A weapon asks this first and falls back to Fx.RobotHit.
+/// </summary>
+public interface IHitEffect
+{
+    void ShowHit(Vector3 point, Vector3 normal);
 }
 
 /// <summary>Physics layer bits (see Project Settings > Layer Names > 3D Physics).</summary>
@@ -53,6 +66,7 @@ public static class Events
     public static event System.Action<string> Message;
 
     public static void EmitNoise(Vector3 position, float radius) => Noise?.Invoke(position, radius);
+
     public static void EmitEnemyKilled(Node3D enemy) => EnemyKilled?.Invoke(enemy);
     public static void EmitMessage(string text) => Message?.Invoke(text);
 

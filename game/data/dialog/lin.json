@@ -1,0 +1,23 @@
+// Sister Lin, shrine keeper (hub POI 16). Sells the Silver Lighter; knows the Sump's secrets.
+{
+  "id": "lin", "name": "Sister Lin", "vendor": "lin",
+  "starts": [{"node": "shrine"}],
+  "nodes": {
+    "shrine": {
+      "say": ["Light a stick, or light a lie. The ancestors don't mind which."],
+      "choices": [
+        {"text": "That silver lighter.", "if": [{"can_afford": "silver_lighter"}], "do": [{"buy": "silver_lighter"}], "next": "lighter"},
+        {"text": "What do the ancestors hear?", "next": "hear"},
+        {"text": "The offering box.", "next": "box"},
+        {"text": "Peace, Sister.", "exit": true}
+      ]
+    },
+    "lighter": {"say": ["It lit the first lamp in this shrine. It will light your way better than your own."], "next": "shrine"},
+    "hear": {"say": [
+      "That Dace keeps two books: one for the precinct, one for himself. The second is on the records terminal, and it is not well hidden.",
+      "And that the depot's workers can walk anywhere in the Sump in their orange, and no one looks twice."
+    ], "next": "shrine"},
+    "box": {"say": ["The offering box feeds this shrine. The gods forgive theft. The Tsang family is less devout."], "next": "shrine"}
+  },
+  "barks": {"greeting": ["Peace.", "Light a stick."]}
+}

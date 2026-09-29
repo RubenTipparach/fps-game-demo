@@ -52,6 +52,12 @@ func _init() -> void:
 	add("weapon_prev", [mouse(MOUSE_BUTTON_WHEEL_UP), joy_button(JOY_BUTTON_LEFT_SHOULDER)])
 	add("pause", [key(KEY_ESCAPE), joy_button(JOY_BUTTON_START)])
 	add("flashlight", [key(KEY_F), joy_button(JOY_BUTTON_DPAD_UP)])
+	# Undercity: the deck, saves, and the ten belt slots on 1 to 0.
+	add("deck", [key(KEY_TAB), joy_button(JOY_BUTTON_BACK)])
+	add("quicksave", [key(KEY_F5)])
+	add("quickload", [key(KEY_F9)])
+	for i in range(10):
+		add("belt_%d" % (i + 1), [key(KEY_1 + i if i < 9 else KEY_0)])
 	ProjectSettings.save()
 	print("input map written")
 	quit()
