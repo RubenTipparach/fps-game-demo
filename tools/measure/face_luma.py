@@ -81,18 +81,22 @@ def measure(shot, face, off=None):
     lit, shadow = (left, right) if key == "left" else (right, left)
     out = {"who": face.get("who", "?"), "mean": box.mean(), "lit_over_shadow": lit / max(shadow, 1e-4)}
 
-    # The rim: the head's far edge, over its upper two thirds where the hair and ears are.
+    # The rim: the head's far edge, over its upper two thirds where the hair and ears are. The
+    # band runs from the face's outer quarter out to the head box, since a head is little wider
+    # than its face; a rim is a thin bright edge, so it is the band's 90th percentile of what the
+    # rig adds, not its mean, which the background beside the head would dilute.
     hx0, hy0, hx1, hy1 = clamp_box(face.get("head", face["box"]), w, h)
     top, bottom = hy0, hy0 + (hy1 - hy0) * 2 // 3
-    band = (slice(top, bottom), slice(x1, max(x1 + 1, hx1))) if key == "left" \
-        else (slice(top, bottom), slice(min(hx0, x0 - 1), x0))
+    quarter = max(1, (x1 - x0) // 4)
+    band = (slice(top, bottom), slice(x1 - quarter, max(x1 + 1, hx1))) if key == "left" \
+        else (slice(top, bottom), slice(min(hx0, x0 - 1), x0 + quarter))
     y_off = None
     if off is not None:
         y_off = luma(off)
         if y_off.shape != y.shape:
             raise SystemExit(f"{off}: {y_off.shape} isn't the shot's size {y.shape}")
     if y_off is not None:
-        out["rim_over_background"] = y[band].mean() - y_off[band].mean()
+        out["rim_over_background"] = float(np.percentile(y[band] - y_off[band], 90))
     else:
         s = max(3, int(round((hx1 - hx0) * RIM_STRIP)))
         bg = y[top:bottom, hx1 + s:hx1 + 2 * s] if key == "left" else y[top:bottom, max(0, hx0 - 2 * s):max(0, hx0 - s)]

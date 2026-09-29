@@ -64,7 +64,32 @@ Each is in the design's section 8.
 
 ## The faces
 
-(filled from the tuned captures)
+Measured with `tools/measure/face_luma.py` on 1280 x 720 shots at seed 7. The first run
+(`docs/playtest/scripts/character_lighting.json`) took the rig off and on for Tank, Silk, Petra
+and Nguyen before its 30-minute limit; the tuning run
+(`docs/playtest/scripts/character_lighting_tune.json`) took the rig again with round 1's
+energies, and Lin off and on. Rig-on shots are measured against the first run's rig-off shots
+of the same speaker, except Lin's, from the same run.
+
+| Speaker | Without the rig | Round 0 (the design's energies) | Round 1: key 2.2 at 55 degrees, rim 6.0 at -120 | Target |
+|---|---|---|---|---|
+| Tank, the Anchor's bar | 21 | 54 | 59; ratio 1.51; rim +66 | 95-150; 2-4; +20 |
+| Silk, Lantern Row | 54 | 104 | 112; ratio 1.51; rim +86 | |
+| Petra, the depot | 100 | 140 | 152; ratio 1.13; rim +99 | |
+| Nguyen, his stall | 88 | | 180; ratio 1.15; rim +96 | |
+| Lin, the shrine hall | 145 | | 189; ratio 1.05; rim +93 | |
+
+The world outside the speaker changed by 0.00-0.40 % in every pair (target under 2 %). Round 0's
+means are from the corrected face box laid over the first run's shots.
+
+What round 1 shows:
+- **The rim now shows on every speaker**, and **the world keeps its mood.**
+- **Silk is in the band.** Tank is under it, at 59; Petra, Nguyen and Lin are over it.
+- **No speaker reaches the 2:1 ratio.** In a dark place the wrist light, from the camera, fills
+  the shadow side; in a lit place, the room's light is most of what a face gets.
+
+One key can't meet the targets across skin tones and places: survey J1 (open) asks how to
+expose each face. The energies stay at round 1 until the answer.
 
 ## What the checks establish
 

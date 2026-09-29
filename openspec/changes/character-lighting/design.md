@@ -127,8 +127,8 @@ the camera's side).
 
 | Light | Type | Where | Colour | Energy | Notes |
 |---|---|---|---|---|---|
-| Key | spot, 35° cone | 40° to the key side, 30° up, 1.4 m | `key_warm` #ffe2c4 | 2.0 | soft: size 0.25 m, shadows on |
-| Rim gel | omni | -140° (behind, the far side), 15° up, 1.2 m | the district's gel | 1.6 | hard: size 0.05 m |
+| Key | spot, 35° cone | 55° to the key side, 30° up, 1.4 m (designed 40°) | `key_warm` #ffe2c4 | 2.2 (designed 2.0) | soft: size 0.25 m, shadows on |
+| Rim gel | omni | -120° (behind, the far side), 20° up, 1.2 m (designed -140°, 15°) | the district's gel | 6.0 (designed 1.6) | hard: size 0.05 m |
 | Accent gel | omni | 150° (behind, the key's side), 5° up, 1.3 m | the district's complement | 0.7 | hard |
 
 **The key side is motivated.** When the rig opens, it sums `energy / distance²` for the level's
@@ -191,8 +191,8 @@ role):
   "wrist": {"color": "deck_glow", "energy": 0.6, "range_m": 4.5, "attenuation": 1.2, "offset_m": [-0.25, -0.35, -0.30]},
   "conversation": {
     "ramp_s": 0.3, "key_side": "motivated", "motivation_radius_m": 12.0,
-    "key":    {"color": "key_warm", "energy": 2.0, "azimuth_deg": 40, "elevation_deg": 30, "distance_m": 1.4, "size_m": 0.25, "spot_angle_deg": 35, "shadow": true},
-    "rim":    {"color": "gel", "energy": 1.6, "azimuth_deg": -140, "elevation_deg": 15, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
+    "key":    {"color": "key_warm", "energy": 2.2, "azimuth_deg": 55, "elevation_deg": 30, "distance_m": 1.4, "size_m": 0.25, "spot_angle_deg": 35, "shadow": true},
+    "rim":    {"color": "gel", "energy": 6.0, "azimuth_deg": -120, "elevation_deg": 20, "distance_m": 1.2, "size_m": 0.05, "shadow": false},
     "accent": {"color": "gel_accent", "energy": 0.7, "azimuth_deg": 150, "elevation_deg": 5, "distance_m": 1.3, "size_m": 0.05, "shadow": false}
   },
   "gels": {"lantern_row": ["magenta", "cyan"], "sump_market": ["cyan", "magenta"], "tin_stacks": ["amber", "blue"],
@@ -233,7 +233,9 @@ role):
 - **The face box was in the wrong units.** `Camera3D.UnprojectPosition` answers in the
   viewport's own size, the project's 1920 x 1080 base stretched to the window, while a shot is
   the window's pixels. At 1280 x 720 the first boxes sat 1.5 times too far right and down. The
-  `face_box` step now scales by the shot's size over the viewport's.
+  `face_box` step now scales by the shot's own image size over the viewport's visible
+  rectangle. (Scaling by the viewport texture's reported size was tried first: it reports
+  854 x 480 in a 1280 x 720 window, measured, and the boxes landed at 0.44.)
 - **The instrument, corrected on the first captures:**
   - *Where the face is.* 0.1 m up the head bone is the eyes on every body, not the middle of
     the head, so the designed box ran from the eyes to above the crown. The point is now
@@ -244,8 +246,10 @@ role):
     ratio of light. Taken on stored values, 2.0 would demand 4.6:1 in light. `face_luma.py`
     decodes sRGB before it divides the halves.
   - *The rim is on the head.* The rig lights only characters, so the background beside the head
-    can't brighten; the head's own far edge does. The rim is what the rig adds there: the band
-    between the face box and the head box, rig on less rig off.
+    can't brighten; the head's own far edge does. The rim is what the rig adds there, rig on
+    less rig off, in a band from the face's outer quarter to the head box. It is the band's 90th
+    percentile, since a rim is a thin bright line: the band's mean read +3 on Tank's plainly
+    magenta edge, because a head is little wider than its face and the rest is wall.
   - *The world is what isn't the speaker.* The key's cone lights the speaker's shoulders by
     design, and that counted as the world changing (4-8 %). The world is now the frame outside
     the speaker: the head box widened threefold and run down to the frame's foot.
@@ -272,8 +276,13 @@ role):
 All recommendations accepted: I9, the wrist glow always on; I10, the key and two gels; I11,
 mockup D9 approved; I12, the skin as designed. I1 builds this third.
 
-Open: **J1** (survey, 2026-09-29), how dark skin meets the face target. One key can't: Tank's
-face measured 21 without the rig and 54 with it, Petra's 100 and 140, and a key that takes Tank
-to 95 takes Petra to about 216. Recommended, provisionally: expose each face, the key scaled by
-the speaker's skin reflectance (measured from the body's skin atlas at build time), capped at 4
-times. Nothing is built for it until the answer.
+Open: **J1** (survey, 2026-09-29), how every face meets the target. One key can't, either way:
+- Dark skin: Tank's face measured 21 without the rig and 54 with it, Petra's 100 and 140, and a
+  key that takes Tank to 95 takes Petra to about 216.
+- Bright places: Lin in the shrine hall reads 145 before the rig and 189 with it, and where a
+  room is lit the key side gets only 1.05-1.5 times the light of the other (target 2-4).
+
+Recommended, provisionally: expose each face, the key set per speaker from the skin's
+reflectance (measured from the body's skin atlas at build time) and the light already on them,
+capped at 4 times. Nothing is built for it until the answer; the energies stay at tuning
+round 1 (section 4's table until then).

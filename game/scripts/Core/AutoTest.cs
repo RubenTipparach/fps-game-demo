@@ -357,10 +357,12 @@ public partial class AutoTest : Node
         var middle = npc.FaceCentre;
         var right = cam.GlobalBasis.X;
         var up = cam.GlobalBasis.Y;
-        // UnprojectPosition answers in the viewport's own size (the project's 1920 x 1080 base,
-        // stretched), the shot is the window's pixels: scale from one to the other.
+        // UnprojectPosition answers in the viewport's visible rectangle (the project's 1920 x 1080
+        // base, stretched); the shot is the image the viewport's texture gives, the window's pixels.
+        // Scale by that image's own size: the texture's reported size isn't it (854 x 480 in a
+        // 1280 x 720 window, measured), and the box must land where the shot's pixels are.
         var vp = GetViewport();
-        var toPixels = (Vector2)vp.GetTexture().GetSize() / vp.GetVisibleRect().Size;
+        var toPixels = (Vector2)vp.GetTexture().GetImage().GetSize() / vp.GetVisibleRect().Size;
         // Metres from the eyes, measured on the conversation shots: the face runs from the chin
         // 0.12 m below to the hairline 0.07 m above and is 0.15 m wide; the head, ears and crown
         // included, 0.22 m wide from 0.14 m below to 0.14 m above.
