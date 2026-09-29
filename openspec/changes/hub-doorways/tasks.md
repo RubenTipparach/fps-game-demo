@@ -1,7 +1,7 @@
 # Tasks
 
-Waiting on the owner's answers to survey K1-K3 before any source changes (CLAUDE.md 3). The
-recommendations are provisional until then.
+The owner answered K1 to K3 on 2026-09-29: no prompt on doors that never open, automatic sliding
+doors on the public entrances, and one room in each named shell.
 
 ## 1. Before
 
@@ -24,20 +24,33 @@ recommendations are provisional until then.
   after its existing draws. Every other opening, sign and colour must be unchanged (compare
   the plan's other prims before and after).
 - [ ] 2.6 `wall_lamps` tries the spot over a door first.
-- [ ] 2.7 The three shells, as K3 decides.
+- [ ] 2.7 The three shells (owner K3): a room, an entrance and fixtures each in `hub.py`.
 - [ ] 2.8 `test_city_plan.py`: each check passes on the hub and names the fault on a layout
   broken on purpose. The triangle budget is asserted.
 
-## 3. The built level
+## 3. The sliding entrances (owner K2)
 
-- [ ] 3.1 Rebuild the eight sectors, the design map and the page; re-run the z-fighting check.
-- [ ] 3.2 Export the approaches in the level data. `placement_test.tscn` walks the navmesh from
+- [ ] 3.1 `Doorway` opens for the groups it names (default "enemies", so the reference maps
+  don't change); `data/doors.json` and its validation in the core; `SlidingDoorway` sets the
+  timings from it.
+- [ ] 3.2 The sliding leaves in the Undercity prop kit, one pair per entrance size; the
+  generator writes a scene per size (frame-free: the portal is in the sector mesh) and places
+  one at each public entrance, leaves on the inside face.
+- [ ] 3.3 `check_sliding_room` in `city_plan.py`: each leaf's open position is clear of walls,
+  fixtures and other doors.
+- [ ] 3.4 `door_test.tscn`: the runner walks up to the Anchor's entrance and it opens, walks
+  away and it closes; a civilian walks through a closed entrance on the navmesh.
+
+## 4. The built level
+
+- [ ] 4.1 Rebuild the eight sectors, the design map and the page; re-run the z-fighting check.
+- [ ] 4.2 Export the approaches in the level data. `placement_test.tscn` walks the navmesh from
   every exterior door to the spawn.
-- [ ] 3.3 Rebake the lightmaps and the navmesh.
-- [ ] 3.4 Placement, ragdoll, combat, swim and UI tests.
+- [ ] 4.3 Rebake the lightmaps and the navmesh.
+- [ ] 4.4 Placement, ragdoll, combat, swim, door and UI tests.
 
-## 4. Records
+## 5. Records
 
-- [ ] 4.1 After stills from the before viewpoints, and a video down Wire Lane, through the
-  Anchor's entrance and to the Fish Hall's north entrance.
-- [ ] 4.2 A validation record; the design page section F19; archive.
+- [ ] 5.1 After stills from the before viewpoints, and a video down Wire Lane, through the
+  Anchor's sliding entrance and to the Fish Hall's north entrance.
+- [ ] 5.2 A validation record; the design page section F19; archive.

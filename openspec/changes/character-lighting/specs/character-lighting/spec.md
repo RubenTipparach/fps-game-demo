@@ -1,16 +1,18 @@
 ## ADDED Requirements
 
 ### Requirement: Faces read in conversation
-In every conversation, the speaker's face SHALL have a mean Rec. 709 luma of 95-150 (0-255),
-its lit side SHALL receive 2 to 4 times the light of its shadow side, and a gel rim SHALL
-brighten the far edge of the head. The rig SHALL change the luma of the frame outside the
-speaker by less than 2 %. The targets SHALL come from `data/character_lighting.json`, and SHALL be measured on
-captures by `tools/measure/face_luma.py` using face boxes projected from the head bone.
+In every conversation, the rig SHALL raise the mean Rec. 709 luma of the speaker's face over the
+same frame with the rig off, and a gel rim SHALL add at least 20 luma (0-255) to the far edge
+of the head. The rig SHALL change the luma of the frame outside the speaker by less than 2 %.
+Each speaker's face mean and lit-to-shadow ratio SHALL be recorded; they are not held to one
+band, since one key can't put dark and pale skin in the same band (owner J1). The targets SHALL
+come from `data/character_lighting.json`, and SHALL be measured on captures by
+`tools/measure/face_luma.py` using face boxes projected from the head bone.
 
 #### Scenario: Tank at the bar
 - **WHEN** the runner talks to Tank at the Rusty Anchor's bar
-- **THEN** Tank's face measures 95-150 mean luma with a lit-to-shadow ratio of 2-4, where it
-  measured 23 before this change
+- **THEN** Tank's face measures brighter with the rig than without, and his far edge shows the
+  district's gel
 
 #### Scenario: The world keeps its mood
 - **WHEN** the same conversation is captured with the rig on and with it off
@@ -45,3 +47,24 @@ of 5.
 #### Scenario: Rebuilding the bodies
 - **WHEN** `build_npcs.py -- --verify` runs
 - **THEN** every body rebuilds byte for byte with its skin normal and roughness, within budget
+
+### Requirement: Characters are dry under a roof and wet in the rain
+Every NPC SHALL carry a wetness from 0 to 1 that rises toward 1 while no roof is over them and
+falls toward 0 while one is, at the rates in `data/character_lighting.json`. A roof is a
+building's footprint, an awning, the Skyway's deck or a walkway, from the shelter shapes the
+level data exports, and the core SHALL decide it. Wetness SHALL lower the roughness of skin and
+cloth and darken cloth, between the dry and wet values in the same file, and SHALL leave the
+eyes as they are. A level SHALL start everyone at the wetness of where they stand.
+
+#### Scenario: Tank indoors
+- **WHEN** Tank stands behind the Anchor's bar
+- **THEN** his wetness is 0 and his skin's T-zone roughness is 0.60, where it was 0.42 before
+  this change
+
+#### Scenario: Silk in the rain
+- **WHEN** Silk stands on Lantern Row with nothing overhead
+- **THEN** her wetness is 1 and her skin looks as it did before this change
+
+#### Scenario: A civilian runs indoors
+- **WHEN** a civilian in the rain runs into the Fish Hall
+- **THEN** their wetness falls from 1 to 0 over 240 s, not at once
