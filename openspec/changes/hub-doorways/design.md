@@ -351,6 +351,44 @@ Captures: the before stills again from the same viewpoints, and a video walking 
 through the Anchor's framed entrance, down Wire Lane and to the Fish Hall's north entrance.
 The video is there because the point is how the street reads as you move.
 
+### 3.11 Found in building the plan
+
+- **The checks on the old plan** name 43 doors ("no frame"), 214 buildings (211 lots and the
+  three shells) and 11 approaches. Section 2 counted 10 approaches with strips as wide as the
+  door; the approach is the frame's outer width plus 0.6 m each side, which also finds lot 249
+  3.23 m in front of the garage's 5 m entrance. The cut changes 15 lots, not 10: 10, 11, 15,
+  226, 239, 240, 242, 244, 245, 246, 249, 251, 252, 257 and 280.
+- **The checkpoint's boom crossed its own door.** The barrier meets the wall at y 157.4-158.2,
+  inside the 2 m door at y 156-158. The door moved to y 154, south of the boom.
+- **Parked cars stood in two shells' approaches.** Cars park every 9 m on Lantern Row and every
+  11.5 m outside Bubble Wash, which leaves 4.4 m between them, and an entrance's approach is 5.4 m
+  wide. The car in front of Pachinko Sunrise is gone (its door is at x 162.5), and Bubble Wash's
+  door is at x 17.5, between two cars.
+- **The doors draw from a stream of their own.** A lot's RNG is drawn from after the facade too
+  (windows, the blade sign or fire escape, the roof), so drawing the doors from it would move
+  those. Each lot's doors take `random.Random(f"{seed}:doors:{lot}")`, and they are placed
+  after everything else, clear of the fire escape's drop ladder. Measured by diffing every prim
+  of the old plan against the new: on the lots no approach cuts, the only changes are the dark
+  recesses that became doors and the ground repaved round the approaches.
+- **A shanty's door takes its recess's own span.** The facade drew the recess as close as
+  0.9 m to a corner, nearer than a frame's half width and 0.35 m allow, so the door keeps the
+  recess's place and only 0.15 m from the corner.
+- **Seven workshops show their roll-up as their door.** Where a roll-up fills a 5-7.5 m front,
+  a man door has no room; the roll-up, with its hood box and guide rails, is the building's
+  door.
+- **Each dressing door is checked for z-fighting in its own frame**, against the facade, its
+  recess and itself: a lot's edges run any way, and the plan's check knows axis-aligned boxes.
+  The named buildings' frames are in the plan's check. Both are clean.
+- **Counts and cost.** 43 shop doors (every bay), 17 residents' doors, 157 shanty doors, 27 man
+  doors and 7 roll-ups; 46 framed doors. Triangles: 3,332 in the frames (56 for a liner and
+  architrave, 98 for a portal) and 10,220 in the dressing doors and shutter fittings, 13,552 in
+  all, against the estimate of about 22,000 and the budget of 30,000.
+- **Lights: 196 to 225.** The 18 lintel downlights, 9 ceiling lights in the shells' new rooms,
+  and 2 blade signs on cut lots, whose edges changed. The wall lamps stay at 24.
+- **The shells' neon bands** are a fixture class of their own, `fix-band`, a band on the facade
+  whether or not the building has rooms; a `fix-neon` inside a room is a strip on its wall.
+- **Neon Koi's closed booth doors are left out**; round booths stand in the lobby instead.
+
 ## Risks / Trade-offs
 
 - **Bake time.** Eight sectors on lavapipe take hours. The rebuild is one pass, run once the

@@ -105,7 +105,7 @@ WATER_JSON = os.path.join(ROOT, "game", "data", "water.json")
 # Layout shape classes a person may stand inside: neon strips hang on walls, and the dark
 # features (culverts, the outfall, tunnel portals) are hollow. A stall's footprint holds its
 # vendor's space, so stalls register their counter, back and posts as solids instead.
-WALK_THROUGH_CLASSES = ("fix-neon", "fix-dark", "stall")
+WALK_THROUGH_CLASSES = ("fix-neon", "fix-band", "fix-dark", "stall")
 STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is underfoot, not in the way
 NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
 PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
@@ -122,7 +122,25 @@ LIGHTS = {
     "cool": ((0.55, 0.75, 1.0), 1.2, 8.0, "corona_cool", 0.9),
     "billboard": ((0.3, 0.85, 1.0), 3.0, 26.0, "corona_cyan", 4.0),
     "warm_sign": ((1.0, 0.7, 0.4), 1.4, 7.0, "corona_warm", 1.2),
+    "door": ((1.0, 0.78, 0.55), 1.2, 6.0, "corona_warm", 0.7),    # an entrance's lintel downlight
 }
+# A door frame's material by facade style (openspec/changes/hub-doorways, design section 3.2):
+# no new material. A named building may name its own "frame_style": the shrine's is stone with
+# neon capitals.
+FRAME_MATS = {"dock": "tech_panel", "workshop": "rust_metal", "shanty": "rust_metal",
+              "strip": "stone_blocks", "market": "stone_blocks", "shrine": "stone_blocks"}
+FRAME_ACCENTS = {"shrine": {"capital": "neon_pink"}}
+# The closed doors a filler building shows (openspec/changes/hub-doorways, design section 3.4): the
+# clear opening (w, h) and the leaf's material, which is the back of a DRESS_DEPTH recess carved at
+# the fits. A shop door stands inside its bay; the rest take a span of their own.
+DRESS_DOORS = {"shop": {"clear": (1.0, 2.2), "leaf": ("tech_panel",)},
+               "residents": {"clear": (1.0, 2.2), "leaf": ("tech_panel",)},
+               "shanty": {"clear": (0.9, 2.0), "leaf": ("crate", "rust_metal")},
+               "man": {"clear": (1.0, 2.2), "leaf": ("rust_metal",)}}
+DRESS_DEPTH = 0.08
+STYLE_DOOR = {"shanty": "shanty", "strip": "residents", "market": "residents", "workshop": "man", "dock": "man"}
+SHANTY_BOARDED, SHANTY_PADLOCKED = 0.20, 0.25
+DOOR_FACES = {"-z": 0, "+z": 1, "+v": 2, "+u": 3, "-v": 4, "-u": 5}   # edge_box's faces, v into the wall
 SIGN_COLOURS = [("neon_pink", "pink"), ("neon_cyan", "cyan"), ("lamp_glow", "warm_sign")]
 CORONA_EXTRAS = {"gi_mode": 0, "cast_shadow": 0, "visibility_range_end_m": 110.0}
 PROP_EXTRAS = {"visibility_range_end_m": 70.0}
@@ -447,7 +465,7 @@ class Plan:
     def shelter(self, g, z0, label):
         """Register a roof the rain can't pass by its footprint (a polygon or a multipolygon) and
         its underside's lowest height: anyone standing inside the footprint below that height is
-        dry (openspec/changes/character-lighting, design section 9; export_level_data.py)."""
+        dry (openspec/changes/archive/2026-09-29-character-lighting, design section 9; export_level_data.py)."""
         for pg in polys(g):
             self.shelters.append((label, pg, z0))
 
@@ -565,6 +583,12 @@ class City:
         self.facades = []       # (sector, A, t, n, length, z_top, occupied spans) for wall lamps
         self.stair_boxes = []   # pit stair treads (floor lookups)
         self.ladders = []       # ways out of the water: {"id", "water", "at", "foot", "n", "top", "bottom"}
+        self.frames = {}        # framed doors by (building, door): {"door", "clear", "carved", "kind", "tris", "wall"}
+        self.shown_doors = []   # doors a building shows on its facade: (building, x, y)
+        self.door_counts = {}   # dressing doors by kind
+        self.door_tris = {}     # the doors' triangles by what they are
+        self.door_zfights = []  # dressing doors that z-fight in their own frame
+        self.edge_doors = {}    # a facade edge's own doors, by id of its occupied list: [s along the edge]
 
     # geometry lookups ------------------------------------------------------
     def walk_z(self, wk, x, y):
@@ -754,9 +778,9 @@ class City:
         blocked = RM.city_blocked(m, self.geo)
         clip = self.fband.buffer(0.3, join_style=2) if hasattr(self, "fband") else Polygon()
         vbuf = self.vfoot.buffer(1.0, join_style=2) if self.viaduct else Polygon()
-        for i, lot in enumerate(RM.city_lots(m, blocked)):
+        for i, lot in enumerate(RM.city_lots(m, blocked, RM.approach_cut(m, self.geo))):
             pg0 = lot["poly"]
-            pieces = polys(pg0.difference(clip)) if pg0.intersects(clip) else [pg0]
+            pieces = polys(pg0.difference(clip)) if pg0.intersects(clip) else polys(pg0)
             for k, pg in enumerate(pieces):
                 if pg.area < 3:
                     continue
@@ -1023,10 +1047,13 @@ class City:
         return edge_box(P, s0, s1, 0.3, -depth, z0, z1, [reveal, reveal, reveal, reveal, back, reveal])
 
     def facade(self, sector, pg, z0, h, st, rng, key, cutters, rooms=False, doors=(), bid=None,
-               allow=("windows", "front", "awning", "blade", "fire_escape")):
+               allow=("windows", "front", "awning", "blade", "fire_escape"), openings=None):
         """Windows, shop fronts, awnings, blade signs and fire escapes on every edge of a building
         that faces open ground. Recesses are cutters (carved by the Blender boolean); the rest are
-        additive details in the chunk's visual object. Returns the street edges."""
+        additive details in the chunk's visual object. Returns the street edges. `openings`, when
+        given, collects the ground floor's shop bays, shanty doors and roll-up and loading doors
+        for dressing_doors ({"edge": index in the returned edges, "kind", "c", "w", "h", "back"});
+        a shanty's door is left to it, where its dark recess once was."""
         Pn = self.P
         cx, cy = pg.representative_point().x, pg.representative_point().y
         vis = Pn.obj(sector, "vis", cx, cy)
@@ -1072,6 +1099,8 @@ class City:
                         back = ("window_lit_warm" if rng.random() < 0.6 else "window_lit_cool") if lit else dark
                         cutters.append(self.recess(P, c - w / 2, c + w / 2, FLOOR_Z, 3.05, 0.35, back, reveal))
                         occupied.append((c - w / 2 - 0.2, c + w / 2 + 0.2, 3.1))
+                        if openings is not None:
+                            openings.append({"edge": len(street_edges), "kind": "bay", "c": c, "w": w, "h": 3.05, "back": back})
                         if lit and "awning" in allow and rng.random() < st["awning"]:
                             s0, s1 = c - w / 2 - 0.2, c + w / 2 + 0.2
                             vis.append(hexa_pts([(*P(s0, 0.03), 3.29), (*P(s1, 0.03), 3.29), (*P(s1, 1.5), 2.94),
@@ -1080,7 +1109,10 @@ class City:
                             Pn.cover([P(s0, 0.03), P(s1, 0.03), P(s1, 1.5), P(s0, 1.5)], 2.94, "shop awning")
                 elif kind == "shanty":
                     c = rng.uniform(0.9, L - 0.9)
-                    cutters.append(self.recess(P, c - 0.5, c + 0.5, FLOOR_Z, 2.3, 0.25, "window_dark", reveal))
+                    if openings is not None:
+                        openings.append({"edge": len(street_edges), "kind": "shanty", "c": c})
+                    else:
+                        cutters.append(self.recess(P, c - 0.5, c + 0.5, FLOOR_Z, 2.3, 0.25, "window_dark", reveal))
                     occupied.append((c - 0.8, c + 0.8, 2.4))
                     if L >= 4.5:
                         c2 = c + 2.0 if c + 3.4 < L else c - 2.0
@@ -1103,6 +1135,8 @@ class City:
                         c = seg * (q + 0.5)
                         cutters.append(self.recess(P, c - wd / 2, c + wd / 2, FLOOR_Z, hd, 0.25, "rust_metal", "hazard_stripes"))
                         occupied.append((c - wd / 2 - 0.2, c + wd / 2 + 0.2, hd + 0.1))
+                        if openings is not None:
+                            openings.append({"edge": len(street_edges), "kind": kind, "c": c, "w": wd, "h": hd})
             street_edges.append((a, b, t, n, L, occupied, look))
         # upper floor windows on every edge that looks at open ground ----------------
         for a, b in self.ring_edges(pgo, pgo.exterior.coords):
@@ -1228,6 +1262,8 @@ class City:
                 zt = tops[0]
                 for off in (0.72, 1.18):
                     vis.append(edge_box(P, s1 - 0.5, s1 - 0.46, off - 0.02, off + 0.02, max(2.4, zt - 2.2), zt - 0.08, "rust_metal"))
+                return {"edge": e, "s": (s1 - 0.5, s1 - 0.46)}   # the drop ladder, for dressing_doors
+        return None
 
     # named buildings ---------------------------------------------------------------
     def clearance(self, pg):
@@ -1256,31 +1292,108 @@ class City:
                 self.named_building(bi, b)
 
     def door_boxes(self, b):
-        """Door openings as air boxes: (x0, x1, y0, y1, height, exterior, (x, y, w))."""
+        """Door openings as air boxes, carved at each door's fits (its clear opening plus REVEAL at
+        the jambs and the head; openspec/changes/hub-doorways, design section 3.1):
+        (x0, x1, y0, y1, carved height, exterior, (x, y, w), door), the door as
+        render_map.named_doors classifies it."""
         pg = b["_g"]
         fx0, fy0, fx1, fy1 = pg.bounds
-        rects = [r["rect"] for r in b.get("rooms", [])]
         out = []
-        for d in b.get("doors", []):
-            x, y = d[0], d[1]
-            w = d[2] if len(d) > 2 else 1.4
-            horiz = any((abs(y - r[1]) < 0.01 or abs(y - r[3]) < 0.01) and r[0] - 0.01 <= x <= r[2] + 0.01 for r in rects)
-            dh = WIDE_DOOR_H if w >= 2.5 else DOOR_H
-            if horiz:
-                ext = abs(y - fy0) < 0.01 or abs(y - fy1) < 0.01
+        for d in RM.named_doors(b):
+            x, y, w, ext = d["x"], d["y"], d["w"], d["exterior"]
+            fw, fh = detailing.door_fits(w, self.clear_h(w))
+            if d["along"] == "x":
                 if ext:
                     y0, y1 = (fy0 - 0.4, fy0 + WALL_T + 0.05) if abs(y - fy0) < 0.01 else (fy1 - WALL_T - 0.05, fy1 + 0.4)
                 else:
                     y0, y1 = y - WALL_T / 2 - 0.05, y + WALL_T / 2 + 0.05
-                out.append((x - w / 2, x + w / 2, y0, y1, dh, ext, (x, y, w)))
+                out.append((x - fw / 2, x + fw / 2, y0, y1, fh, ext, (x, y, w), d))
             else:
-                ext = abs(x - fx0) < 0.01 or abs(x - fx1) < 0.01
                 if ext:
                     x0, x1 = (fx0 - 0.4, fx0 + WALL_T + 0.05) if abs(x - fx0) < 0.01 else (fx1 - WALL_T - 0.05, fx1 + 0.4)
                 else:
                     x0, x1 = x - WALL_T / 2 - 0.05, x + WALL_T / 2 + 0.05
-                out.append((x0, x1, y - w / 2, y + w / 2, dh, ext, (x, y, w)))
+                out.append((x0, x1, y - fw / 2, y + fw / 2, fh, ext, (x, y, w), d))
         return out
+
+    @staticmethod
+    def clear_h(w):
+        """A door's clear height: DOOR_H, or WIDE_DOOR_H for an opening 2.5 m wide or wider."""
+        return WIDE_DOOR_H if w >= 2.5 else DOOR_H
+
+    def frame_door(self, b, sector, dd, airs, cx, cy):
+        """Frames one of a named building's doors by detailing.door_frame (openspec/changes/
+        hub-doorways, design section 3.2): liners, the threshold and the inside architrave go in
+        the interior object, the outside face's architrave, or an entrance's portal and its lit
+        downlight, in the building's own; every box is a z-fighting detail of the building."""
+        P = self.P
+        x0, x1, y0, y1, fh, ext, (x, y, w), d = dd
+        bid = b["id"]
+        ch = self.clear_h(w)
+        fx0, fy0, fx1, fy1 = b["_g"].bounds
+        horiz = d["along"] == "x"
+        if ext:
+            v0 = (fy0 if d["n"][1] < 0 else fy1) if horiz else (fx0 if d["n"][0] < 0 else fx1)
+            vdir = -(d["n"][1] if horiz else d["n"][0])
+        else:
+            v0, vdir = ((y if horiz else x) - WALL_T / 2), 1.0
+        out = "portal" if d["entrance"] else "architrave"
+        style = b.get("frame_style") or self.style_of(b)
+        boxes = detailing.door_frame(w, ch, WALL_T, out=out, inside="architrave", step=STANDING_STEP_M,
+                                     mat=FRAME_MATS[style])
+        accents = FRAME_ACCENTS.get(style, {})
+        u_axis, v_axis = (0, 1) if horiz else (1, 0)
+        face_of = {"-z": 0, "+z": 1, "-y": 2, "+x": 3, "+y": 4, "-x": 5}
+        inner = P.obj(sector, "interior", name=f"interior_{bid}", col="col")
+        outer = P.obj(sector, "walk", cx, cy, col="col")
+        tris = 0
+        for k, bx in enumerate(boxes):
+            lo, hi = [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
+            lo[u_axis], hi[u_axis] = (x if horiz else y) + bx["lo"][0], (x if horiz else y) + bx["hi"][0]
+            va, vb = v0 + vdir * bx["lo"][1], v0 + vdir * bx["hi"][1]
+            lo[v_axis], hi[v_axis] = min(va, vb), max(va, vb)
+            lo[2], hi[2] = FLOOR_Z + bx["lo"][2], FLOOR_Z + bx["hi"][2]
+            skip = []
+            for dirn in bx["buried"]:
+                sign, ax = dirn[0], dirn[1]
+                if ax == "z":
+                    skip.append(face_of[dirn])
+                    continue
+                world = "xy"[u_axis] if ax == "u" else "xy"[v_axis]
+                if ax == "v" and vdir < 0:
+                    sign = "-" if sign == "+" else "+"
+                skip.append(face_of[sign + world])
+            outside = ext and bx["hi"][1] <= 1e-9
+            mat = accents.get(bx["part"], bx["mat"])
+            (outer if outside else inner).append(box_prim(tuple(lo), tuple(hi), mat, skip=sorted(skip)))
+            P.zdetail(bid, tuple(lo), tuple(hi), f"{bid} door {d['i']} {bx['part']} {k}")
+            tris += 2 * (6 - len(skip))
+            if bx["part"] == "downlight":
+                lx, ly = (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2
+                P.light(sector, "door", lx, ly, lo[2] - 0.3, corona_at=(lx, ly, lo[2] - 0.03))
+        # Wall enough for the frame, on each face: to the room's corner inside, the footprint's outside.
+        half = {f: detailing.frame_outer_width(w, kind) / 2 for f, kind in (("out", out), ("in", "architrave"))}
+        spans = []
+        along = x if horiz else y
+        for a in airs:
+            ar_u = a.x if horiz else a.z
+            ar_v = a.z if horiz else a.x
+            wall = y if horiz else x
+            if ar_u[0] - 0.01 <= along <= ar_u[1] + 0.01 and min(abs(ar_v[0] - wall), abs(ar_v[1] - wall)) <= WALL_T + 0.01:
+                spans.append((min(along - ar_u[0], ar_u[1] - along), half["in"]))
+        if ext:
+            spans.append((min(along - (fx0 if horiz else fy0), (fx1 if horiz else fy1) - along), half["out"]))
+        margin = min((room - need for room, need in spans), default=-math.inf)
+        self.frames[(bid, d["i"])] = {"door": (x, y, w), "clear": (w, ch), "carved": (x1 - x0 if horiz else y1 - y0, fh),
+                                      "kind": out, "tris": tris, "wall": margin}
+        if ext:
+            self.shown_doors.append((bid, x, y))
+
+    def style_of(self, b):
+        """The facade style of a named building's district."""
+        rp = b["_g"].representative_point()
+        style = self.P.district_at(rp.x, rp.y).get("style", "strip")
+        return "strip" if style == "foundation" else style
 
     def named_building(self, bi, b):
         P = self.P
@@ -1341,7 +1454,7 @@ class City:
                 airs.append(room)
                 cutters.append(box_prim((ax0, ay0, FLOOR_Z), (ax1, ay1, FLOOR_Z + ROOM_H),
                                         [floor_m, ceil_m, walls, walls, walls, walls]))
-            for di, (x0, x1, y0, y1, dh, ext, _) in enumerate(doors):
+            for di, (x0, x1, y0, y1, dh, ext, _, _) in enumerate(doors):
                 door_airs.append(detailing.Room(f"{bid}:door{di}", (x0, x1), (FLOOR_Z, FLOOR_Z + dh), (y0, y1), trim,
                                                 trims=False, beams=False))
                 cutters.append(box_prim((x0, y0, FLOOR_Z), (x1, y1, FLOOR_Z + dh),
@@ -1370,13 +1483,6 @@ class City:
                             allow=("windows",) if rooms else ("windows", "front"))
         if sign:
             cutters[structure:] = [c for c in cutters[structure:] if not self.cutter_hits(c, sign["zone"])]
-        if not rooms and not ext_doors:
-            # an entrance: a lit, recessed doorway on the longest street front
-            fronts = [e for e in edges if e[6] == "street"]
-            if fronts:
-                a, bb, t, n, L, occ, _ = max(fronts, key=lambda e: e[4])
-                Pf = frame(a, t, n)
-                cutters.append(self.recess(Pf, L / 2 - 1.5, L / 2 + 1.5, FLOOR_Z, 3.0, 0.6, "window_lit_warm", "tech_panel"))
         ext_obj = P.obj(sector, "walk", cx, cy, col="col")
         ext_obj.append({"t": "bool", "solid": solid, "cutters": cutters, "interior": interior})
         self.building_details(sector, pg, 0.0, h, st, rng, edges, cap, parapet, allow_blade=False, allow_fire=False)
@@ -1385,6 +1491,8 @@ class City:
         # fixtures and interior detail
         if rooms:
             self.interior_detail(b, sector, airs, door_airs, trim, ceil_m)
+            for dd in doors:
+                self.frame_door(b, sector, dd, airs, cx, cy)
         for fx in b.get("fixtures", []):
             self.fixture(sector, fx, b if rooms else None, bid)
         self.P.zgroup(bid)["airs"] += airs + door_airs
@@ -1417,14 +1525,15 @@ class City:
                 s = (x - a[0]) * t[0] + (y - a[1]) * t[1]
                 off = (x - a[0]) * n[0] + (y - a[1]) * n[1]
                 if -0.05 <= s <= L + 0.05 and abs(off) < 0.05 and (door is None or w > door[1]):
-                    door = (s, w, dd[4])
+                    top = detailing.frame_top(self.clear_h(w), "portal" if dd[7]["entrance"] else "architrave")
+                    door = (s, w, top)
             score = (door[1] + 100 if door else 0) + (L if look == "street" else L * 0.1)
             cands.append((score, a, bb, t, n, L, door))
         score, a, bb, t, n, L, door = max(cands, key=lambda c: c[0])
         lines = b["name"].split("\n")
         chars = max(len(x) for x in lines)
         size = min(1.0, max(0.45, (L - 1.5) / (0.72 * chars)))
-        z0 = max(st["ground_h"] + 0.2 if st["band"] else 0.0, (FLOOR_Z + door[2] + 0.35) if door else 3.2, 3.3)
+        z0 = max(st["ground_h"] + 0.2 if st["band"] else 0.0, (FLOOR_Z + door[2] + 0.2) if door else 3.2, 3.3)
         tall = len(lines) * size * 1.2
         if z0 + tall > h - 0.3:
             size = max(0.4, (h - 0.3 - z0) / (len(lines) * 1.2))
@@ -1607,6 +1716,10 @@ class City:
         thin = min(w, d)
         long_ = max(w, d)
         lo, hi = (x0, y0, z), (x1, y1, z)
+        if cls == "fix-band":
+            # a neon band on the facade over a frontage, whether or not the building has rooms
+            self.neon_band(sector, fx, g)
+            return
         if cls == "fix-neon":
             if inside:
                 # a neon strip on the nearest wall
@@ -1940,18 +2053,215 @@ class City:
                     solid = prism(pg, 0.0, h, {"side": facade_mat, "top": st["roof"], "bottom": facade_mat}, caps=["top", "bottom"])
             P.shelter(pg, h, f"lot {lot['id']}")
             thick = not pg.buffer(-0.5).is_empty
+            openings = []
             edges = self.facade(sector, pg, 0.0, h, st, rng, lot["id"], cutters,
-                                allow=("windows", "front", "awning") if thick else ())
+                                allow=("windows", "front", "awning") if thick else (), openings=openings)
             rp = pg.representative_point()
             P.obj(sector, "vis", rp.x, rp.y).append({"t": "bool", "solid": solid, "cutters": cutters, "interior": None})
             # simplified collision: the plain block
             P.obj(sector, "hull", rp.x, rp.y, col="colonly").append(
                 prism(pg, 0.0, h + parapet, {"side": facade_mat, "top": st["roof"], "bottom": facade_mat}))
-            self.building_details(sector, pg, 0.0, h, st, rng, edges, st["cap"], parapet,
-                                  allow_blade=thick, allow_fire=thick, limit=lot["limit"])
+            ladder = self.building_details(sector, pg, 0.0, h, st, rng, edges, st["cap"], parapet,
+                                           allow_blade=thick, allow_fire=thick, limit=lot["limit"])
+            self.dressing_doors(lot, st, edges, openings, ladder, cutters)
             for e in edges:
                 self.facades.append((sector, e, h))
             self.roof_clutter(lot, st, rng)
+
+    # dressing doors (openspec/changes/hub-doorways, design section 3.4) ---------------------
+    def dressing_doors(self, lot, st, edges, openings, ladder, cutters):
+        """The closed doors a filler building shows: a glazed door in every shop bay, a
+        residents' door on a shop building of two floors or more, the shanty's plank or sheet
+        door where its dark recess was, a steel man door beside a roll-up or loading door, and
+        for a building still showing none, its style's door on its longest walkable edge. They
+        never open and show no use prompt (owner K1); each is framed by detailing.door_frame and
+        solid behind its leaf. Every choice comes from the lot's own door RNG, drawn after the
+        facade's, so no window, bay, sign or colour already in the hub moves."""
+        key = f"lot {lot['id']}"
+        drng = random.Random(f"{self.P.seed}:doors:{lot['id']}")
+        rp = lot["poly"].representative_point()
+        vis = self.P.obj(lot["sector"], "vis", rp.x, rp.y)
+        mat = FRAME_MATS[lot["style"]]
+        shown = 0
+        for op in openings:
+            e = edges[op["edge"]]
+            if op["kind"] == "bay":
+                self.shop_door(vis, key, e, op, drng, mat)
+                shown += 1
+            elif op["kind"] == "shanty":
+                e[5].remove((op["c"] - 0.8, op["c"] + 0.8, 2.4))    # the span facade kept for this door
+                shown += self.leaf_door(vis, key, e, op["c"], "shanty", drng, cutters, mat, ladder, reserved=True)
+            else:
+                self.shutter_fittings(vis, key, e, op)
+        rollups = [op for op in openings if op["kind"] in ("rollup", "loading")]
+        walkable = sorted([e for e in edges if e[4] >= 2.2 and e[6] in ("street", "side")],
+                          key=lambda e: (e[6] != "street", -e[4]))    # the longest street edge first
+        if not walkable:
+            return
+        style = lot["style"]
+        if style in ("strip", "market") and lot["h"] >= st["ground_h"] + st["floor_h"]:
+            fronts = [e for e in walkable if e[6] == "street"]
+            if fronts:
+                shown += self.leaf_door(vis, key, max(fronts, key=lambda e: e[4]), None, "residents", drng, cutters, mat, ladder)
+        if style in ("workshop", "dock"):
+            need = detailing.frame_outer_width(DRESS_DOORS["man"]["clear"][0], "architrave")
+            placed = 0
+            for op in [o for o in openings if o["kind"] in ("rollup", "loading")]:
+                e = edges[op["edge"]]
+                for side in (1, -1):
+                    want = op["c"] + side * (op["w"] / 2 + 0.3 + need / 2)
+                    placed = self.leaf_door(vis, key, e, want, "man", drng, cutters, mat, ladder, prefer_only=True)
+                    if placed:
+                        break
+                if placed:
+                    break
+            if not placed and rollups:
+                # A front the roll-up fills has no room for a man door: the fitted roll-up is its door.
+                e, op = edges[rollups[0]["edge"]], rollups[0]
+                self.shown_doors.append((key, *frame(e[0], e[2], e[3])(op["c"], 0.0)))
+                self.door_counts["roll-up as door"] = self.door_counts.get("roll-up as door", 0) + 1
+                placed = 1
+            shown += placed
+        for e in walkable if not shown else ():
+            if self.leaf_door(vis, key, e, None, STYLE_DOOR[style], drng, cutters, mat, ladder):
+                break
+
+    def free_spot(self, e, need, ladder, prefer=None, only=False, reserved=False):
+        """Where on edge `e` a door frame `need` wide stands clear: 0.35 m from the edge's ends,
+        clear of its other openings (their occupied spans, padded 0.1 m more) and of a fire
+        escape's drop ladder. Nearest `prefer` (the middle by default); with `only`, just there.
+        A `reserved` door takes a span the facade already kept for it (a shanty's recess, drawn
+        0.9 m or more from a corner): only 0.15 m from the ends and the ladder apply."""
+        a, b, t, n, L, occupied, look = e
+        end = 0.15 if reserved else 0.35
+        lo, hi = end + need / 2, L - end - need / 2
+        if hi < lo:
+            return None
+        blocks = [] if reserved else [(s0 - 0.1, s1 + 0.1) for s0, s1, _ in occupied]
+        if ladder and ladder["edge"] is e:
+            blocks.append((ladder["s"][0] - 0.3, ladder["s"][1] + 0.3))
+        target = L / 2 if prefer is None else prefer
+        cands = [target] if only else sorted({round(target + k * 0.1, 3) for k in range(-int(L * 10) - 1, int(L * 10) + 2)},
+                                             key=lambda q: (abs(q - target), q))
+        for q in cands:
+            if lo - 1e-9 <= q <= hi + 1e-9 and all(q + need / 2 <= b0 or q - need / 2 >= b1 for b0, b1 in blocks):
+                return q
+        return None
+
+    def leaf_door(self, vis, key, e, s, kind, drng, cutters, mat, ladder, prefer_only=False, reserved=False):
+        """A closed door of its own: a recess carved at the fits with the leaf as its back, the
+        frame's liners, threshold and architrave, and the kind's fittings. Returns 1 when it
+        found room (at `s`, or with `prefer_only` false the free spot nearest it), else 0."""
+        a, b, t, n, L, occupied, look = e
+        cw, ch = DRESS_DOORS[kind]["clear"]
+        fw, fh = detailing.door_fits(cw, ch)
+        need = detailing.frame_outer_width(cw, "architrave")
+        s = self.free_spot(e, need, ladder, s, only=(prefer_only or reserved) and s is not None, reserved=reserved)
+        if s is None:
+            return 0
+        leaves = DRESS_DOORS[kind]["leaf"]
+        leaf = leaves[int(drng.random() * len(leaves))]
+        Pf = frame(a, t, n)
+        cutters.append(self.recess(Pf, s - fw / 2, s + fw / 2, FLOOR_Z, FLOOR_Z + fh, DRESS_DEPTH, leaf, "concrete"))
+        boxes = detailing.door_frame(cw, ch, DRESS_DEPTH, out="architrave", inside=None, step=STANDING_STEP_M, mat=mat)
+        for bx in boxes:
+            if bx["part"] in ("liner", "threshold"):
+                bx["buried"].add("+v")      # pressed against the leaf
+        cu, fu = cw / 2, fw / 2
+        arch = fu + detailing.ARCHITRAVE["width"]
+        if kind == "residents":
+            boxes.append({"lo": (arch + 0.1, -0.03, 1.2), "hi": (arch + 0.22, 0.0, 1.5), "mat": "light_panel",
+                          "part": "buzzer", "buried": {"+v"}})
+        if kind == "shanty":
+            if drng.random() < SHANTY_BOARDED:
+                for z0 in (0.8, 1.5):
+                    boxes.append({"lo": (-cu, 0.02, z0), "hi": (cu, DRESS_DEPTH, z0 + 0.15), "mat": "crate",
+                                  "part": "board", "buried": {"+v", "-u", "+u"}})
+            if drng.random() < SHANTY_PADLOCKED:
+                boxes.append({"lo": (cu - 0.2, 0.04, 1.0), "hi": (cu - 0.08, DRESS_DEPTH, 1.12), "mat": "gunmetal",
+                              "part": "hasp", "buried": {"+v"}})
+        self.dress(vis, key, Pf, s, boxes, [("recess", (-fu, fu), (0.0, fh), (-0.3, DRESS_DEPTH))], f"{kind} door")
+        occupied.append((s - need / 2 - 0.1, s + need / 2 + 0.1, FLOOR_Z + detailing.frame_top(ch, "architrave")))
+        self.edge_doors.setdefault(id(occupied), []).append(s)
+        self.shown_doors.append((key, *Pf(s, 0.0)))
+        self.door_counts[kind] = self.door_counts.get(kind, 0) + 1
+        return 1
+
+    def shop_door(self, vis, key, e, op, drng, mat):
+        """A shop bay split into a window and a glazed door, one frame round both: the bay's
+        recess is the frame's fits, so the carve is unchanged. A shuttered bay's shutter comes
+        down over both, so it shows only the frame."""
+        a, b, t, n, L, occupied, look = e
+        Pf = frame(a, t, n)
+        w, depth = op["w"], 0.35
+        bay_h = op["h"] - FLOOR_Z
+        cw, ch = w - 2 * detailing.REVEAL, bay_h - detailing.REVEAL
+        boxes = detailing.door_frame(cw, ch, depth, out="architrave", inside=None, step=STANDING_STEP_M, mat=mat)
+        for bx in boxes:
+            if bx["part"] in ("liner", "threshold"):
+                bx["buried"].add("+v")      # pressed against the window or the shutter
+        if op["back"] != "rust_metal":
+            dw, dh = DRESS_DOORS["shop"]["clear"]
+            cu = cw / 2
+            side = 1 if drng.random() < 0.5 else -1
+            d0, d1 = (cu - dw, cu) if side > 0 else (-cu, -cu + dw)
+            m0, m1 = (d0 - 0.08, d0) if side > 0 else (d1, d1 + 0.08)
+            step = STANDING_STEP_M
+            boxes += [
+                {"lo": (d0, 0.30, step), "hi": (d1, depth, dh), "mat": "tech_panel", "part": "leaf",
+                 "buried": {"+v", "-z", "+z", "-u", "+u"}},
+                {"lo": (m0, 0.27, step), "hi": (m1, depth, ch), "mat": mat, "part": "mullion", "buried": {"+v", "-z", "+z"}},
+                {"lo": (d0, 0.27, dh), "hi": (d1, depth, dh + 0.08), "mat": mat, "part": "transom", "buried": {"+v", "-u", "+u"}},
+                {"lo": (d0 + 0.12, 0.29, 0.95), "hi": (d1 - 0.12, 0.30, dh - 0.15), "mat": "glass", "part": "glass",
+                 "buried": {"+v", "-u", "+u", "-z", "+z"}},
+                {"lo": (d0 + 0.15, 0.25, 1.0), "hi": (d1 - 0.15, 0.29, 1.04), "mat": "gunmetal", "part": "push bar",
+                 "buried": {"+v"}},
+            ]
+            door_s = op["c"] + (d0 + d1) / 2
+        else:
+            door_s = op["c"]
+        self.dress(vis, key, Pf, op["c"], boxes, [("bay", (-w / 2, w / 2), (0.0, bay_h), (-0.3, depth))], "shop door")
+        self.shown_doors.append((key, *Pf(door_s, 0.0)))
+        self.door_counts["shop"] = self.door_counts.get("shop", 0) + 1
+
+    def shutter_fittings(self, vis, key, e, op):
+        """A roll-up or loading door's hood box over it and guide rails in its jambs, so the
+        painted shutter reads as one."""
+        a, b, t, n, L, occupied, look = e
+        Pf = frame(a, t, n)
+        w, depth, top = op["w"], 0.25, op["h"] - FLOOR_Z
+        boxes = [{"lo": (-w / 2 - 0.1, -0.35, top), "hi": (w / 2 + 0.1, 0.0, top + 0.35), "mat": "rust_metal",
+                  "part": "hood", "buried": {"+v"}}]
+        for side in (-1, 1):
+            u0, u1 = sorted((side * (w / 2 - 0.08), side * w / 2))
+            boxes.append({"lo": (u0, 0.0, 0.0), "hi": (u1, depth, top), "mat": "rust_metal", "part": "guide rail",
+                          "buried": {"+v", "-z", "+z", "+u" if side > 0 else "-u"}})
+        self.dress(vis, key, Pf, op["c"], boxes, [("shutter", (-w / 2, w / 2), (0.0, top), (-0.3, depth))], "shutter")
+
+    def dress(self, vis, key, Pf, s, boxes, recesses, what):
+        """Puts a dressing door's boxes, in its own frame (u along the edge from `s`, v into the
+        wall, z up from the floor), on the facade with their buried faces left out, registers what
+        stands proud of the wall as solids for the standing-room check, and checks the door for
+        z-fighting in its own frame: against the facade, the recess it stands in and itself (the
+        plan's check knows axis-aligned boxes only, and a lot's edges run any way)."""
+        tris = 0
+        for bx in boxes:
+            (u0, v0, z0), (u1, v1, z1) = bx["lo"], bx["hi"]
+            skip = sorted(DOOR_FACES[d] for d in bx["buried"])
+            vis.append(edge_box(Pf, s + u0, s + u1, -v1, -v0, FLOOR_Z + z0, FLOOR_Z + z1, bx["mat"], skip=skip))
+            tris += 2 * (6 - len(skip))
+            if v0 < 0:
+                self.P.solid([Pf(s + u0, -v1), Pf(s + u1, -v1), Pf(s + u1, -v0), Pf(s + u0, -v0)],
+                             FLOOR_Z + z0, FLOOR_Z + z1, f"{key} {what} {bx['part']}")
+        airs = [detailing.Room("facade", (-8.0, 8.0), (0.0, 9.0), (-4.0, 0.0))]
+        airs += [detailing.Room(name, u, z, v) for name, u, z, v in recesses]
+        details = [((bx["lo"][0], bx["lo"][2], bx["lo"][1]), (bx["hi"][0], bx["hi"][2], bx["hi"][1]), f"{bx['part']} {i}")
+                   for i, bx in enumerate(boxes)]
+        report = detailing.zfight_report(airs, details)
+        if report:
+            x, y = Pf(s, 0.0)
+            self.door_zfights.append(f"{key} {what} at ({x:.1f}, {y:.1f}): {report[0]}")
+        self.door_tris[what] = self.door_tris.get(what, 0) + tris
 
     def roof_clutter(self, lot, st, rng):
         """The map's rooftop plant (render_map's lots), plus stacked shanty boxes and antennas."""
@@ -2489,7 +2799,9 @@ class City:
                 if best is not None:
                     off, sector, e, s = best
                     a, b, t, n, L, occupied, _ = e
-                    for ds in (0, 1.0, -1.0, 2.0, -2.0):
+                    # a door within 2 m gets the lamp over it (openspec/changes/hub-doorways, design section 3.5)
+                    near = sorted((q - s for q in self.edge_doors.get(id(occupied), []) if abs(q - s) <= 2.0), key=abs)
+                    for ds in near[:1] + [0, 1.0, -1.0, 2.0, -2.0]:
                         ss = s + ds
                         if ss < 0.8 or ss > L - 0.8:
                             continue
@@ -2690,6 +3002,110 @@ class City:
         if problems:
             raise SystemExit(f"{self.m['id']}: {len(problems)} rooms aren't carved:\n  " + "\n  ".join(problems))
 
+    # doors (openspec/changes/hub-doorways) -------------------------------------------
+    def door_problems(self):
+        """Every door an enterable building declares is framed by detailing.door_frame, carved at
+        its fits, and has wall enough for its frame ("Every doorway is framed")."""
+        problems = []
+        for b in self.named:
+            for d in RM.named_doors(b) if b.get("doors") else []:
+                name = f"{b['id']} door {d['i']} at ({d['x']:g}, {d['y']:g}), {d['w']:g} m"
+                f = self.frames.get((b["id"], d["i"]))
+                if f is None:
+                    problems.append(f"{name}: no frame")
+                    continue
+                want = detailing.door_fits(*f["clear"])
+                if any(abs(c - w) > 1e-6 for c, w in zip(f["carved"], want)):
+                    problems.append(f"{name}: carved {f['carved'][0]:.2f} x {f['carved'][1]:.2f} m, not its fits "
+                                    f"{want[0]:.2f} x {want[1]:.2f}")
+                if f["wall"] < 0:
+                    problems.append(f"{name}: its {f['kind']} overruns the wall it stands in by {-f['wall']:.2f} m")
+        return problems
+
+    def walkable_edges(self, pg):
+        """A building's facade edges that face walkable ground: 2.2 m or longer (room for a door
+        frame and 0.35 m to each end), looking at a street or a paved side passage."""
+        pgo = oriented(pg)
+        out = []
+        for a, b in self.ring_edges(pgo, pgo.exterior.coords):
+            if math.dist(a, b) < 2.2:
+                continue
+            n = self.outward(pgo, a, b)
+            look = self.facing((a[0] + b[0]) / 2 + n[0] * 2.6, (a[1] + b[1]) / 2 + n[1] * 2.6)
+            if look in ("street", "side"):
+                out.append((a, b, look))
+        return out
+
+    def building_door_problems(self):
+        """Every building that faces walkable ground shows a door on such an edge: a declared
+        entrance, or a dressing door ("Every building on the street shows a door")."""
+        buildings = [(f"lot {lot['id']}", lot["poly"]) for lot in self.lots]
+        buildings += [(b["id"], b["_g"]) for b in self.named if b["id"] != "ferry"]
+        shown = {}
+        for key, x, y in self.shown_doors:
+            shown.setdefault(key, []).append(Point(x, y))
+        problems = []
+        for key, pg in buildings:
+            edges = self.walkable_edges(pg)
+            if not edges:
+                continue
+            if any(LineString([a, b]).distance(pt) < 0.05 for a, b, _ in edges for pt in shown.get(key, [])):
+                continue
+            a, b, look = max(edges, key=lambda e: math.dist(e[0], e[1]))
+            problems.append(f"{key}: no door on its {len(edges)} walkable edge{'s' if len(edges) > 1 else ''}; "
+                            f"the longest runs ({a[0]:.1f}, {a[1]:.1f}) to ({b[0]:.1f}, {b[1]:.1f}) on a {look}")
+        return problems
+
+    def door_approach_problems(self):
+        """Every exterior door opens onto ground a person can reach ("Every door opens onto ground
+        a person can reach"): its approach (render_map.door_approach) is clear of buildings, lots,
+        fixtures, props, solids and water; an entrance's reaches open ground; a service door's
+        landing joins open ground by walkable ground 1.2 m wide or more."""
+        room = self.standing_room()
+        solids = [(name, fp) for name, fp, z0, z1 in self.P.solids if z1 > STANDING_STEP_M + PAVED_Z and z0 < 2.0]
+        blockers = room["footprints"] + solids
+        problems = []
+        walk = None
+        for b, d, ap in RM.door_approaches(self.m, self.geo):
+            name = f"{b['id']} door {d['i']} at ({d['x']:g}, {d['y']:g}), a {d['w']:g} m {ap['kind']}"
+            strip = ap["poly"]
+            in_way = []
+            for lot in self.lots:
+                if strip.intersection(lot["poly"]).area > 1e-3:
+                    nx, ny = d["n"]
+                    depth = min(((q[0] - d["x"]) * nx + (q[1] - d["y"]) * ny)
+                                for q in polys(strip.intersection(lot["poly"]))[0].exterior.coords)
+                    in_way.append(f"lot {lot['id']} ({depth:.2f} m out)")
+            others = [bb for bb in self.named if bb is not b and bb["id"] != "ferry"]
+            in_way += [bb["id"] for bb in others if strip.intersection(bb["_g"]).area > 1e-3]
+            in_way += [nm for nm, fp in blockers if strip.intersection(fp).area > 1e-3]
+            if strip.intersection(room["water"]).area > 1e-3:
+                in_way.append("water")
+            if in_way:
+                problems.append(f"{name}: its approach is blocked by {', '.join(sorted(set(in_way)))}")
+                continue
+            if ap["kind"] == "entrance" and not ap["reached"]:
+                problems.append(f"{name}: its approach doesn't reach open ground within {RM.ENTRANCE_REACH_M:g} m")
+            elif ap["kind"] == "service":
+                if walk is None:
+                    ground = box(0, 0, self.P.W, self.P.H).difference(self.B).difference(room["water"])
+                    ground = ground.difference(unary_union([fp for _, fp in blockers]))
+                    walk = ground.buffer(-0.6, join_style=2)
+                nx, ny = d["n"]
+                probe = Point(d["x"] + nx * (RM.LANDING_M - 0.7), d["y"] + ny * (RM.LANDING_M - 0.7))
+                part = next((g for g in polys(walk) if g.buffer(1e-6).contains(probe)), None)
+                if part is None or not part.intersects(self.O):
+                    problems.append(f"{name}: its landing joins no street by ground 1.2 m wide")
+        return problems
+
+    def check_doors(self):
+        for fn, what in ((self.door_problems, "doors aren't framed"),
+                         (self.building_door_problems, "buildings on the street show no door"),
+                         (self.door_approach_problems, "doors open onto ground nobody can reach")):
+            problems = fn()
+            if problems:
+                raise SystemExit(f"{self.m['id']}: {len(problems)} {what}:\n  " + "\n  ".join(problems))
+
     def standing_spots(self):
         """Where the level stands a person: every NPC and civilian, every stop on a patrol and
         every spawn point, as (label, x, y, z, place, body). place is "indoors", "outdoors" or
@@ -2852,6 +3268,7 @@ class City:
         self.check_skyline()
         self.check_zfighting()
         self.check_rooms_carved()
+        self.check_doors()
         self.check_exits()
         self.check_standing_room()
         return self.P

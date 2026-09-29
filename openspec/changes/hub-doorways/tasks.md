@@ -12,20 +12,23 @@ doors on the public entrances, and one room in each named shell.
 
 ## 2. The rules in the plan
 
-- [ ] 2.1 `detailing.door_frame`: liners, architrave, portal and threshold, REVEAL from the one
+- [x] 2.1 `detailing.door_frame`: liners, architrave, portal and threshold, REVEAL from the one
   constant, the triangle counts; unit tests in `tools/godot`.
-- [ ] 2.2 `check_doors`, `check_building_doors` and `check_door_approaches` in `city_plan.py`.
+- [x] 2.2 `check_doors`, `check_building_doors` and `check_door_approaches` in `city_plan.py`.
   Run on the old plan, they must name 43 doors, 214 buildings and 10 doors; record their output.
-- [ ] 2.3 `City.door_approach`. `render_map.city_lots` cuts approaches after splitting, and
-  only lots 11, 15, 226, 239, 242, 244, 245, 252, 257 and 280 may change.
-- [ ] 2.4 Named buildings: carve at the fits; frames and portals; lintel downlights; the sign
+  They name 43, 214 and 11 (design section 3.11: the frame-wide approach finds the garage's too).
+- [x] 2.3 `City.door_approach`. `render_map.city_lots` cuts approaches after splitting, and
+  only lots 11, 15, 226, 239, 242, 244, 245, 252, 257 and 280 may change. With frame-wide
+  approaches, 15 change (design section 3.11).
+- [x] 2.4 Named buildings: carve at the fits; frames and portals; lintel downlights; the sign
   above the lintel.
-- [ ] 2.5 Filler buildings: dressing doors by style in `City.facade`, drawn from each lot's RNG
+- [x] 2.5 Filler buildings: dressing doors by style in `City.facade`, drawn from each lot's RNG
   after its existing draws. Every other opening, sign and colour must be unchanged (compare
-  the plan's other prims before and after).
-- [ ] 2.6 `wall_lamps` tries the spot over a door first.
-- [ ] 2.7 The three shells (owner K3): a room, an entrance and fixtures each in `hub.py`.
-- [ ] 2.8 `test_city_plan.py`: each check passes on the hub and names the fault on a layout
+  the plan's other prims before and after). The doors take a stream of their own, placed after
+  every other feature (design section 3.11).
+- [x] 2.6 `wall_lamps` tries the spot over a door first.
+- [x] 2.7 The three shells (owner K3): a room, an entrance and fixtures each in `hub.py`.
+- [x] 2.8 `test_city_plan.py`: each check passes on the hub and names the fault on a layout
   broken on purpose. The triangle budget is asserted.
 
 ## 3. The sliding entrances (owner K2)
