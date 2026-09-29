@@ -33,13 +33,13 @@ doors on the public entrances, and one room in each named shell.
 
 ## 3. The sliding entrances (owner K2)
 
-- [ ] 3.1 `Doorway` opens for the groups it names (default "enemies", so the reference maps
+- [x] 3.1 `Doorway` opens for the groups it names (default "enemies", so the reference maps
   don't change); `data/doors.json` and its validation in the core; `SlidingDoorway` sets the
   timings from it.
-- [ ] 3.2 The sliding leaves in the Undercity prop kit, one pair per entrance size; the
+- [x] 3.2 The sliding leaves in the Undercity prop kit, one pair per entrance size; the
   generator writes a scene per size (frame-free: the portal is in the sector mesh) and places
   one at each public entrance, leaves on the inside face.
-- [ ] 3.3 `check_sliding_room` in `city_plan.py`: each leaf's open position is clear of walls,
+- [x] 3.3 `check_sliding_room` in `city_plan.py`: each leaf's open position is clear of walls,
   fixtures and other doors.
 - [ ] 3.4 `door_test.tscn`: the runner walks up to the Anchor's entrance and it opens, walks
   away and it closes; a civilian walks through a closed entrance on the navmesh.

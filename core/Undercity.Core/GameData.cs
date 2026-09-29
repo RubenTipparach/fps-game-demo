@@ -103,6 +103,9 @@ public sealed class GameData
     /// <summary>data/crowd.json.</summary>
     public required CrowdTable Crowd { get; init; }
 
+    /// <summary>data/doors.json.</summary>
+    public required DoorsTable Doors { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -150,6 +153,7 @@ public sealed class GameData
             Combat = JsonData.Load<Combat.CombatTable>(source, "combat.json"),
             CharacterLighting = JsonData.Load<CharacterLightingTable>(source, "character_lighting.json"),
             Crowd = JsonData.Load<CrowdTable>(source, "crowd.json"),
+            Doors = JsonData.Load<DoorsTable>(source, "doors.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,

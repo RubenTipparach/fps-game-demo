@@ -60,6 +60,10 @@ if [[ $FAST == 0 ]]; then
   (cd game && flock /tmp/undercity-godot.lock timeout 600 godot --headless --path . \
       res://scenes/undercity/tests/lighting_test.tscn 2>&1 | grep -E "FAIL|lighting_test\] [0-9]")
 
+  step "Sliding entrances: every one timed from data, the runner and a person walk through (door_test.tscn)"
+  (cd game && flock /tmp/undercity-godot.lock timeout 900 godot --headless --path . \
+      res://scenes/undercity/tests/door_test.tscn 2>&1 | grep -E "FAIL|door_test\] [0-9]")
+
   step "Design maps and page"
   python3 tools/levels/render_map.py
   python3 tools/design/build_page.py

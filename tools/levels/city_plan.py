@@ -589,6 +589,7 @@ class City:
         self.door_tris = {}     # the doors' triangles by what they are
         self.door_zfights = []  # dressing doors that z-fight in their own frame
         self.edge_doors = {}    # a facade edge's own doors, by id of its occupied list: [s along the edge]
+        self.sliding = []       # public entrances' sliding doors: {"building", "door", "tag", "sweeps", "keep", "airs"}
 
     # geometry lookups ------------------------------------------------------
     def walk_z(self, wk, x, y):
@@ -1389,6 +1390,59 @@ class City:
         if ext:
             self.shown_doors.append((bid, x, y))
 
+    def sliding_entrance(self, b, sector, dd):
+        """A public entrance's automatic sliding door (owner K2; openspec/changes/hub-doorways,
+        design section 3.3): the game's scene for its size and face (detailing.SLIDING_LEAVES), at
+        the building's inside face, and where its two leaves stand when open, which the room's
+        trims keep clear of and check_sliding_room checks."""
+        x, y, w = dd[6]
+        d = dd[7]
+        ch = self.clear_h(w)
+        face = b.get("leaves", "glazed")
+        if (w, ch, face) not in detailing.SLIDING_LEAVES:
+            raise SystemExit(f"{b['id']} door {d['i']}: no {face} sliding door {w:g} x {ch:g} m in detailing.SLIDING_LEAVES")
+        nx, ny = d["n"]
+        ix, iy = x - nx * WALL_T, y - ny * WALL_T          # the inside face, the door's middle
+        tx, ty = -ny, nx
+        sweeps, keep = [], []
+        for u0, u1, v0, v1, z0, z1 in detailing.sliding_sweep(w, ch):
+            xs = [ix + tx * u - nx * v for u in (u0, u1) for v in (v0, v1)]
+            ys = [iy + ty * u - ny * v for u in (u0, u1) for v in (v0, v1)]
+            sweeps.append((min(xs), min(ys), FLOOR_Z + z0, max(xs), max(ys), FLOOR_Z + z1))
+            keep.append(((min(xs), FLOOR_Z + z0, min(ys)), (max(xs), FLOOR_Z + z1, max(ys))))
+        tag = detailing.sliding_tag(w, ch, face)
+        self.P.entity(sector, f"ENT_sliding_door_{b['id']}_{d['i']}", ix, iy, FLOOR_Z, heading_of(nx, ny),
+                      {"kind": "sliding_door", "id": f"{b['id']}_{d['i']}", "leaf": tag})
+        return {"building": b, "door": d, "tag": tag, "sweeps": sweeps, "keep": keep}
+
+    def sliding_room_problems(self):
+        """Every sliding leaf has room to open ("Public entrances open as you walk up"): where it
+        stands open lies inside the building's rooms, and meets no fixture and no detail (a trim,
+        a counter, another door's frame)."""
+        problems = []
+        for sl in self.sliding:
+            b, d = sl["building"], sl["door"]
+            room_air = unary_union([box(a.x[0], a.z[0], a.x[1], a.z[1]) for a in sl["airs"]]).buffer(1e-6)
+            height = max(a.y[1] for a in sl["airs"])
+            fixtures = [(fx[-1], RM.shape_geom(fx)) for fx in b.get("fixtures", []) if fx[-1] not in WALK_THROUGH_CLASSES]
+            details = self.P.zboxes.get(b["id"], {"details": []})["details"]
+            for k, (x0, y0, z0, x1, y1, z1) in enumerate(sl["sweeps"]):
+                name = f"{b['id']} door {d['i']} at ({d['x']:g}, {d['y']:g}), its {'left' if k == 0 else 'right'} leaf"
+                fp = box(x0, y0, x1, y1)
+                if not room_air.contains(fp) or z1 > height:
+                    over = fp.difference(room_air)
+                    problems.append(f"{name} meets a wall: {max(over.bounds[2] - over.bounds[0], over.bounds[3] - over.bounds[1]):.2f} m "
+                                    "of its open position is outside the rooms" if not over.is_empty else f"{name} is taller than the room")
+                hits = [cls for cls, g in fixtures if g.intersection(fp).area > 1e-6]
+                for lo, hi, label in details:
+                    # stored as (x, up, y)
+                    if min(hi[0], x1) - max(lo[0], x0) > 1e-4 and min(hi[2], y1) - max(lo[2], y0) > 1e-4 \
+                            and min(hi[1], z1) - max(lo[1], z0) > 1e-4:
+                        hits.append(label)
+                if hits:
+                    problems.append(f"{name} meets {', '.join(sorted(set(hits))[:4])}")
+        return problems
+
     def style_of(self, b):
         """The facade style of a named building's district."""
         rp = b["_g"].representative_point()
@@ -1490,9 +1544,11 @@ class City:
             self.put_sign(sector, sign, bi)
         # fixtures and interior detail
         if rooms:
-            self.interior_detail(b, sector, airs, door_airs, trim, ceil_m)
+            sliding = [self.sliding_entrance(b, sector, dd) for dd in doors if dd[7]["entrance"]]
+            self.interior_detail(b, sector, airs, door_airs, trim, ceil_m, avoid=[k for sl in sliding for k in sl["keep"]])
             for dd in doors:
                 self.frame_door(b, sector, dd, airs, cx, cy)
+            self.sliding += [{**sl, "airs": airs} for sl in sliding]
         for fx in b.get("fixtures", []):
             self.fixture(sector, fx, b if rooms else None, bid)
         self.P.zgroup(bid)["airs"] += airs + door_airs
@@ -1558,7 +1614,7 @@ class City:
         lx, ly = P(sg["s"], 1.3)
         self.P.light(sector, light, lx, ly, sg["z0"] + tall / 2)
 
-    def interior_detail(self, b, sector, airs, door_airs, trim, ceil_m):
+    def interior_detail(self, b, sector, airs, door_airs, trim, ceil_m, avoid=()):
         """UT99 trims from tools/godot/detailing.py, and ceiling lights in the bays between girders."""
         P = self.P
         prims = P.obj(sector, "interior", name=f"interior_{b['id']}", col="col")
@@ -1587,7 +1643,7 @@ class City:
                 P.lamp_entity(sector, "ceiling_light", gx, gz, y1 - 0.07, heading)
                 half = (0.2, 0.1, 0.8) if span_x else (0.8, 0.1, 0.2)
                 keep.append(detailing.keep_out((gx, y1 - 0.05, gz), half))
-        for lo, hi, mat in detailing.all_trims(airs, airs + door_airs, keep):
+        for lo, hi, mat in detailing.all_trims(airs, airs + door_airs, keep + list(avoid)):
             L0, L1 = (lo[0], lo[2], lo[1]), (hi[0], hi[2], hi[1])
             prims.append(box_prim(L0, L1, mat))
             P.zdetail(b["id"], L0, L1, f"trim {mat}")
@@ -3100,6 +3156,7 @@ class City:
 
     def check_doors(self):
         for fn, what in ((self.door_problems, "doors aren't framed"),
+                         (self.sliding_room_problems, "sliding leaves have no room to open"),
                          (self.building_door_problems, "buildings on the street show no door"),
                          (self.door_approach_problems, "doors open onto ground nobody can reach")):
             problems = fn()

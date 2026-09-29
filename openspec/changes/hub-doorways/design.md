@@ -200,7 +200,7 @@ sliding door:
 - **The timings are data.** `game/data/doors.json`, validated in the core like every data file:
 
   ```json
-  {"sliding": {"trigger_radius_m": 3.0, "npc_trigger_radius_m": 2.4, "wait_s": 1.5, "speed_m_s": 2.4}}
+  {"sliding": {"trigger_radius_m": 3.0, "npc_trigger_radius_m": 2.4, "wait_s": 1.5, "speed_mps": 2.4}}
   ```
 
   A thin `Undercity.Client.SlidingDoorway` (a `Doorway`, and `IWired`) sets the exports from
@@ -388,6 +388,27 @@ The video is there because the point is how the street reads as you move.
 - **The shells' neon bands** are a fixture class of their own, `fix-band`, a band on the facade
   whether or not the building has rooms; a `fix-neon` inside a room is a strip on its wall.
 - **Neon Koi's closed booth doors are left out**; round booths stand in the lobby instead.
+
+**Found in building the sliding entrances:**
+- **One catalogue of leaves.** `detailing.SLIDING_LEAVES` lists the six sizes and faces the hub
+  needs (steel 2.0 x 2.4; glazed 2.5 x 3.0, 3.0 x 3.0 and 4.0 x 3.0; steel 4.0 x 3.0; hazard
+  5.0 x 3.0). The prop kit builds a leaf for each, the scene generator writes a door scene for
+  each, and the plan refuses an entrance the catalogue lacks. A building names its face
+  (`"leaves"` in the layout: the depot, the checkpoint and Precinct 9 steel, the garage hazard;
+  glazed otherwise).
+- **The two leaves hang at different depths,** 0.15 and 0.21 m off the inside face, so where
+  they overlap by 0.1 m when shut they never share a plane.
+- **Where the leaves stand open is a keep-out for the rooms' trims,** so no pilaster is built
+  in their way, and `check_sliding_room` checks it against the rooms, the fixtures and every
+  detail box. It passed on the hub at once, all 18 entrances; a counter put in the Anchor's
+  right leaf's way is named.
+- **The data names speed `speed_mps`**, as every other speed in `game/data` does, not
+  `speed_m_s`.
+- **No status light.** E1M3's doorway has a red and green lamp on its lintel; the hub's
+  entrances show their lintel downlight instead, and `Doorway` does without a status mesh.
+- **The rebuilt hub** has 146,164 triangles in its sectors and 225 lights; the navmesh baked
+  again to 5,059 polygons, and passes through the entrances, since the leaves are not in the
+  navigation group.
 
 ## Risks / Trade-offs
 

@@ -311,6 +311,12 @@ public sealed class LevelDef : IValidated
     /// </summary>
     public IReadOnlyList<ShelterDef> Shelters { get; init; } = Array.Empty<ShelterDef>();
 
+    /// <summary>
+    /// Where a walk to the runner's spawn starts outside each exterior door of an enterable
+    /// building (openspec/changes/hub-doorways); none for a level without.
+    /// </summary>
+    public IReadOnlyList<ApproachDef> Approaches { get; init; } = Array.Empty<ApproachDef>();
+
     /// <summary>The id of the district the point (x, y) in layout metres lies in, or null outside them all.</summary>
     public string? DistrictAt(double x, double y) => Districts.FirstOrDefault(d => d.Contains(x, y))?.Id;
 
@@ -367,6 +373,14 @@ public sealed class LevelDef : IValidated
         for (var i = 0; i < Shelters.Count; i++)
         {
             Shelters[i].Validate(Id, i, errors);
+        }
+        foreach (var dup in Approaches.GroupBy(a => a.Door).Where(g => g.Count() > 1))
+        {
+            errors.Add($"levels.{Id}: approach '{dup.Key}' is given twice");
+        }
+        foreach (var a in Approaches)
+        {
+            a.Validate(Id, errors);
         }
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {

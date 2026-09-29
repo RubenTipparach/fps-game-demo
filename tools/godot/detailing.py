@@ -363,6 +363,40 @@ def door_frame(clear_w, clear_h, wall_t, out="architrave", inside="architrave", 
     return boxes
 
 
+# A public entrance's sliding door (openspec/changes/hub-doorways, design section 3.3; owner K2):
+# two leaves, each half the clear width plus half LEAF_OVERLAP, so they overlap when shut, hanging
+# on the building's inside face at LEAF_OFF_M (the two leaves' faces nearest the wall; they pass in
+# front of the inside architrave, ARCHITRAVE["proud"]) and sliding apart by their own width. The
+# catalogue is every size and face the kit builds; the prop kit, the scene generator and the plan
+# all read it, and the plan refuses an entrance it lacks.
+LEAF_T_M = 0.05
+LEAF_OVERLAP_M = 0.1
+LEAF_OFF_M = (0.15, 0.21)
+LEAF_OVER_HEAD_M = 0.05
+SLIDING_FACES = ("glazed", "steel", "hazard")
+SLIDING_LEAVES = ((2.0, 2.4, "steel"), (2.5, 3.0, "glazed"), (3.0, 3.0, "glazed"), (4.0, 3.0, "glazed"),
+                  (4.0, 3.0, "steel"), (5.0, 3.0, "hazard"))
+
+
+def sliding_leaf(clear_w, clear_h):
+    """One leaf of a sliding entrance: {"w", "h", "t"} metres."""
+    return {"w": clear_w / 2 + LEAF_OVERLAP_M / 2, "h": clear_h + LEAF_OVER_HEAD_M, "t": LEAF_T_M}
+
+
+def sliding_tag(clear_w, clear_h, face):
+    """The catalogue name of a sliding entrance: "glazed_300x300"."""
+    return f"{face}_{round(clear_w * 100)}x{round(clear_h * 100)}"
+
+
+def sliding_sweep(clear_w, clear_h):
+    """Where the two leaves stand when open, in the door's frame on the inside face: (u0, u1, v0,
+    v1, z0, z1) per leaf, u along the wall from the opening's middle, v into the room, z up."""
+    leaf = sliding_leaf(clear_w, clear_h)
+    cu = clear_w / 2
+    v0, v1 = LEAF_OFF_M[0], LEAF_OFF_M[1] + leaf["t"]
+    return [(-(cu + leaf["w"]), -cu, v0, v1, 0.0, leaf["h"]), (cu, cu + leaf["w"], v0, v1, 0.0, leaf["h"])]
+
+
 def frame_top(clear_h, kind):
     """The top of a frame over its opening, metres above the floor: a sign starts above it."""
     return clear_h + PORTAL["lintel"] if kind == "portal" else clear_h + REVEAL + ARCHITRAVE["head"]

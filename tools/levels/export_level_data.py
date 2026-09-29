@@ -60,6 +60,25 @@ def shelters(level_id, plan):
     return out
 
 
+# Where the placement test starts its walk to the runner's spawn: this far outside each exterior
+# door, on its approach (openspec/changes/hub-doorways, "Every door opens onto ground a person can
+# reach").
+APPROACH_START_M = 1.0
+
+
+def approaches(layout):
+    """Every exterior door of an enterable building, from render_map.door_approaches, the one
+    approach the plan's check and the lot cut use: its building and door, whether it is an entrance
+    or a service door, and the point APPROACH_START_M outside it, in layout metres."""
+    geo = city_plan.RM.base_geometry(layout)
+    out = []
+    for b, d, ap in city_plan.RM.door_approaches(layout, geo):
+        nx, ny = d["n"]
+        out.append({"door": f"{b['id']}:{d['i']}", "kind": ap["kind"],
+                    "at": [round(d["x"] + nx * APPROACH_START_M, 3), round(d["y"] + ny * APPROACH_START_M, 3)]})
+    return out
+
+
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
     layout = importlib.import_module(f"layouts.{level_id}").MAP
@@ -84,6 +103,7 @@ def export(level_id):
             plan = city_plan.build(level_id)
         covers = plan.covers
         out["shelters"] = shelters(level_id, plan)
+        out["approaches"] = approaches(layout)
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

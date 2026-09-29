@@ -124,6 +124,9 @@ func _undercity_scene(extras: Dictionary) -> String:
 			return "res://scenes/undercity/%s.tscn" % ("barrier" if str(extras.get("style", "")) == "barrier" else "door")
 		"exit":
 			return "res://scenes/undercity/exit_%s.tscn" % str(extras.get("style", "none"))
+		"sliding_door":
+			# a public entrance, by its size and face (tools/godot/detailing.py, SLIDING_LEAVES)
+			return "res://scenes/undercity/doors/sliding_%s.tscn" % str(extras.get("leaf", ""))
 	return UNDERCITY.get(kind, "")
 
 

@@ -6,7 +6,8 @@
 // It lives in the core because whether a character stands in the rain is a rule the wetness step,
 // its tests and a future save must agree about (CLAUDE.md 5.1, 5.2). The plan
 // (tools/levels/city_plan.py, Plan.shelter) is the single source of the shapes, and
-// tools/levels/export_level_data.py copies them here.
+// tools/levels/export_level_data.py copies them here. The doors' approaches, where the placement
+// test starts its walks, travel with them.
 
 namespace Undercity.Core.World;
 
@@ -45,6 +46,39 @@ public sealed class ShelterDef
         if (!double.IsFinite(UnderM))
         {
             errors.Add($"levels.{level}.shelters[{index}] ({Label}): under_m must be a finite height");
+        }
+    }
+}
+
+/// <summary>
+/// Where a walk to the runner's spawn starts outside an exterior door (data/levels/&lt;id&gt;.json
+/// "approaches"; openspec/changes/hub-doorways, "Every door opens onto ground a person can
+/// reach"): the placement test walks the built level's navmesh from here.
+/// </summary>
+public sealed class ApproachDef
+{
+    /// <summary>The kinds an approach may be.</summary>
+    public static readonly IReadOnlyList<string> Kinds = ["entrance", "service"];
+
+    /// <summary>The building and its door, "fish_hall:0".</summary>
+    public required string Door { get; init; }
+
+    /// <summary>"entrance" (a public entrance) or "service".</summary>
+    public required string Kind { get; init; }
+
+    /// <summary>The start, [x, y] in layout metres, outside the door.</summary>
+    public required IReadOnlyList<double> At { get; init; }
+
+    /// <summary>Adds a message to <paramref name="errors"/> for each thing wrong with the approach.</summary>
+    public void Validate(string level, ICollection<string> errors)
+    {
+        if (At.Count != 2 || !At.All(double.IsFinite))
+        {
+            errors.Add($"levels.{level}.approaches.{Door}: at needs [x, y] in finite metres");
+        }
+        if (!Kinds.Contains(Kind))
+        {
+            errors.Add($"levels.{level}.approaches.{Door}: kind '{Kind}' isn't one of {string.Join(", ", Kinds)}");
         }
     }
 }

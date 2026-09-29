@@ -10702,5 +10702,199 @@
    ],
    "under_m": 2.65
   }
+ ],
+ "approaches": [
+  {
+   "door": "station:0",
+   "kind": "entrance",
+   "at": [
+    114.0,
+    30.0
+   ]
+  },
+  {
+   "door": "station:1",
+   "kind": "entrance",
+   "at": [
+    126.0,
+    30.0
+   ]
+  },
+  {
+   "door": "golden_carp:0",
+   "kind": "entrance",
+   "at": [
+    50.0,
+    35.0
+   ]
+  },
+  {
+   "door": "neon_koi:0",
+   "kind": "entrance",
+   "at": [
+    83.0,
+    34.0
+   ]
+  },
+  {
+   "door": "pachinko:0",
+   "kind": "entrance",
+   "at": [
+    162.5,
+    34.0
+   ]
+  },
+  {
+   "door": "rusty_anchor:0",
+   "kind": "entrance",
+   "at": [
+    90.0,
+    43.0
+   ]
+  },
+  {
+   "door": "rusty_anchor:4",
+   "kind": "service",
+   "at": [
+    113.0,
+    60.0
+   ]
+  },
+  {
+   "door": "rusty_anchor:6",
+   "kind": "service",
+   "at": [
+    67.0,
+    65.0
+   ]
+  },
+  {
+   "door": "kessler:0",
+   "kind": "entrance",
+   "at": [
+    138.0,
+    43.0
+   ]
+  },
+  {
+   "door": "kessler:3",
+   "kind": "service",
+   "at": [
+    127.0,
+    59.0
+   ]
+  },
+  {
+   "door": "clinic:0",
+   "kind": "entrance",
+   "at": [
+    159.0,
+    43.0
+   ]
+  },
+  {
+   "door": "clinic:4",
+   "kind": "service",
+   "at": [
+    177.0,
+    58.0
+   ]
+  },
+  {
+   "door": "fish_hall:0",
+   "kind": "entrance",
+   "at": [
+    174.0,
+    75.0
+   ]
+  },
+  {
+   "door": "fish_hall:1",
+   "kind": "entrance",
+   "at": [
+    163.0,
+    94.0
+   ]
+  },
+  {
+   "door": "fish_hall:2",
+   "kind": "entrance",
+   "at": [
+    185.0,
+    104.0
+   ]
+  },
+  {
+   "door": "fish_hall:3",
+   "kind": "service",
+   "at": [
+    163.0,
+    108.0
+   ]
+  },
+  {
+   "door": "depot:0",
+   "kind": "entrance",
+   "at": [
+    222.0,
+    108.0
+   ]
+  },
+  {
+   "door": "depot:3",
+   "kind": "entrance",
+   "at": [
+    235.5,
+    103.0
+   ]
+  },
+  {
+   "door": "garage:0",
+   "kind": "entrance",
+   "at": [
+    161.0,
+    119.0
+   ]
+  },
+  {
+   "door": "shrine:0",
+   "kind": "entrance",
+   "at": [
+    99.0,
+    144.0
+   ]
+  },
+  {
+   "door": "checkpoint:0",
+   "kind": "entrance",
+   "at": [
+    173.0,
+    154.0
+   ]
+  },
+  {
+   "door": "precinct:0",
+   "kind": "entrance",
+   "at": [
+    223.0,
+    134.0
+   ]
+  },
+  {
+   "door": "mouse_den:0",
+   "kind": "service",
+   "at": [
+    35.0,
+    115.0
+   ]
+  },
+  {
+   "door": "laundromat:0",
+   "kind": "entrance",
+   "at": [
+    17.5,
+    45.0
+   ]
+  }
  ]
 }

@@ -105,6 +105,31 @@ def door():
     s.save(out("door.tscn"))
 
 
+def sliding_doors():
+    """A public entrance's automatic sliding door, one scene per size and face in
+    detailing.SLIDING_LEAVES (openspec/changes/hub-doorways, design section 3.3; owner K2): E1M3's
+    split door, Brushfire.Doorway driving two Brushfire.Door leaves, timed from data/doors.json by
+    SlidingDoorway. The origin is the building's inside face at the opening's middle, on the
+    floor; -Z faces out of the building, and the leaves hang into the room at detailing.LEAF_OFF_M,
+    overlapping in the middle, and slide apart by their own width. The portal and the frame are
+    the sector's mesh, so the scene carries only the leaves, which the probes light."""
+    import detailing  # noqa: E402  (tools/godot: the catalogue the prop kit and the plan read)
+    os.makedirs(out("doors"), exist_ok=True)
+    for w, h, face in detailing.SLIDING_LEAVES:
+        tag = detailing.sliding_tag(w, h, face)
+        leaf = detailing.sliding_leaf(w, h)
+        s = Scene("SlidingDoor", "Node3D")
+        s.nodes[0][3].update(script=script(s, "World/SlidingDoorway.cs"))
+        for name, sign, off in (("LeafL", -1, detailing.LEAF_OFF_M[0]), ("LeafR", 1, detailing.LEAF_OFF_M[1])):
+            body = s.node(name, "AnimatableBody3D", ".", position=v3(sign * (w / 2 - leaf["w"] / 2), 0, off + leaf["t"] / 2),
+                          collision_layer=64, script=s.ext_res("Script", "res://scripts/World/Door.cs"), Controlled=True,
+                          OpenOffset=v3(sign * leaf["w"], 0, 0))
+            s.instance("Model", PROPS + f"sliding_{tag}.glb", body)
+            s.node("CollisionShape3D", "CollisionShape3D", body, position=v3(0, leaf["h"] / 2, 0),
+                   shape=s.sub_res("BoxShape3D", size=v3(leaf["w"], leaf["h"], leaf["t"])))
+        s.save(out(f"doors/sliding_{tag}.tscn"))
+
+
 def barrier():
     """The checkpoint boom: its arm lifts about Z from the left post."""
     s = Scene("Barrier", "Node3D")
@@ -279,6 +304,7 @@ def main():
     player()
     npc()
     door()
+    sliding_doors()
     barrier()
     for m in ("locker", "safe", "crate", "tool_box", "shelf", "offering_box", "stash_box"):
         loot(m)

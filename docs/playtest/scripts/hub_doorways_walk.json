@@ -1,0 +1,18 @@
+{"out": "/tmp/undercity_doors_walk", "god": true,
+ "steps": [
+  {"log": "hub doorways (openspec/changes/hub-doorways): a walk down Wire Lane past its shanty doors, through the Rusty Anchor's sliding entrance, and up Clinic Lane into the Fish Hall's north entrance. Run with --write-movie at --fixed-fps 30"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"wait": 20},
+  {"teleport": [31.0, 0.3, 48.0], "yaw": 180, "pitch": -4},
+  {"wait": 20},
+  {"walk_to": [30.0, 62.0], "within": 0.4, "max": 420},
+  {"teleport": [90.0, 0.3, 34.0], "yaw": 180, "pitch": -2},
+  {"wait": 20},
+  {"walk_to": [90.0, 50.0], "within": 0.4, "max": 480},
+  {"wait": 20},
+  {"teleport": [174.0, 0.3, 64.0], "yaw": 180, "pitch": -2},
+  {"wait": 20},
+  {"walk_to": [174.0, 82.0], "within": 0.4, "max": 540},
+  {"wait": 30},
+  {"quit": true}
+ ]}

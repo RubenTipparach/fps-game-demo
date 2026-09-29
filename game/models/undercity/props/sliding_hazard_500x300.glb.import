@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bg6tn5o487y71"
-path="res://.godot/imported/safe.glb-b5f1bbd9bbf0ce8872725dd2afdb1e23.scn"
+uid="uid://tarjrtfg40th"
+path="res://.godot/imported/sliding_hazard_500x300.glb-afef6a6cfdd6232d7883ce6089524478.scn"
 
 [deps]
 
-source_file="res://models/undercity/props/safe.glb"
-dest_files=["res://.godot/imported/safe.glb-b5f1bbd9bbf0ce8872725dd2afdb1e23.scn"]
+source_file="res://models/undercity/props/sliding_hazard_500x300.glb"
+dest_files=["res://.godot/imported/sliding_hazard_500x300.glb-afef6a6cfdd6232d7883ce6089524478.scn"]
 
 [params]
 
@@ -26,7 +26,7 @@ nodes/use_node_type_suffixes=true
 meshes/ensure_tangents=true
 meshes/generate_lods=false
 meshes/create_shadow_meshes=true
-meshes/light_baking=2
+meshes/light_baking=3
 meshes/lightmap_texel_size=0.05
 meshes/force_disable_compression=false
 skins/use_named_skins=true
@@ -79,7 +79,6 @@ _subresources={
 },
 "brass": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/brass.tres",
 "use_external/path": "res://materials/props/brass.tres"
 },
 "brick_wall": {
@@ -132,6 +131,7 @@ _subresources={
 },
 "diamond_plate": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/diamond_plate.tres",
 "use_external/path": "res://materials/diamond_plate.tres"
 },
 "door_metal": {
@@ -156,6 +156,7 @@ _subresources={
 },
 "glass": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/glass.tres",
 "use_external/path": "res://materials/glass.tres"
 },
 "gun_wood": {
@@ -164,16 +165,15 @@ _subresources={
 },
 "gunmetal": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/gunmetal.tres",
 "use_external/path": "res://materials/props/gunmetal.tres"
 },
 "gunmetal_light": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/gunmetal_light.tres",
 "use_external/path": "res://materials/props/gunmetal_light.tres"
 },
 "hazard_stripes": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/hazard_stripes.tres",
 "use_external/path": "res://materials/hazard_stripes.tres"
 },
 "hazard_triplanar": {
@@ -250,7 +250,6 @@ _subresources={
 },
 "paint_safe": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/paint_safe.tres",
 "use_external/path": "res://materials/props/paint_safe.tres"
 },
 "paper_white": {
@@ -267,7 +266,6 @@ _subresources={
 },
 "rubber": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/rubber.tres",
 "use_external/path": "res://materials/props/rubber.tres"
 },
 "rust_metal": {
@@ -308,6 +306,7 @@ _subresources={
 },
 "tech_panel": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/tech_panel.tres",
 "use_external/path": "res://materials/tech_panel.tres"
 },
 "terminal_screen": {
