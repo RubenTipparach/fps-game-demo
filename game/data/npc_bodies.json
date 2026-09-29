@@ -9,7 +9,7 @@
     // A guard's weapon stays out of sight until they fight, so the guards stand.
     "guard": "Idle",
     "hostile": "Idle",
-    "sit": "Sitting_Idle",
+    "sit": "Sitting_Idle", "fixing": "Fixing_Kneeling", "torch": "Idle_Torch",
     "surrender": "undercity/Surrender",
     "cower": "undercity/Cower",
     "death": "Death01",

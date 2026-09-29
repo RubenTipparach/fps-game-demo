@@ -13,6 +13,8 @@ import json
 import pathlib
 import sys
 
+from shapely.geometry import Point, Polygon
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "levels"))
 
@@ -21,12 +23,24 @@ KINDS = {"loot": "containers", "terminal": "terminals", "door": "doors", "trigge
 NO_DATA = {"spawn", "npc", "civ", "bed", "stash"}
 
 
+def crowd_place(e, layout):
+    """Where a civilian stands, for the crowd rule (openspec/changes/crowd-variety): the place in
+    layout metres, the district it stands in (none between districts) and whether it is inside a
+    named building (umbrellas are for outdoors)."""
+    x, y = (float(v) for v in e["at"])
+    pt = Point(x, y)
+    district = next((d["name"].lower().replace(" ", "_") for d in layout.get("districts", [])
+                     if Polygon(d["poly"]).covers(pt)), None)
+    indoors = any(Polygon(b["poly"]).covers(pt) for b in layout.get("buildings", []))
+    return {"at": [x, y], "district": district, "indoors": indoors}
+
+
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
     layout = importlib.import_module(f"layouts.{level_id}").MAP
     title = layout["title"].title()
     out = {"id": level_id, "title": title, "spawns": [],
-           **{v: {} for v in KINDS.values()}, "npcs": {}, "water": [], "districts": []}
+           **{v: {} for v in KINDS.values()}, "npcs": {}, "crowd": {}, "water": [], "districts": []}
     # The layout's districts, for the conversation rig's gels (openspec/changes/character-lighting).
     for d in layout.get("districts", []):
         out["districts"].append({"id": d["name"].lower().replace(" ", "_"),
@@ -52,6 +66,7 @@ def export(level_id):
             out["npcs"][sid] = e["props"]["npc"]
         elif kind == "civ":
             out["npcs"][sid] = "civ"
+            out["crowd"][sid] = crowd_place(e, layout)
         elif kind in KINDS:
             if "data" not in e:
                 raise SystemExit(f"{level_id}: {kind} '{local}' has no data")

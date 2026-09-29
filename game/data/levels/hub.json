@@ -450,6 +450,256 @@
   "hub:civ_30": "civ",
   "hub:civ_31": "civ"
  },
+ "crowd": {
+  "hub:civ_01": {
+   "at": [
+    20.0,
+    41.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_02": {
+   "at": [
+    70.0,
+    40.5
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_03": {
+   "at": [
+    100.0,
+    39.5
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_04": {
+   "at": [
+    125.0,
+    38.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_05": {
+   "at": [
+    150.0,
+    39.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_06": {
+   "at": [
+    180.0,
+    40.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_07": {
+   "at": [
+    119.0,
+    50.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_08": {
+   "at": [
+    120.0,
+    65.0
+   ],
+   "district": "lantern_row",
+   "indoors": false
+  },
+  "hub:civ_09": {
+   "at": [
+    95.0,
+    80.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_10": {
+   "at": [
+    100.0,
+    92.5
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_11": {
+   "at": [
+    112.0,
+    89.4
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_12": {
+   "at": [
+    125.0,
+    85.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_13": {
+   "at": [
+    135.0,
+    95.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_14": {
+   "at": [
+    145.0,
+    85.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_15": {
+   "at": [
+    150.0,
+    105.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_16": {
+   "at": [
+    115.0,
+    110.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_17": {
+   "at": [
+    100.0,
+    108.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_18": {
+   "at": [
+    83.0,
+    57.0
+   ],
+   "district": "lantern_row",
+   "indoors": true
+  },
+  "hub:civ_19": {
+   "at": [
+    90.0,
+    64.5
+   ],
+   "district": "lantern_row",
+   "indoors": true
+  },
+  "hub:civ_20": {
+   "at": [
+    75.0,
+    68.0
+   ],
+   "district": "lantern_row",
+   "indoors": true
+  },
+  "hub:civ_21": {
+   "at": [
+    170.0,
+    89.4
+   ],
+   "district": "sump_market",
+   "indoors": true
+  },
+  "hub:civ_22": {
+   "at": [
+    176.0,
+    103.0
+   ],
+   "district": "sump_market",
+   "indoors": true
+  },
+  "hub:civ_23": {
+   "at": [
+    60.0,
+    97.6
+   ],
+   "district": "tin_stacks",
+   "indoors": false
+  },
+  "hub:civ_24": {
+   "at": [
+    40.0,
+    101.0
+   ],
+   "district": "tin_stacks",
+   "indoors": false
+  },
+  "hub:civ_25": {
+   "at": [
+    32.0,
+    145.0
+   ],
+   "district": "tin_stacks",
+   "indoors": false
+  },
+  "hub:civ_26": {
+   "at": [
+    156.0,
+    122.0
+   ],
+   "district": "kiln",
+   "indoors": false
+  },
+  "hub:civ_27": {
+   "at": [
+    170.0,
+    129.5
+   ],
+   "district": "kiln",
+   "indoors": false
+  },
+  "hub:civ_28": {
+   "at": [
+    110.0,
+    142.0
+   ],
+   "district": "kiln",
+   "indoors": false
+  },
+  "hub:civ_29": {
+   "at": [
+    188.0,
+    80.0
+   ],
+   "district": "sump_market",
+   "indoors": false
+  },
+  "hub:civ_30": {
+   "at": [
+    217.5,
+    90.0
+   ],
+   "district": "drydock",
+   "indoors": false
+  },
+  "hub:civ_31": {
+   "at": [
+    230.0,
+    90.0
+   ],
+   "district": "drydock",
+   "indoors": false
+  }
+ },
  "water": [
   {
    "id": "the_cut",

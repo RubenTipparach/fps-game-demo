@@ -124,6 +124,41 @@ A core test runs the hub's placement data with seeds 1-100 and asserts both.
 Each civilian's role comes from its placement's district (market: shopper; Tin Stacks and
 Lantern Row: resident; Drydock and Kiln: dockhand), or a `role` prop in `hub_entities.py`.
 
+### 5. Found in building
+
+- **The age band is pinned, not found by seed.** MPFB's skin bands are slider ages 0.65 and
+  0.85, 44.5 and 70.5 years, and the civilian range stops at 74, so almost no seed lands "old"
+  (none of the first six did; civ_a at 65.8 years is middle-aged). A civilian row may now name
+  an `age_band`, and the age is drawn inside the table's `age_bands_years` for it, with the
+  same single draw, so the first six rebuild byte for byte. The build refuses a body whose skin
+  band isn't the row's.
+- **The grid, as built.** The first six held five cells (civ_b and civ_d are both young
+  Caucasian women), so the twelve new rows take twelve of the thirteen empty cells, leaving
+  middle-aged Caucasian women out: 6 bodies per ethnicity, 9 men and 9 women, 7 young,
+  5 middle-aged and 6 old.
+- **Eyelashes stay the default.** Drawing them from the seed would move every later draw and
+  change the first six bodies.
+- **MerSec's three faces are `mersec`, `mersec_b` and `mersec_c`**, keeping the first body's id
+  (the troopers' data and scenes name it). mersec_c is a woman; the kit's shoulder plate cut her
+  body at the stress pose until her proportions were slimmed (muscle 0.6, weight 0.4).
+- **`male_casualsuit01` is decimated to 0.4**: it has 8,336 faces, and civ_j came to 22,714
+  triangles against the 16,000 budget.
+- **The level data carries no positions for civilians** (`levels/hub.json` maps each stable id
+  to "civ"), and the lookalike rule is about distance. The export gains a `crowd` block: each
+  civilian's stable id, place (layout metres), district and whether it stands indoors. The core
+  assigns the whole crowd at once, in stable id order, since a rule between neighbours can't
+  be kept by a function of one civilian: `CrowdPicker.Assign(worldSeed, crowd, table)`.
+  Each civilian, in ordinal stable-id order, shuffles its role's bodies and the palettes from
+  its own seeded stream and takes the first pair that keeps both rules (the body cap gives way
+  first if none can). On the hub's 31 civilians, seeds 1-100, both rules hold.
+- **The idles are the clips UAL Standard has.** It has no phone, lean, smoke or look-around
+  clip: shoppers and residents idle or talk, dockhands idle or kneel at a repair
+  (`Fixing_Kneeling`), and an umbrella forces `Idle_Torch`, which holds it up. The body table
+  gains the states `fixing` and `torch`.
+- **Accessories carry a slot as well as a bone** (hat, ears, eyes, mouth, temple, a hand, the
+  left forearm), so a cap and headphones can share the head but two hats can't. The umbrella
+  is drawn first, outdoors only, then up to two in all.
+
 ## Risks / Trade-offs
 
 - **Hue shifts can make clothes look dyed wrong.** The palettes are ranges tuned on the lineup

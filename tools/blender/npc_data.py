@@ -99,12 +99,18 @@ NAMED = Obj({
     "gear": List(Str(), []),
 })
 
+AGE_BANDS = ("young", "middleage", "old")
+
 CIVILIAN = Obj({
     "id": Str(),
     "role": Str(""),
     "seed": Int(lo=0, hi=(1 << 31) - 1),
     "sex": Str(choices=SEXES),
     "race": Str(choices=RACES),
+    # openspec/changes/crowd-variety: draw the age inside one of MPFB's skin bands (the table's
+    # civilian_range.age_bands_years), so the rows can cover the CC0 skin grid; unset, the age is
+    # drawn over the whole civilian range as before.
+    "age_band": Str(None, choices=AGE_BANDS, nullable=True),
     "skin_tone": Colour(None, nullable=True),
     "eyelashes": Asset("eyelashes01"),
     "hair": Asset(None, nullable=True),
@@ -169,6 +175,7 @@ TABLE_SCHEMA = Obj({
         "height_mean_m": Obj({"male": Num(lo=1.0, hi=2.3), "female": Num(lo=1.0, hi=2.3)}),
         "height_sd_m": Num(lo=0.0, hi=0.5),
         "age_years": Vec(2, lo=18.0, hi=90.0),
+        "age_bands_years": Obj({b: Vec(2, lo=18.0, hi=90.0) for b in AGE_BANDS}),
         "race_pin_weight": Num(lo=0.0, hi=1.0),
         "eyebrows": List(Asset(), min_len=1),
         "eyes": List(Asset(), min_len=1),

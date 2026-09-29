@@ -296,6 +296,12 @@ public sealed class LevelDef : IValidated
     /// <summary>NPC placements by stable id: the NPC id (named) or "civ" (a civilian).</summary>
     public IReadOnlyDictionary<string, string> Npcs { get; init; } = new Dictionary<string, string>();
 
+    /// <summary>
+    /// Where each civilian stands, by stable id, for the crowd rule (openspec/changes/crowd-variety):
+    /// every "civ" placement in <see cref="Npcs"/> has one.
+    /// </summary>
+    public IReadOnlyDictionary<string, CrowdPlace> Crowd { get; init; } = new Dictionary<string, CrowdPlace>();
+
     /// <summary>The level's water bodies, from its layout (openspec/changes/water-and-swimming).</summary>
     public IReadOnlyList<WaterBody> Water { get; init; } = Array.Empty<WaterBody>();
 
@@ -323,6 +329,25 @@ public sealed class LevelDef : IValidated
         foreach (var dup in Water.GroupBy(w => w.Id).Where(g => g.Count() > 1))
         {
             errors.Add($"levels.{Id}: water id '{dup.Key}' is used twice");
+        }
+        foreach (var (sid, _) in Npcs.Where(n => n.Value == "civ" && !Crowd.ContainsKey(n.Key)))
+        {
+            errors.Add($"levels.{Id}.crowd: civilian '{sid}' has no place");
+        }
+        foreach (var (sid, place) in Crowd)
+        {
+            if (!Npcs.TryGetValue(sid, out var who) || who != "civ")
+            {
+                errors.Add($"levels.{Id}.crowd: '{sid}' isn't a civilian placement");
+            }
+            if (place.At.Count != 2 || !place.At.All(double.IsFinite))
+            {
+                errors.Add($"levels.{Id}.crowd.{sid}.at: needs [x, y] in finite metres");
+            }
+            if (place.District is { } d && Districts.All(x => x.Id != d))
+            {
+                errors.Add($"levels.{Id}.crowd.{sid}.district: no district '{d}'");
+            }
         }
         foreach (var w in Water)
         {

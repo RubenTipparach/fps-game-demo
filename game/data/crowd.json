@@ -1,0 +1,51 @@
+// The crowd (openspec/changes/crowd-variety, design sections 2 to 5): the bodies, palettes,
+// accessories and idles civilians draw from by role, and the rule against lookalikes.
+// core/Undercity.Core/World/Crowd.cs reads it; CrowdPicker.Assign decides the whole crowd from the
+// world seed. A role's idles and an accessory's idle are states of npc_bodies.json. UAL Standard
+// has no phone, lean, smoke or look-around clip, so the idles are the ones it has.
+{
+  "lookalike_radius_m": 15.0,
+  "max_per_body": 3,
+  "scale_range": [0.95, 1.05],
+  "max_accessories": 2,
+  "rain_umbrella_share": 0.35,
+  "umbrella": "umbrella",
+  "body_pools": {
+    "civilian": ["civ_a", "civ_b", "civ_c", "civ_d", "civ_e", "civ_f", "civ_g", "civ_h", "civ_i",
+                 "civ_j", "civ_k", "civ_l", "civ_m", "civ_n", "civ_o", "civ_p", "civ_q", "civ_r"]
+  },
+  "palettes": {
+    "as_built": {"hue_deg": 0, "sat": 1.0},
+    "rust": {"hue_deg": 18, "sat": 0.9},
+    "ochre": {"hue_deg": 40, "sat": 1.0},
+    "olive": {"hue_deg": 75, "sat": 0.8},
+    "teal": {"hue_deg": 170, "sat": 0.8},
+    "slate": {"hue_deg": 210, "sat": 0.6},
+    "plum": {"hue_deg": 290, "sat": 0.85},
+    "crimson": {"hue_deg": 350, "sat": 1.1}
+  },
+  "accessories": {
+    "umbrella": {"bone": "RightHand", "slot": "hand_r", "idle": "torch"},
+    "cigarette": {"bone": "RightHand", "slot": "hand_r"},
+    "bag": {"bone": "LeftHand", "slot": "hand_l"},
+    "briefcase": {"bone": "LeftHand", "slot": "hand_l"},
+    "cap": {"bone": "Head", "slot": "hat"},
+    "beanie": {"bone": "Head", "slot": "hat"},
+    "headphones": {"bone": "Head", "slot": "ears"},
+    "visor": {"bone": "Head", "slot": "eyes"},
+    "respirator": {"bone": "Head", "slot": "mouth"},
+    "implant": {"bone": "Head", "slot": "temple"},
+    "prosthetic": {"bone": "LeftLowerArm", "slot": "arm_l"}
+  },
+  "roles": {
+    "shopper": {"bodies": "civilian", "accessories": ["umbrella", "bag", "briefcase", "headphones", "visor", "cap"],
+                "idles": ["idle", "talk"]},
+    "resident": {"bodies": "civilian", "accessories": ["umbrella", "cigarette", "beanie", "implant", "headphones"],
+                 "idles": ["idle", "talk"]},
+    "dockhand": {"bodies": "civilian", "accessories": ["respirator", "beanie", "prosthetic", "cap"],
+                 "idles": ["idle", "fixing"]}
+  },
+  "district_roles": {"sump_market": "shopper", "tin_stacks": "resident", "lantern_row": "resident",
+                     "spire_foundations": "resident", "drydock": "dockhand", "kiln": "dockhand"},
+  "default_role": "resident"
+}

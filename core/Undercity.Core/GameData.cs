@@ -100,6 +100,9 @@ public sealed class GameData
     /// <summary>data/character_lighting.json.</summary>
     public required CharacterLightingTable CharacterLighting { get; init; }
 
+    /// <summary>data/crowd.json.</summary>
+    public required CrowdTable Crowd { get; init; }
+
     /// <summary>data/dialog/*.json by tree id.</summary>
     public required IReadOnlyDictionary<string, DialogTree> Dialogs { get; init; }
 
@@ -146,6 +149,7 @@ public sealed class GameData
             Weapons = JsonData.Load<Combat.WeaponTable>(source, "weapons.json"),
             Combat = JsonData.Load<Combat.CombatTable>(source, "combat.json"),
             CharacterLighting = JsonData.Load<CharacterLightingTable>(source, "character_lighting.json"),
+            Crowd = JsonData.Load<CrowdTable>(source, "crowd.json"),
             Dialogs = dialogs,
             LevelIndex = index,
             Levels = levels,
@@ -167,6 +171,21 @@ public sealed class GameData
         foreach (var d in CharacterLighting.Gels.Keys.Where(d => !districts.Contains(d)))
         {
             errors.Add($"character_lighting.json gels: no level has a district '{d}'");
+        }
+        foreach (var d in Crowd.DistrictRoles.Keys.Where(d => !districts.Contains(d)))
+        {
+            errors.Add($"crowd.json district_roles: no level has a district '{d}'");
+        }
+        foreach (var (name, role) in Crowd.Roles)
+        {
+            foreach (var idle in role.Idles.Where(i => NpcBodies.Clip(i) is null))
+            {
+                errors.Add($"crowd.json roles.{name}.idles: '{idle}' is no state of npc_bodies.json");
+            }
+        }
+        foreach (var (id, a) in Crowd.Accessories.Where(a => a.Value.Idle is { } i && NpcBodies.Clip(i) is null))
+        {
+            errors.Add($"crowd.json accessories.{id}.idle: '{a.Idle}' is no state of npc_bodies.json");
         }
         void Item(string? id, string where)
         {

@@ -163,7 +163,8 @@ def resolve_body(table, body, m):
     rspec = rs.get_default_phenotype_spec()
     rspec["phenotype"]["attributes"]["gender"]["allowed"] = [body["sex"]]
     macro = rs.randomize_macro_info_dict(rspec, rng)
-    age_years = rng.uniform(*cr["age_years"])
+    # One draw either way, so a row without a band rebuilds byte for byte.
+    age_years = rng.uniform(*(cr["age_bands_years"][body["age_band"]] if body.get("age_band") else cr["age_years"]))
     macro["age"] = age_slider(age_years)
     w = cr["race_pin_weight"]
     race = {r: (1.0 - w) * macro["race"][r] + (w if r == body["race"] else 0.0) for r in npc_data.RACES}
@@ -176,6 +177,9 @@ def resolve_body(table, body, m):
     band = rs.skin_age_label(macro)
     if band not in ("young", "middleage", "old"):
         raise BuildError(f"{body['id']}: seed {body['seed']} gives skin age band {band!r}; adults only")
+    if body.get("age_band") and band != body["age_band"]:
+        raise BuildError(f"{body['id']}: age {age_years:.1f} gives MPFB's skin band {band!r}, not the row's "
+                         f"{body['age_band']!r}: npcs.json civilian_range.age_bands_years is off MPFB's bands")
     spec.update(macro=macro, height_m=height_m, age_years=age_years, skin=f"{band}_{body['race']}_{body['sex']}",
                 eyes=eyes, eyebrows=eyebrows, seed=body["seed"])
     return spec
