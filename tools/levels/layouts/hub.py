@@ -408,5 +408,5 @@ MAP = {
     ],
 
     "key": ["viaduct", "walkway", "route-main", "route-social", "route-stealth", "patrol", "cone",
-            "restricted", "civ", "water", "ladder"],
+            "restricted", "civ", "water", "ladder", "puddle"],
 }

@@ -175,9 +175,12 @@ stream of its own (`f"{seed}:puddles:{place}"`), so nothing else in the hub move
 
 | Rule | Where | Size | Spacing |
 |---|---|---|---|
-| **Gutter** | on the road, along a kerb in the rain, its long side 0.05 m off the kerb face | 1.5-3.5 m long, 0.4-0.7 m wide, an ellipse turned along the kerb | a gap of 4-9 m between puddles |
-| **Gully** | a grate on the road at the kerb, and a round puddle round it | 1.0-1.4 m across | every 25 m of kerb, half a step in from each end |
-| **Drip** | on open ground just outside the outer edge of an awning or the Skyway's deck, 0.05-0.35 m out | 1.0-2.5 m long, 0.4-0.6 m wide, along the edge | a gap of 1.5-4 m |
+| **Gutter** | on the road, along a kerb in the rain, the kerb cutting off its side 0.05 m from the kerb face | 2-5 m long, 0.6-1.0 m of road wide, an ellipse turned along the kerb | a gap of 1.5-4 m between puddles |
+| **Gully** | a grate on the road at the kerb, and a round puddle round it, cut off the same way | 1.2-1.8 m across | every 25 m of kerb, half a step in from each end |
+| **Drip** | on open ground just outside an awning's edge that faces away from its building, or the Skyway deck's, 0.05-0.35 m out | 1.5-3 m long, 0.5-0.8 m wide, along the edge | a gap of 1-3 m |
+
+Each kerb and each drip edge draws from its own stream, and every draw happens whether or not
+its puddle is kept, so dropping one moves none of the others.
 
 **Never:**
 - under a roof (any `Plan.shelter` with 1 m or more of headroom over the ground, the same test
@@ -192,6 +195,15 @@ stream of its own (`f"{seed}:puddles:{place}"`), so nothing else in the hub move
 **Expected** (L2, the recommended amount), from section 2's lengths: 184 gutter puddles, 66
 gullies and 135 drip puddles: **about 385 puddles, 451 m², 2.6 % of the ground**, against
 2,432 m² and 14.2 % today.
+
+**Measured on the built plan** (seed 7). The first spacing above (gutters 1.5-3.5 m long with
+gaps of 4-9 m, gullies 1.0-1.4 m, drips with gaps of 1.5-4 m) placed only 205 puddles, 181 m²
+(1.05 %). The estimate had counted every metre of kerb, but the rules then drop what they
+should: 26 candidates under the Skyway's deck, 12 beside a parked car, 21 drip lines within
+0.3 m of a building, 28 gutters touching a gully's puddle. L2 chose the amount, so the sizes and
+gaps above are the ones that reach it: **254 puddles (156 gutter, 41 gully, 57 drip), 434 m²,
+2.53 % of the ground**, and 41 gully grates. Every kerb of 40 m or more has
+a gully and at least three gutter puddles.
 
 ### 3.6 One rule each
 
@@ -213,7 +225,8 @@ gullies and 135 drip puddles: **about 385 puddles, 451 m², 2.6 % of the ground*
 | A puddle forced under the Skyway, or onto a kerb, is refused, naming it | `test_city_plan.py` | | passes |
 | The committed mask agrees with the plan: each puddle's centre reads inside at its height; 0.3 m outside every puddle reads dry | a `tools/levels` test on `hub_puddles.png` | | passes |
 | The canal and the ground include the one ripple function, neither defines its own, and the ground's ripple numbers equal the water's | a `tools/godot` test on the shader and `.tres` files | | passes |
-| Every puddle in the built level is in the rain by the core's rule | `placement_test.tscn` (`Wetness.Sheltered` at each puddle's centre and ends, from the level data) | | about 385 of 385 |
+| Every puddle is in the rain by the core's rule | `Undercity.Core.Tests` (`PuddleDef.InTheRain`: `Wetness.Sheltered` at every point of each outline, from the level data) | | 254 of 254 |
+| The level hands the mask to the ground's shader | `lighting_test.tscn` (the `puddle_rect_m` global after the hub loads) | | the hub's rect |
 | The map and the level agree | the design map draws `City.puddles()` | | |
 
 ### 3.8 Captures

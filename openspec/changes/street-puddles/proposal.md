@@ -54,7 +54,8 @@ puddles are drawn by the ground's shader instead, and they ripple.
 
   Never under a roof, never over a kerb top or a stair, and never within reach of a wall. The
   choices come from a seeded stream of their own, so nothing else in the hub moves.
-- **About 385 puddles, 451 m², 2.6 % of the ground** instead of 14.2 % (L2).
+- **254 puddles, 434 m², 2.53 % of the ground** instead of 14.2 % (L2, about 2.6 %; design
+  section 3.5).
 - **The design map** draws them, from the same plan, so the map and the level agree
   (CLAUDE.md 7.1).
 - **Checks:**

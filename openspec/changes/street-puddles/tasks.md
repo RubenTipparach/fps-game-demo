@@ -24,13 +24,18 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
 
 ## 3. The plan
 
-- [ ] 3.1 `City.puddles()`: gutter, gully and drip rules, the exclusions, a stream of its own.
-- [ ] 3.2 `check_puddles`, and `test_city_plan.py`: the hub passes; a puddle under the Skyway
+- [x] 3.1 `City.puddles()`: gutter, gully and drip rules, the exclusions, a stream of its own.
+- [x] 3.2 `check_puddles`, and `test_city_plan.py`: the hub passes; a puddle under the Skyway
   and one on a kerb are refused, named.
-- [ ] 3.3 The mask writer (`hub_puddles.png`: distance and height), and its test against the
+- [x] 3.3 The mask writer (`hub_puddles.png`: distance and height), and its test against the
   plan.
-- [ ] 3.4 The level data's puddles and mask rect; `ENT_gully` entities; the design map draws the
+- [x] 3.4 The level data's puddles and mask rect; `ENT_gully` entities; the design map draws the
   puddles.
+
+  Built: 254 puddles, 434 m², 2.53 % (the first spacing gave 1.05 %; design section 3.5), 41
+  gullies; the core's rain check moved from the placement test to `Undercity.Core.Tests`
+  (design section 3.7). The generator and material-writer code for 2.1 and 2.3 is in, but the
+  textures and materials are not regenerated yet.
 
 ## 4. The game
 
