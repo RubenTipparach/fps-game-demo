@@ -50,6 +50,7 @@
   <a href="#crowd"><b>F17</b>Crowd</a>
   <a href="#hubcombat"><b>F18</b>The Kestrel</a>
   <a href="#doorways"><b>F19</b>Doorways</a>
+  <a href="#puddles"><b>F20</b>Puddles</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -123,9 +124,10 @@
         <tr><td><span class="chip built">Built</span></td><td>The Kestrel fires (F18): everyone can be shot by the one damage rule, people fight, flee, cower or surrender, gunfire turns MerSec, and death fades to the newest save. See <code>docs/validation/2026-09-28-hub-combat.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Meridian's towers (F15): the Halcyon Spire and 31 more stand around the hub by four checked rules, drawn in 5 surfaces with their own haze out to 1,500 m, and the Spire's two searchlights sweep the sky. Video: <code>docs/screenshots/hub_skyline/hub_skyline.mp4</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>The crowd (F17): 18 civilian bodies and 3 MerSec faces; each civilian's body, palette, accessories, height and idle picked for the whole crowd by one rule in the core, with no lookalikes within 15 m; four talking pairs. See <code>docs/validation/2026-09-29-crowd-variety.md</code>.</td></tr>
-        <tr><td><span class="chip proposed">In progress</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig are built and tested; the faces are being tuned, and survey J1 asks how one key meets every skin tone and place.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig, accepted as they look (owner J1); skin and clothes follow where a character stands, dry under a roof and wet in the rain. Tank's highlight at the bar falls from 148 to 101.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
-        <tr><td><span class="chip proposed">Proposed</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, and a clear approach to every entrance. Waiting on survey K1 to K3.</td></tr>
+        <tr><td><span class="chip proposed">In progress</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, and a clear approach to every entrance. Decided (K1 to K3): no prompt on doors that never open, automatic sliding doors on the public entrances, a room in each named shell. The plan is built and checked (46 framed doors, 244 dressing doors, 15 lots cut back); the sliding doors, the rebake and the captures are next.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs, and become decals placed where water gathers: gutters, drip edges, gullies. Asked: L1 to L3.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
       </tbody></table></div>
     </div>
@@ -880,8 +882,9 @@
         <tr><td><code>perception-and-disguise</code></td><td>sight, noise, states, alarms, disguise verdict</td><td class="n">9</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
-        <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin</td><td class="n">4</td><td><span class="chip proposed">Proposed</span></td></tr>
-        <tr><td><code>hub-doorways</code></td><td>every door framed, a door on every building on the street, clear approaches</td><td class="n">3</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin, dry and wet</td><td class="n">5</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
+        <tr><td><code>hub-doorways</code></td><td>every door framed, a door on every building on the street, clear approaches</td><td class="n">3</td><td><span class="chip proposed">In progress</span></td></tr>
+        <tr><td><code>street-puddles</code></td><td>puddles where water gathers, as decals; none under a roof</td><td class="n">1</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, talking pairs, the body pool</td><td class="n">4</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -1043,9 +1046,9 @@
 
 <!-- ========================================================= F16 -->
 <section id="faces">
-  <div class="sh"><span class="key">F16</span><h2>Faces, skin and coloured gels</h2><span class="spec">openspec/changes/character-lighting</span></div>
+  <div class="sh"><span class="key">F16</span><h2>Faces, skin and coloured gels</h2><span class="spec">openspec/specs/character-lighting</span></div>
   <p class="intro">Owner, 2026-09-28: faces are too dark in conversation, skin needs normal maps, and the runner needs a light source; coloured gels suit cyberpunk. Measured: Tank's face at the bar is 23 of 255 luma, while Lin under the shrine's lights is 161. Faces read only where the level happens to light them. The fix is new lights that touch only characters: the wrist-deck's glow, and a key and two gels when a conversation opens. It follows the owner's reference (Digital Camera's lighting guide: LOOP, KEY WITH A CLOSE SOFTBOX, COLOURED GELS).</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (I9 to I12) · third</span></div>
+  <div class="controls"><span class="chip built">Built (I9 to I12, J1; I1: third)</span><span class="chip enforced">Checked: 201 core tests, lighting test 24 of 24</span></div>
   <div class="sub">
     <h3>The conversation rig, from above <small>angles around the speaker's head, 0° toward the camera</small></h3>
     <div class="diagram" role="img" aria-label="Top view of the conversation lighting rig: warm key, magenta rim gel, blue accent gel and the wrist light">
@@ -1072,7 +1075,7 @@
     <div class="scroll"><table class="tbl">
       <thead><tr><th>Face</th><th class="n">Today</th><th>Target in conversation</th></tr></thead>
       <tbody>
-        <tr><td>Tank at the Anchor's bar</td><td class="n">23</td><td rowspan="4">95-150; lit side 2-4 x the shadow side; a gel rim beside the head; the rest of the frame within 2 %</td></tr>
+        <tr><td>Tank at the Anchor's bar</td><td class="n">23</td><td rowspan="4">the rig brightens the face; a gel rim beside the head; the rest of the frame within 2 %. The aims of 95-150 and a lit side 2-4 x the shadow are recorded per face, not gated (owner J1)</td></tr>
         <tr><td>Silk, Lantern Row at night</td><td class="n">60</td></tr>
         <tr><td>Petra, the depot at night</td><td class="n">112</td></tr>
         <tr><td>Sister Lin, the shrine hall</td><td class="n">161</td></tr>
@@ -1080,9 +1083,32 @@
     <p class="note">Skin gains a normal map derived from its CC0 texture's own pores and creases, a roughness mask shared by every body (oilier T-zone), subsurface scattering in skin mode and the MakeHuman specular (F0 0.028). Gels by district: Lantern Row magenta/cyan, Sump Market cyan/magenta, Tin Stacks amber/blue, Kiln ember/blue, Drydock sodium/violet.</p>
   </div>
   <div class="sub">
+    <h3>Dry under a roof, wet in the rain <small>owner J1: "he's not wet in doors"</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Surface</th><th>Dry (under a roof)</th><th>Wet (in the rain)</th></tr></thead>
+      <tbody>
+        <tr><td>Skin roughness</td><td>T-zone 0.60, cheeks 0.73, body 0.80</td><td>0.42, 0.55, 0.62: the look Tank had indoors</td></tr>
+        <tr><td>Cloth</td><td>roughness 0.70</td><td>roughness 0.45, 0.8 times as bright</td></tr>
+        <tr><td>Eyes, hair</td><td colspan="2">unchanged</td></tr>
+        <tr><td>How fast</td><td>dries over 240 s</td><td>soaks over 20 s</td></tr>
+      </tbody></table></div>
+    <p class="note">A roof is a building, an awning, a kiosk, the Skyway's deck or a walkway: what stops the rain. The plan registers the hub's 414 roofs where it builds them, the level data carries them, and the core decides who is under one; each NPC carries its wetness to its skin and outfit shaders. The lighting stays at its first tuning ("tank looks fine with lighting"), with no per-face exposure.</p>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Speaker, rig on</th><th class="n">Wetness</th><th class="n">Highlight before</th><th class="n">After</th></tr></thead>
+      <tbody>
+        <tr><td>Tank, the Anchor's bar</td><td class="n">0</td><td class="n">148</td><td class="n">101</td></tr>
+        <tr><td>Silk, the Anchor's back room</td><td class="n">0</td><td class="n">185</td><td class="n">177</td></tr>
+        <tr><td>Petra, the depot</td><td class="n">0</td><td class="n">214</td><td class="n">210</td></tr>
+        <tr><td>Nguyen, under the Skyway</td><td class="n">0</td><td class="n">233</td><td class="n">233</td></tr>
+        <tr><td>Lin, the shrine</td><td class="n">0</td><td class="n">231</td><td class="n">230</td></tr>
+        <tr><td>Dace, the checkpoint gate, in the rain</td><td class="n">1</td><td class="n">140</td><td class="n">139</td></tr>
+      </tbody></table></div>
+    <p class="note">Highlight: the mean luma of the face's brightest tenth. Faces lit near white (Nguyen, Lin) barely move: diffuse light sets their brightest tenth. Stills: <code>docs/screenshots/character_lighting/</code>.</p>
+  </div>
+  <div class="sub">
     <h3>D9 · Conversation framing <small>approved (I11); today the view just freezes</small></h3>
     <div class="diagram" role="img" aria-label="Two conversation frames: today's 67 degree view and a 48 degree framing with the face above the dialog band">
-      <svg viewBox="0 0 1600 490">
+      <svg viewBox="0 0 1600 480">
         <rect width="1600" height="480" fill="#0a0f14"/>
         <g transform="translate(40 30)">
           <rect width="720" height="405" fill="#161c23" stroke="#1f2c37"/>
@@ -1163,7 +1189,7 @@
 <section id="doorways">
   <div class="sh"><span class="key">F19</span><h2>Doorways</h2><span class="spec">openspec/changes/hub-doorways</span></div>
   <p class="intro">Owner, 2026-09-29: "a lot of buildings are missing door ways or doors, review guidelines for level design that we did in e1 m3". They are: 214 of the 225 buildings that face a street, lane or passage show no way in, and the 11 that do show a bare hole. E1M3's door rules (a carved opening at the frame's size, a frame standing proud, a lit lintel, nothing standing in front) never reached the hub's plan. This change builds every door by them, at the hub's own sizes, gives every building a door, and clears the ground in front of each entrance.</p>
-  <div class="controls"><span class="chip proposed">Proposed: waiting on survey K1 to K3</span><span class="chip">Measured on the committed plan, seed 7</span><span class="chip">Stills: docs/screenshots/hub_doorways/</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (K1 to K3)</span><span class="chip">Measured on the committed plan, seed 7</span><span class="chip">Stills: docs/screenshots/hub_doorways/</span></div>
   <div class="sub">
     <h3>What the street sees today <small>225 buildings with a wall of 2.2 m or more on walkable ground</small></h3>
     <div class="scroll"><table class="tbl">
@@ -1173,8 +1199,8 @@
         <tr><td>A dark 1.0 x 2.15 m recess, no frame, no door (shanties)</td><td class="n">78</td><td>a framed plank or sheet door, some boarded, some padlocked</td></tr>
         <tr><td>Shop windows and shutters, no way into the shop</td><td class="n">28</td><td>a glazed door in every shop bay; a residents' door on two floors or more</td></tr>
         <tr><td>A roll-up or loading door painted on a recess</td><td class="n">25</td><td>a steel man door beside it; the shutter gains a hood box and guide rails</td></tr>
-        <tr><td>A lit 3 x 2.85 m recess you can't enter (Neon Koi, Pachinko Sunrise, Bubble Wash)</td><td class="n">3</td><td>one enterable room each, or a door behind a shutter (K3)</td></tr>
-        <tr><td>A real entrance, carved as a bare hole</td><td class="n">11</td><td>framed; entrances 2 m and wider get a portal with a lit lintel</td></tr>
+        <tr><td>A lit 3 x 2.85 m recess you can't enter (Neon Koi, Pachinko Sunrise, Bubble Wash)</td><td class="n">3</td><td>one enterable room each, with a sliding entrance (K3)</td></tr>
+        <tr><td>A real entrance, carved as a bare hole</td><td class="n">11</td><td>framed; entrances 2 m and wider get a portal, a lit lintel and automatic sliding doors (K2)</td></tr>
       </tbody></table></div>
     <p class="note">The enterable buildings have 43 doors, 21 of them exterior. None is framed, and only the 5 locked doors have a leaf. Ten exterior doors open onto a gap 1.20-1.35 m wide facing a filler building's wall, the Fish Hall's two 4 m entrances, Precinct 9's front and the checkpoint's among them. Lots keep 0.9 m from named buildings and then shrink 0.3-0.7 m, and nothing kept a door's approach clear.</p>
   </div>
@@ -1195,6 +1221,9 @@
         <!-- B: entrance portal, 3.0 x 3.0 clear -->
         <rect x="440" y="160" width="240" height="240" fill="#0a0f14"/>
         <rect x="440" y="360" width="240" height="40" fill="#141c24"/>
+        <rect x="440" y="164" width="84" height="236" fill="#566370"/><rect x="446" y="170" width="72" height="230" fill="#2b4a52" opacity=".9"/>
+        <rect x="596" y="164" width="84" height="236" fill="#566370"/><rect x="602" y="170" width="72" height="230" fill="#2b4a52" opacity=".9"/>
+        <path d="M530 280 h-18 m0 0 l8 -6 m-8 6 l8 6 M590 280 h18 m0 0 l-8 -6 m8 6 l-8 6" stroke="#35e0ff" stroke-width="2.5" fill="none"/>
         <rect x="432" y="152" width="8" height="248" fill="#566370"/><rect x="680" y="152" width="8" height="248" fill="#566370"/><rect x="432" y="152" width="256" height="8" fill="#566370"/>
         <rect x="404" y="152" width="28" height="248" fill="#7d8b97"/><rect x="688" y="152" width="28" height="248" fill="#7d8b97"/>
         <rect x="400" y="356" width="36" height="44" fill="#8a98a4"/><rect x="684" y="356" width="36" height="44" fill="#8a98a4"/>
@@ -1221,7 +1250,7 @@
         <rect x="1406" y="232" width="88" height="168" fill="#4a3b30"/><rect x="1414" y="240" width="72" height="160" fill="#6b4f36"/>
         <rect x="1400" y="286" width="100" height="12" fill="#8a6a48" transform="rotate(-14 1450 292)"/><rect x="1400" y="340" width="100" height="12" fill="#8a6a48" transform="rotate(10 1450 346)"/>
         <g font-family="IBM Plex Mono, monospace" font-size="14" fill="#8a9bab" text-anchor="middle">
-          <text x="200" y="428">locked door: a leaf</text><text x="200" y="446">1.4 x 2.4 clear</text><text x="200" y="464">carved 1.6 x 2.5</text><text x="560" y="428">entrance, 2 m and wider</text><text x="560" y="446">a portal, a lit lintel</text><text x="560" y="464">the sign above it</text><text x="980" y="428">shop bay</text><text x="980" y="446">window and glazed door</text><text x="980" y="464">one frame round both</text><text x="1244" y="428">residents' door</text><text x="1244" y="446">buzzer, lamp over it</text><text x="1450" y="428">shanty door</text><text x="1450" y="446">0.9 x 2.0</text><text x="1450" y="464">some boarded</text>
+          <text x="200" y="428">locked door: a leaf</text><text x="200" y="446">1.4 x 2.4 clear</text><text x="200" y="464">carved 1.6 x 2.5</text><text x="560" y="428">entrance, 2 m and wider</text><text x="560" y="446">a portal, a lit lintel</text><text x="560" y="464">sliding doors open as you walk up</text><text x="980" y="428">shop bay</text><text x="980" y="446">window and glazed door</text><text x="980" y="464">one frame round both</text><text x="1244" y="428">residents' door</text><text x="1244" y="446">buzzer, lamp over it</text><text x="1450" y="428">shanty door</text><text x="1450" y="446">0.9 x 2.0</text><text x="1450" y="464">some boarded</text>
         </g>
         <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#d9e2e9">
           <text x="286" y="206">REVEAL 0.1</text><text x="286" y="224">architrave 0.15,</text><text x="286" y="240">0.1 proud</text>
@@ -1229,7 +1258,7 @@
         </g>
       </svg>
     </div>
-    <p class="note">One frame builder (<code>detailing.door_frame</code>) makes every one of them from boxes in the sector mesh: liners fill the 0.1 m reveals and an architrave or portal stands proud of each face, all registered with the z-fighting check. The layout's width stays the clear opening, so the door leaf and every door entity keep their size. Under K2 as recommended, only a door with a lock has a leaf; the rest are open, framed doorways.</p>
+    <p class="note">One frame builder (<code>detailing.door_frame</code>) makes every one of them from boxes in the sector mesh: liners fill the 0.1 m reveals and an architrave or portal stands proud of each face, all registered with the z-fighting check. The layout's width stays the clear opening, so the door leaf and every door entity keep their size. Public entrances slide open as you walk up (owner K2): E1M3&#39;s own split sliding door, which now opens for NPCs too, with its timings in <code>data/doors.json</code>. Locked doors keep their swinging leaf, other doors are open, framed doorways, and closed doors on buildings with no inside show no prompt (K1).</p>
   </div>
   <div class="sub">
     <h3>A clear approach <small>the Fish Hall's north entrance in plan; 24 px = 1 m</small></h3>
@@ -1268,8 +1297,46 @@
         <tr><td>Every exterior door's approach is clear and reaches the street</td><td><code>city_plan.check_door_approaches</code></td><td>10 doors</td></tr>
         <tr><td>The doors add at most 30,000 triangles (about 22,000 planned)</td><td><code>city_plan</code> stats</td><td></td></tr>
         <tr><td>The navmesh reaches the runner's spawn from outside every exterior door</td><td><code>placement_test.tscn</code></td><td></td></tr>
+        <tr><td>Every sliding leaf has room to open</td><td><code>city_plan.check_sliding_room</code></td><td></td></tr>
+        <tr><td>A sliding entrance opens for the runner and for an NPC, and closes behind them</td><td><code>door_test.tscn</code></td><td></td></tr>
       </tbody></table></div>
-    <p class="note">Survey K1 asks what a closed door on a building with no inside does when used, K2 whether public entrances are open doorways or doors you open, K3 what the three named shells become.</p>
+    <p class="note">Decided 2026-09-29: K1, no prompt on doors that never open; K2, automatic sliding doors on the public entrances; K3, one room in each named shell, which makes 18 public entrances.</p>
+  </div>
+</section>
+
+<!-- ========================================================= F20 -->
+<section id="puddles">
+  <div class="sh"><span class="key">F20</span><h2>Puddles</h2><span class="spec">openspec/changes/street-puddles</span></div>
+  <p class="intro">Owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?" Today the puddles are painted into the asphalt and paving textures, so the same blobs repeat every 4 m and 2 m across the whole hub, on kerbs, against walls and under roofs. The proposal takes them out of the textures and places them as decals where rain water would gather.</p>
+  <div class="controls"><span class="chip proposed">Proposed · asked (L1 to L3)</span><span class="chip">Measured on the committed textures and plan, seed 7</span></div>
+  <div class="sub">
+    <h3>Today and proposed <small>one real stretch round the garage, 48 x 30 m; the right panel is a sketch of the rules</small></h3>
+    <div class="diagram" role="img" aria-label="Two plans of the same street: today's grid of texture puddles, including under the Skyway, and the proposed puddles along kerbs and drip edges, none under the deck">
+      <!--MAP:puddles_mockup-->
+    </div>
+  </div>
+  <div class="sub">
+    <h3>Measured</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th></th><th class="n">Today</th><th class="n">Proposed</th></tr></thead>
+      <tbody>
+        <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">about 451 m² (2.6 %)</td></tr>
+        <tr><td>Of it under a roof, where no rain falls</td><td class="n">328 m²</td><td class="n">0</td></tr>
+        <tr><td>Pattern</td><td class="n">repeats every 4 m (road) and 2 m (paving)</td><td class="n">none: each puddle its own shape and size</td></tr>
+        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">about 385 decals: 184 gutter, 66 gully, 135 drip</td></tr>
+      </tbody></table></div>
+  </div>
+  <div class="sub">
+    <h3>Where water gathers</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Rule</th><th>Where</th><th>Size</th></tr></thead>
+      <tbody>
+        <tr><td>Gutter</td><td>on the road along a kerb in the rain (1,657 m of kerb), gaps of 4-9 m</td><td>1.5-3.5 x 0.4-0.7 m</td></tr>
+        <tr><td>Gully</td><td>a drain grate at the kerb every 25 m, a round puddle round it</td><td>1.0-1.4 m across</td></tr>
+        <tr><td>Drip</td><td>just outside the edge of an awning or the Skyway's deck (608 m of edge)</td><td>1.0-2.5 x 0.4-0.6 m</td></tr>
+        <tr><td>Never</td><td colspan="2">under a roof, on a kerb top, a stair, a bridge or the rails, within 0.3 m of a wall or a prop, or over another puddle</td></tr>
+      </tbody></table></div>
+    <p class="note">Decals darken the ground and make it glossy through their albedo and ORM maps, fade out beyond 35-45 m, and are no surface, so nothing can z-fight. They can't run a shader, so rain ripples would be a later change to the ground shaders (L3).</p>
   </div>
 </section>
 
@@ -1279,7 +1346,7 @@
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag y">J1 faces</span><span class="tag y">K1 to K3 doorways</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag">J1 faces (answered)</span><span class="tag">K1 to K3 doorways (answered)</span><span class="tag y">L1 to L3 puddles</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>

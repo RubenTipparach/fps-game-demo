@@ -1,0 +1,8 @@
+// How the hub's public entrances slide open (openspec/changes/hub-doorways, design section 3.3;
+// owner K2). The leaves part when the runner comes within "trigger_radius_m" of the doorway, or a
+// person within "npc_trigger_radius_m" (2.4 m: 1.6 s ahead of someone walking at 1.5 m/s), stay
+// open while anyone is near, close "wait_s" after the last one leaves, and slide at "speed_mps"
+// (a 1.55 m leaf is open in 0.65 s).
+{
+  "sliding": {"trigger_radius_m": 3.0, "npc_trigger_radius_m": 2.4, "wait_s": 1.5, "speed_mps": 2.4}
+}

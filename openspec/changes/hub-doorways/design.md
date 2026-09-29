@@ -88,13 +88,17 @@ each lot by 0.3, 0.35, 0.45 or 0.7 m, so a lot can stand 1.2-1.6 m from any wall
 building, doors included. The placement test passes only because nobody stands in those gaps.
 
 **Before stills** (`docs/screenshots/hub_doorways/before_*.png`, AutoTest
-`docs/playtest/scripts/hub_doorways_before.json`, seed 7, 1600 x 900):
-- Lantern Row's shops without doors;
-- Wire Lane's dark recesses;
-- the Anchor's unframed entrance;
-- the Fish Hall's north entrance hidden behind lot 242, and the 1.35 m slot to it;
-- Precinct 9's door behind lot 11;
-- Neon Koi's lit false entrance.
+`docs/playtest/scripts/hub_doorways_before.json`, seed 7, 1600 x 900, the committed hub):
+
+| Still | Shows | Requirement it motivates |
+|---|---|---|
+| `before_01_lantern_row_shops_without_doors.png` | Lantern Row at Pachinko Sunrise: shop windows and parked cars, and not a door along the block | Every building on the street shows a door |
+| `before_02_wire_lane_blank_recesses.png` | Wire Lane: a shanty's dark recess beside a lit window, and a blank rust wall opposite | Every building on the street shows a door |
+| `before_03_anchor_entrance_unframed.png` | the Rusty Anchor's 3 m entrance under its sign: a rectangular hole in the stone, a thin `tech_panel` reveal, no jamb, lintel or lamp | Every doorway is framed |
+| `before_04_fish_hall_entrance_hidden.png` | from Clinic Lane toward the Fish Hall's north entrance: what stands there is lot 242's dark shop window, 2.5 m away | Every door opens onto ground a person can reach |
+| `before_05_fish_hall_entrance_slot.png` | the unlit 1.35 m slot between lot 242 and the hall, the only way to that entrance | Every door opens onto ground a person can reach |
+| `before_06_precinct_door_hidden.png` | from Quay Road toward Precinct 9's front door: lot 11's rust wall and loading door, with the precinct's corner behind it | Every door opens onto ground a person can reach |
+| `before_07_neon_koi_false_entrance.png` | Neon Koi's front under its sign: the lit 3 m recess in the middle stands in for an entrance, between a shutter and a lit shop window, and none of them opens | K3 |
 
 ## Goals / Non-Goals
 
@@ -173,23 +177,71 @@ it is the same rule, R2, at other sizes. E1M3's glb frames keep `frame_solids`.
 The sign over an entrance reads the frame's top, not the door's height. That moves its bottom
 to the lintel's top plus 0.2 m, so the two never share space.
 
-### 3.3 Which doors close (K2)
+### 3.3 Which doors close: sliding entrances (owner K2)
 
-The rule is **a door with a lock has a leaf, and a door without one is an open, framed
-doorway**. The rule needs no new code in the core: `DoorDef.Lock` is required today, so
-an unlocked door you open by hand doesn't exist. It gives:
-- 5 leaves, the locked doors that have them now;
-- 38 open doorways.
+The owner, K2: "automatic opening sliding doors" on the public entrances. So:
+- **The 15 public entrances** (exterior doors 2.0 m wide or more) get automatic sliding doors,
+  and so do the three shells' new entrances (section 3.7): 18 in all.
+- **The 5 locked doors** keep their swinging leaf (`LockedDoor`, `door_leaf.glb`): four
+  interior doors and the Anchor's back door.
+- **The other 23 doors** are open, framed doorways: 18 interior openings and 5 service doors,
+  none of them locked.
 
-Owner question K2 asks whether public entrances should have doors the runner opens. That
-would take a lockless `DoorDef` in the core and a door entity at each entrance. Civilians flee
-along the navmesh, so each leaf would also need a navigation link that opens it.
+**One implementation: E1M3's own sliding door.** `scenes/props/doorway.tscn` is a split door:
+`Brushfire.Doorway` drives two `Brushfire.Door` leaves (AnimatableBody3D, probe-lit). It opens
+when the runner comes within its trigger radius, stays open while anyone is in the doorway,
+and closes after a wait, with `door_open` and `door_close` sounds and a red or green status
+light on the lintel. That is K2's behaviour, so the hub reuses it rather than writing a second
+sliding door:
+- **`Doorway` learns whom it opens for.** Today it watches the player and the "enemies" group.
+  It gains `OpenForGroups` (default `["enemies"]`, so E1M3, E1M1 and E1M2 behave as now), and the
+  hub's doors name `["npcs"]`, the group `NpcActor` already joins. A civilian walking a navmesh
+  path through a closed entrance opens it as it comes.
+- **The timings are data.** `game/data/doors.json`, validated in the core like every data file:
+
+  ```json
+  {"sliding": {"trigger_radius_m": 3.0, "npc_trigger_radius_m": 2.4, "wait_s": 1.5, "speed_mps": 2.4}}
+  ```
+
+  A thin `Undercity.Client.SlidingDoorway` (a `Doorway`, and `IWired`) sets the exports from
+  it when the level wires. E1M3's timings stay where they are, in its scene.
+- **No state in the save.** A sliding door is open only while someone is near, so nothing
+  about it is saved, as in E1M3. It never locks; the plan refuses a lock on a public entrance.
+
+**The leaves.** The Undercity prop kit gains `sliding_leaf_<w>x<h>`, one leaf per entrance size:
+
+| Clear opening | Entrances | Leaf (each of two) | Face |
+|---|---|---|---|
+| 2.0 x 2.4 | depot front, checkpoint, Precinct 9 | 1.05 x 2.45 | steel: `tech_panel` stile, a vision slit |
+| 2.5 x 3.0 | shrine | 1.30 x 3.05 | glazed: a `glass` panel in a `tech_panel` stile |
+| 3.0 x 3.0 | Golden Carp, Anchor, Kessler's, clinic, Fish Hall east, the three shells | 1.55 x 3.05 | glazed |
+| 4.0 x 3.0 | station (2), Fish Hall north and west, depot bay | 2.05 x 3.05 | glazed; the depot bay steel |
+| 5.0 x 3.0 | Kings' garage | 2.55 x 3.05 | steel with hazard-striped edges |
+
+Each leaf is half the clear width plus 0.05 m, so the two overlap 0.1 m when shut. They hang
+on the building's inside face, 0.15 m off the wall, clear of the inside architrave (0.1 m
+proud), and slide apart along it by their own width. The sector mesh carries the portal and
+the frame; the leaf scene carries only the leaves, the trigger and the status light, so it is
+lit by the probes, like E1M3's leaves.
+
+**Room to slide.** Each leaf needs its own width of clear wall beside the opening, on the
+inside. Section 2's measure (door centre to the nearest room corner along the wall) gives all
+15 entrances room; the tightest is the depot bay, 4.5 m against 4.25 needed. The shells'
+entrances are placed where their fronts have room.
+`check_sliding_room` refuses a leaf whose open position meets a wall, a fixture or another
+door.
+
+**The navmesh** is baked from the sector colliders, which don't include the leaves, so paths
+run through the entrances. An NPC opens the door at 2.4 m, 1.6 s ahead of itself at a walk
+(1.5 m/s) and 0.4 s at a sprint (5.5 m/s); the leaves are open in 0.65 s (1.55 m at 2.4 m/s).
+The door test pins a civilian walking through a closed entrance.
 
 ### 3.4 Dressing doors on the filler buildings
 
 A dressing door is geometry in the sector's lit mesh, not an entity: frame boxes, a leaf box
-set 0.05 m behind the clear opening's plane, and its fittings. It is never opened (K1), and
-it is collision, so a thrown body or a shot stops on it.
+set 0.05 m behind the clear opening's plane, and its fittings. It is never opened and shows
+no use prompt (owner K1: "no prompts for permanently locked doors"), and it is collision, so a
+thrown body or a shot stops on it.
 
 | Style | Where | The door | Fittings | Triangles |
 |---|---|---|---|---|
@@ -218,12 +270,13 @@ trying offsets of 0, 1 and 2 m. It will try the spot above a door first, when a 
 - The lamp stays at `WALL_LAMP_Z` (3.3 m), above every dressing door's head (2.2 + 0.1 + 0.2 =
   2.5 m, plus the 0.15 m floor).
 - The lamp count is unchanged.
-- The 15 entrances each get a baked downlight at the lintel, with its fixture (the downlight
-  strip) and a corona, so the hub's baked lights go from 196 to 211.
+- The 18 entrances (the 15 and the shells' three) each get a baked downlight at the lintel,
+  with its fixture (the downlight strip) and a corona, so the hub's baked lights go from 196
+  to 214.
 
 ### 3.6 Clear approaches
 
-- **Entrance** (an exterior door 2.0 m wide or more, 15 doors): the approach is a strip as
+- **Entrance** (an exterior door 2.0 m wide or more, 18 doors with the shells'): the approach is a strip as
   wide as the frame's outer width plus 0.6 m each side. It runs straight out from the wall
   until it lies on open ground (`O`: a street, lane or square), and it may run at most 12 m.
 - **Service door** (1.4 m, 6 doors): the approach is a 2.0 m landing as wide as the frame
@@ -242,21 +295,20 @@ the build share `city_lots`, so they still agree (CLAUDE.md 7.1).
 **Precinct 9:** cutting lot 11 back from the approach also opens the precinct's west face to
 Quay Road. It gets its windows, and its sign's choice of face.
 
-### 3.7 The three named shells (K3)
+### 3.7 The three named shells (owner K3: one room each)
 
 Neon Koi Karaoke (22 x 18 m), Pachinko Sunrise (26 x 18 m) and Bubble Wash (20 x 12 m) are
 named, signed and lit, but have no rooms. Their front is a lit recess you walk into and stop.
 
-K3 offers two options:
-- **(a) One enterable ground-floor room each.** The recommendation. Layout data only:
-  `rooms`, `doors` and `fixtures`. The pipeline carves, trims, lights and frames them like any
-  enterable building:
-  - Neon Koi: a lobby 10 m deep with a counter and closed booth doors;
-  - Pachinko Sunrise: a floor with two rows of machines;
-  - Bubble Wash: the machines and a bench.
+The owner chose the recommendation (K3): one enterable ground-floor room each. It is layout
+data only (`rooms`, `doors` and `fixtures`), and the pipeline carves, trims, lights and frames
+them like any enterable building. Each front gets a 3.0 m sliding entrance, in place of the lit
+recess:
+- Neon Koi: a lobby 10 m deep with a counter and closed booth doors;
+- Pachinko Sunrise: a floor with two rows of machines;
+- Bubble Wash: the machines and a bench.
 
-  Nobody new stands in them.
-- **(b) A framed entrance closed behind a lowered shutter.**
+Nobody new stands in them. The public entrances become 18: the 15 above and these three.
 
 ### 3.8 One implementation of each rule
 
@@ -276,7 +328,9 @@ K3 offers two options:
 | Every building that faces walkable ground (an edge of 2.2 m or more) shows a door | `city_plan.check_building_doors` | names 214 buildings: 80 blank walls, 78 dark recesses, 28 shop-only, 25 painted shutters, 3 false entrances | clean |
 | Every exterior door's approach is clear, and reaches open ground | `city_plan.check_door_approaches` | names the 10 doors of section 2 | clean |
 | The doors add at most 30,000 triangles | `city_plan` stats | 0 | about 22,000: 15,300 in dressing doors, 1,600 in shutter fittings, about 5,000 in the 43 frames |
-| From 1 m outside every exterior door, the navmesh reaches the runner's spawn | `placement_test.tscn` | not run (no approaches exported) | 21 of 21, plus the shells' doors under K3 (a) |
+| From 1 m outside every exterior door, the navmesh reaches the runner's spawn | `placement_test.tscn` | not run (no approaches exported) | 24 of 24: the 21, and the three shells' entrances |
+| Every sliding leaf has room to open | `city_plan.check_sliding_room` | not run (no sliding doors) | clean, 18 entrances |
+| A sliding entrance opens for the runner and for an NPC, and closes behind them | `door_test.tscn` | not run | passes |
 | Frames do not z-fight | `detailing.assert_no_zfighting` | clean | clean, with every frame box registered |
 
 `test_city_plan.py` pins each plan check twice:
@@ -297,6 +351,65 @@ Captures: the before stills again from the same viewpoints, and a video walking 
 through the Anchor's framed entrance, down Wire Lane and to the Fish Hall's north entrance.
 The video is there because the point is how the street reads as you move.
 
+### 3.11 Found in building the plan
+
+- **The checks on the old plan** name 43 doors ("no frame"), 214 buildings (211 lots and the
+  three shells) and 11 approaches. Section 2 counted 10 approaches with strips as wide as the
+  door; the approach is the frame's outer width plus 0.6 m each side, which also finds lot 249
+  3.23 m in front of the garage's 5 m entrance. The cut changes 15 lots, not 10: 10, 11, 15,
+  226, 239, 240, 242, 244, 245, 246, 249, 251, 252, 257 and 280.
+- **The checkpoint's boom crossed its own door.** The barrier meets the wall at y 157.4-158.2,
+  inside the 2 m door at y 156-158. The door moved to y 154, south of the boom.
+- **Parked cars stood in two shells' approaches.** Cars park every 9 m on Lantern Row and every
+  11.5 m outside Bubble Wash, which leaves 4.4 m between them, and an entrance's approach is 5.4 m
+  wide. The car in front of Pachinko Sunrise is gone (its door is at x 162.5), and Bubble Wash's
+  door is at x 17.5, between two cars.
+- **The doors draw from a stream of their own.** A lot's RNG is drawn from after the facade too
+  (windows, the blade sign or fire escape, the roof), so drawing the doors from it would move
+  those. Each lot's doors take `random.Random(f"{seed}:doors:{lot}")`, and they are placed
+  after everything else, clear of the fire escape's drop ladder. Measured by diffing every prim
+  of the old plan against the new: on the lots no approach cuts, the only changes are the dark
+  recesses that became doors and the ground repaved round the approaches.
+- **A shanty's door takes its recess's own span.** The facade drew the recess as close as
+  0.9 m to a corner, nearer than a frame's half width and 0.35 m allow, so the door keeps the
+  recess's place and only 0.15 m from the corner.
+- **Seven workshops show their roll-up as their door.** Where a roll-up fills a 5-7.5 m front,
+  a man door has no room; the roll-up, with its hood box and guide rails, is the building's
+  door.
+- **Each dressing door is checked for z-fighting in its own frame**, against the facade, its
+  recess and itself: a lot's edges run any way, and the plan's check knows axis-aligned boxes.
+  The named buildings' frames are in the plan's check. Both are clean.
+- **Counts and cost.** 43 shop doors (every bay), 17 residents' doors, 157 shanty doors, 27 man
+  doors and 7 roll-ups; 46 framed doors. Triangles: 3,332 in the frames (56 for a liner and
+  architrave, 98 for a portal) and 10,220 in the dressing doors and shutter fittings, 13,552 in
+  all, against the estimate of about 22,000 and the budget of 30,000.
+- **Lights: 196 to 225.** The 18 lintel downlights, 9 ceiling lights in the shells' new rooms,
+  and 2 blade signs on cut lots, whose edges changed. The wall lamps stay at 24.
+- **The shells' neon bands** are a fixture class of their own, `fix-band`, a band on the facade
+  whether or not the building has rooms; a `fix-neon` inside a room is a strip on its wall.
+- **Neon Koi's closed booth doors are left out**; round booths stand in the lobby instead.
+
+**Found in building the sliding entrances:**
+- **One catalogue of leaves.** `detailing.SLIDING_LEAVES` lists the six sizes and faces the hub
+  needs (steel 2.0 x 2.4; glazed 2.5 x 3.0, 3.0 x 3.0 and 4.0 x 3.0; steel 4.0 x 3.0; hazard
+  5.0 x 3.0). The prop kit builds a leaf for each, the scene generator writes a door scene for
+  each, and the plan refuses an entrance the catalogue lacks. A building names its face
+  (`"leaves"` in the layout: the depot, the checkpoint and Precinct 9 steel, the garage hazard;
+  glazed otherwise).
+- **The two leaves hang at different depths,** 0.15 and 0.21 m off the inside face, so where
+  they overlap by 0.1 m when shut they never share a plane.
+- **Where the leaves stand open is a keep-out for the rooms' trims,** so no pilaster is built
+  in their way, and `check_sliding_room` checks it against the rooms, the fixtures and every
+  detail box. It passed on the hub at once, all 18 entrances; a counter put in the Anchor's
+  right leaf's way is named.
+- **The data names speed `speed_mps`**, as every other speed in `game/data` does, not
+  `speed_m_s`.
+- **No status light.** E1M3's doorway has a red and green lamp on its lintel; the hub's
+  entrances show their lintel downlight instead, and `Doorway` does without a status mesh.
+- **The rebuilt hub** has 146,164 triangles in its sectors and 225 lights; the navmesh baked
+  again to 5,059 polygons, and passes through the entrances, since the leaves are not in the
+  navigation group.
+
 ## Risks / Trade-offs
 
 - **Bake time.** Eight sectors on lavapipe take hours. The rebuild is one pass, run once the
@@ -307,9 +420,12 @@ The video is there because the point is how the street reads as you move.
 - **Lots change in front of 10 doors.** The civilians and patrols near them are re-checked by
   the plan and the placement test before anything is built. Wall lamps on those facades may
   move by a few metres.
-- **Closed doors invite the use key (K1).** A dressing door with no prompt can read as broken.
-  The recommendation keeps prompts for doors that open, so a prompt never lies. The real
-  entrances are the lit, signed, framed ones.
+- **Closed doors invite the use key.** A dressing door with no prompt can read as broken. The
+  owner chose no prompt (K1), so a prompt never lies; the real entrances are the lit, signed,
+  framed ones, and they open as you walk up.
+- **A sliding door caught mid-close.** E1M3's leaves are AnimatableBody3D: one closing on the
+  runner pushes them. The door stays open while anyone is inside its trigger, which covers the
+  doorway, so it doesn't close on a person standing in it.
 - **Shops you can't enter.** A glazed door into a lit shop that never opens is a promise the
   hub doesn't keep. It is still better than a shop with no door. Enterable shops belong to
   later content.

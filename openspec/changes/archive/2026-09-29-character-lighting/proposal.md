@@ -52,13 +52,21 @@ Why:
   - a complementary accent gel from the other side.
 
   They light characters only and ramp out when the conversation ends.
-- **Targets that a check measures.** In conversation, a face's mean luma is 95-150, its lit side
-  is 2-4 times its shadow side, and the gel rim shows. The world's luma stays within 2 %.
+- **Targets that a check measures.** In conversation, the rig brightens every face and its gel
+  rim shows, and the world's luma stays within 2 %. Each face's mean (95-150 the aim) and its
+  lit-to-shadow ratio (2-4) are recorded, not gated (owner J1).
+- **Dry under a roof, wet in the rain** (owner J1): every NPC's skin and clothes take a wetness
+  from where they stand, so Tank behind the bar is matte and Silk on Lantern Row glistens.
 - **A conversation framing** that narrows the view onto the speaker's face above the dialog
   band: mockup D9, approved (survey I11).
 
 The owner answered on 2026-09-28: I9 to I12 accepted as recommended (the wrist glow always on,
 the key and two gels, the D9 framing, the skin as designed). I1 builds this third.
+
+On 2026-09-29 (survey J1), on how one key should serve dark and pale faces: "tank looks fine
+with lighting, I think you made him too shiny, he's not wet in doors.... so you might have to
+tweak shaders based on where characters are." The rig stays at its first tuning, and skin and
+cloth follow where a character stands (design section 9).
 
 ## Capabilities
 

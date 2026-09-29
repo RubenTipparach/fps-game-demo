@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_faces_tune", "god": true,
  "steps": [
-  {"log": "tuning the conversation rig (openspec/changes/character-lighting, task 3.4): the rig's shots only, and Lin's pair; run with --fixed-fps 30"},
+  {"log": "tuning the conversation rig (openspec/changes/archive/2026-09-29-character-lighting, task 3.4): the rig's shots only, and Lin's pair; run with --fixed-fps 30"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"wait": 20},
   {"rig": true},

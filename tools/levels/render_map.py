@@ -27,6 +27,8 @@ from shapely.ops import split, unary_union
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUT = ROOT / "docs" / "design" / "maps"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "godot"))
+import detailing  # noqa: E402  (a door's frame decides how wide its approach is)
 
 MARGIN = 36          # px around the map for grid labels
 GRID_M = 20          # grid spacing, metres
@@ -203,6 +205,80 @@ def base_geometry(m):
     return {"open": open_u, "water": water_u, "lower": lower_u, "buildings": bld_geoms}
 
 
+# Doors (openspec/changes/hub-doorways, design sections 3.1 and 3.6). An exterior door this wide or
+# wider is a public entrance: a portal outside and a sliding door; a narrower one is a service door.
+ENTRANCE_MIN_W = 2.0
+APPROACH_SIDE_M = 0.6       # an approach is its frame's outer width plus this much each side
+ENTRANCE_REACH_M = 12.0     # an entrance's approach reaches open ground within this far
+LANDING_M = 2.0             # a service door's landing: a leaf's swing (1.36 m) and a body clear of it
+APPROACH_STEP_M = 0.1
+
+
+def named_doors(b):
+    """Each door a named building declares, classified once for the map, the plan and its checks:
+    {"i", "x", "y", "w", "along" ("x": the wall runs along x), "exterior", "n" (the outward
+    normal of an exterior door's wall, else None), "entrance"}. A door lies on a room's edge;
+    it is exterior when that edge is the footprint's."""
+    pg = b["_g"]
+    fx0, fy0, fx1, fy1 = pg.bounds
+    rects = [r["rect"] for r in b.get("rooms", [])]
+    out = []
+    for i, d in enumerate(b.get("doors", [])):
+        x, y = d[0], d[1]
+        w = d[2] if len(d) > 2 else 1.4
+        horiz = any((abs(y - r[1]) < 0.01 or abs(y - r[3]) < 0.01) and r[0] - 0.01 <= x <= r[2] + 0.01 for r in rects)
+        if horiz:
+            ext = abs(y - fy0) < 0.01 or abs(y - fy1) < 0.01
+            n = ((0.0, -1.0) if abs(y - fy0) < 0.01 else (0.0, 1.0)) if ext else None
+        else:
+            ext = abs(x - fx0) < 0.01 or abs(x - fx1) < 0.01
+            n = ((-1.0, 0.0) if abs(x - fx0) < 0.01 else (1.0, 0.0)) if ext else None
+        out.append({"i": i, "x": x, "y": y, "w": w, "along": "x" if horiz else "y", "exterior": ext, "n": n,
+                    "entrance": ext and w >= ENTRANCE_MIN_W})
+    return out
+
+
+def door_approach(door, open_g):
+    """The ground an exterior door opens onto, which no lot may take: {"kind", "poly", "reached",
+    "depth_m"}, or None for an interior door. An entrance's is a strip its frame's outer width
+    plus APPROACH_SIDE_M each side, straight out from the wall until its far edge lies on open
+    ground (`open_g`: streets, lanes and squares), at most ENTRANCE_REACH_M; a service door's is
+    a LANDING_M landing as wide. The one approach the lot cut, the plan's check and the
+    placement test read."""
+    if not door["exterior"]:
+        return None
+    kind = "portal" if door["entrance"] else "architrave"
+    half = detailing.frame_outer_width(door["w"], kind) / 2 + APPROACH_SIDE_M
+    nx, ny = door["n"]
+    tx, ty = -ny, nx
+    x, y = door["x"], door["y"]
+
+    def strip(d):
+        return Polygon([(x + tx * half, y + ty * half), (x - tx * half, y - ty * half),
+                        (x - tx * half + nx * d, y - ty * half + ny * d), (x + tx * half + nx * d, y + ty * half + ny * d)])
+    if not door["entrance"]:
+        return {"kind": "service", "poly": strip(LANDING_M), "reached": None, "depth_m": LANDING_M}
+    near = open_g.buffer(0.05)
+    steps = int(round(ENTRANCE_REACH_M / APPROACH_STEP_M))
+    for k in range(1, steps + 1):
+        d = k * APPROACH_STEP_M
+        far = LineString([(x + tx * half + nx * d, y + ty * half + ny * d), (x - tx * half + nx * d, y - ty * half + ny * d)])
+        if near.contains(far):
+            return {"kind": "entrance", "poly": strip(d), "reached": True, "depth_m": d}
+    return {"kind": "entrance", "poly": strip(ENTRANCE_REACH_M), "reached": False, "depth_m": ENTRANCE_REACH_M}
+
+
+def door_approaches(m, geo):
+    """Every named building's exterior doors' approaches: [(building, door, approach)]."""
+    return [(b, d, door_approach(d, geo["open"])) for b in m.get("buildings", []) if b.get("doors")
+            for d in named_doors(b) if d["exterior"]]
+
+
+def approach_cut(m, geo):
+    """The ground every door's approach keeps free of lots (city_lots' `cut`)."""
+    return unary_union([ap["poly"] for _, _, ap in door_approaches(m, geo)])
+
+
 def city_blocked(m, geo):
     """Ground that is not split into lots: open areas, water, and a 0.9 m margin round named
     buildings and keep_clear shapes."""
@@ -210,14 +286,20 @@ def city_blocked(m, geo):
                        [shape_geom(k).buffer(0.9, join_style=2) for k in m.get("keep_clear", [])])
 
 
-def city_lots(m, blocked):
+def city_lots(m, blocked, cut=None):
     """Split the solid ground between open spaces into building lots, district by district.
 
     Yields one dict per lot, in a stable order: "poly" (the lot, already shrunk off its
     neighbours), "district" (the layout's district dict), "shade" (map fill colour), "roof"
     (rooftop plant: ("tank", x, y, radius) or ("box", x, y, w, h), metres) and "piece" (the
     index of the solid piece it was cut from). One seeded RNG per piece drives every choice,
-    so the design map and the Blender build get the same lots."""
+    so the design map and the Blender build get the same lots.
+
+    `cut` (approach_cut: the doors' approaches) is taken out of each lot after every choice is
+    drawn, so only the lots standing in front of a door change: cutting before the split would
+    renumber the pieces after it, and every piece seeds its own RNG (openspec/changes/hub-doorways,
+    design section 3.6). A lot may come out in two parts, or empty; it is still yielded, so the
+    lots after it keep their numbers."""
     W, H = m["size"]
     solid = box(0, 0, W, H).difference(blocked)
     districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
@@ -252,6 +334,9 @@ def city_lots(m, blocked):
                             roof.append(("tank", p.x, p.y, rng.uniform(0.8, 1.5)))
                         else:
                             roof.append(("box", p.x, p.y, rng.uniform(1.0, 3.0), rng.uniform(0.8, 2.2)))
+                if cut is not None and lp.intersection(cut).area > 1e-6:
+                    lp = lp.difference(cut)
+                    roof = [r for r in roof if lp.buffer(-0.3).contains(Point(r[1], r[2]))]
                 yield {"poly": lp, "district": dist, "shade": shade, "roof": roof, "piece": bi}
 
 
@@ -304,7 +389,7 @@ STYLE = """
 .wall{fill:%(wall)s}
 .fix{fill:#2f3b48;stroke:#56697b;stroke-width:0.7}
 .fix-lt{fill:#3b4a59;stroke:#7a8fa3;stroke-width:0.7}
-.fix-neon{fill:none;stroke:#ff4fa3;stroke-width:1.4;stroke-opacity:.85}
+.fix-neon,.fix-band{fill:none;stroke:#ff4fa3;stroke-width:1.4;stroke-opacity:.85}
 .fix-cyan{fill:none;stroke:#35e0ff;stroke-width:1.4;stroke-opacity:.8}
 .fix-hot{fill:#4a2a14;stroke:#ff9e2e;stroke-width:0.8}
 .fix-dark{fill:#0b0f13;stroke:#3a4654;stroke-width:0.7}
@@ -421,10 +506,10 @@ def draw_rooms(c, b):
     c.add(f'<path class="wall" d="{c.path(walls)}"/>')
 
 
-def draw_city(c, m, blocked):
+def draw_city(c, m, blocked, cut=None):
     """Draw the building lots (city_lots) and their rooftop plant."""
     g = ['<g data-layer="lots">']
-    for lot in city_lots(m, blocked):
+    for lot in city_lots(m, blocked, cut):
         g.append(f'<path class="lot" fill="{lot["shade"]}" d="{c.path(lot["poly"])}"/>')
         for item in lot["roof"]:
             if item[0] == "tank":
@@ -526,7 +611,7 @@ def render(m, ladders=()):
         c.add(f'<path class="wall" d="{c.path(edge)}"/>')
 
     if base == "city":
-        draw_city(c, m, city_blocked(m, geo))
+        draw_city(c, m, city_blocked(m, geo), approach_cut(m, geo))
 
     c.add('<g data-layer="bridges">')
     draw_shapes(c, m.get("bridges", []), "bridge")

@@ -33,7 +33,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
     /// <summary>The scene for items on the floor.</summary>
     [Export] public PackedScene WorldItemScene = GD.Load<PackedScene>("res://scenes/undercity/world_item.tscn");
 
-    /// <summary>The conversation rig (openspec/changes/character-lighting).</summary>
+    /// <summary>The conversation rig (openspec/changes/archive/2026-09-29-character-lighting).</summary>
     [Export] public PackedScene ConversationRigScene = GD.Load<PackedScene>("res://scenes/undercity/conversation_rig.tscn");
 
     /// <summary>
@@ -143,6 +143,8 @@ public partial class UndercityLevel : Node3D, ILevelHost
         // The whole crowd at once, from the world seed: no two neighbours look alike, and a save
         // sees the same crowd (openspec/changes/archive/2026-09-29-crowd-variety).
         _crowd = CrowdPicker.Assign(State.World.Seed, _def.Crowd, State.Data.Crowd);
+        // Dry skin and wet cloth read the data's numbers (openspec/changes/archive/2026-09-29-character-lighting, design section 9).
+        CharacterShading.Apply(State.Data.CharacterLighting.Wetness);
         State.World.CurrentLevel = LevelId;
 
         _player = PlayerScene.Instantiate<PlayerController>();

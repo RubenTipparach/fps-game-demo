@@ -270,3 +270,18 @@ lightmapping/primitive_meshes/texel_size=0.1
 environment/defaults/default_clear_color=Color(0.02, 0.02, 0.025, 1)
 lightmapping/bake_quality/medium_quality_probe_ray_count=128
 anti_aliasing/quality/screen_space_aa=1
+
+[shader_globals]
+
+character_cloth_wet_brightness={
+"type": "float",
+"value": 1.0
+}
+character_cloth_wet_roughness={
+"type": "float",
+"value": 0.7
+}
+character_skin_dry_roughness_add={
+"type": "float",
+"value": 0.0
+}

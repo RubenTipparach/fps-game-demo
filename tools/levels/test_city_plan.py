@@ -139,5 +139,77 @@ class PeopleStayOutOfTheWater(unittest.TestCase):
         self.assertFalse([p for p in problems if "water" in p], problems)
 
 
+def built_hub_with(patch):
+    """The hub built with one part of the plan changed for the test: `patch` is a context manager."""
+    m, ents = CP.load("hub")
+    city = CP.City(m, ents)
+    with patch, contextlib.redirect_stdout(io.StringIO()), mock.patch.object(CP.City, "check_doors", lambda self: None):
+        city.build()
+    return city
+
+
+class DoorsAreFramedShownAndReachable(unittest.TestCase):
+    """openspec/changes/hub-doorways: "Every doorway is framed", "Every building on the street
+    shows a door" and "Every door opens onto ground a person can reach". Each check passes on
+    the committed hub and names the fault on a hub broken on purpose."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.city = built_hub()
+
+    def test_the_hub_passes_all_three_door_checks(self):
+        self.assertEqual([], self.city.door_problems())
+        self.assertEqual([], self.city.building_door_problems())
+        self.assertEqual([], self.city.door_approach_problems())
+
+    def test_every_declared_door_has_a_frame_the_carve_of_its_fits(self):
+        self.assertEqual(46, len(self.city.frames), "43 doors and the three shells' entrances")
+        for (bid, i), f in self.city.frames.items():
+            for want, got in zip(CP.detailing.door_fits(*f["clear"]), f["carved"]):
+                self.assertAlmostEqual(want, got, 6, f"{bid} door {i}")
+
+    def test_a_door_left_unframed_is_named(self):
+        real = CP.City.frame_door
+
+        def skip_the_anchors_entrance(self, b, sector, dd, airs, cx, cy):
+            if not (b["id"] == "rusty_anchor" and dd[7]["i"] == 0):
+                real(self, b, sector, dd, airs, cx, cy)
+        city = built_hub_with(mock.patch.object(CP.City, "frame_door", skip_the_anchors_entrance))
+        self.assertEqual(["rusty_anchor door 0 at (90, 44), 3 m: no frame"], city.door_problems())
+
+    def test_a_lot_back_in_front_of_the_fish_halls_entrance_is_named(self):
+        real = CP.RM.approach_cut
+
+        def without_the_fish_halls_north_entrance(m, geo):
+            keep = [ap["poly"] for b, d, ap in CP.RM.door_approaches(m, geo) if not (b["id"] == "fish_hall" and d["i"] == 0)]
+            return CP.unary_union(keep)
+        city = built_hub_with(mock.patch.object(CP.RM, "approach_cut", without_the_fish_halls_north_entrance))
+        problems = city.door_approach_problems()
+        self.assertEqual(1, len(problems), problems)
+        self.assertRegex(problems[0], r"^fish_hall door 0 at \(174, 76\), a 4 m entrance: its approach is blocked by lot 242 \(1\.35 m out\)")
+        self.assertIs(CP.RM.approach_cut, real)
+
+    def test_a_lot_with_its_door_taken_away_is_named(self):
+        real = CP.City.dressing_doors
+
+        def none_for_lot_0(self, lot, *args):
+            if lot["id"] != "0":
+                real(self, lot, *args)
+        city = built_hub_with(mock.patch.object(CP.City, "dressing_doors", none_for_lot_0))
+        problems = city.building_door_problems()
+        self.assertEqual(1, len(problems), problems)
+        self.assertTrue(problems[0].startswith("lot 0: no door on its 1 walkable edge"), problems)
+
+    def test_no_dressing_door_z_fights_in_its_own_frame(self):
+        self.assertEqual([], self.city.door_zfights)
+
+    def test_the_doors_stay_in_their_triangle_budget(self):
+        frames = sum(f["tris"] for f in self.city.frames.values())
+        dressing = sum(self.city.door_tris.values())
+        self.assertLessEqual(frames + dressing, 30000, f"frames {frames}, dressing doors and fittings {dressing}")
+        for (bid, i), f in self.city.frames.items():
+            self.assertLessEqual(f["tris"], 180 if f["kind"] == "portal" else 72, f"{bid} door {i}")
+
+
 if __name__ == "__main__":
     unittest.main()

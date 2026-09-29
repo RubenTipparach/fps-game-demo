@@ -1,6 +1,6 @@
 // The conversation rig: a soft warm key and two district gels around the speaker's head, lighting
 // characters only, ramped in when a conversation opens and out when it closes
-// (openspec/changes/character-lighting, design section 4, after the owner's portrait reference:
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 4, after the owner's portrait reference:
 // loop lighting with a rim light and coloured gels).
 //
 // It lives in the Godot layer: the scene (scenes/undercity/conversation_rig.tscn) holds the three

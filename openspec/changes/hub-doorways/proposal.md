@@ -5,6 +5,12 @@
 The owner, 2026-09-29: "a lot of buildings are missing door ways or doors, review guidelines for
 level design that we did in e1 m3".
 
+The owner's answers, 2026-09-29 (survey K1 to K3):
+- K1: "no prompts for permanently locked doors" (the recommendation);
+- K2: "automatic opening sliding doors" on the public entrances (not the recommendation, which
+  was open framed doorways);
+- K3: "recommended": Neon Koi, Pachinko Sunrise and Bubble Wash get one enterable room each.
+
 E1M3, The Cistern (`tools/blender/build_cistern.py`), is the Blender reference level. Its door
 rules are written down in three places: `CLAUDE.md` 7.2, checklist item 2 of
 `docs/ut99_reference.md` ("Every doorway has a thick framed jamb and a lintel, inset from the
@@ -67,11 +73,15 @@ Why the hub reads as doorless:
   - Entrances 2.0 m wide or more get a portal frame: pilasters with a plinth and a capital,
     and a lintel with a lit downlight and a corona. That is E1M3's doorway lighting and
     checklist items 3 and 4.
-  - A door with a lock keeps its leaf; a door without one is an open, framed doorway (owner
-    question K2).
+  - The 15 public entrances, and the three shells' new ones, get automatic sliding doors
+    (owner K2). This is E1M3's split sliding door: two leaves that slide apart when the runner
+    or anyone else comes near, stay open while someone is in the doorway and close after them.
+    They never lock.
+  - A door with a lock keeps its swinging leaf; any other door is an open, framed doorway.
   - A building's sign rises to clear its entrance frame.
 - **Every building that faces walkable ground shows at least one door.** A closed door the
-  runner can't open (K1), built from boxes in the sector mesh, in the building's style:
+  runner can't open, with no use prompt (owner K1), built from boxes in the sector mesh, in the
+  building's style:
   - a glazed shop door in every shop bay;
   - a residents' street door on shop buildings of two or more floors;
   - a plank or sheet-metal door in each shanty, replacing the dark recess, some boarded and
@@ -90,7 +100,7 @@ Why the hub reads as doorless:
   - The approaches are cut from the lots after the lots are split, so only the lots that stood
     in front of a door change shape. The design map and the build share that code.
 - **The three named shells.** Neon Koi, Pachinko Sunrise and Bubble Wash each get one enterable
-  ground-floor room, or a framed door closed behind a shutter (K3).
+  ground-floor room, with a sliding entrance like the other public buildings (owner K3).
 - **Checks.**
   - `city_plan.py` refuses a door that is unframed, doesn't fit its wall, or has a blocked
     approach, and a building that faces walkable ground with no door.
@@ -117,17 +127,26 @@ None.
   - `tools/levels/render_map.py`: approaches cut from lots.
   - `tools/levels/city_plan.py`: frames, dressing doors, lamps over doors, approaches, the
     checks.
-  - `tools/levels/layouts/hub.py`: the three shells' rooms if K3 says so.
+  - `tools/levels/layouts/hub.py`: the three shells' rooms, doors and fixtures.
   - `tools/levels/test_city_plan.py`: the regression tests.
-- **Godot:** `placement_test.tscn` gains the approach walk. `LockedDoor` and `door_leaf.glb` are
-  unchanged. Under K2's second option, the core also gets an unlocked door.
+- **Godot:**
+  - `placement_test.tscn` gains the approach walk.
+  - The sliding doors reuse Brushfire's `Doorway` and `Door` (`scripts/World`). `Doorway` learns
+    which groups it opens for (the reference maps keep "enemies"; the hub adds "npcs"), and a
+    thin `SlidingDoorway` in the Undercity layer reads its timings from `data/doors.json`.
+  - `tools/godot/gen_level_hub.py` writes one sliding door scene per entrance size, and places
+    them; the Undercity prop kit gains the sliding leaves.
+  - A door test walks the runner and an NPC through a sliding entrance.
+  - `LockedDoor` and `door_leaf.glb` are unchanged.
+- **Core:** `data/doors.json` and its validation (trigger radius, wait, speed); the doors hold no
+  state a save needs.
 - **Rebuild:**
   - all eight hub sectors, since every sector's mesh changes;
   - a full lightmap rebake and a new navmesh;
   - the placement, ragdoll, combat and swim tests again, because civilians and patrols stand
     near doors;
   - the design map, since the lots in front of 10 doors change.
-- **Owner questions:** K1, K2 and K3 in the survey.
+- **Owner answers:** K1 to K3, 2026-09-29 (above).
 - **Not in scope:**
   - interiors for filler buildings;
   - moving any door the layout places;

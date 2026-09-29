@@ -8,8 +8,11 @@
 // height, and room to stand on the floor at its top (openspec/changes/archive/2026-09-29-water-and-swimming). Every
 // accessory a civilian's role may give them is tested in its mount's pose, on every body of the
 // role's pool at both ends of the height range, against the level: an umbrella held up into a
-// wall, or a bag hanging into a counter, fails (openspec/changes/archive/2026-09-29-crowd-variety, task 3.3). Prints
-// PASS or FAIL per check and quits with 1 on any failure.
+// wall, or a bag hanging into a counter, fails (openspec/changes/archive/2026-09-29-crowd-variety, task 3.3). From
+// 1 m outside every exterior door of an enterable building (the level data's "approaches"), the
+// level's baked navmesh must reach the runner's spawn (openspec/changes/hub-doorways, "Every
+// door opens onto ground a person can reach"). Prints PASS or FAIL per check and quits with 1 on
+// any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
 //
@@ -26,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Brushfire;
 using Godot;
+using Undercity.Core;
 using GArray = Godot.Collections.Array<Godot.Rid>;
 
 namespace Undercity.Client;
@@ -87,6 +91,7 @@ public partial class PlacementTest : Node3D
             }
             CheckSpawns();
             CheckLadders();
+            await CheckApproaches();
             await CheckAccessories();
         }
         catch (Exception e)
@@ -141,6 +146,60 @@ public partial class PlacementTest : Node3D
             Check($"{spawn.Name}", col.Shape, spawn.GlobalTransform, col.Transform, Array.Empty<Rid>(), Layers.World | Layers.Enemy);
         }
         player.Free();
+    }
+
+    /// <summary>A walk ends at the spawn when the navmesh path's last point is this near it, metres.</summary>
+    private const float ReachedM = 1.0f;
+
+    // Every exterior door's approach reaches the runner's spawn on the level's baked navmesh: the
+    // walk starts 1 m outside the door, on the navmesh there, and must end at the spawn.
+    private async Task CheckApproaches()
+    {
+        var level = LevelDir.TrimEnd('/').Split('/')[^1];
+        var def = GameData.Load(new GodotDataSource()).Levels.GetValueOrDefault(level);
+        if (def is null || def.Approaches.Count == 0)
+        {
+            return;
+        }
+        var region = new NavigationRegion3D { NavigationMesh = GD.Load<NavigationMesh>($"{LevelDir}/{level}_navmesh.res") };
+        AddChild(region);
+        for (var i = 0; i < 3; i++)
+        {
+            await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
+        }
+        var map = GetWorld3D().NavigationMap;
+        var spawn = GetTree().GetNodesInGroup("ent_spawn").OfType<Node3D>().FirstOrDefault(n => n.Name == "spawn_start")
+                    ?? GetTree().GetNodesInGroup("ent_spawn").OfType<Node3D>().FirstOrDefault();
+        if (spawn is null)
+        {
+            Fail("approaches: the level has no spawn to walk to");
+            return;
+        }
+        var goal = NavigationServer3D.MapGetClosestPoint(map, spawn.GlobalPosition);
+        foreach (var a in def.Approaches)
+        {
+            _people++;
+            var outside = new Vector3((float)a.At[0], 0, (float)a.At[1]);
+            var floor = FloorBelow(outside + Vector3.Up * 2.0f, 3.0f, Array.Empty<Rid>()) ?? 0f;
+            var from = outside with { Y = floor };
+            var start = NavigationServer3D.MapGetClosestPoint(map, from);
+            var off = new Vector2(start.X - from.X, start.Z - from.Z).Length();
+            var path = NavigationServer3D.MapGetPath(map, start, goal, true);
+            var at = $"({outside.X:0.#}, {outside.Z:0.#})";
+            if (off > ReachedM)
+            {
+                Fail($"door {a.Door} ({a.Kind}): the navmesh is {off:0.00} m from {at}, 1 m outside the door");
+            }
+            else if (path.Length == 0 || path[^1].DistanceTo(goal) > ReachedM)
+            {
+                var end = path.Length == 0 ? "nowhere" : $"({path[^1].X:0.#}, {path[^1].Z:0.#})";
+                Fail($"door {a.Door} ({a.Kind}): the navmesh from {at} ends at {end}, not the spawn");
+            }
+            else
+            {
+                GD.Print($"PASS [placement_test] door {a.Door} ({a.Kind}): {at} reaches the spawn in {path.Length} points");
+            }
+        }
     }
 
     /// <summary>How far under the water's surface a ladder's foot must reach, metres: a floating

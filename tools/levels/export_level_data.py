@@ -46,13 +46,46 @@ def crowd_place(e, layout, covers):
     return {"at": [x, y], "district": district, "sheltered": sheltered}
 
 
+def shelters(level_id, plan):
+    """Every roof the plan registered (Plan.shelter), for the core's wetness rule
+    (openspec/changes/archive/2026-09-29-character-lighting, design section 9): its label, its footprint in layout
+    metres and the height of its underside. The core's polygon rule has no holes, so a footprint
+    with one is refused rather than written as if it were solid."""
+    out = []
+    for label, pg, z0 in plan.shelters:
+        if pg.interiors:
+            raise SystemExit(f"{level_id}: shelter '{label}' has a hole the core can't represent")
+        out.append({"label": label, "poly": [[round(x, 3), round(y, 3)] for x, y in list(pg.exterior.coords)[:-1]],
+                     "under_m": round(z0, 3)})
+    return out
+
+
+# Where the placement test starts its walk to the runner's spawn: this far outside each exterior
+# door, on its approach (openspec/changes/hub-doorways, "Every door opens onto ground a person can
+# reach").
+APPROACH_START_M = 1.0
+
+
+def approaches(layout):
+    """Every exterior door of an enterable building, from render_map.door_approaches, the one
+    approach the plan's check and the lot cut use: its building and door, whether it is an entrance
+    or a service door, and the point APPROACH_START_M outside it, in layout metres."""
+    geo = city_plan.RM.base_geometry(layout)
+    out = []
+    for b, d, ap in city_plan.RM.door_approaches(layout, geo):
+        nx, ny = d["n"]
+        out.append({"door": f"{b['id']}:{d['i']}", "kind": ap["kind"],
+                    "at": [round(d["x"] + nx * APPROACH_START_M, 3), round(d["y"] + ny * APPROACH_START_M, 3)]})
+    return out
+
+
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
     layout = importlib.import_module(f"layouts.{level_id}").MAP
     title = layout["title"].title()
     out = {"id": level_id, "title": title, "spawns": [],
            **{v: {} for v in KINDS.values()}, "npcs": {}, "crowd": {}, "water": [], "districts": []}
-    # The layout's districts, for the conversation rig's gels (openspec/changes/character-lighting).
+    # The layout's districts, for the conversation rig's gels (openspec/changes/archive/2026-09-29-character-lighting).
     for d in layout.get("districts", []):
         out["districts"].append({"id": d["name"].lower().replace(" ", "_"),
                                  "poly": [[float(x), float(y)] for x, y in d["poly"]]})
@@ -62,11 +95,15 @@ def export(level_id):
             raise SystemExit(f"{level_id}: a water body has no id")
         out["water"].append({"id": w["id"], "surface_m": w["surface_m"], "bed_m": w["bed_m"],
                              "poly": [[float(x), float(y)] for x, y in w["poly"]]})
-    # The awnings civilians shelter under, from the level's plan; its checks report on stderr.
+    # The awnings civilians shelter under, and every roof the rain can't pass, from the level's
+    # plan (a city layout has one); its checks report on stderr.
     covers = []
-    if any(e["kind"] == "civ" for e in ents):
+    if layout.get("base", "city") == "city":
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            covers = city_plan.build(level_id).covers
+            plan = city_plan.build(level_id)
+        covers = plan.covers
+        out["shelters"] = shelters(level_id, plan)
+        out["approaches"] = approaches(layout)
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

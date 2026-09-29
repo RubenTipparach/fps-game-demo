@@ -152,8 +152,9 @@ A building can name its own gel pair in the layout, as the Anchor would.
 
 | Target | Value |
 |---|---|
-| Face mean luma, in conversation | 95-150 |
-| Lit side / shadow side | 2.0-4.0, in linear light (section 8) |
+| The face | the rig raises the face's mean luma over the same frame with the rig off |
+| Face mean luma, in conversation | 95-150, recorded per speaker, not a gate (owner J1) |
+| Lit side / shadow side | 2.0-4.0 in linear light (section 8), recorded per speaker, not a gate (owner J1) |
 | The rim | the rig adds at least 20 luma to the head's far edge (section 8) |
 | The world | frame luma outside the speaker changes by less than 2 % with the rig on versus off (section 8) |
 
@@ -258,6 +259,83 @@ role):
   the core finds a speaker's district with the same polygon rule as water (`LayoutPolygon`). A
   data check refuses a gel pair for a district no level has.
 
+### 9. Dry indoors, wet in the rain (owner J1)
+
+The owner, on Tank at the Anchor's bar: "I think you made him too shiny, he's not wet in
+doors". The skin's roughness is one mask everywhere (0.42 on the T-zone, 0.55 on the cheeks,
+0.62 on the body), glossy enough to read as rain-wet, and it doesn't care where a character
+stands. The hub always rains, so a character in the open should look wet, and one under a roof
+should not.
+
+**Wetness**, 0 to 1 per character:
+- **Where:** a character is sheltered when a roof is over them: inside a building's footprint,
+  under an awning or a kiosk's roof, under the Skyway's deck or under a walkway. Those are the
+  same things that stop the rain particles (the rain's heightfield). The plan registers each
+  where it builds it (`Plan.shelter`: an outline and the height of its underside), and
+  `export_level_data.py` writes them to the level data as `shelters`, beside the districts and
+  the water. The core answers `ShelterDef.Covers(x, y, feet, headroom)` with the polygon rule
+  water and districts use (`LayoutPolygon`), and `Wetness.Sheltered` asks every roof. A roof
+  counts when its underside is at least `headroom_m` (1.0 m) above the character's feet: the
+  lowest awning is 2.14 m over the pavement, and someone standing on a roof has none, so a roof
+  never shelters the people on it. A civilian's crowd place keeps its own flag for umbrellas (a
+  different rule: an umbrella's reach from an awning).
+- **How fast:** it rises toward 1 in the open over `wet_time_s` (20 s) and falls toward 0
+  under a roof over `dry_time_s` (240 s), linearly. A level starts everyone at their place's
+  value, so nobody dries on screen at load. The step is a core function, so a test pins it.
+- **Who:** every NPC. The runner has no visible body.
+
+**What it changes**, from `character_lighting.json`'s `wetness` block:
+
+| Surface | Dry (wetness 0) | Wet (wetness 1) |
+|---|---|---|
+| Skin roughness | the mask + 0.18: T-zone 0.60, cheeks 0.73, body 0.80 | the mask as it is today: 0.42, 0.55, 0.62 |
+| Cloth roughness | 0.70, as today | 0.45 |
+| Cloth colour | as today | 0.8 times as bright (wet cloth darkens) |
+| Eyes (outfit alpha under 0.3) | 0.08, unchanged | 0.08, unchanged |
+| Hair | unchanged | unchanged (not covered by this change) |
+
+Today's look is the wet one, which is what the owner saw as too shiny indoors; dry skin is
+matte enough that the key's highlight spreads instead of glinting.
+
+**How:**
+- **The skin becomes a shader.** A StandardMaterial3D has no per-instance parameter, so
+  `character_skin.gdshader` takes over from `character_skin.tres`'s numbers, one for one:
+  albedo, the normal and its alpha roughness, specular 0.42, subsurface scattering in skin mode
+  (strength 0.30) and the transmittance (colour, depth 0.2, boost 0.3). It adds `instance
+  uniform float wetness`. The import step writes each body's skin as that shader with its
+  textures, as it writes the outfit today.
+- **The outfit shader** gains the same `instance uniform float wetness`, beside its hue and
+  saturation.
+- **`NpcActor`** asks the core for its shelter every 0.25 s, steps its wetness and sets the
+  instance uniform on its body's meshes. The rule and the step are the core's; the node only
+  carries them to the meshes (CLAUDE.md 6.2).
+
+**Measured** on the capture set's five conversations and Dace at the checkpoint gate, rig on:
+each face's brightest tenth, the highlight, before and after, beside the face means already
+recorded. Tank at the bar is the owner's case: his highlight must fall with the key unchanged.
+Dace stands in the rain and must not change. (The "before" shots set the skin's dry add to 0,
+which is the old look: the AutoTest step `skin_before_wetness`.)
+
+**Found in building:**
+- **All five speakers stand under a roof.** This section first said Silk and Petra stand in the
+  rain. In the hub's data, Silk is in the Anchor's back room, Petra in the depot, Lin in the
+  shrine and Nguyen under the Skyway and its service deck, so all five dry. Dace, at the
+  checkpoint gate with nothing overhead, joins the captures as the rain case, and the spec's
+  "Silk in the rain" became "Dace in the rain".
+- **The hub has 414 roofs:** 343 lot blocks (their shop and loading recesses are under them), 15
+  named buildings, 28 stall awnings, 16 shop awnings, 6 shanty awnings, 4 walkway runs, the
+  Skyway's deck and a kiosk's roof. They are registered where the plan builds them, so they
+  can't drift from the geometry, and none has a hole (the export refuses one, since the core's
+  polygon rule has none).
+- **Three civilians hold umbrellas under the Skyway.** The crowd's umbrella flag (inside a named
+  building, or within an umbrella's reach of an awning) doesn't know the Skyway's deck: civ_16,
+  civ_26 and civ_27 stand dry under it with umbrellas open. Making the flag ask the same roofs
+  would change those three civilians' look, which is crowd-variety's rule, not this change's;
+  it is left as a follow-up. The flag and the roof rule are two answers to "is a roof over
+  me", which CLAUDE.md 5.1 asks to report.
+- **A step carries the time since the last update**, so a body asked every 0.25 s dries at the
+  data's rate whatever the frame rate.
+
 ## Risks / Trade-offs
 
 - **A normal map from albedo detail is an approximation.** It gives pores and fine creases, not
@@ -276,13 +354,17 @@ role):
 All recommendations accepted: I9, the wrist glow always on; I10, the key and two gels; I11,
 mockup D9 approved; I12, the skin as designed. I1 builds this third.
 
-Open: **J1** (survey, 2026-09-29), how every face meets the target. One key can't, either way:
+**J1** (survey, 2026-09-29) asked how every face meets the target, since one key can't:
 - Dark skin: Tank's face measured 21 without the rig and 54 with it, Petra's 100 and 140, and a
   key that takes Tank to 95 takes Petra to about 216.
 - Bright places: Lin in the shrine hall reads 145 before the rig and 189 with it, and where a
   room is lit the key side gets only 1.05-1.5 times the light of the other (target 2-4).
 
-Recommended, provisionally: expose each face, the key set per speaker from the skin's
-reflectance (measured from the body's skin atlas at build time) and the light already on them,
-capped at 4 times. Nothing is built for it until the answer; the energies stay at tuning
-round 1 (section 4's table until then).
+The owner, 2026-09-29: "tank looks fine with lighting, I think you made him too shiny, he's
+not wet in doors.... so you might have to tweak shaders based on where characters are."
+- **The lighting stays as it is.** One key, at tuning round 1 (section 4's table). There is no
+  per-face exposure. The face band (95-150) and the lit-to-shadow ratio (2-4) become numbers
+  the captures record for each speaker, not a gate every face must pass; the rig must still
+  add light to every face, show its rim and leave the world alone (section 5).
+- **Skin and clothes follow where a character stands:** dry under a roof, wet in the rain
+  (section 9).

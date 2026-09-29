@@ -865,7 +865,7 @@ SKIN_ROUGHNESS = os.path.join(HERE, "npc_skin_roughness.png")   # make_skin_roug
 
 def skin_normal_pixels(path, size, cfg):
     """The skin's tangent-space normal map, derived from its own colour map at full resolution
-    (openspec/changes/character-lighting, design section 1): the luminance less its blur is the
+    (openspec/changes/archive/2026-09-29-character-lighting, design section 1): the luminance less its blur is the
     height (pores and creases are darker, so lower), its slope scaled by cfg["strength"] tilts
     the normal, and the result is resampled to size x size and renormalised. OpenGL convention
     (+Y up the texture), as glTF's normalTexture wants. The alpha carries the skin's roughness

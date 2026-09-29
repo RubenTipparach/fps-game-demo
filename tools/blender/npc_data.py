@@ -187,7 +187,7 @@ TABLE_SCHEMA = Obj({
                  "legwear_below_frac": Num(0.3, 0.0, 0.6), "max_ratio": Num(2.0, 1.0, 20.0),
                  "mask_dilate_px": Int(3, 0, 32)}),
     "skin_tone_strength": Num(1.0, 0.0, 1.0),
-    # openspec/changes/character-lighting, design section 1 (and its found-in-building notes)
+    # openspec/changes/archive/2026-09-29-character-lighting, design section 1 (and its found-in-building notes)
     "skin_normal": Obj({"blur_px": Num(6.0, 0.5, 64.0), "strength": Num(16.0, 0.0, 200.0)}),
     "skin_roughness": Obj({"t_zone": Num(0.42, 0.0, 1.0), "cheeks": Num(0.55, 0.0, 1.0), "body": Num(0.62, 0.0, 1.0),
                            "blur_px": Num(6.0, 0.0, 64.0)}),

@@ -11,7 +11,9 @@
 // are kept under its target key (a named NPC's id, a civilian's stable id;
 // openspec/changes/archive/2026-09-28-hub-combat, design section 9). A civilian's body, outfit
 // palette, accessories, height and idle are the core's crowd pick (ILevelHost.Crowd,
-// openspec/changes/archive/2026-09-29-crowd-variety), applied here.
+// openspec/changes/archive/2026-09-29-crowd-variety), applied here. Its body is wet in the rain and
+// dry under a roof by the core's rule, carried to its meshes by BodyWetness
+// (openspec/changes/archive/2026-09-29-character-lighting, design section 9).
 
 #nullable enable
 using System;
@@ -57,6 +59,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
     private NpcRagdoll? _ragdoll;
     private NpcTarget? _target;
     private NpcCombat? _combat;
+    private BodyWetness? _wetness;
     private Node3D? _held;
     private Vector3 _heldMuzzle;
     private double _oneShotS;
@@ -87,6 +90,9 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
 
     /// <summary>How they fight, flee, cower or surrender; null until wired.</summary>
     public NpcCombat? Combat => _combat;
+
+    /// <summary>How wet their body is, 0 dry to 1 soaked; null until wired or without a body.</summary>
+    public BodyWetness? BodyWetness => _wetness;
 
     /// <summary>Their intelligence, 1 to 5.</summary>
     public int Intelligence => _def?.Intelligence ?? 1;
@@ -137,6 +143,10 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         var weapon = _def?.Weapon is { } wid ? data.Weapons.Find(wid) : null;
         _held = Hold(weapon);
         OnCharactersLayer(data.CharacterLighting.CharactersLayer);
+        if (GetNodeOrNull<Node3D>("Model") is { } model)
+        {
+            _wetness = new BodyWetness(model, services.Level.Def.Shelters, data.CharacterLighting.Wetness, GlobalPosition);
+        }
         _combat = new NpcCombat(this, services, CombatRules.DefenceOf(_def, data.Npcs.Civilians, services.State.World.Seed, StableId),
             weapon, GetNodeOrNull<NavigationAgent3D>("Nav"), _held);
         ParsePatrol(Entity.Meta(this, "patrol"), Entity.Meta(this, "patrol_start", "0"));
@@ -264,7 +274,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
     /// <summary>
     /// Puts the body's meshes (and what they hold) on the characters' visual layer as well as the
     /// world's, so the wrist light and the conversation rig reach them and nothing else
-    /// (openspec/changes/character-lighting, design section 2).
+    /// (openspec/changes/archive/2026-09-29-character-lighting, design section 2).
     /// </summary>
     private void OnCharactersLayer(int layer)
     {
@@ -352,6 +362,7 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
         }
         var dt = (float)delta;
         _oneShotS -= delta;
+        _wetness?.Tick(delta, GlobalPosition);
         var v = Velocity;
         v.Y = IsOnFloor() ? 0 : v.Y - Gravity * dt;
         var player = _s.Level.Player;

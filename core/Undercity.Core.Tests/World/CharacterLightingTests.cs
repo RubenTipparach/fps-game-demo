@@ -1,4 +1,4 @@
-// The character lighting table (openspec/changes/character-lighting, design section 7): the
+// The character lighting table (openspec/changes/archive/2026-09-29-character-lighting, design section 7): the
 // shipped data/character_lighting.json, the gels each district takes, and what validation refuses.
 
 using Undercity.Core.Data;

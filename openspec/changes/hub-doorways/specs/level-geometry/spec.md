@@ -10,8 +10,9 @@ enterable building declares, and every closed door a building shows. Specificall
 - The frame's boxes SHALL be registered with the z-fighting check.
 - An entrance 2.0 m wide or wider SHALL have a portal: pilasters with plinths and capitals, and
   a lintel with a lit downlight, whose light has a visible fixture and a corona.
-- A door with a lock SHALL have a leaf in its frame. A door without one SHALL be an open, framed
-  doorway.
+- An exterior door 2.0 m wide or wider SHALL be a public entrance with a sliding door
+  (requirement "Public entrances open as you walk up"). A door with a lock SHALL have a leaf
+  in its frame. Any other door SHALL be an open, framed doorway.
 
 The city plan generator (`tools/levels/city_plan.py`, `check_doors`) SHALL refuse a door that
 is unframed, carved at other than its fits, or whose frame doesn't fit the wall it stands in.
@@ -41,8 +42,8 @@ door built in the building's style:
 - a plank or sheet door on a shanty;
 - a steel man door on a workshop or dock building.
 
-A closed door SHALL be built by the rules of "Every doorway is framed" and SHALL be solid to
-collision. The city plan generator (`check_building_doors`) SHALL refuse a plan in which such a
+A closed door SHALL be built by the rules of "Every doorway is framed", SHALL be solid to
+collision, and SHALL show no use prompt. The city plan generator (`check_building_doors`) SHALL refuse a plan in which such a
 building shows no door, naming the building and the edge.
 
 #### Scenario: A shop with no way in
@@ -84,3 +85,27 @@ level's navmesh from 1 m outside every exterior door to the runner's spawn.
 - **WHEN** a door's approach is clear but the ground round it joins no street
 - **THEN** the plan exits naming the door, and in a built level the placement test prints FAIL
   naming the door and exits 1
+
+### Requirement: Public entrances open as you walk up
+Every public entrance SHALL have an automatic sliding door: two leaves that slide apart along
+the building's inside face when the runner, or a person in a group the door names, comes within
+its trigger radius. It SHALL stay open while anyone is within that radius and close after its
+wait. It SHALL never lock, and it SHALL hold no state a save records. The runner's and NPCs'
+trigger radii, the wait and the leaves' speed SHALL come from `data/doors.json`. E1M3's
+`Brushfire.Doorway` and `Brushfire.Door` SHALL be the one implementation, used by the reference
+maps and the hub alike. The navmesh SHALL pass through a closed public entrance. The city plan
+generator (`check_sliding_room`) SHALL refuse a leaf whose open position meets a wall, a fixture
+or another door.
+
+#### Scenario: The runner walks into the Rusty Anchor
+- **WHEN** the runner walks up to the Anchor's 3.0 m entrance
+- **THEN** its leaves slide apart before the runner reaches them, and close behind the runner
+  after the wait
+
+#### Scenario: A civilian flees through a closed entrance
+- **WHEN** a fleeing civilian's navmesh path runs through the Fish Hall's closed north entrance
+- **THEN** the door opens ahead of the civilian and the civilian walks through without stopping
+
+#### Scenario: A leaf with no room
+- **WHEN** a counter stands on the inside wall where a leaf would slide
+- **THEN** the plan exits naming the entrance, the leaf and the counter, and nothing is built

@@ -1,5 +1,5 @@
 // The runner's wrist-deck glow: an omni light low and to the left of the view, lighting characters
-// and nothing else (openspec/changes/character-lighting, design section 3). At 2 m it is a cool
+// and nothing else (openspec/changes/archive/2026-09-29-character-lighting, design section 3). At 2 m it is a cool
 // fill of about a third of the conversation key. It is always on (owner I9), and perception
 // doesn't count it: it lights no world surface.
 //
