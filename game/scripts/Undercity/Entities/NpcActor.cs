@@ -50,7 +50,8 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
     /// <summary>Within this distance an NPC notices the runner whatever way it faces, metres.</summary>
     [Export] public float NoticeRangeM = 2.5f;
 
-    private const float Gravity = 20f;
+    /// <summary>How fast a person falls, m/s². On the floor they don't fall at all (see _PhysicsProcess).</summary>
+    internal const float Gravity = 20f;
 
     private Services? _s;
     private NpcDef? _def;

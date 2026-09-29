@@ -410,6 +410,26 @@ The video is there because the point is how the street reads as you move.
   again to 5,059 polygons, and passes through the entrances, since the leaves are not in the
   navigation group.
 
+**Found in the built level** (the in-engine tests on the rebuilt, rebaked hub):
+- **Tank's aisle fell off the navmesh.** Behind the Anchor's bar, 1.1 m lies between the
+  counter's short leg (x 98.8) and the wall. A pilaster pinches it to 0.9 m at its south end, and
+  the back room's door, framed now, pinches it to 1.0 m at its north end with the architrave. The
+  navmesh keeps its agent 0.4 m off everything on 0.2 m cells, so neither end kept a path, and the
+  aisle was dropped. Shot, Tank never reached the runner (the combat test). The counter's leg now
+  stops at x 98.5, a 1.4 m aisle, and the placement test checks that every person stands on the
+  navmesh, within 0.5 m.
+- **The approach walks asked the map too soon.** Godot 4.7 syncs a navigation region on a
+  worker thread, 12 frames for the hub's 5,000 polygons, and until then every query answers the
+  origin: all 24 approaches read as 48-260 m off the navmesh. The test now waits until the
+  spawn's floor is on the map.
+- **The door test's walker stopped at the first kerb.** A bare body with the NPC's capsule took
+  the default 45 degree floor and a steady 2 m/s push down, which slides a capsule back off a
+  0.15 m kerb's edge. It now takes the NPC scene's floor angle and falls as an NPC falls: not at
+  all on the floor (`NpcActor.Gravity`).
+- **Found, not this change's:** on the navmesh, the back room behind Tank's locked door (Silk)
+  and the Pit's floor (Skiv, civilian 25) don't join the rest of the hub, on the old navmesh as
+  on the new. A person there who flees has nowhere to go. Left for a follow-up.
+
 ## Risks / Trade-offs
 
 - **Bake time.** Eight sectors on lavapipe take hours. The rebuild is one pass, run once the
