@@ -48,7 +48,7 @@ import shapely
 from shapely import affinity
 from shapely.geometry import LineString, MultiLineString, Point, Polygon, box
 from shapely.geometry.polygon import orient
-from shapely.ops import nearest_points, split, unary_union
+from shapely.ops import linemerge, nearest_points, split, unary_union
 from shapely.prepared import prep
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -110,6 +110,20 @@ STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is
 NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
 PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
 PLAYER_SCRIPT = os.path.join(ROOT, "game", "scripts", "Player", "PlayerController.cs")
+# Puddles (openspec/changes/street-puddles, design section 3.5). Where rain water gathers is level
+# construction, so its numbers live here; how a puddle looks is the ground shader's (materials.json),
+# and whether a roof keeps the rain off is the core's (data/character_lighting.json, headroom_m).
+CHARACTER_LIGHTING_JSON = os.path.join(ROOT, "game", "data", "character_lighting.json")
+PUDDLE_KERB_OFF_M = 0.05   # a puddle's edge stays this far in from its own ground's edge (a kerb face)
+PUDDLE_CLEAR_M = 0.3       # and this far from a building, a lot, a fixture, a prop, a solid or a stair
+PUDDLE_LOW_M = 0.5         # a detail box or solid whose bottom is below this stands on the ground
+PUDDLE_GAP_M = 0.1         # two puddles are at least this far apart
+PUDDLE_FIT = 0.5           # a puddle keeps at least this share of its ellipse after its ground's edge clips it
+# Sizes and gaps give the amount the owner chose (survey L2, about 2.6 % of the ground; design 3.5)
+GUTTER_LEN_M, GUTTER_WIDE_M, GUTTER_GAP_M = (2.0, 5.0), (0.6, 1.0), (1.5, 4.0)
+GULLY_EVERY_M, GULLY_ACROSS_M, GULLY_GRATE_M = 25.0, (1.2, 1.8), (0.45, 0.25)   # grate: along, across the kerb
+DRIP_LEN_M, DRIP_WIDE_M, DRIP_GAP_M, DRIP_OUT_M = (1.5, 3.0), (0.5, 0.8), (1.0, 3.0), (0.05, 0.35)
+DRIP_ROOFS = ("awning", "Skyway deck")   # the shelters whose edges drip onto open ground
 
 # Light colours (linear-ish RGB) and settings: (color, energy, range_m, corona material, corona size)
 LIGHTS = {
@@ -233,6 +247,19 @@ def water_data():
     with open(WATER_JSON) as f:
         # the game's data files allow whole-line // comments (Undercity.Core JsonData)
         return json.loads("".join(line for line in f if not line.lstrip().startswith("//")))
+
+
+def wetness_data():
+    """The core's wetness rule's numbers (data/character_lighting.json "wetness"), so a puddle and
+    a character agree about which roofs keep the rain off."""
+    with open(CHARACTER_LIGHTING_JSON) as f:
+        return json.loads("".join(line for line in f if not line.lstrip().startswith("//")))["wetness"]
+
+
+def ellipse(cx, cy, length, width, angle):
+    """An ellipse length x width metres round (cx, cy), its long axis at angle radians."""
+    e = affinity.scale(Point(0, 0).buffer(1.0, quad_segs=8), length / 2, width / 2)
+    return affinity.translate(affinity.rotate(e, angle, origin=(0, 0), use_radians=True), cx, cy)
 
 
 def mantle_rise():
@@ -590,6 +617,9 @@ class City:
         self.door_zfights = []  # dressing doors that z-fight in their own frame
         self.edge_doors = {}    # a facade edge's own doors, by id of its occupied list: [s along the edge]
         self.sliding = []       # public entrances' sliding doors: {"building", "door", "tag", "sweeps", "keep", "airs"}
+        self.flights = []       # open stair flights' footprints, which puddles keep clear of
+        self.puddle_list = []   # the puddles (City.puddles()): {"id", "kind", "at", "ground_m", "g"}
+        self.gullies = []       # the kerb gullies' grates: {"id", "at", "heading"}
 
     # geometry lookups ------------------------------------------------------
     def walk_z(self, wk, x, y):
@@ -2646,6 +2676,8 @@ class City:
             mx, my = (c[0][0] + c[2][0]) / 2, (c[0][1] + c[2][1]) / 2
             P.add(sector, "walk", mx, my, hexa(c, ztop - 0.06, ztop, ["rust_metal", "diamond_plate"] + ["rust_metal"] * 4), col="col")
         end = (start[0] + t[0] * run * risers, start[1] + t[1] * run * risers)
+        self.flights.append(Polygon([(start[0] + n[0] * v, start[1] + n[1] * v) for v in (-w / 2, w / 2)]
+                                    + [(end[0] + n[0] * v, end[1] + n[1] * v) for v in (w / 2, -w / 2)]))
         for side in (-1, 1):
             a = (start[0] + n[0] * side * (w / 2 + 0.05), start[1] + n[1] * side * (w / 2 + 0.05), z_top - 0.3)
             b = (end[0] + n[0] * side * (w / 2 + 0.05), end[1] + n[1] * side * (w / 2 + 0.05), z_bottom)
@@ -3291,6 +3323,200 @@ class City:
             raise SystemExit(f"{self.m['id']}: {len(problems)} placements put a person inside the level:\n  "
                              + "\n  ".join(problems))
 
+    # puddles (openspec/changes/street-puddles) --------------------------------------------
+    def puddle_ground(self):
+        """What a puddle is checked against, built once, after the rest of the level: the ground
+        it may lie on by height (inset from its edges), the roofs, and what it keeps clear of. The
+        roofs are Plan.shelters under the core's own headroom (wetness_data()), the same shapes
+        and the same test as the core's Wetness.Sheltered, so a puddle and a character agree
+        about where the rain falls."""
+        if getattr(self, "_puddle_ground", None) is None:
+            road = self.street.difference(self.rail_geom)
+            ground = {STREET_Z: ("road", road), PLAZA_Z: ("square", self.plaza), PAVED_Z: ("sidewalk", self.paved)}
+            room = self.standing_room()
+            clear = [("building", self.B)] + list(room["footprints"])
+            clear += [(name, fp) for name, fp, z0, z1 in self.P.solids if z0 < PUDDLE_LOW_M]
+            clear += [(name or "detail", box(x0, y0, x1, y1)) for name, x0, y0, z0, x1, y1, z1 in room["details"]
+                      if z0 < PUDDLE_LOW_M and z1 > STREET_Z]
+            clear += [("stair", fp) for fp in self.flights]
+            roofs = self.P.shelters
+            self._puddle_ground = {
+                # (name, the ground, what a puddle is clipped to, what the check holds it to: a
+                # millimetre wider, so a clipped edge lying on the line isn't refused for rounding)
+                "ground": {z: (name, g, g.buffer(-PUDDLE_KERB_OFF_M, join_style=2),
+                               g.buffer(-PUDDLE_KERB_OFF_M + 1e-3, join_style=2)) for z, (name, g) in ground.items()},
+                "not_on": [("bridge deck", self.bridge_u), ("rail tracks", self.rail_geom), ("Pit", self.PIT),
+                           ("water", self.W)],
+                "roofs": roofs, "roof_tree": shapely.STRtree([g for _, g, _ in roofs]),
+                "headroom": wetness_data()["headroom_m"],
+                "clear": clear, "clear_tree": shapely.STRtree([g for _, g in clear])}
+        return self._puddle_ground
+
+    def puddle_problems(self, label, g, z, others=()):
+        """Why a puddle can't lie here, or [] when it can (openspec/changes/street-puddles, design
+        section 3.5). g is its outline, z the height of the ground it lies on, others the puddles it
+        must keep PUDDLE_GAP_M from. The placement and the check both ask this, so they can't
+        disagree about the rule."""
+        pg = self.puddle_ground()
+        if z not in pg["ground"]:
+            return [f"{label} lies at {z:g} m, where there is no open ground"]
+        name, _, _, inset = pg["ground"][z]
+        problems = []
+        if not inset.contains(g):
+            problems.append(f"{label} runs off its {name}: {g.difference(inset).area:.2f} m2 of it lies within "
+                            f"{PUDDLE_KERB_OFF_M:g} m of a kerb or an edge, or past it")
+        problems += [f"{label} lies on the {what}" for what, geom in pg["not_on"] if g.intersects(geom)]
+        for i in pg["roof_tree"].query(g):
+            rl, rg, under = pg["roofs"][i]
+            if under - z >= pg["headroom"] and g.intersects(rg):
+                problems.append(f"{label} lies under a roof, the {rl} ({g.intersection(rg).area:.2f} m2 of it)")
+        for i in pg["clear_tree"].query(g, predicate="dwithin", distance=PUDDLE_CLEAR_M):
+            what, geom = pg["clear"][i]
+            problems.append(f"{label} is {g.distance(geom):.2f} m from a {what} (it keeps {PUDDLE_CLEAR_M:g} m clear)")
+        problems += [f"{label} is {o['g'].distance(g):.2f} m from {o['id']} (puddles keep {PUDDLE_GAP_M:g} m apart)"
+                     for o in others if o["g"].distance(g) < PUDDLE_GAP_M]
+        return problems
+
+    def kerbs(self):
+        """The kerbs in the rain's path: the road's edges where it meets a sidewalk, as lines,
+        each with a stable key (its start, rounded) for its puddles' seeded stream."""
+        road = self.puddle_ground()["ground"][STREET_Z][1]
+        edge = linemerge(road.boundary.intersection(self.paved.buffer(0.05)))
+        lines = [ln for ln in getattr(edge, "geoms", [edge]) if ln.geom_type == "LineString" and ln.length >= 1.0]
+        return sorted(((f"{ln.coords[0][0]:.1f},{ln.coords[0][1]:.1f}", ln) for ln in lines), key=lambda kl: kl[0])
+
+    def kerb_frame(self, line, s):
+        """The point s metres along a kerb, its unit tangent, and the unit normal into the road."""
+        road = self.puddle_ground()["ground"][STREET_Z][1]
+        p = line.interpolate(s)
+        a, b = line.interpolate(max(s - 0.2, 0.0)), line.interpolate(min(s + 0.2, line.length))
+        t = unit(b.x - a.x, b.y - a.y)
+        n = (-t[1], t[0])
+        if not road.contains(Point(p.x + n[0] * 0.3, p.y + n[1] * 0.3)):
+            n = (-n[0], -n[1])
+        return (p.x, p.y), t, n
+
+    def drip_edges(self):
+        """The edges rain drips from onto open ground: each awning's edges that face away from its
+        building (not the edge on the wall, nor the sides running back to it), and every edge of
+        the Skyway's deck. Each comes with a stable key for its puddles' seeded stream."""
+        out = []
+        for label, g, _ in self.P.shelters:
+            if not any(k in label for k in DRIP_ROOFS):
+                continue
+            pg = oriented(g)
+            c = pg.centroid
+            for a, b in self.ring_edges(pg, pg.exterior.coords):
+                if math.dist(a, b) < 1.0:
+                    continue
+                n = self.outward(pg, a, b)
+                mid = Point((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+                if "awning" in label and self.B.distance(Point(mid.x + n[0] * 0.5, mid.y + n[1] * 0.5)) \
+                        < self.B.distance(mid) + 0.25:
+                    continue
+                out.append((f"{label}:{c.x:.1f},{c.y:.1f}:{a[0]:.1f},{a[1]:.1f}", a, b, n))
+        return sorted(out, key=lambda e: e[0])
+
+    def puddles(self):
+        """Every puddle in the level, where rain water gathers (openspec/changes/street-puddles,
+        design section 3.5): round a kerb gully every GULLY_EVERY_M of kerb, in the gutters between,
+        and just outside the drip edges of the awnings and the Skyway's deck. A candidate that
+        breaks a rule (puddle_problems) is dropped, never moved, so the rest stay where they are.
+        Each kerb and each drip edge draws from its own seeded stream ("{seed}:puddles:..."), so
+        placing puddles moves nothing else in the level, and the draws happen whether or not a
+        candidate is kept. Returns (puddles, gullies)."""
+        grounds = self.puddle_ground()["ground"]
+        road_inset = grounds[STREET_Z][2]
+        kept, gullies, cells, counts = [], [], {}, {}
+
+        def near(g):
+            x0, y0, x1, y1 = g.bounds
+            seen = {}
+            for i in range(int(x0 // 4) - 1, int(x1 // 4) + 2):
+                for j in range(int(y0 // 4) - 1, int(y1 // 4) + 2):
+                    for o in cells.get((i, j), ()):
+                        seen[id(o)] = o
+            return list(seen.values())
+
+        def keep(kind, full, z, at):
+            g = full.intersection(grounds[z][2]) if z in grounds else Polygon()
+            g = max(polys(g), key=lambda q: q.area) if not g.is_empty else g
+            if g.is_empty or g.area < PUDDLE_FIT * full.area:
+                return None
+            if self.puddle_problems(f"{kind} at ({at[0]:.1f}, {at[1]:.1f})", g, z, near(g)):
+                return None
+            counts[kind] = counts.get(kind, 0) + 1
+            p = {"id": f"{kind}_{counts[kind]:03d}", "kind": kind, "at": (r4(at[0]), r4(at[1])), "ground_m": z, "g": g}
+            kept.append(p)
+            x0, y0, x1, y1 = g.bounds
+            for i in range(int(x0 // 4), int(x1 // 4) + 1):
+                for j in range(int(y0 // 4), int(y1 // 4) + 1):
+                    cells.setdefault((i, j), []).append(p)
+            return p
+
+        kerbs = self.kerbs()
+        for key, line in kerbs:                         # the gullies first: they are the fixed points
+            rng = random.Random(f"{self.P.seed}:puddles:gully:{key}")
+            for q in range(1, int(line.length // GULLY_EVERY_M) + 1):
+                (px, py), t, n = self.kerb_frame(line, q * GULLY_EVERY_M - GULLY_EVERY_M / 2)
+                off = PUDDLE_KERB_OFF_M + GULLY_GRATE_M[1] / 2
+                cx, cy = px + n[0] * off, py + n[1] * off
+                d = rng.uniform(*GULLY_ACROSS_M)
+                if keep("gully", Point(cx, cy).buffer(d / 2, quad_segs=8), STREET_Z, (cx, cy)):
+                    # heading into the road: the decal's -Z crosses the kerb, its X runs along it
+                    gullies.append({"id": f"gully_{len(gullies) + 1:03d}", "at": (r4(cx), r4(cy)),
+                                    "heading": r4(heading_of(*n))})
+        for key, line in kerbs:
+            rng = random.Random(f"{self.P.seed}:puddles:gutter:{key}")
+            s = rng.uniform(1.0, GUTTER_GAP_M[1])
+            while s < line.length - 1.0:
+                length, wide = rng.uniform(*GUTTER_LEN_M), rng.uniform(*GUTTER_WIDE_M)
+                (px, py), t, n = self.kerb_frame(line, min(s + length / 2, line.length))
+                # an ellipse whose kerb side the kerb cuts off: wide / 0.7 across, its centre 0.4 of
+                # its half-width in from the kerb's inset, so the water shows `wide` metres of road
+                full_w = wide / 0.7
+                off = PUDDLE_KERB_OFF_M + 0.4 * full_w / 2
+                cx, cy = px + n[0] * off, py + n[1] * off
+                keep("gutter", ellipse(cx, cy, length, full_w, math.atan2(t[1], t[0])), STREET_Z, (cx, cy))
+                s += length + rng.uniform(*GUTTER_GAP_M)
+        for key, a, b, n in self.drip_edges():
+            rng = random.Random(f"{self.P.seed}:puddles:drip:{key}")
+            edge = math.dist(a, b)
+            t = unit(b[0] - a[0], b[1] - a[1])
+            s = rng.uniform(0.0, DRIP_GAP_M[1])
+            while s < edge - 0.5:
+                length = min(rng.uniform(*DRIP_LEN_M), edge - s)
+                wide, out = rng.uniform(*DRIP_WIDE_M), rng.uniform(*DRIP_OUT_M)
+                m = s + length / 2
+                cx, cy = a[0] + t[0] * m + n[0] * (out + wide / 2), a[1] + t[1] * m + n[1] * (out + wide / 2)
+                z = self.ground_level(cx, cy)
+                keep("drip", ellipse(cx, cy, length, wide, math.atan2(t[1], t[0])), z, (cx, cy))
+                s += length + rng.uniform(*DRIP_GAP_M)
+        return kept, gullies
+
+    def place_puddles(self):
+        """The level's puddles (City.puddles()) and a grate entity for each kerb gully, which the
+        importer turns into the gully decal (openspec/changes/street-puddles, design section 3.2)."""
+        self.puddle_list, self.gullies = self.puddles()
+        for gl in self.gullies:
+            self.P.entity("streets", f"ENT_{gl['id']}", gl["at"][0], gl["at"][1], STREET_Z, gl["heading"],
+                          {"kind": "gully", "id": gl["id"]})
+
+    def check_puddles(self, puddles=None):
+        """Every puddle lies where rain water gathers and nowhere else (openspec/changes/street-puddles,
+        "Puddles lie where water gathers"): on open ground in the rain, within its own ground and
+        PUDDLE_KERB_OFF_M in from a kerb, off the bridges, the rails, the Pit and the water, clear
+        of buildings, lots, fixtures, props, solids and stairs by PUDDLE_CLEAR_M, and apart from
+        every other puddle. Refuses the plan, naming each puddle and what it breaks."""
+        puddles = self.puddle_list if puddles is None else puddles
+        tree = shapely.STRtree([p["g"] for p in puddles])
+        problems = []
+        for i, p in enumerate(puddles):
+            others = [puddles[j] for j in tree.query(p["g"], predicate="dwithin", distance=PUDDLE_GAP_M) if j != i]
+            problems += self.puddle_problems(p["id"], p["g"], p["ground_m"], others)
+        if problems:
+            raise SystemExit(f"{self.m['id']}: {len(problems)} puddle problems:\n  " + "\n  ".join(problems))
+
     def build(self):
         self.foundation()
         self.plan_lots()
@@ -3328,6 +3554,8 @@ class City:
         self.check_doors()
         self.check_exits()
         self.check_standing_room()
+        self.place_puddles()
+        self.check_puddles()
         return self.P
 
     def pit_railings(self):

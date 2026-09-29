@@ -10,8 +10,8 @@ same path the Material Maker materials take, so texel density (tile_m in materia
 emission rule (emission_operator = 1, Multiply; CLAUDE.md 11) cannot differ between the two.
 
 Materials (tile_m is metres per texture repeat, see materials.json):
-  asphalt           wet asphalt with aggregate, cracks and puddles (streets)
-  paving_wet        0.5 m slabs, wet, puddles in the joints (sidewalks and squares)
+  asphalt           wet asphalt with aggregate and cracks (streets)
+  paving_wet        0.5 m slabs, wet (sidewalks and squares)
   window_lit_warm   a lit window behind blinds, warm (emissive)
   window_lit_cool   a lit window, cool television or strip light (emissive)
   window_dark       an unlit pane: near-black glass that reflects the street
@@ -20,7 +20,12 @@ Materials (tile_m is metres per texture repeat, see materials.json):
   neon_cyan         neon tube, cyan #35e0ff (emissive)
   water             canal water: black-green, rippled, mirror-smooth
   awning            striped canvas
-Every map is seeded, so the same script writes the same files.
+Decals (DECALS), written straight to game/textures/decals/ with lossless import presets:
+  gully             a kerb gully's cast-iron grate, 0.45 x 0.25 m
+
+The ground holds no standing water: the level plan places the puddles and the ground's shader
+draws them (openspec/changes/street-puddles). Every map is seeded, so the same script writes the
+same files.
 """
 import os
 import sys
@@ -98,13 +103,12 @@ def asphalt():
     r = rng_for("asphalt")
     grain = r.uniform(0, 1, (N, N)).astype(np.float32)
     patch = fbm(r, (4, 8))
-    puddle = np.clip((fbm(r, (3, 6, 12)) - 0.56) * 9, 0, 1)
+    fbm(r, (3, 6, 12))   # the old puddle noise: still drawn, so the cracks drawn after it don't move
     ck = cracks(r, 14)
     base = 0.05 + 0.03 * patch + 0.035 * (grain - 0.5) - 0.03 * ck
-    base = base * (1 - 0.35 * puddle)
     alb = np.dstack([base, base * 1.02, base * 1.06])
-    rough = np.clip(0.62 - 0.12 * patch - 0.52 * puddle + 0.05 * (grain - 0.5), 0.05, 1)
-    h = 0.4 * grain * (1 - puddle) - 1.2 * ck + 0.3 * patch
+    rough = np.clip(0.62 - 0.12 * patch + 0.05 * (grain - 0.5), 0.05, 1)
+    h = 0.4 * grain - 1.2 * ck + 0.3 * patch
     save("asphalt", "albedo", alb)
     save("asphalt", "orm", orm(rough, 0.0, 1 - 0.4 * ck))
     save("asphalt", "normal", normal_from_height(h, 1.6))
@@ -120,11 +124,9 @@ def paving_wet():
     ix, iy = (x * slabs).astype(int), (y * slabs).astype(int)
     tone = r.uniform(-0.03, 0.03, (slabs, slabs))[iy, ix]
     grain = fbm(r, (32, 64))
-    puddle = np.clip((fbm(r, (2, 4, 8)) - 0.6) * 8, 0, 1)
     base = 0.2 + tone + 0.05 * (grain - 0.5) - 0.12 * joint
-    base = base * (1 - 0.3 * puddle)
     alb = np.dstack([base * 0.96, base, base * 1.05])
-    rough = np.clip(0.34 + 0.08 * grain + 0.2 * joint - 0.28 * puddle, 0.05, 1)
+    rough = np.clip(0.34 + 0.08 * grain + 0.2 * joint, 0.05, 1)
     h = -joint * 1.0 + 0.2 * grain + 0.3 * np.clip(edge * 20, 0, 1)
     save("paving_wet", "albedo", alb)
     save("paving_wet", "orm", orm(rough, 0.0, 1 - 0.5 * joint))
@@ -196,6 +198,42 @@ def awning():
     save("awning", "normal", normal_from_height(weave, 3.0))
 
 
+GULLY_PX_M = 1 / 512    # the grate's texels: 0.45 x 0.25 m at about 2 mm
+
+
+def gully():
+    """A kerb gully's cast-iron grate (openspec/changes/street-puddles, design section 3.2): a frame
+    and nine slots across it, dark, wet, metallic. Its alpha is the grate's outline, so the decal
+    paints nothing past it."""
+    w, h = round(0.45 / GULLY_PX_M), round(0.25 / GULLY_PX_M)
+    r = rng_for("gully")
+    y, x = (np.mgrid[0:h, 0:w].astype(np.float32) + 0.5) * GULLY_PX_M
+    frame = 0.03
+    inner = (x > frame) & (x < 0.45 - frame) & (y > frame) & (y < 0.25 - frame)
+    pitch = (0.45 - 2 * frame) / 9
+    slot = inner & (((x - frame) % pitch) > 0.012) & (((x - frame) % pitch) < pitch - 0.012) & (y > 0.045) & (y < 0.205)
+    rust = fbm(r, (8, 16), n=max(w, h))[:h, :w]
+    iron = 0.07 + 0.03 * rust
+    alb = np.where(slot, 0.012, iron)
+    albedo = np.dstack([alb * 1.05, alb, alb * 0.95])
+    height = np.where(slot, -1.0, 0.0) + 0.1 * rust
+    normal = normal_from_height(height, 2.5)
+    ormap = np.dstack([np.where(slot, 0.3, 1.0), np.where(slot, 0.8, 0.4 + 0.1 * rust), np.where(slot, 0.0, 0.8)])
+    edge = np.minimum(np.minimum(x, 0.45 - x), np.minimum(y, 0.25 - y))
+    alpha = np.clip(edge / 0.004, 0, 1)
+    out = os.path.join(GAME, "textures", "decals")
+    os.makedirs(out, exist_ok=True)
+    for kind, rgb, a in (("albedo", albedo, alpha), ("normal", normal, None), ("orm", ormap, None)):
+        data = np.clip(rgb, 0, 1)
+        if a is not None:
+            data = np.dstack([data, a])
+        img = Image.fromarray((data * 255 + 0.5).astype(np.uint8), "RGBA" if a is not None else "RGB")
+        img.save(os.path.join(out, f"gully_{kind}.png"), optimize=True)
+        postprocess.write_import(out, f"gully_{kind}.png", lossless=True, res_dir="res://textures/decals")
+
+
+DECALS = {"gully": gully}
+
 MATERIALS = {
     "asphalt": asphalt,
     "paving_wet": paving_wet,
@@ -211,11 +249,11 @@ MATERIALS = {
 
 
 def main():
-    names = sys.argv[1:] or list(MATERIALS)
+    names = sys.argv[1:] or list(MATERIALS) + list(DECALS)
     for n in names:
-        MATERIALS[n]()
+        (MATERIALS.get(n) or DECALS[n])()
         print("maps:", n)
-    postprocess.process(RAW, GAME, names)
+    postprocess.process(RAW, GAME, [n for n in names if n in MATERIALS])
 
 
 if __name__ == "__main__":

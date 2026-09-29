@@ -36,7 +36,7 @@ class ShaderMaterials(unittest.TestCase):
                 out = os.path.join(tmp, "materials")
                 os.makedirs(out)
                 os.symlink(os.path.join(GAME, "shaders"), os.path.join(tmp, "shaders"))
-                postprocess.write_shader_material(out, name, spec)
+                postprocess.write_shader_material(out, name, spec, manifest())
                 with open(os.path.join(out, name + ".tres")) as want, open(os.path.join(MATERIALS, name + ".tres")) as got:
                     self.assertEqual(want.read(), got.read(), f"{name}.tres differs: regenerate it with postprocess.py")
 

@@ -180,7 +180,9 @@ MAP = {
                    {"name": "STORE", "rect": (100, 56, 112, 64)},
                    {"name": "WC", "rect": (100, 64, 112, 70)}],
          "doors": [(90, 44, 3), (90, 50, 3), (100, 53), (106, 56), (112, 60), (100, 67), (68, 65), (80, 50)],
-         "fixtures": [("rect", 84, 52, 98, 54, "fix-lt"), ("rect", 97, 52, 98.8, 58, "fix-lt"),
+         # The bar's short leg stops at x 98.5, leaving Tank a 1.4 m aisle to the wall: at 1.1 m the
+         # navmesh (agent 0.4 m) lost it once the back room's door was framed beside it.
+         "fixtures": [("rect", 84, 52, 98, 54, "fix-lt"), ("rect", 97, 52, 98.5, 58, "fix-lt"),
                       ("rect", 69, 56, 76, 66, "fix"), ("circle", 80, 58, 1.1, "fix"), ("circle", 86, 60, 1.1, "fix"),
                       ("circle", 92, 62, 1.1, "fix"), ("circle", 80, 66, 1.1, "fix"), ("circle", 88, 67, 1.1, "fix"),
                       ("rect", 102, 46, 110, 49, "fix"), ("rect", 69, 51, 70, 69, "fix-neon"),
@@ -406,5 +408,5 @@ MAP = {
     ],
 
     "key": ["viaduct", "walkway", "route-main", "route-social", "route-stealth", "patrol", "cone",
-            "restricted", "civ", "water", "ladder"],
+            "restricted", "civ", "water", "ladder", "puddle"],
 }

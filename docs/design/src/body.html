@@ -53,6 +53,7 @@
   <a href="#puddles"><b>F20</b>Puddles</a>
   <a href="#vehicles"><b>F21</b>Vehicles</a>
   <a href="#ads"><b>F22</b>Street ads</a>
+  <a href="#weapon-bob"><b>F23</b>The gun while walking</a>
   <a href="#questions"><b>?</b>Open questions</a>
 </nav>
 
@@ -128,8 +129,8 @@
         <tr><td><span class="chip built">Built</span></td><td>The crowd (F17): 18 civilian bodies and 3 MerSec faces; each civilian's body, palette, accessories, height and idle picked for the whole crowd by one rule in the core, with no lookalikes within 15 m; four talking pairs. See <code>docs/validation/2026-09-29-crowd-variety.md</code>.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig, accepted as they look (owner J1); skin and clothes follow where a character stands, dry under a roof and wet in the rain. Tank's highlight at the bar falls from 148 to 101.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
-        <tr><td><span class="chip proposed">In progress</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, and a clear approach to every entrance. Decided (K1 to K3): no prompt on doors that never open, automatic sliding doors on the public entrances, a room in each named shell. The plan is built and checked (46 framed doors, 244 dressing doors, 15 lots cut back); the sliding doors, the rebake and the captures are next.</td></tr>
-        <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs, and become decals placed where water gathers: gutters, drip edges, gullies. Asked: L1 to L3.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, a clear approach to every entrance, and automatic sliding doors on the 18 public entrances. The hub is rebuilt and rebaked: 46 framed doors, 244 dressing doors, 15 lots cut back, 225 lights; the doors, approaches and sliding entrances are checked in the plan and in the built level.</td></tr>
+        <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs. The plan places them where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Decided (L1 to L3): the recommended rules and amount, and ripples as a shader effect.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Vehicles (F21): the hub's 14 box cars become generated sedans, taxis, vans and trucks from the prop kit, placed by the plan. Decided (M1 to M3): our own generator, parked only.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
@@ -887,8 +888,9 @@
         <tr><td><code>combat-and-enemies</code></td><td>non-lethal, EMP, takedowns, archetypes</td><td class="n">5</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>water-and-swimming</code></td><td>water in the level's data, swimming, breath, stamina, ways out, floating and sinking</td><td class="n">7 + 2</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>character-lighting</code></td><td>faces in conversation, the characters layer, the gel rig, skin, dry and wet</td><td class="n">5</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
-        <tr><td><code>hub-doorways</code></td><td>every door framed, a door on every building on the street, clear approaches</td><td class="n">3</td><td><span class="chip proposed">In progress</span></td></tr>
-        <tr><td><code>street-puddles</code></td><td>puddles where water gathers, as decals; none under a roof</td><td class="n">1</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>hub-doorways</code></td><td>every door framed, a door on every building on the street, clear approaches, sliding entrances</td><td class="n">4</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
+        <tr><td><code>weapon-bob</code></td><td>the gun sways on slow sines while walking; the view barely bobs</td><td class="n">1</td><td><span class="chip proposed">Proposed</span></td></tr>
+        <tr><td><code>street-puddles</code></td><td>puddles where water gathers, none under a roof; rain rings on every puddle</td><td class="n">2</td><td><span class="chip proposed">Proposed</span></td></tr>
         <tr><td><code>crowd-variety</code></td><td>no lookalikes, runtime variety, talking pairs, the body pool</td><td class="n">4</td><td><span class="chip built">Built</span> <span class="chip enforced">Checked</span></td></tr>
         <tr><td><code>sump-market-hub</code></td><td>Low Harbor</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
         <tr><td><code>the-drains</code></td><td>the Drains, M1</td><td class="n">6</td><td><span class="chip proposed">Proposed</span> <span class="chip built">Map built</span></td></tr>
@@ -1193,7 +1195,7 @@
 <section id="doorways">
   <div class="sh"><span class="key">F19</span><h2>Doorways</h2><span class="spec">openspec/changes/hub-doorways</span></div>
   <p class="intro">Owner, 2026-09-29: "a lot of buildings are missing door ways or doors, review guidelines for level design that we did in e1 m3". They are: 214 of the 225 buildings that face a street, lane or passage show no way in, and the 11 that do show a bare hole. E1M3's door rules (a carved opening at the frame's size, a frame standing proud, a lit lintel, nothing standing in front) never reached the hub's plan. This change builds every door by them, at the hub's own sizes, gives every building a door, and clears the ground in front of each entrance.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (K1 to K3)</span><span class="chip">Measured on the committed plan, seed 7</span><span class="chip">Stills: docs/screenshots/hub_doorways/</span></div>
+  <div class="controls"><span class="chip built">Built</span><span class="chip enforced">Checked</span><span class="chip">Measured on the committed plan, seed 7</span><span class="chip">Stills: docs/screenshots/hub_doorways/</span></div>
   <div class="sub">
     <h3>What the street sees today <small>225 buildings with a wall of 2.2 m or more on walkable ground</small></h3>
     <div class="scroll"><table class="tbl">
@@ -1294,15 +1296,16 @@
   <div class="sub">
     <h3>Checks <small>each names its fault on the old plan</small></h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th>Check</th><th>Where</th><th>Old plan</th></tr></thead>
+      <thead><tr><th>Check</th><th>Where</th><th>Old plan</th><th>Built hub</th></tr></thead>
       <tbody>
-        <tr><td>Every door carved at its frame's size and framed</td><td><code>city_plan.check_doors</code></td><td>43 doors</td></tr>
-        <tr><td>Every building on walkable ground shows a door</td><td><code>city_plan.check_building_doors</code></td><td>214 buildings</td></tr>
-        <tr><td>Every exterior door's approach is clear and reaches the street</td><td><code>city_plan.check_door_approaches</code></td><td>10 doors</td></tr>
-        <tr><td>The doors add at most 30,000 triangles (about 22,000 planned)</td><td><code>city_plan</code> stats</td><td></td></tr>
-        <tr><td>The navmesh reaches the runner's spawn from outside every exterior door</td><td><code>placement_test.tscn</code></td><td></td></tr>
-        <tr><td>Every sliding leaf has room to open</td><td><code>city_plan.check_sliding_room</code></td><td></td></tr>
-        <tr><td>A sliding entrance opens for the runner and for an NPC, and closes behind them</td><td><code>door_test.tscn</code></td><td></td></tr>
+        <tr><td>Every door carved at its frame's size and framed</td><td><code>city_plan.check_doors</code></td><td>43 doors</td><td>46 framed, clean</td></tr>
+        <tr><td>Every building on walkable ground shows a door</td><td><code>city_plan.check_building_doors</code></td><td>214 buildings</td><td>clean</td></tr>
+        <tr><td>Every exterior door's approach is clear and reaches the street</td><td><code>city_plan.check_door_approaches</code></td><td>11 doors</td><td>clean</td></tr>
+        <tr><td>The doors add at most 30,000 triangles (about 22,000 planned)</td><td><code>city_plan</code> stats</td><td></td><td>13,552</td></tr>
+        <tr><td>The navmesh reaches the runner's spawn from outside every exterior door</td><td><code>placement_test.tscn</code></td><td></td><td>24 of 24</td></tr>
+        <tr><td>Every person stands on the navmesh</td><td><code>placement_test.tscn</code></td><td></td><td>found Tank's aisle behind the Anchor's bar cut off; the bar's leg is shorter now</td></tr>
+        <tr><td>Every sliding leaf has room to open</td><td><code>city_plan.check_sliding_room</code></td><td></td><td>18 of 18</td></tr>
+        <tr><td>A sliding entrance opens for the runner and for an NPC, and closes behind them</td><td><code>door_test.tscn</code></td><td></td><td>10 of 10</td></tr>
       </tbody></table></div>
     <p class="note">Decided 2026-09-29: K1, no prompt on doors that never open; K2, automatic sliding doors on the public entrances; K3, one room in each named shell, which makes 18 public entrances.</p>
   </div>
@@ -1311,8 +1314,8 @@
 <!-- ========================================================= F20 -->
 <section id="puddles">
   <div class="sh"><span class="key">F20</span><h2>Puddles</h2><span class="spec">openspec/changes/street-puddles</span></div>
-  <p class="intro">Owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?" Today the puddles are painted into the asphalt and paving textures, so the same blobs repeat every 4 m and 2 m across the whole hub, on kerbs, against walls and under roofs. The proposal takes them out of the textures and places them as decals where rain water would gather.</p>
-  <div class="controls"><span class="chip proposed">Proposed · asked (L1 to L3)</span><span class="chip">Measured on the committed textures and plan, seed 7</span></div>
+  <p class="intro">Owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?" Today the puddles are painted into the asphalt and paving textures, so the same blobs repeat every 4 m and 2 m across the whole hub, on kerbs, against walls and under roofs. The proposal takes them out of the textures, places them where rain water would gather, and draws them in the ground's shader so they ripple. The survey's answers (L1 to L3): the recommended rules and amount, and "ripples would be awesome, this should just be a shader effect, simple cheap".</p>
+  <div class="controls"><span class="chip proposed">Proposed · decided (L1 to L3)</span><span class="chip">Measured on the committed textures and plan, seed 7</span></div>
   <div class="sub">
     <h3>Today and proposed <small>one real stretch round the garage, 48 x 30 m; the right panel is a sketch of the rules</small></h3>
     <div class="diagram" role="img" aria-label="Two plans of the same street: today's grid of texture puddles, including under the Skyway, and the proposed puddles along kerbs and drip edges, none under the deck">
@@ -1327,7 +1330,7 @@
         <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">about 451 m² (2.6 %)</td></tr>
         <tr><td>Of it under a roof, where no rain falls</td><td class="n">328 m²</td><td class="n">0</td></tr>
         <tr><td>Pattern</td><td class="n">repeats every 4 m (road) and 2 m (paving)</td><td class="n">none: each puddle its own shape and size</td></tr>
-        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">about 385 decals: 184 gutter, 66 gully, 135 drip</td></tr>
+        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">about 385: 184 gutter, 66 gully, 135 drip</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">
@@ -1340,7 +1343,17 @@
         <tr><td>Drip</td><td>just outside the edge of an awning or the Skyway's deck (608 m of edge)</td><td>1.0-2.5 x 0.4-0.6 m</td></tr>
         <tr><td>Never</td><td colspan="2">under a roof, on a kerb top, a stair, a bridge or the rails, within 0.3 m of a wall or a prop, or over another puddle</td></tr>
       </tbody></table></div>
-    <p class="note">Decals darken the ground and make it glossy through their albedo and ORM maps, fade out beyond 35-45 m, and are no surface, so nothing can z-fight. They can't run a shader, so rain ripples would be a later change to the ground shaders (L3).</p>
+  </div>
+  <div class="sub">
+    <h3>How they're drawn <small>design sections 3.2 to 3.4</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Part</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>The ground's shader</td><td><code>city_ground.gdshader</code> draws the asphalt and paving as today's material does. Inside a puddle it darkens the ground to 0.65-0.7 of itself, drops the roughness to 0.04 so it mirrors the neon, flattens the grain and adds the rain rings.</td></tr>
+        <tr><td>The puddle mask</td><td>The plan writes it with the level: 1920 x 1360 texels, 0.125 m each. Grey is the distance to the nearest puddle's edge, so a 0.4 m gutter keeps its shape. Alpha is the height of the ground it lies on, so a kerb top or a deck above stays dry.</td></tr>
+        <tr><td>Rain rings</td><td>The canal's ripple code moves into one include that both shaders use, with the canal's numbers: a drop every 0.9 m cell, 0.7 a second. A decal can't run a shader, which is why the puddles aren't decals (L3).</td></tr>
+        <tr><td>Gully grates</td><td>Decals: 66 cast-iron grates, drawn over the puddle beneath each.</td></tr>
+      </tbody></table></div>
   </div>
 </section>
 
@@ -1394,13 +1407,33 @@
   </div>
 </section>
 
+<!-- ========================================================= F23 -->
+<section id="weapon-bob">
+  <div class="sh"><span class="key">F23</span><h2>The gun while walking</h2><span class="spec">openspec/changes/weapon-bob</span></div>
+  <p class="intro">Owner, 2026-09-29: "Huh gun is shaking up and down violently. That shouldn't happen. Gun should maybe have a low frequency sine wave while walking". Measured on a walk and a sprint down Lantern Row with the Kestrel drawn: the runner moves at Brushfire's arena pace with a person's 1.15 m step, so the gait takes 6.5 footsteps a second, and the view bobs on <code>|sin|</code>, which turns sharply at every footstep. The gun hangs from the view.</p>
+  <div class="controls"><span class="chip proposed">Proposed · asked (N1 to N3)</span><span class="chip">Measured: AutoTest trace, seed 7, 60 fps</span></div>
+  <div class="sub">
+    <h3>Measured and proposed</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th></th><th class="n">Walk today</th><th class="n">Sprint today</th><th class="n">Walk proposed</th><th class="n">Sprint proposed</th></tr></thead>
+      <tbody>
+        <tr><td>Ground speed</td><td class="n">7.5 m/s</td><td class="n">10.5 m/s</td><td class="n">7.5 m/s</td><td class="n">10.5 m/s</td></tr>
+        <tr><td>Footsteps a second</td><td class="n">6.5</td><td class="n">9.1</td><td class="n">2.0</td><td class="n">2.6</td></tr>
+        <tr><td>The view's bob</td><td class="n">4.9 cm at 6.5 Hz</td><td class="n">6.5 cm at 8.7 Hz</td><td class="n">1 cm at 2.0 Hz</td><td class="n">1 cm at 2.6 Hz</td></tr>
+        <tr><td>Its sharpest turn</td><td class="n">11.5 g</td><td class="n">21.6 g</td><td class="n">0.08 g</td><td class="n">0.14 g</td></tr>
+        <tr><td>The gun's sway</td><td class="n">4.6 mm up and down, 4.1&#176; roll, at 6.5 Hz</td><td class="n">5.7 mm, 5.4&#176;</td><td class="n">6 mm up and down at 2.0 Hz, 10 mm side to side at 1.0 Hz, 1.5&#176; roll</td><td class="n">1.5 times that, at 2.6 and 1.3 Hz</td></tr>
+      </tbody></table></div>
+    <p class="note">One gait drives the view, the gun and the footstep sounds, with its numbers in <code>game/data/view_motion.json</code>. A check measures the motion the way the trace did: footsteps a second, the sway's frequency, the view's peak acceleration, and no sharp turns.</p>
+  </div>
+</section>
+
 <!-- ========================================================= questions -->
 <section id="questions">
   <div class="sh"><span class="key">?</span><h2>Open questions</h2><span class="spec">owner survey</span></div>
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag">J1 faces (answered)</span><span class="tag">K1 to K3 doorways (answered)</span><span class="tag y">L1 to L3 puddles</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag">J1 faces (answered)</span><span class="tag">K1 to K3 doorways (answered)</span><span class="tag">L1 to L3 puddles (answered)</span><span class="tag y">N1 to N3 the gun while walking</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>

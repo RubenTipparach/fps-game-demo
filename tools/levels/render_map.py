@@ -426,6 +426,8 @@ STYLE = """
 .route-main{fill:none;stroke:#f2b33d;stroke-width:2.2;stroke-dasharray:12 5}
 .patrol{fill:none;stroke:#ff5b4f;stroke-width:1.3;stroke-dasharray:2 3;stroke-opacity:.9}
 .ladder{fill:#0a0e13;stroke:#35e0ff;stroke-width:1.4}
+.puddle{fill:#3fa9d6;fill-opacity:.75}
+.gully{fill:#0a0e13;stroke:#9fb3c8;stroke-width:.8}
 .ladder-rung{stroke:#35e0ff;stroke-width:1.2}
 .cone{fill:#ff5b4f;fill-opacity:.13;stroke:#ff5b4f;stroke-opacity:.5;stroke-width:.8}
 .cone-light{fill:#fff3b0;fill-opacity:.10;stroke:#fff3b0;stroke-opacity:.45;stroke-width:.8}
@@ -568,7 +570,19 @@ def draw_ladders(c, ladders):
     c.add("</g>")
 
 
-def render(m, ladders=()):
+def draw_puddles(c, puddles, gullies):
+    """The standing water the level plan places (city_plan.py puddles(): gutters, gullies and drip
+    lines, openspec/changes/street-puddles), and each kerb gully's grate."""
+    c.add('<g data-layer="puddles">')
+    for p in puddles:
+        c.add(f'<path class="puddle" d="{c.path(p["g"])}"><title>{esc(p["id"])}</title></path>')
+    for gl in gullies:
+        x, y = c.X(gl["at"][0]), c.Y(gl["at"][1])
+        c.add(f'<rect class="gully" x="{x - 1.5:.1f}" y="{y - 1.5:.1f}" width="3" height="3"><title>{esc(gl["id"])}</title></rect>')
+    c.add("</g>")
+
+
+def render(m, ladders=(), puddles=(), gullies=()):
     c = Canvas(m)
     W, H, S = c.W, c.H, c.S
     LW = m.get("legend_width", 520)
@@ -717,6 +731,7 @@ def render(m, ladders=()):
         c.add(f'<text class="{lb.get("cls", "lbl-note")} m-lbl" x="{c.X(x):.1f}" y="{c.Y(y):.1f}" text-anchor="{anchor}" transform="rotate({rot} {c.X(x):.1f} {c.Y(y):.1f})">{esc(lb["text"])}</text>')
     c.add("</g>")
 
+    draw_puddles(c, puddles, gullies)
     draw_ladders(c, ladders)
 
     # points of interest and mission markers
@@ -791,6 +806,7 @@ KEY_STYLES = {
     "civ": ("Neutral NPC", '<circle cx="13" cy="0" r="4.5" fill="#4aa8ff"/>'),
     "ladder": ("Ladder out of the water", '<g transform="translate(13,0)">' + '<rect x="-4" y="-6" width="8" height="12" class="ladder"/>'
                '<path class="ladder-rung" d="M-4,-2 H4 M-4,2 H4"/></g>'),
+    "puddle": ("Puddle, gully", '<ellipse cx="9" cy="0" rx="8" ry="3.5" class="puddle"/><rect x="20" y="-2" width="4" height="4" class="gully"/>'),
 }
 
 
@@ -931,26 +947,26 @@ def draw_locator(c, m, x0, y0, w, h):
     c.add("</g>")
 
 
-def plan_ladders(level_id):
-    """The ladders the level plan places, for a city level with water (city_plan.py, which
-    builds on this module's geometry, so it is imported here rather than at the top)."""
+def plan_city(level_id):
+    """The built level plan of a city level, for what it places that the layout doesn't hold:
+    the ladders out of the water and the puddles (city_plan.py, which builds on this module's
+    geometry, so it is imported here rather than at the top)."""
     import contextlib
     import io
     import city_plan
     m, ents = city_plan.load(level_id)
-    if m.get("base", "city") != "city" or not m.get("water"):
-        return []
     city = city_plan.City(m, ents)
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
         city.build()
-    return city.ladders
+    return city
 
 
 def main(ids):
     OUT.mkdir(parents=True, exist_ok=True)
     for i in ids:
         mod = importlib.import_module(f"layouts.{i}")
-        svg = render(mod.MAP, plan_ladders(i) if mod.MAP.get("base", "city") == "city" else ())
+        city = plan_city(i) if mod.MAP.get("base", "city") == "city" else None
+        svg = render(mod.MAP, *((city.ladders, city.puddle_list, city.gullies) if city else ()))
         (OUT / f"{i}.svg").write_text(svg)
         print(f"wrote {OUT / (i + '.svg')} ({len(svg) // 1024} KB)")
 
