@@ -382,6 +382,7 @@ class Plan:
         self.zboxes = {}          # z-fighting groups: name -> {"airs": [], "details": []}
         self.solids = []          # (label, footprint, z0, z1): solids that aren't boxes
         self.covers = []          # (label, footprint, z0): awnings people shelter under
+        self.shelters = []        # (label, footprint, z0): every roof, by the height of its underside
         self.entity_list = entities or []
         self.districts = [(d, Polygon(d["poly"])) for d in m["districts"]]
         self.probes = []          # reflection probe boxes for the scene generator
@@ -438,8 +439,17 @@ class Plan:
 
     def cover(self, corners, z0, label):
         """Register an awning by its footprint corners and its underside's lowest height: a
-        civilian under it is sheltered, and doesn't open an umbrella (export_level_data.py)."""
+        civilian under it is sheltered, and doesn't open an umbrella (export_level_data.py). An
+        awning is a shelter too."""
         self.covers.append((label, Polygon(corners), z0))
+        self.shelter(Polygon(corners), z0, label)
+
+    def shelter(self, g, z0, label):
+        """Register a roof the rain can't pass by its footprint (a polygon or a multipolygon) and
+        its underside's lowest height: anyone standing inside the footprint below that height is
+        dry (openspec/changes/character-lighting, design section 9; export_level_data.py)."""
+        for pg in polys(g):
+            self.shelters.append((label, pg, z0))
 
     def zdetail(self, group, lo, hi, label):
         """Register an axis-aligned box (layout coordinates) for the z-fighting check."""
@@ -1293,6 +1303,7 @@ class City:
                 raise SystemExit(f"{bid}: something overhead caps it at {h:.2f} m, below its own ceiling")
         b["_h"] = h
         b["_roof_z"] = h
+        P.shelter(pg, h, bid)
         facade_mat = b.get("facade") or st["facade"][int(rng.random() * len(st["facade"]))]
         cap = st["cap"]
         cx, cy = pg.centroid.x, pg.centroid.y
@@ -1635,6 +1646,7 @@ class City:
                 roof_lo, roof_hi = (x0 - 0.4, y0 - 0.4, z + ht), (x1 + 0.4, y1 + 0.4, z + ht + 0.12)
                 prims.append(box_prim(roof_lo, roof_hi, "tech_panel"))
                 P.zdetail(zg, roof_lo, roof_hi, "kiosk roof")
+                P.shelter(box(roof_lo[0], roof_lo[1], roof_hi[0], roof_hi[1]), roof_lo[2], "kiosk roof")
                 P.light(sector, "cyan", c.x, y1 + 0.9, z + ht - 0.3)
             return
         if cls == "fix-hot":
@@ -1926,6 +1938,7 @@ class City:
                     parapet = 0.0
                     lot["parapet"] = 0.0
                     solid = prism(pg, 0.0, h, {"side": facade_mat, "top": st["roof"], "bottom": facade_mat}, caps=["top", "bottom"])
+            P.shelter(pg, h, f"lot {lot['id']}")
             thick = not pg.buffer(-0.5).is_empty
             edges = self.facade(sector, pg, 0.0, h, st, rng, lot["id"], cutters,
                                 allow=("windows", "front", "awning") if thick else ())
@@ -2111,6 +2124,7 @@ class City:
             prims.append(obox(x, y, ux, uy, 1.02, 1.02, c0 - 0.7, c0 - 0.4, "concrete"))
             prims.append(obox(x, y, ux, uy, 1.15, 1.15, c0 - 0.4, c0, "stone_blocks"))
         self.v_frame = (ax, ay, ux, uy, vx, vy, d0, g0, c0)
+        P.shelter(self.vfoot.intersection(self.R), d0, "Skyway deck")
 
     # walkways --------------------------------------------------------------------------
     def walkway_geometry(self):
@@ -2149,11 +2163,13 @@ class City:
                     P.add(sec, "walk", mx, my, hexa_pts([(*c[q], ztop[q] - WALK_DECK) for q in range(4)] +
                                                         [(*c[q], ztop[q]) for q in range(4)],
                                                         ["rust_metal", "diamond_plate"] + ["rust_metal"] * 4), col="col")
+                    P.shelter(Polygon(c), min(za, zb) - WALK_DECK, f"walkway {wk.get('name')}")
                     seg_poly = LineString([a, b]).buffer(W / 2, cap_style=2)
                     deck = deck.difference(seg_poly)
                 else:
                     flat_z = za
             if flat_z is not None:
+                P.shelter(deck, flat_z - WALK_DECK, f"walkway {wk.get('name')}")
                 for i, j, pg in self.chunked(deck) if not hung else [(0, 0, deck)]:
                     rp = pg.representative_point()
                     sec = "skyway" if hung else P.district_sector(rp.x, rp.y)

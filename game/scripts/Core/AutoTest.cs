@@ -14,6 +14,7 @@ namespace Brushfire;
 ///         {"render_scale": 0.67} (the 3D view's resolution scale, for long captures on lavapipe)
 ///         {"shot": "tank.png", "face_box": "hub:tank"} (also writes tank.png.face.json: the head's box on screen)
 ///         {"rig": false} (conversations without the character lighting, the rig and the wrist glow: before and after)
+///         {"skin_before_wetness": true} (skin as it was before wetness, the mask everywhere; false: the data's again)
 ///         {"hold": "action" | ["action", ...], "frames": n} | {"press": "action"} | {"give": "all"} | {"weapon": slot}
 ///         {"log": "text"} | {"stats": true} | {"level": index} | {"quit": true}
 /// Undercity: {"scene": "res://levels/undercity/hub/hub.tscn"} | {"key": "1"} (a raw key press)
@@ -264,6 +265,15 @@ public partial class AutoTest : Node
         }
         if (step.TryGetValue("rig", out var rig))    // character lighting on or off, for the before-and-after checks
             level.ConversationRigOn = rig.AsBool();
+        // Skin as it was before wetness (openspec/changes/character-lighting, design section 9):
+        // with no dry add, every skin is the roughness mask, wet or dry. For before-and-after shots.
+        if (step.TryGetValue("skin_before_wetness", out var before))
+        {
+            if (before.AsBool())
+                RenderingServer.GlobalShaderParameterSet(Undercity.Client.CharacterShading.SkinDryRoughnessAdd, 0f);
+            else
+                Undercity.Client.CharacterShading.Apply(level.AutoTestState!.Data.CharacterLighting.Wetness);
+        }
         if (step.TryGetValue("face_box", out var fb))
             WriteFaceBox(level, fb.AsString(), step.TryGetValue("shot", out var fs) ? fs.AsString() : null);
         if (step.TryGetValue("probe", out var probeId))
@@ -380,6 +390,8 @@ public partial class AutoTest : Node
             ["head"] = Box(0.11f, 0.14f, 0.14f),
             // Which side the conversation rig put its key on; "none" before the rig exists.
             ["key_side"] = rig != null && rig.HasMeta("key_side") ? rig.GetMeta("key_side").AsString() : "none",
+            // How wet the speaker is, 0 dry to 1 soaked (design section 9).
+            ["wetness"] = npc.BodyWetness?.Value ?? -1,
         };
         string file = _out.PathJoin(shot + ".face.json");
         using var f = FileAccess.Open(file, FileAccess.ModeFlags.Write);

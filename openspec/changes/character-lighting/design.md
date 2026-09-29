@@ -269,11 +269,15 @@ should not.
 
 **Wetness**, 0 to 1 per character:
 - **Where:** a character is sheltered when a roof is over them: inside a building's footprint,
-  under an awning, under the Skyway's deck or under a walkway. Those are the same things that
-  stop the rain particles (the rain's heightfield). The plan exports them as shelter shapes
-  (an outline and the height of its underside) in the level data, beside the districts and the
-  water; the core answers `Shelter.Covers(x, y, z)` with the polygon rule water and districts
-  use (`LayoutPolygon`). A civilian's crowd place keeps its own flag for umbrellas (a
+  under an awning or a kiosk's roof, under the Skyway's deck or under a walkway. Those are the
+  same things that stop the rain particles (the rain's heightfield). The plan registers each
+  where it builds it (`Plan.shelter`: an outline and the height of its underside), and
+  `export_level_data.py` writes them to the level data as `shelters`, beside the districts and
+  the water. The core answers `ShelterDef.Covers(x, y, feet, headroom)` with the polygon rule
+  water and districts use (`LayoutPolygon`), and `Wetness.Sheltered` asks every roof. A roof
+  counts when its underside is at least `headroom_m` (1.0 m) above the character's feet: the
+  lowest awning is 2.14 m over the pavement, and someone standing on a roof has none, so a roof
+  never shelters the people on it. A civilian's crowd place keeps its own flag for umbrellas (a
   different rule: an umbrella's reach from an awning).
 - **How fast:** it rises toward 1 in the open over `wet_time_s` (20 s) and falls toward 0
   under a roof over `dry_time_s` (240 s), linearly. A level starts everyone at their place's
@@ -306,10 +310,31 @@ matte enough that the key's highlight spreads instead of glinting.
   instance uniform on its body's meshes. The rule and the step are the core's; the node only
   carries them to the meshes (CLAUDE.md 6.2).
 
-**Measured** on the capture set's five conversations, rig on: each face's brightest tenth, the
-highlight, before and after, beside the face means already recorded. Tank at the bar is the
-owner's case: his highlight must fall with the key unchanged. Silk and Petra stand in the rain
-and must not change.
+**Measured** on the capture set's five conversations and Dace at the checkpoint gate, rig on:
+each face's brightest tenth, the highlight, before and after, beside the face means already
+recorded. Tank at the bar is the owner's case: his highlight must fall with the key unchanged.
+Dace stands in the rain and must not change. (The "before" shots set the skin's dry add to 0,
+which is the old look: the AutoTest step `skin_before_wetness`.)
+
+**Found in building:**
+- **All five speakers stand under a roof.** This section first said Silk and Petra stand in the
+  rain. In the hub's data, Silk is in the Anchor's back room, Petra in the depot, Lin in the
+  shrine and Nguyen under the Skyway and its service deck, so all five dry. Dace, at the
+  checkpoint gate with nothing overhead, joins the captures as the rain case, and the spec's
+  "Silk in the rain" became "Dace in the rain".
+- **The hub has 414 roofs:** 343 lot blocks (their shop and loading recesses are under them), 15
+  named buildings, 28 stall awnings, 16 shop awnings, 6 shanty awnings, 4 walkway runs, the
+  Skyway's deck and a kiosk's roof. They are registered where the plan builds them, so they
+  can't drift from the geometry, and none has a hole (the export refuses one, since the core's
+  polygon rule has none).
+- **Three civilians hold umbrellas under the Skyway.** The crowd's umbrella flag (inside a named
+  building, or within an umbrella's reach of an awning) doesn't know the Skyway's deck: civ_16,
+  civ_26 and civ_27 stand dry under it with umbrellas open. Making the flag ask the same roofs
+  would change those three civilians' look, which is crowd-variety's rule, not this change's;
+  it is left as a follow-up. The flag and the roof rule are two answers to "is a roof over
+  me", which CLAUDE.md 5.1 asks to report.
+- **A step carries the time since the last update**, so a body asked every 0.25 s dries at the
+  data's rate whatever the frame rate.
 
 ## Risks / Trade-offs
 

@@ -305,6 +305,12 @@ public sealed class LevelDef : IValidated
     /// <summary>The level's districts, from its layout; none for a level without.</summary>
     public IReadOnlyList<DistrictDef> Districts { get; init; } = Array.Empty<DistrictDef>();
 
+    /// <summary>
+    /// The level's roofs, from its plan (openspec/changes/character-lighting, design section 9);
+    /// none for a level without rain.
+    /// </summary>
+    public IReadOnlyList<ShelterDef> Shelters { get; init; } = Array.Empty<ShelterDef>();
+
     /// <summary>The id of the district the point (x, y) in layout metres lies in, or null outside them all.</summary>
     public string? DistrictAt(double x, double y) => Districts.FirstOrDefault(d => d.Contains(x, y))?.Id;
 
@@ -357,6 +363,10 @@ public sealed class LevelDef : IValidated
         foreach (var d in Districts.Where(d => !LayoutPolygon.IsValid(d.Poly)))
         {
             errors.Add($"levels.{Id}.districts.{d.Id}: poly needs 3 or more [x, y] points of finite metres");
+        }
+        for (var i = 0; i < Shelters.Count; i++)
+        {
+            Shelters[i].Validate(Id, i, errors);
         }
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {

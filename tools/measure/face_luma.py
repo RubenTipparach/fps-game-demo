@@ -11,6 +11,8 @@ the whole head with its ears and crown; "none" before the conversation rig exist
 brighter half counts as the lit one) and prints:
 
   mean       the face box's mean luma
+  highlight  the mean of the face box's brightest tenth: where a glossy face glints (design
+             section 9, owner J1: "too shiny"); recorded, not held to a target
   lit/shadow the key side's half of the face over the other half, in linear light: a
              lighting ratio as a photographer's (the design's reference) is of light, so the
              halves' stored values are decoded from sRGB before they are divided
@@ -79,7 +81,8 @@ def measure(shot, face, off=None):
     # Before the conversation rig exists there is no key side: the brighter half is the lit one.
     key = face["key_side"] if face["key_side"] in ("left", "right") else ("left" if left >= right else "right")
     lit, shadow = (left, right) if key == "left" else (right, left)
-    out = {"who": face.get("who", "?"), "mean": box.mean(), "lit_over_shadow": lit / max(shadow, 1e-4)}
+    out = {"who": face.get("who", "?"), "mean": box.mean(), "highlight": box[box >= np.percentile(box, 90)].mean(),
+           "lit_over_shadow": lit / max(shadow, 1e-4), "wetness": face.get("wetness")}
 
     # The rim: the head's far edge, over its upper two thirds where the hair and ears are. The
     # band runs from the face's outer quarter out to the head box, since a head is little wider
@@ -133,8 +136,9 @@ def main():
         raise SystemExit(f"{face_json}: no face box (the AutoTest face_box step writes it)")
     m = measure(a.shot, load_json(face_json), a.off)
     targets = load_json(TARGETS).get("targets") if os.path.exists(TARGETS) else None
-    print(f"{m['who']}: mean {m['mean']:.0f}, lit/shadow {m['lit_over_shadow']:.2f}, "
-          f"rim {m['rim_over_background']:+.0f}" + (f", world {m['world_change_pct']:.2f} %" if "world_change_pct" in m else ""))
+    print(f"{m['who']}: mean {m['mean']:.0f}, highlight {m['highlight']:.0f}, lit/shadow {m['lit_over_shadow']:.2f}, "
+          f"rim {m['rim_over_background']:+.0f}" + (f", world {m['world_change_pct']:.2f} %" if "world_change_pct" in m else "")
+          + (f", wetness {m['wetness']:.2f}" if m.get("wetness") is not None else ""))
     if targets is None:
         return 0
     missed = [f"{name} {value:.2f}" for name, value, ok in check(m, targets) if not ok]

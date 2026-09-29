@@ -4,7 +4,10 @@
 // meshes are on the characters layer as well as the world's, the runner's own view isn't, the
 // wrist light and the rig light only that layer, a conversation with Silk in Lantern Row wears
 // Lantern Row's gels with its key on the side the core names, the view narrows to the framing's
-// width, and the rig ramps out and is freed when the conversation ends. Prints PASS or FAIL per
+// width, and the rig ramps out and is freed when the conversation ends. It also checks "Characters
+// are dry under a roof and wet in the rain": Tank behind the Anchor's bar starts dry and Dace at the
+// checkpoint gate soaked, every mesh of their bodies carries that value, their skin is drawn by the
+// skin shader, and a soaked body under a roof dries at the data's rate. Prints PASS or FAIL per
 // check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 600 godot --headless --path game res://scenes/undercity/tests/lighting_test.tscn
@@ -50,6 +53,7 @@ public partial class LightingTest : Node3D
             TheRunnersViewIsNot(bit);
             TheWristLight(t, bit);
             await TheRig(t, bit);
+            DryIndoorsWetInTheRain(t.Wetness);
         }
         catch (Exception e)
         {
@@ -141,6 +145,44 @@ public partial class LightingTest : Node3D
         await Seconds((float)t.Conversation.RampS + 0.2f);
         Check("the rig ramps out and is freed when the conversation ends", !IsInstanceValid(rig) || rig.IsQueuedForDeletion(),
             IsInstanceValid(rig) ? "still there" : "gone");
+    }
+
+    private void DryIndoorsWetInTheRain(WetnessDef def)
+    {
+        var tank = L.Npcs().FirstOrDefault(n => n.NpcId == "tank");
+        var dace = L.Npcs().FirstOrDefault(n => n.NpcId == "dace");
+        Check("Tank and Dace are in the hub with bodies", tank?.BodyWetness != null && dace?.BodyWetness != null,
+            $"tank {tank?.BodyWetness?.Value.ToString("0.00") ?? "missing"}, dace {dace?.BodyWetness?.Value.ToString("0.00") ?? "missing"}");
+        if (tank?.BodyWetness is not { } dry || dace?.BodyWetness is not { } wet)
+        {
+            return;
+        }
+        Check("Tank behind the Anchor's bar is under a roof and dry", dry.Sheltered && dry.Value == 0,
+            $"sheltered {dry.Sheltered}, wetness {dry.Value:0.00} at {tank.GlobalPosition}");
+        Check("Dace at the checkpoint gate is in the rain and soaked", !wet.Sheltered && wet.Value == 1,
+            $"sheltered {wet.Sheltered}, wetness {wet.Value:0.00} at {dace.GlobalPosition}");
+        foreach (var (who, body) in new[] { (tank, dry), (dace, wet) })
+        {
+            var meshes = Meshes(who).ToList();
+            var off = meshes.Where(g => !Mathf.IsEqualApprox((float)g.GetInstanceShaderParameter(BodyWetness.Uniform), (float)body.Value))
+                .Select(g => g.Name.ToString()).ToList();
+            Check($"every mesh of {who.NpcId}'s body carries its wetness", meshes.Count > 0 && off.Count == 0,
+                off.Count == 0 ? $"{meshes.Count} meshes at {body.Value:0.00}" : string.Join(", ", off.Take(5)));
+            var skins = meshes.OfType<MeshInstance3D>()
+                .SelectMany(m => Enumerable.Range(0, m.GetSurfaceOverrideMaterialCount()).Select(m.GetActiveMaterial))
+                .Where(m => m?.ResourceName.EndsWith("_skin", StringComparison.Ordinal) == true).ToList();
+            Check($"{who.NpcId}'s skin is drawn by the skin shader, which reads it",
+                skins.Count > 0 && skins.All(m => m is ShaderMaterial { Shader.ResourcePath: "res://shaders/character_skin.gdshader" }),
+                skins.Count == 0 ? "no skin material" : string.Join(", ", skins.Select(m => $"{m!.ResourceName} {m.GetClass()}")));
+        }
+        // A soaked body under a roof: Dace, asked with Tank's feet, dries 1 / dry_time_s a second. The
+        // step also takes the time left since the last update, up to update_s more.
+        wet.Tick(1.0, tank.GlobalPosition);
+        double most = 1 - 1 / def.DryTimeS, least = 1 - (1 + def.UpdateS) / def.DryTimeS;
+        Check("a soaked body under a roof dries at the data's rate", wet.Sheltered && wet.Value <= most + 1e-9 && wet.Value >= least - 1e-9,
+            $"{wet.Value:0.0000} after 1 s (want {least:0.0000} to {most:0.0000})");
+        Check("and its meshes follow", Meshes(dace).All(g => Mathf.IsEqualApprox((float)g.GetInstanceShaderParameter(BodyWetness.Uniform), (float)wet.Value)),
+            $"{wet.Value:0.0000}");
     }
 
     private static bool SameColour(Light3D light, CharacterLightingTable t, string role)

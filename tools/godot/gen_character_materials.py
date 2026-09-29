@@ -10,8 +10,10 @@ tools/blender/npcs.json: a template's settings with that body's textures, which 
 step (setup_npc_import.gd) maps onto the glb's "<id>_skin" and "<id>_outfit" materials. The
 settings live once, in SKIN and OUTFIT below, so the templates and the bodies can't disagree.
 
-- The albedo is the body's skin atlas; the normal is the one derived from it (build_npcs.py), and
-  its alpha is the roughness (npc_skin_roughness.png), read through roughness_texture_channel.
+- The skin is drawn by shaders/character_skin.gdshader (design section 9: a StandardMaterial3D
+  can't take a per-character wetness). The albedo is the body's skin atlas; the normal is the one
+  derived from it (build_npcs.py), and its alpha is the roughness (npc_skin_roughness.png), the
+  wet look, which dry skin roughens.
 - Subsurface scattering in skin mode, strength 0.30, with transmittance (depth 0.2, boost 0.3),
   so ears glow against a rim gel.
 - Specular 0.42: Godot's F0 is 0.16 x specular squared, so 0.028, MakeHuman's skins' 0.027.
@@ -32,20 +34,17 @@ OUT = os.path.join(GAME, "materials", "characters")
 TABLE = os.path.join(ROOT, "tools", "blender", "npcs.json")
 TEXTURES = "res://models/characters/"
 
-# StandardMaterial3D properties, in the order Godot writes them.
+# The skin is drawn by shaders/character_skin.gdshader: the numbers the StandardMaterial3D skin
+# had, one for one, and a wetness per instance (design section 9). Its parameters, in the order
+# Godot writes them.
+SKIN_SHADER = "res://shaders/character_skin.gdshader"
 SKIN = {
-    "roughness": 1.0,
-    "roughness_texture_channel": 3,          # the normal map's alpha
-    "metallic_specular": 0.42,
-    "normal_enabled": True,
-    "normal_scale": 1.0,
-    "subsurf_scatter_enabled": True,
-    "subsurf_scatter_strength": 0.3,
-    "subsurf_scatter_skin_mode": True,
-    "subsurf_scatter_transmittance_enabled": True,
-    "subsurf_scatter_transmittance_color": "Color(0.9, 0.35, 0.25, 1)",
-    "subsurf_scatter_transmittance_depth": 0.2,
-    "subsurf_scatter_transmittance_boost": 0.3,
+    "shader_parameter/specular": 0.42,
+    "shader_parameter/normal_strength": 1.0,
+    "shader_parameter/sss_strength": 0.3,
+    "shader_parameter/transmittance_color": "Color(0.9, 0.35, 0.25, 1)",
+    "shader_parameter/transmittance_depth": 0.2,
+    "shader_parameter/transmittance_boost": 0.3,
 }
 
 # The outfit is drawn by shaders/character_outfit.gdshader (openspec/changes/archive/2026-09-29-crowd-variety): the
@@ -58,6 +57,7 @@ OUTFIT = {
     "shader_parameter/eye_roughness_below": 0.3,
 }
 MATERIALS = {"skin": SKIN, "outfit": OUTFIT}
+SHADERS = {"skin": SKIN_SHADER, "outfit": OUTFIT_SHADER}
 
 
 def fmt(v):
@@ -69,24 +69,17 @@ def fmt(v):
 
 
 def write(path, part, body_id=None):
-    shader = part == "outfit"
-    kind = "ShaderMaterial" if shader else "StandardMaterial3D"
-    ext, props = [], []
-    if shader:
-        ext.append(f"[ext_resource type=\"Shader\" path=\"{OUTFIT_SHADER}\" id=\"0_shader\"]")
+    ext = [f"[ext_resource type=\"Shader\" path=\"{SHADERS[part]}\" id=\"0_shader\"]"]
+    props = []
     if body_id is not None:
         albedo, normal = f"{TEXTURES}{body_id}_{part}_albedo.webp", f"{TEXTURES}{body_id}_{part}_normal.webp"
         ext += [f"[ext_resource type=\"Texture2D\" path=\"{albedo}\" id=\"1_albedo\"]",
                 f"[ext_resource type=\"Texture2D\" path=\"{normal}\" id=\"2_normal\"]"]
-        props = (["shader_parameter/albedo_texture = ExtResource(\"1_albedo\")",
-                  "shader_parameter/normal_texture = ExtResource(\"2_normal\")"] if shader else
-                 ["albedo_texture = ExtResource(\"1_albedo\")", "roughness_texture = ExtResource(\"2_normal\")",
-                  "normal_texture = ExtResource(\"2_normal\")"])
-    steps = f" load_steps={len(ext) + 1}" if ext else ""
-    head = f"[gd_resource type=\"{kind}\"{steps} format=3]\n\n" + ("\n".join(ext) + "\n\n" if ext else "")
+        props = ["shader_parameter/albedo_texture = ExtResource(\"1_albedo\")",
+                 "shader_parameter/normal_texture = ExtResource(\"2_normal\")"]
+    head = f"[gd_resource type=\"ShaderMaterial\" load_steps={len(ext) + 1} format=3]\n\n" + "\n".join(ext) + "\n\n"
     body = [f"resource_name = \"{body_id}_{part}\"" if body_id else f"resource_name = \"character_{part}\""]
-    if shader:
-        body.append("shader = ExtResource(\"0_shader\")")
+    body.append("shader = ExtResource(\"0_shader\")")
     body += [f"{k} = {fmt(v)}" for k, v in MATERIALS[part].items()] + props
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "[resource]\n" + "\n".join(body) + "\n")

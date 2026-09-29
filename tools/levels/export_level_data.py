@@ -46,6 +46,20 @@ def crowd_place(e, layout, covers):
     return {"at": [x, y], "district": district, "sheltered": sheltered}
 
 
+def shelters(level_id, plan):
+    """Every roof the plan registered (Plan.shelter), for the core's wetness rule
+    (openspec/changes/character-lighting, design section 9): its label, its footprint in layout
+    metres and the height of its underside. The core's polygon rule has no holes, so a footprint
+    with one is refused rather than written as if it were solid."""
+    out = []
+    for label, pg, z0 in plan.shelters:
+        if pg.interiors:
+            raise SystemExit(f"{level_id}: shelter '{label}' has a hole the core can't represent")
+        out.append({"label": label, "poly": [[round(x, 3), round(y, 3)] for x, y in list(pg.exterior.coords)[:-1]],
+                     "under_m": round(z0, 3)})
+    return out
+
+
 def export(level_id):
     ents = importlib.import_module(f"layouts.{level_id}_entities").ENTITIES
     layout = importlib.import_module(f"layouts.{level_id}").MAP
@@ -62,11 +76,14 @@ def export(level_id):
             raise SystemExit(f"{level_id}: a water body has no id")
         out["water"].append({"id": w["id"], "surface_m": w["surface_m"], "bed_m": w["bed_m"],
                              "poly": [[float(x), float(y)] for x, y in w["poly"]]})
-    # The awnings civilians shelter under, from the level's plan; its checks report on stderr.
+    # The awnings civilians shelter under, and every roof the rain can't pass, from the level's
+    # plan (a city layout has one); its checks report on stderr.
     covers = []
-    if any(e["kind"] == "civ" for e in ents):
+    if layout.get("base", "city") == "city":
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            covers = city_plan.build(level_id).covers
+            plan = city_plan.build(level_id)
+        covers = plan.covers
+        out["shelters"] = shelters(level_id, plan)
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

@@ -148,6 +148,9 @@ public sealed class CharacterLightingTable : IValidated
     /// <summary>How a conversation is framed.</summary>
     public required FramingDef Framing { get; init; }
 
+    /// <summary>How characters wet in the rain and dry under a roof (design section 9).</summary>
+    public required WetnessDef Wetness { get; init; }
+
     /// <summary>
     /// The side the key goes on: the data's, or when it says "motivated", the side where the
     /// level's lights within the motivation radius sum the most energy / distance², so the face
@@ -299,5 +302,6 @@ public sealed class CharacterLightingTable : IValidated
         {
             errors.Add("framing.face_from_top must be between 0 and 1");
         }
+        Wetness.Validate(errors);
     }
 }

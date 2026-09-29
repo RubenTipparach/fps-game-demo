@@ -51,19 +51,25 @@ of 5.
 ### Requirement: Characters are dry under a roof and wet in the rain
 Every NPC SHALL carry a wetness from 0 to 1 that rises toward 1 while no roof is over them and
 falls toward 0 while one is, at the rates in `data/character_lighting.json`. A roof is a
-building's footprint, an awning, the Skyway's deck or a walkway, from the shelter shapes the
-level data exports, and the core SHALL decide it. Wetness SHALL lower the roughness of skin and
-cloth and darken cloth, between the dry and wet values in the same file, and SHALL leave the
-eyes as they are. A level SHALL start everyone at the wetness of where they stand.
+building's footprint, an awning, a kiosk's roof, the Skyway's deck or a walkway, from the
+shelter shapes the level data exports. A roof SHALL count only when its underside is at least
+the data's headroom above the character's feet, so a roof never shelters the people standing on
+it. The core SHALL decide it. Wetness SHALL lower the roughness of skin and cloth and darken
+cloth, between the dry and wet values in the same file, and SHALL leave the eyes as they are. A
+level SHALL start everyone at the wetness of where they stand.
 
 #### Scenario: Tank indoors
 - **WHEN** Tank stands behind the Anchor's bar
 - **THEN** his wetness is 0 and his skin's T-zone roughness is 0.60, where it was 0.42 before
   this change
 
-#### Scenario: Silk in the rain
-- **WHEN** Silk stands on Lantern Row with nothing overhead
-- **THEN** her wetness is 1 and her skin looks as it did before this change
+#### Scenario: Dace in the rain
+- **WHEN** Dace stands at the checkpoint gate with nothing overhead
+- **THEN** Dace's wetness is 1 and Dace's skin looks as it did before this change
+
+#### Scenario: On a roof
+- **WHEN** someone stands on the Rusty Anchor's roof
+- **THEN** no roof is over them, though the Anchor shelters everyone inside it
 
 #### Scenario: A civilian runs indoors
 - **WHEN** a civilian in the rain runs into the Fish Hall
