@@ -85,6 +85,64 @@ MAP = {
     ],
 
     # Named buildings. Rooms make a floor plan (enterable); fixtures are furniture and machines.
+    # Meridian's towers around the slum (openspec/changes/hub-skyline): scenery beyond the hub's
+    # edges, drawn by the skyline sector and the map's locator inset. Layout metres like the rest,
+    # so towers sit at negative or beyond-edge coordinates. "style" picks the massing (spire,
+    # arcology, slab, corporate, civic, cluster), "crown" the top (halo, neon, billboard, beacons),
+    # "lit" the share of windows lit, "neon" the crown's colour role. The near ring is named; the
+    # far ring is silhouettes 400-900 m out. city_plan.py asserts the bounds, the horizon's
+    # coverage, no overlaps and the triangle budget. "searchlights" (owner I8) are beams off the
+    # tower's faces at height_m, each sweeping one turn per period_s (negative: the other way)
+    # from phase_deg, tilted between tilt_deg's two angles from vertical.
+    "skyline": [
+        {"id": "halcyon_spire", "name": "HALCYON SPIRE", "at": (170, -70), "size": (100, 80), "height_m": 440,
+         "style": "spire", "crown": "halo", "neon": "cyan", "lit": 0.35, "setbacks_m": [120, 260, 380],
+         "searchlights": {"height_m": 420, "tilt_deg": (20, 35),
+                          "beams": [{"face": "west", "period_s": 47.0, "phase_deg": 0.0},
+                                    {"face": "east", "period_s": -61.0, "phase_deg": 180.0}]}},
+        {"id": "castellan_arcology", "name": "CASTELLAN ARCOLOGY", "at": (40, -60), "size": (90, 70), "height_m": 260,
+         "style": "arcology", "crown": "neon", "neon": "magenta", "lit": 0.3},
+        {"id": "kosei_stacks", "name": "KOSEI STACKS", "at": (-60, 60), "size": (40, 120), "height_m": 150,
+         "style": "slab", "crown": "beacons", "lit": 0.55},
+        {"id": "harrow_tower", "name": "HARROW TOWER", "at": (-70, 150), "size": (50, 50), "height_m": 230,
+         "style": "corporate", "crown": "billboard", "neon": "amber", "lit": 0.3},
+        {"id": "the_pylons", "name": "THE PYLONS", "at": (20, 258), "size": (50, 50), "height_m": 260,
+         "style": "cluster", "crown": "beacons", "lit": 0.25,
+         "parts": [{"at": (5, 245), "size": (20, 20), "height_m": 260}, {"at": (35, 255), "size": (20, 20), "height_m": 190},
+                   {"at": (20, 275), "size": (20, 20), "height_m": 220}]},
+        {"id": "sable_mutual", "name": "SABLE MUTUAL", "at": (120, 240), "size": (60, 40), "height_m": 320,
+         "style": "corporate", "crown": "neon", "neon": "cyan", "lit": 0.3},
+        {"id": "pier_nine", "name": "PIER NINE ARCOLOGY", "at": (310, 180), "size": (80, 80), "height_m": 210,
+         "style": "arcology", "crown": "neon", "neon": "amber", "lit": 0.35},
+        {"id": "water_authority", "name": "MERIDIAN WATER AUTHORITY", "at": (300, 40), "size": (60, 60), "height_m": 180,
+         "style": "civic", "crown": "neon", "neon": "blue", "lit": 0.25},
+        # the near ring's gaps
+        {"id": "stack_ne", "at": (275, -45), "size": (40, 40), "height_m": 160, "style": "slab", "crown": "beacons", "lit": 0.4},
+        {"id": "stack_se", "at": (215, 235), "size": (40, 40), "height_m": 140, "style": "slab", "lit": 0.45},
+        {"id": "stack_w", "at": (-55, -25), "size": (40, 40), "height_m": 170, "style": "slab", "crown": "beacons", "lit": 0.4},
+        {"id": "stack_sw", "at": (-60, 235), "size": (40, 40), "height_m": 130, "style": "slab", "lit": 0.45},
+        # the far ring
+        {"id": "far_01", "at": (772, 133), "size": (70, 60), "height_m": 590, "style": "corporate", "lit": 0.18, "ring": "far"},
+        {"id": "far_02", "at": (584, 194), "size": (100, 80), "height_m": 640, "style": "slab", "lit": 0.19, "ring": "far"},
+        {"id": "far_03", "at": (775, 649), "size": (70, 70), "height_m": 270, "style": "spire", "lit": 0.22, "ring": "far"},
+        {"id": "far_04", "at": (600, 791), "size": (70, 100), "height_m": 220, "style": "slab", "lit": 0.26, "ring": "far"},
+        {"id": "far_05", "at": (281, 656), "size": (60, 100), "height_m": 200, "style": "corporate", "lit": 0.35, "ring": "far"},
+        {"id": "far_06", "at": (146, 748), "size": (80, 70), "height_m": 200, "style": "corporate", "lit": 0.17, "ring": "far"},
+        {"id": "far_07", "at": (-76, 614), "size": (90, 60), "height_m": 330, "style": "slab", "lit": 0.26, "ring": "far"},
+        {"id": "far_08", "at": (-310, 674), "size": (80, 60), "height_m": 560, "style": "slab", "lit": 0.21, "ring": "far"},
+        {"id": "far_09", "at": (-493, 544), "size": (60, 70), "height_m": 570, "style": "slab", "lit": 0.34, "ring": "far"},
+        {"id": "far_10", "at": (-411, 222), "size": (80, 90), "height_m": 220, "style": "arcology", "lit": 0.2, "ring": "far"},
+        {"id": "far_11", "at": (-565, 64), "size": (90, 100), "height_m": 270, "style": "corporate", "lit": 0.24, "ring": "far"},
+        {"id": "far_12", "at": (-564, -138), "size": (90, 60), "height_m": 550, "style": "arcology", "lit": 0.23, "ring": "far"},
+        {"id": "far_13", "at": (-377, -319), "size": (80, 70), "height_m": 360, "style": "spire", "lit": 0.16, "ring": "far"},
+        {"id": "far_14", "at": (-308, -636), "size": (80, 60), "height_m": 440, "style": "corporate", "lit": 0.34, "ring": "far"},
+        {"id": "far_15", "at": (-131, -679), "size": (90, 90), "height_m": 510, "style": "corporate", "lit": 0.28, "ring": "far"},
+        {"id": "far_16", "at": (65, -671), "size": (70, 80), "height_m": 550, "style": "corporate", "lit": 0.21, "ring": "far"},
+        {"id": "far_17", "at": (335, -726), "size": (60, 90), "height_m": 610, "style": "slab", "lit": 0.16, "ring": "far"},
+        {"id": "far_18", "at": (418, -382), "size": (60, 100), "height_m": 360, "style": "corporate", "lit": 0.18, "ring": "far"},
+        {"id": "far_19", "at": (595, -310), "size": (80, 70), "height_m": 350, "style": "corporate", "lit": 0.32, "ring": "far"},
+        {"id": "far_20", "at": (878, -207), "size": (100, 90), "height_m": 430, "style": "spire", "lit": 0.22, "ring": "far"},
+    ],
     "buildings": [
         {"id": "station", "name": "LOW HARBOR STATION", "poly": [(100, 5), (140, 5), (140, 29), (100, 29)], "height_m": 16,
          "label_at": (120, 2.6),

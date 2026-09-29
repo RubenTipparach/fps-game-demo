@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://shaders/searchlight.gdshader" id="1_searchlight"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2"]
+shader = ExtResource("1_searchlight")
+shader_parameter/length_m = 900.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+material = SubResource("ShaderMaterial_2")
+top_radius = 24.367329
+bottom_radius = 0.8
+height = 900.0
+radial_segments = 24
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[node name="Searchlight" type="MeshInstance3D"]
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+gi_mode = 0
+custom_aabb = AABB(-540.6, -1, -540.6, 1081.2, 902.0, 1081.2)

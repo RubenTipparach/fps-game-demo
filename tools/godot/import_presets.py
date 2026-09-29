@@ -33,6 +33,13 @@ def prop_materials():
     return sorted(f[:-len(".tres")] for f in os.listdir(folder) if f.endswith(".tres"))
 
 
+def skyline_materials():
+    """Every material in game/materials/skyline (tools/godot/gen_skyline_materials.py writes them),
+    read from the folder like the prop kit's."""
+    folder = os.path.join(GAME, "materials", "skyline")
+    return sorted(f[:-len(".tres")] for f in os.listdir(folder) if f.endswith(".tres")) if os.path.isdir(folder) else []
+
+
 FX_MATS = ["corona_warm", "corona_cool", "corona_pink", "corona_cyan"]
 
 # Undercity levels bake exterior lightmaps at 0.4 m texels; interiors ask for 0.15 m through the
@@ -44,6 +51,7 @@ def material_map():
     m = {n: f"res://materials/{n}.tres" for n in LEVEL_MATS}
     m.update({n: f"res://materials/props/{n}.tres" for n in prop_materials()})
     m.update({n: f"res://materials/fx/{n}.tres" for n in FX_MATS})
+    m.update({n: f"res://materials/skyline/{n}.tres" for n in skyline_materials()})
     return m
 
 
@@ -116,7 +124,9 @@ gltf/texture_map_mode=1
     print("wrote", rel + ".import")
 
 
-STATIC_LIGHTMAPS, DYNAMIC = 2, 3
+NO_BAKING, STATIC_LIGHTMAPS, DYNAMIC = 0, 2, 3
+# Sectors that are only scenery bake nothing, so they need no lightmap UVs (hub-skyline).
+SCENERY_SECTORS = ("skyline",)
 
 
 def undercity():
@@ -125,7 +135,8 @@ def undercity():
     for level in sorted(os.listdir(base)) if os.path.isdir(base) else []:
         for f in sorted(os.listdir(os.path.join(base, level))):
             if f.endswith(".glb"):
-                write(f"levels/undercity/{level}/{f}", STATIC_LIGHTMAPS, UNDERCITY_TEXEL_M,
+                scenery = any(f == f"{level}_{s}.glb" for s in SCENERY_SECTORS)
+                write(f"levels/undercity/{level}/{f}", NO_BAKING if scenery else STATIC_LIGHTMAPS, UNDERCITY_TEXEL_M,
                       "res://addons/brushfire_tools/blender_level_import.gd")
 
 

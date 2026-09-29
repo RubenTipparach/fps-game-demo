@@ -202,6 +202,10 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/led_amber.tres"
 },
+"led_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/led_cyan.tres"
+},
 "led_red": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/led_red.tres"
@@ -279,6 +283,10 @@ _subresources={
 "sky_storm": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/sky_storm.tres"
+},
+"skyline": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/skyline/skyline.tres"
 },
 "status_light": {
 "use_external/enabled": true,

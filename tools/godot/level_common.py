@@ -181,10 +181,18 @@ def add_surface_animator(scene, material, scroll=(0.03, 0.0), pulse=0.0, pulse_s
                PulseSpeed=float(pulse_speed))
 
 
-def add_navigation(scene, parent_name="Navigation", **overrides):
-    """A NavigationRegion3D baked from static colliders (its children, or a source group via overrides)."""
-    nav = scene.sub_res("NavigationMesh", **{**dict(agent_height=1.8, agent_radius=0.4, agent_max_climb=0.5,
-                                                    agent_max_slope=46.0, cell_size=0.2, cell_height=0.1,
-                                                    geometry_parsed_geometry_type=1, geometry_collision_mask=1),
-                                             **overrides})
+def add_navigation(scene, parent_name="Navigation", baked=None, **overrides):
+    """A NavigationRegion3D baked from static colliders (its children, or a source group via overrides).
+
+    baked is the res:// path the editor's bake saves the mesh to (plugin.gd, "<scene>_navmesh.res").
+    When that file exists the region links it, so writing the scene again keeps the last bake; the
+    next bake rebuilds it with the settings here."""
+    game = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "game")
+    if baked and os.path.exists(os.path.join(game, baked[len("res://"):])):
+        nav = scene.ext_res("NavigationMesh", baked)
+    else:
+        nav = scene.sub_res("NavigationMesh", **{**dict(agent_height=1.8, agent_radius=0.4, agent_max_climb=0.5,
+                                                        agent_max_slope=46.0, cell_size=0.2, cell_height=0.1,
+                                                        geometry_parsed_geometry_type=1, geometry_collision_mask=1),
+                                                 **overrides})
     return scene.node(parent_name, "NavigationRegion3D", ".", navigation_mesh=nav)

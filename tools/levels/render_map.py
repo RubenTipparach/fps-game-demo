@@ -745,8 +745,9 @@ def draw_legend(c, m, x0, LW, vh):
         items += [("p", p) for p in ps]
     key_rows = m.get("key", [])
     key_h = 22 + ((len(key_rows) + 1) // 2) * 18
+    inset_h = LOCATOR_H if m.get("skyline") else 0
     col_top = y
-    col_bottom = vh - key_h - 24
+    col_bottom = vh - key_h - 24 - (inset_h + 18 if inset_h else 0)
     rows_h = sum(24 if k == "h" else 16 for k, _ in items)
     single = col_top + rows_h <= col_bottom
     if single:
@@ -771,6 +772,9 @@ def draw_legend(c, m, x0, LW, vh):
                   + (f'<tspan class="lg-n" dx="8">{esc(it["note"])}</tspan>' if single and it.get("note") else "")
                   + '</text></g>')
             cy += 16
+    # the locator inset: where the level sits among the city's towers (openspec/changes/hub-skyline)
+    if inset_h:
+        draw_locator(c, m, 24, vh - key_h - 22 - inset_h, LW - 48, inset_h)
     # key
     ky = vh - key_h - 8
     c.add(f'<rect x="24" y="{ky - 14}" width="{LW - 48}" height="1" fill="#1f2933"/>')
@@ -780,6 +784,65 @@ def draw_legend(c, m, x0, LW, vh):
         kx = 24 + (i % 2) * ((LW - 48) / 2 + 8)
         kyy = ky + 20 + (i // 2) * 18
         c.add(f'<g transform="translate({kx},{kyy})">{glyph.replace("ID", m["id"])}</g><text class="lg-n m-lbl" x="{kx + 34}" y="{kyy + 4}">{esc(label)}</text>')
+    c.add("</g>")
+
+
+LOCATOR_H = 200    # the legend's locator inset, px
+
+
+def draw_locator(c, m, x0, y0, w, h):
+    """"<LEVEL> IN MERIDIAN": the level's rectangle among the near ring of towers, from the same
+    skyline list the level builds (tools/levels/skyline.py). The far ring is left off: at a scale
+    that holds it, the level would be a dot."""
+    import skyline
+    near = [t for t in m["skyline"] if t.get("ring", "near") == "near"]
+    W, H = m["size"]
+    xs, ys = [0.0, W], [0.0, H]
+    for t in near:
+        for bx0, by0, bx1, by1, _ in skyline.parts(t):
+            xs += [bx0, bx1]
+            ys += [by0, by1]
+    pad = 12.0
+    mx0, my0, mx1, my1 = min(xs) - pad, min(ys) - pad, max(xs) + pad, max(ys) + pad
+    top = 18
+    k = min(w / (mx1 - mx0), (h - top) / (my1 - my0))
+    ox = x0 + (w - (mx1 - mx0) * k) / 2
+    oy = y0 + top
+
+    def P(x, y):
+        return ox + (x - mx0) * k, oy + (y - my0) * k
+    c.add(f'<g class="locator">')
+    c.add(f'<rect x="{x0}" y="{y0 - 4}" width="{w}" height="1" fill="#1f2933"/>')
+    c.add(f'<text class="lg-h m-lbl" x="{x0}" y="{y0 + 12}">{esc(m["title"])} IN MERIDIAN</text>')
+    for t in near:
+        for bx0, by0, bx1, by1, _ in skyline.parts(t):
+            (px0, py0), (px1, py1) = P(bx0, by0), P(bx1, by1)
+            c.add(f'<rect x="{px0:.1f}" y="{py0:.1f}" width="{px1 - px0:.1f}" height="{py1 - py0:.1f}" '
+                  f'fill="#1a2230" stroke="#3a4a5a" stroke-width="0.8"/>')
+    (hx0, hy0), (hx1, hy1) = P(0, 0), P(W, H)
+    c.add(f'<rect x="{hx0:.1f}" y="{hy0:.1f}" width="{hx1 - hx0:.1f}" height="{hy1 - hy0:.1f}" '
+          f'fill="#15202b" stroke="{ROLE["accent"]}" stroke-width="1.2"/>')
+    cx, cy = P(W / 2, H / 2)
+    c.add(f'<text class="lg-n m-lbl" x="{cx:.1f}" y="{cy + 3:.1f}" text-anchor="middle">{esc(m["title"])}</text>')
+    for t in near:
+        if "name" not in t:
+            continue
+        # outside the footprint, on the side away from the level, so no label crosses it
+        (tx, ty), (tw, td) = t["at"], t["size"]
+        dx, dy = tx - W / 2, ty - H / 2
+        if abs(dx) * H > abs(dy) * W:
+            side = 1 if dx > 0 else -1
+            lx, ly = P(tx + side * tw / 2, ty)
+            lx += side * 3
+            anchor = "start" if side > 0 else "end"
+            ly += 3
+        else:
+            side = 1 if dy > 0 else -1
+            lx, ly = P(tx, ty + side * td / 2)
+            ly += 10 if side > 0 else -3
+            anchor = "middle"
+        c.add(f'<text class="lg-n m-lbl" x="{lx:.1f}" y="{ly:.1f}" text-anchor="{anchor}" font-size="8">'
+              f'{esc(t["name"].title())}</text>')
     c.add("</g>")
 
 

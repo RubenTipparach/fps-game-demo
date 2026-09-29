@@ -25,6 +25,19 @@ have no collision, and SHALL be drawn out to 1,500 m.
 - **THEN** the Halcyon Spire rises above the foundation wall with lit windows and its halo, and
   the sky above the roofline is no longer empty
 
+### Requirement: Searchlights sweep the sky
+The Halcyon Spire SHALL carry two searchlight beams that sweep the sky in opposite directions,
+placed and timed from the layout. They SHALL cast no light and no shadow, and the plan SHALL
+refuse a searchlight whose height has no tier of its tower to stand on.
+
+#### Scenario: Looking north at night
+- **WHEN** the runner looks north from the Sump Market
+- **THEN** two pale beams rise from the Spire's needle and turn slowly, out of step
+
+#### Scenario: A lamp above its tower
+- **WHEN** the layout sets a tower's searchlights higher than the tower
+- **THEN** the plan exits naming the tower and the height
+
 ### Requirement: The map shows the skyline
 The design map's legend SHALL carry a locator inset drawn from the same skyline list as the
 level, showing the hub inside its towers and naming the named ones.

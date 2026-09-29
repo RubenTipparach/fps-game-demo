@@ -51,24 +51,27 @@ def V(p):
 # ----------------------------------------------------------------------------- mesh building
 
 class Acc:
-    """Accumulates faces for one object: vertices in Blender space, a material per face."""
+    """Accumulates faces for one object: vertices in Blender space, a material per face, and an
+    optional colour per face (the skyline's towers carry their lit share and seed in it)."""
 
     def __init__(self):
         self.verts = []
         self.faces = []
         self.mats = []
         self.smooth = []
+        self.colors = []
 
-    def add(self, verts, faces, mats, smooth=None):
+    def add(self, verts, faces, mats, smooth=None, colors=None):
         base = len(self.verts)
         self.verts += verts
         for k, f in enumerate(faces):
             self.faces.append([base + i for i in f])
             self.mats.append(mats[k])
             self.smooth.append(bool(smooth[k]) if smooth else False)
+            self.colors.append(tuple(colors[k]) if colors and colors[k] is not None else None)
 
     def extend(self, other):
-        self.add(other.verts, other.faces, other.mats, other.smooth)
+        self.add(other.verts, other.faces, other.mats, other.smooth, other.colors)
 
     def to_mesh(self, name, origin=None):
         me = bpy.data.meshes.new(name)
@@ -83,6 +86,14 @@ class Acc:
             me.materials.append(material(n))
         me.polygons.foreach_set("material_index", [index[m] for m in self.mats])
         me.polygons.foreach_set("use_smooth", self.smooth)
+        if any(c is not None for c in self.colors):
+            # One colour per face, on its corners (glTF COLOR_0); faces without one are white.
+            attr = me.color_attributes.new("Col", "FLOAT_COLOR", "CORNER")
+            per_loop = []
+            for f, c in zip(self.faces, self.colors):
+                rgba = (*(c or (1.0, 1.0, 1.0))[:3], 1.0)
+                per_loop += list(rgba) * len(f)
+            attr.data.foreach_set("color", per_loop)
         me.validate(clean_customdata=False)
         me.update()
         return me
@@ -117,7 +128,7 @@ def mesh_hexa(p):
             f = list(reversed(f))
         keep.append(f)
         keep_m.append(mats[fi])
-    acc.add(pts, keep, keep_m)
+    acc.add(pts, keep, keep_m, colors=[p["color"]] * len(keep) if p.get("color") else None)
     return acc
 
 
@@ -449,7 +460,7 @@ def export_sector(level, name, coll):
                               export_image_format="NONE", export_materials="EXPORT", export_yup=True,
                               export_apply=False, export_lights=False, export_cameras=False,
                               export_texcoords=True, export_normals=True, export_tangents=False,
-                              export_animations=False)
+                              export_vertex_color="ACTIVE", export_animations=False)
     return out
 
 

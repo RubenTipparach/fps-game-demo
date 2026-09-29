@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cs2cggjqlh5b8"
-path="res://.godot/imported/hub_drydock.glb-20a9f41734930daf292c31bbc955c7a6.scn"
+uid="uid://vd3deywdbrcf"
+path="res://.godot/imported/hub_skyline.glb-6d2fdb97a0786b55e99285651cf8524b.scn"
 
 [deps]
 
-source_file="res://levels/undercity/hub/hub_drydock.glb"
-dest_files=["res://.godot/imported/hub_drydock.glb-20a9f41734930daf292c31bbc955c7a6.scn"]
+source_file="res://levels/undercity/hub/hub_skyline.glb"
+dest_files=["res://.godot/imported/hub_skyline.glb-6d2fdb97a0786b55e99285651cf8524b.scn"]
 
 [params]
 
@@ -26,7 +26,7 @@ nodes/use_node_type_suffixes=true
 meshes/ensure_tangents=true
 meshes/generate_lods=false
 meshes/create_shadow_meshes=true
-meshes/light_baking=2
+meshes/light_baking=0
 meshes/lightmap_texel_size=0.4
 meshes/force_disable_compression=false
 skins/use_named_skins=true
@@ -55,6 +55,7 @@ _subresources={
 },
 "asphalt": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/asphalt.tres",
 "use_external/path": "res://materials/asphalt.tres"
 },
 "awning": {
@@ -83,7 +84,6 @@ _subresources={
 },
 "brick_wall": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/brick_wall.tres",
 "use_external/path": "res://materials/brick_wall.tres"
 },
 "canvas": {
@@ -96,7 +96,6 @@ _subresources={
 },
 "ceiling_tiles": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/ceiling_tiles.tres",
 "use_external/path": "res://materials/ceiling_tiles.tres"
 },
 "concrete": {
@@ -114,17 +113,14 @@ _subresources={
 },
 "corona_pink": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/fx/corona_pink.tres",
 "use_external/path": "res://materials/fx/corona_pink.tres"
 },
 "corona_warm": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/fx/corona_warm.tres",
 "use_external/path": "res://materials/fx/corona_warm.tres"
 },
 "crate": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/crate.tres",
 "use_external/path": "res://materials/crate.tres"
 },
 "crate_large": {
@@ -137,7 +133,6 @@ _subresources={
 },
 "diamond_plate": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/diamond_plate.tres",
 "use_external/path": "res://materials/diamond_plate.tres"
 },
 "door_metal": {
@@ -150,7 +145,6 @@ _subresources={
 },
 "floor_tiles": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/floor_tiles.tres",
 "use_external/path": "res://materials/floor_tiles.tres"
 },
 "glass": {
@@ -163,17 +157,14 @@ _subresources={
 },
 "gunmetal": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/gunmetal.tres",
 "use_external/path": "res://materials/props/gunmetal.tres"
 },
 "gunmetal_light": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/gunmetal_light.tres",
 "use_external/path": "res://materials/props/gunmetal_light.tres"
 },
 "hazard_stripes": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/hazard_stripes.tres",
 "use_external/path": "res://materials/hazard_stripes.tres"
 },
 "hazard_triplanar": {
@@ -194,7 +185,6 @@ _subresources={
 },
 "lamp_glow": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/lamp_glow.tres",
 "use_external/path": "res://materials/props/lamp_glow.tres"
 },
 "lava": {
@@ -231,12 +221,10 @@ _subresources={
 },
 "neon_cyan": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/neon_cyan.tres",
 "use_external/path": "res://materials/neon_cyan.tres"
 },
 "neon_pink": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/neon_pink.tres",
 "use_external/path": "res://materials/neon_pink.tres"
 },
 "paint_grimy": {
@@ -265,7 +253,6 @@ _subresources={
 },
 "rubber": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/rubber.tres",
 "use_external/path": "res://materials/props/rubber.tres"
 },
 "rust_metal": {
@@ -291,6 +278,7 @@ _subresources={
 },
 "skyline": {
 "use_external/enabled": true,
+"use_external/fallback_path": "res://materials/skyline/skyline.tres",
 "use_external/path": "res://materials/skyline/skyline.tres"
 },
 "status_light": {
@@ -299,7 +287,6 @@ _subresources={
 },
 "stone_blocks": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/stone_blocks.tres",
 "use_external/path": "res://materials/stone_blocks.tres"
 },
 "stripe_yellow": {
@@ -308,7 +295,6 @@ _subresources={
 },
 "tech_panel": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/tech_panel.tres",
 "use_external/path": "res://materials/tech_panel.tres"
 },
 "terminal_screen": {
@@ -325,17 +311,14 @@ _subresources={
 },
 "window_dark": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/window_dark.tres",
 "use_external/path": "res://materials/window_dark.tres"
 },
 "window_lit_cool": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/window_lit_cool.tres",
 "use_external/path": "res://materials/window_lit_cool.tres"
 },
 "window_lit_warm": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/window_lit_warm.tres",
 "use_external/path": "res://materials/window_lit_warm.tres"
 }
 }

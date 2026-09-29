@@ -137,6 +137,43 @@ outside it.
 - **The label says the foundation wall carries "400 m of tower above".** The Spire at 440 m
   total, 400 m above the wall, keeps that true.
 
+## Found in building (2026-09-28)
+
+- **One material, not one per part.** Built as first written (a facade material, a beacon
+  material, one neon material per colour and the foundation wall's holo material for
+  billboards), the sector came to 11 surfaces against the 6 draw calls above. Every tower part
+  is now drawn by one `skyline` material. What a face is rides in its vertex colour
+  (`tools/levels/skyline.py`, `vertex_color`):
+  - red: the tower's lit share;
+  - green: its window seed;
+  - blue: (part x 8 + neon role) / 32. The parts are facade 0, neon band 1, beacon 2 and
+    billboard 3. The role indexes `NEON_ROLES`, the shader's palette, filled from
+    `data/character_lighting.json`'s colours by `gen_skyline_materials.py`.
+
+  The built sector is 5 surfaces: the near ring, the far ring, and the Skyway scenery's
+  asphalt, concrete and rust. A test decodes every part and role through 8-bit colour, and
+  another reads the shader and checks it decodes with the same numbers.
+- **A lit window's 10 % neon is now the tower's own.** With a material per part, the facade
+  couldn't know its tower's neon, so every tower's neon windows were cyan.
+- **Billboards are drawn by the skyline shader.** The foundation wall's holo material takes the
+  scene fog. Harrow Tower's billboard is 174 m from the middle of the west edge and 238 m from
+  the centre, where the fog leaves 15 % and 7 % of it. The skyline shader draws it as a panel in
+  the tower's neon with scrolling scan lines, hazed like the windows (15-19 % there).
+- **Triangles.** The budget rule counts the towers at 12 triangles a box: 1,332. The built
+  sector, with the Skyway's scenery, is 2,556. Both are far inside 30,000.
+- **The far plane.** The farthest tower corner is 1,078 m from the centre and 1,178 m from a
+  hub corner, so 1,500 m holds all of it.
+- **The rest of the hub is untouched.** The plan's eight existing sectors come out identical
+  to the committed ones (compared as JSON). So their glbs, lightmaps and navmesh stand, and
+  only the skyline glb is new. The skyline sector is left out of the navmesh group as well as
+  the bake.
+- **The searchlights sweep in the vertex shader** (`shaders/searchlight.gdshader`). There is no
+  script and no per-frame CPU. Each beam is a 900 m open cone, 3° wide, off a lamp 0.8 m across
+  (`scenes/undercity/searchlight.tscn`), with a custom AABB covering its whole sweep so it is
+  never culled. The layout carries each beam's face, period, phase and tilt range, and
+  `skyline.searchlights` places the lamps 1.5 m off the Spire's needle at 420 m. The level sets
+  them as instance shader parameters.
+
 ## Owner decisions (survey, 2026-09-28)
 
 - I7: all towers as meshes with their own haze (recommendation accepted).

@@ -57,6 +57,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
 import render_map as RM  # noqa: E402
 import detailing  # noqa: E402
+import skyline  # noqa: E402
 
 # ----------------------------------------------------------------------------- the city kit
 # Generic construction rules shared by every city level. Level-specific numbers (district
@@ -81,6 +82,9 @@ WALL_LAMP_Z = 3.3     # plate 3.1-3.5 m: above shop fronts (3.05), below the str
 DOOR_H = 2.4          # interior doors; openings 2.5 m wide or more get WIDE_DOOR_H
 WIDE_DOOR_H = 3.0
 PILLAR_BASE_HALF_M = 1.2  # a viaduct pillar's base, half its side
+SKYWAY_SCENERY_M = 200.0  # the Skyway runs on this far past each edge, as scenery (hub-skyline)
+SKYWAY_SCENERY_SPAN_M = 36.0  # ... in spans about this long, as over the hub
+SKYWAY_PIER_DEPTH_M = 40.0    # ... on piers down into the haze below the hub's ground
 # Ways out of the water (openspec/changes/water-and-swimming, design section 4). How a ladder
 # or a ledge is climbed is the game's (data/water.json); where they are is level construction.
 LADDER_EVERY_M = 30.0   # a quay ladder every this many metres of open quay
@@ -125,6 +129,9 @@ PROP_EXTRAS = {"visibility_range_end_m": 70.0}
 # the water's surface refracts and reflects what is around it (shaders/water.gdshader): it takes no
 # baked light and casts no shadow
 WATER_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
+# the skyline is unshaded scenery past the hub's edges (openspec/changes/hub-skyline, design
+# section 3): no baked light, no shadows
+SKYLINE_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
 # Lightmap texels: the import bakes at 0.4 m (import_presets.py); interiors ask for 0.15 m.
 EXTERIOR_TEXEL_M = 0.4
 INTERIOR_TEXEL_M = 0.15
@@ -281,6 +288,21 @@ def box_prim(lo, hi, mat, skip=()):
     """Axis-aligned box, layout coordinates."""
     (x0, y0, z0), (x1, y1, z1) = lo, hi
     return hexa([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], z0, z1, mat, skip)
+
+
+def viaduct_span(Q, s0, s1, half, d0, d1, g0, skip_ends=()):
+    """One span of the Skyway between stations s0 and s1 along its line (Q(s, v) is the point s
+    along it and v across): the deck, its parapets and the girders under it. The one span the
+    viaduct and its scenery past the hub's edges share."""
+    prims = [hexa([Q(s0, -half), Q(s1, -half), Q(s1, half), Q(s0, half)], d0, d1,
+                  ["concrete", "asphalt", "concrete", "concrete", "concrete", "concrete"], skip=list(skip_ends))]
+    for side in (-1, 1):
+        v0, v1 = sorted((side * half, side * (half - 0.4)))
+        prims.append(hexa([Q(s0, v0), Q(s1, v0), Q(s1, v1), Q(s0, v1)], d1, d1 + 1.1, "concrete", skip=[0] + list(skip_ends)))
+        for gv in (4.8, 7.2):
+            va, vb = sorted((side * (gv - 0.35), side * (gv + 0.35)))
+            prims.append(hexa([Q(s0, va), Q(s1, va), Q(s1, vb), Q(s0, vb)], g0, d0, "rust_metal", skip=[1] + list(skip_ends)))
+    return prims
 
 
 def frame(A, t, n):
@@ -2046,14 +2068,7 @@ class City:
             mx, my = Q((s0 + s1) / 2, 0)
             prims = P.obj("skyway", "walk", mx, my, col="col")
             skip_ends = ([] if k == 0 else [5]) + ([] if k == len(cuts) - 2 else [3])
-            prims.append(hexa([Q(s0, -half), Q(s1, -half), Q(s1, half), Q(s0, half)], d0, d1,
-                              ["concrete", "asphalt", "concrete", "concrete", "concrete", "concrete"], skip=skip_ends))
-            for side in (-1, 1):
-                v0, v1 = sorted((side * half, side * (half - 0.4)))
-                prims.append(hexa([Q(s0, v0), Q(s1, v0), Q(s1, v1), Q(s0, v1)], d1, d1 + 1.1, "concrete", skip=[0] + skip_ends))
-                for gv in (4.8, 7.2):
-                    va, vb = sorted((side * (gv - 0.35), side * (gv + 0.35)))
-                    prims.append(hexa([Q(s0, va), Q(s1, va), Q(s1, vb), Q(s0, vb)], g0, d0, "rust_metal", skip=[1] + skip_ends))
+            prims += viaduct_span(Q, s0, s1, half, d0, d1, g0, skip_ends)
             # an underside light in the middle of each span, alternating sides
             if 0 < k < len(cuts) - 1 or (s1 - s0) > 10:
                 sm = (s0 + s1) / 2
@@ -2806,7 +2821,10 @@ class City:
         self.street_lamps()
         self.wall_lamps()
         self.boundary()
+        self.skyline_geometry()
+        self.skyway_scenery()
         self.place_entities()
+        self.check_skyline()
         self.check_zfighting()
         self.check_rooms_carved()
         self.check_exits()
@@ -3140,6 +3158,59 @@ class City:
                 problems.append(f"{w['id']}: {len(far)} points of water are more than {EXIT_REACH_M:g} m of swimming "
                                 f"from a way out; the farthest is ({fx:g}, {fy:g}), {how}")
         return problems
+
+    # ------------------------------------------------------------------ the skyline
+
+    def skyline_geometry(self):
+        """Meridian's towers beyond the hub's edges (openspec/changes/hub-skyline): each tower's
+        massing and crown (skyline.py), merged into one object per ring in the skyline sector,
+        with no collision. Every box is registered with the z-fighting check."""
+        towers = self.m.get("skyline", [])
+        centre = (self.P.W / 2, self.P.H / 2)
+        for t in towers:
+            ring = t.get("ring", "near")
+            prims = self.P.obj("skyline", "sky", name=f"skyline_{ring}", extras=SKYLINE_EXTRAS)
+            # what each box is rides in its colour, for the one skyline shader (skyline.vertex_color)
+            for k, (lo, hi, part) in enumerate(skyline.massing(t, centre)):
+                prims.append({**box_prim(lo, hi, skyline.MATERIAL), "color": skyline.vertex_color(t, part)})
+                self.P.zdetail("skyline", lo, hi, f"{t['id']}#{k}")
+
+    def skyway_scenery(self):
+        """The Skyway runs on past each edge as scenery, 200 m of deck, parapets, girders, pier
+        caps and piers in the skyline sector, with no collision: the viaduct's own span."""
+        if not self.viaduct:
+            return
+        e = self.viaduct
+        (ax, ay), (bx, by) = e["pts"][0], e["pts"][-1]
+        L = math.dist((ax, ay), (bx, by))
+        ux, uy = unit(bx - ax, by - ay)
+        vx, vy = -uy, ux
+        half = e["w"] / 2
+        d0, d1 = self.deck_top - 1.0, self.deck_top
+        g0 = d0 - 1.2
+        c0 = g0 - 1.0
+
+        def Q(s, v):
+            return (ax + ux * s + vx * v, ay + uy * s + vy * v)
+        prims = self.P.obj("skyline", "sky", name="skyline_skyway", extras=SKYLINE_EXTRAS)
+        for s_from, s_to in ((-SKYWAY_SCENERY_M, 0.0), (L, L + SKYWAY_SCENERY_M)):
+            n = max(1, round((s_to - s_from) / SKYWAY_SCENERY_SPAN_M))
+            cuts = [s_from + (s_to - s_from) * i / n for i in range(n + 1)]
+            for k in range(n):
+                prims += viaduct_span(Q, cuts[k], cuts[k + 1], half, d0, d1, g0)
+            for s in cuts[1:-1]:
+                x, y = Q(s, 0)
+                for va, vb in ((-half, -1.9), (1.9, half)):
+                    prims.append(hexa([Q(s - 1.0, va), Q(s + 1.0, va), Q(s + 1.0, vb), Q(s - 1.0, vb)], c0, g0, "concrete"))
+                prims.append(obox(x, y, ux, uy, PILLAR_BASE_HALF_M - 0.3, PILLAR_BASE_HALF_M - 0.3,
+                                  -SKYWAY_PIER_DEPTH_M, c0, "concrete"))
+
+    def check_skyline(self):
+        """The skyline's four rules (skyline.py): bounds, the horizon's coverage, no overlaps and
+        the triangle budget."""
+        found = skyline.problems(self.m.get("skyline", []), self.P.W, self.P.H)
+        if found:
+            raise SystemExit(f"{self.m['id']}: the skyline breaks its rules:\n  " + "\n  ".join(found))
 
     def check_exits(self):
         """Falling in is never a soft lock (openspec/changes/water-and-swimming, "Every water body

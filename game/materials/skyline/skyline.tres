@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/skyline_tower.gdshader" id="1"]
+
+[resource]
+resource_name = "skyline"
+shader = ExtResource("1")
+shader_parameter/neon_palette = PackedVector3Array(0.0356, 0.7454, 1.0000, 1.0000, 0.0497, 0.3916, 1.0000, 0.3813, 0.0513, 0.0685, 0.1470, 1.0000, 0.2542, 0.1470, 1.0000, 1.0000, 0.1022, 0.0273, 1.0000, 0.4508, 0.0630, 0.3467, 0.8070, 1.0000)

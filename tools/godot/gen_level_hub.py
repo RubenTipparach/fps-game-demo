@@ -9,10 +9,13 @@ layout). This scene composes them and adds what the glbs don't carry:
   * the root: UndercityLevel with LevelId "hub";
   * one node per sector, holding its glb, its own LightmapGI (each bakes its own .lmbake), its
     cool fill lights and the zone ambient of its interiors;
+  * the scenery sectors (SCENERY: the skyline) with only their glb and, for the skyline, the
+    searchlight beams: no LightmapGI, no lights and no navmesh;
   * a NavigationRegion3D that bakes from every sector's static colliders (group "hub_nav");
   * a night environment: a dark sky with the city's glow, blue-violet fog, glow for the neon,
     screen-space reflections for the wet streets;
-  * box-projected reflection probes for the market, Lantern Row and every interior;
+  * box-projected reflection probes for the market, Lantern Row, every interior and every water
+    body (transparent water gets no screen-space reflections);
   * rain: GPU particles over the whole hub, stopped by a heightfield so it never falls indoors.
 
 Baking by sector. A LightmapGI bakes only the lights under its own parent, and a static light
@@ -33,13 +36,17 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "tools", "levels"))
 import level_common as lc  # noqa: E402
-from tscn import Raw, Scene, color, hexcolor, v3  # noqa: E402
+from tscn import Raw, Scene, color, hexcolor, v2, v3  # noqa: E402
 
 import city_plan  # noqa: E402
+import skyline  # noqa: E402
 from shapely.geometry import box  # noqa: E402
 
 LEVEL = "hub"
 NAV_GROUP = "hub_nav"
+# Sectors that are only scenery (openspec/changes/hub-skyline): no navmesh, no LightmapGI, no
+# lights. The skyline is unshaded and stands past the hub's edges.
+SCENERY = {"skyline"}
 CITY_GLOW = "#2c2a52"          # the sky's glow over the Sump: blue-violet, light-polluted
 CITY_GLOW_ENERGY = 0.55
 FILL = ("#4f7dff", 0.6, 26.0)  # cool blue fill: colour, energy, range (m)
@@ -103,6 +110,44 @@ def G(p):
     return v3(p[0], p[2], p[1])
 
 
+WATER_PROBE_RUN_M = 40.0      # a probe's length along the water; a long box projects poorly
+WATER_PROBE_SIDE_M = 4.0      # past the water on each side, to take in the quay's edge
+WATER_PROBE_BELOW_M = 1.0     # the box's floor under the surface: the probe captures 0.7 m above it
+WATER_PROBE_ABOVE_M = 20.0    # the box's top over the surface: the quays' buildings
+
+
+def water_probes(city):
+    """Outdoor reflection probes over every water body, one per WATER_PROBE_RUN_M of its longer
+    side, as (name, (x0, x1), (y0, y1), (z0, z1)) in Godot axes."""
+    out = []
+    for w in city.waters:
+        x0, z0, x1, z1 = w["g"].bounds
+        y0, y1 = w["surface"] - WATER_PROBE_BELOW_M, w["surface"] + WATER_PROBE_ABOVE_M
+        along_x = (x1 - x0) >= (z1 - z0)
+        lo, hi = (x0, x1) if along_x else (z0, z1)
+        n = max(1, math.ceil((hi - lo) / WATER_PROBE_RUN_M))
+        for k in range(n):
+            a, b = lo + (hi - lo) * k / n, lo + (hi - lo) * (k + 1) / n
+            xs = (a, b) if along_x else (x0 - WATER_PROBE_SIDE_M, x1 + WATER_PROBE_SIDE_M)
+            zs = (z0 - WATER_PROBE_SIDE_M, z1 + WATER_PROBE_SIDE_M) if along_x else (a, b)
+            out.append((f"RefWater_{w['id']}_{k}", xs, (y0, y1), zs))
+    return out
+
+
+def searchlights(s, city, parent):
+    """The skyline's searchlight beams (owner I8), placed and timed from the layout (skyline.py)."""
+    n = 0
+    for t in city.m.get("skyline", []):
+        for k, b in enumerate(skyline.searchlights(t)):
+            s.instance(f"Searchlight_{t['id']}_{k}", "res://scenes/undercity/searchlight.tscn", parent,
+                       position=G(b["at"]),
+                       **{"instance_shader_parameters/period_s": float(b["period_s"]),
+                          "instance_shader_parameters/phase_deg": float(b["phase_deg"]),
+                          "instance_shader_parameters/tilt_deg": v2(*b["tilt_deg"])})
+            n += 1
+    return n
+
+
 def main():
     with contextlib.redirect_stdout(sys.stderr):
         city = city_plan.City(*city_plan.load(LEVEL))
@@ -113,7 +158,8 @@ def main():
 
     s = Scene("LowHarbor", "Node3D")
     lc.setup_root(s, script="res://scripts/Undercity/Level/UndercityLevel.cs", LevelId=LEVEL)
-    lc.add_navigation(s, geometry_source_geometry_mode=1, geometry_source_group_name=NAV_GROUP,
+    lc.add_navigation(s, baked=f"res://levels/undercity/{LEVEL}/{LEVEL}_navmesh.res",
+                      geometry_source_geometry_mode=1, geometry_source_group_name=NAV_GROUP,
                       agent_max_climb=0.3)
     lc.add_environment(
         s, fog_color="#2a2d55", fog_density=0.011, exposure=1.2,
@@ -168,10 +214,21 @@ def main():
         rooms_by_sector.setdefault(r["sector"], []).extend(r["rooms"])
     copies = 0
     for name in sectors:
+        if name in SCENERY:
+            sp = s.node(name, "Node3D", "Sectors")
+            s.instance("Geometry", f"res://levels/undercity/{LEVEL}/{LEVEL}_{name}.glb", sp)
+            if name == "skyline":
+                searchlights(s, city, sp)
+            continue
         sp = s.node(name, "Node3D", "Sectors", groups=[NAV_GROUP])
         s.instance("Geometry", f"res://levels/undercity/{LEVEL}/{LEVEL}_{name}.glb", sp)
+        # A sector already baked keeps its bake: the editor links it when it bakes, and a scene
+        # written again without the link would drop every lightmap until the next 70-minute bake.
+        bake = os.path.join(ROOT, "game", "levels", "undercity", LEVEL, f"{LEVEL}_{name}.lmbake")
+        baked = {"light_data": s.ext_res("LightmapGIData", f"res://levels/undercity/{LEVEL}/{LEVEL}_{name}.lmbake")} \
+            if os.path.exists(bake) else {}
         lc.add_lightmap(s, parent=sp, interior=False, probes_subdiv=2, environment_mode=3,
-                        environment_custom_color=hexcolor(CITY_GLOW), environment_custom_energy=CITY_GLOW_ENERGY)
+                        environment_custom_color=hexcolor(CITY_GLOW), environment_custom_energy=CITY_GLOW_ENERGY, **baked)
         own_fills = [f for f in fills if f["sector"] == name]
         if own_fills:
             fp = s.node("FillLights", "Node3D", sp)
@@ -197,6 +254,10 @@ def main():
                              parent="ReflectionProbesStreet", interior=False)
     lc.add_reflection_probes(s, [(p["name"], (p["box"][0], p["box"][1]), (p["box"][2], p["box"][3]),
                                   (p["box"][4], p["box"][5])) for p in plan["probes"]], parent="ReflectionProbesInterior")
+    # The water is drawn transparent, which loses screen-space reflections, so without a probe it
+    # reflects only the black sky and reads as a void from swimming height
+    # (docs/validation/2026-09-28-water-and-swimming.md). Each body gets probes along its length.
+    lc.add_reflection_probes(s, water_probes(city), parent="ReflectionProbesWater", interior=False)
 
     # rain over the hub; the heightfield stops it on roofs, decks and the Skyway
     W, H = city.P.W, city.P.H
