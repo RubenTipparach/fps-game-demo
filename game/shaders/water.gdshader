@@ -1,17 +1,20 @@
-// Canal water (openspec/changes/water-and-swimming, design section 6): a dark green-black surface
-// whose colour deepens with the water's thickness behind it, two scrolling normal maps and rain
-// ripples (the hub always rains), a glassy roughness that streaks the lamps, and the refracted
-// scene through it. Both faces draw, so the surface shows from below.
+// Canal water (openspec/changes/water-and-swimming, design section 6): a dark surface that
+// reflects the lit city. Two scrolling normal maps and rain ripples (the hub always rains) break
+// the screen-space reflections of the windows, neon and lamps into streaks, with a glassy
+// roughness. Both faces draw, so the surface shows from below.
+//
+// It is opaque on purpose. Godot's screen-space reflections skip transparent materials, and the
+// first version read the screen and depth textures (for refraction and a colour by the water's
+// thickness), which made it transparent: from swimming height it reflected nothing and read as
+// a black void (docs/validation/2026-09-28-water-and-swimming.md). The canal is 2.3-4.5 m of
+// murky water at night, so its deep colour is what the eye would see through it anyway.
 //
 // Its numbers are the material's parameters (game/materials/materials.json "water", written into
 // materials/water.tres by tools/material_maker/postprocess.py); nothing here is tuned inline.
 shader_type spatial;
-render_mode blend_mix, depth_draw_always, cull_disabled, diffuse_burley, specular_schlick_ggx;
+render_mode cull_disabled, diffuse_burley, specular_schlick_ggx;
 
-uniform vec3 shallow_color : source_color = vec3(0.122, 0.290, 0.290);
-uniform vec3 deep_color : source_color = vec3(0.043, 0.137, 0.153);
-uniform float deep_m = 2.3;             // water this thick behind the surface reads fully deep, metres
-uniform float clarity = 0.55;           // how much of the scene behind shows through shallow water, 0-1
+uniform vec3 color : source_color = vec3(0.043, 0.137, 0.153);
 uniform sampler2D normal_map : hint_normal, filter_linear_mipmap, repeat_enable;
 uniform float tile_m = 6.0;             // the normal map repeats every this many metres
 uniform vec2 flow_a_mps = vec2(0.035, 0.012);
@@ -22,10 +25,7 @@ uniform float ripple_rate_hz = 0.7;     // drops per cell per second
 uniform float ripple_strength = 0.35;
 uniform float ripple_wave_per_m = 40.0;    // a ring's crests per metre, times 2 pi
 uniform float ripple_falloff_per_m = 18.0; // how sharply a ring fades either side of its crest
-uniform float refraction = 0.025;       // screen offset of the scene behind, at full normal
 uniform float surface_roughness : hint_range(0.0, 1.0) = 0.05;
-uniform sampler2D screen_tex : hint_screen_texture, filter_linear_mipmap;
-uniform sampler2D depth_tex : hint_depth_texture, filter_nearest;
 
 varying vec3 world_pos;
 
@@ -70,20 +70,5 @@ void fragment() {
 	ROUGHNESS = surface_roughness;
 	METALLIC = 0.0;
 	SPECULAR = 0.5;
-
-	// How much water lies between the surface and what is behind it, along the view.
-	vec2 suv = SCREEN_UV + slope * refraction;
-	float raw = texture(depth_tex, suv).r;
-	vec4 behind_view = INV_PROJECTION_MATRIX * vec4(suv * 2.0 - 1.0, raw, 1.0);
-	behind_view.xyz /= behind_view.w;
-	float thickness = max(-behind_view.z + VERTEX.z, 0.0);
-	float deep = clamp(thickness / deep_m, 0.0, 1.0);
-
-	vec3 behind = texture(screen_tex, suv).rgb;
-	float facing = clamp(dot(NORMAL, VIEW), 0.0, 1.0);
-	float fresnel = pow(1.0 - facing, 5.0);
-	float see = FRONT_FACING ? clarity * (1.0 - deep) * (1.0 - fresnel) : 0.8;
-	ALBEDO = mix(shallow_color, deep_color, deep) * (1.0 - see);
-	EMISSION = behind * see;
-	ALPHA = 1.0;
+	ALBEDO = color;
 }

@@ -176,12 +176,14 @@ four on the ship.
 ### 6. Seeing and hearing water
 
 **The surface:** `game/shaders/water.gdshader` replaces the opaque material.
-- A depth colour from shallow `#1f4a4a` to deep `#0b2327`, over the water's thickness.
+- The deep colour `#0b2327`. (Designed as a colour from shallow `#1f4a4a` to deep over the
+  water's thickness, with the scene refracted through it: see Risks, found in building.)
 - Two scrolling normal maps (the existing procedural water normal), plus rain ripples, one ring
   at a time in each 0.9 m cell (the hub always rains). The ripples are computed in the shader
   rather than a flipbook texture.
-- Roughness 0.05, a screen-space refraction offset, reflections from the existing probes, and
-  both faces drawn so the surface shows from below.
+- Roughness 0.05 and the screen-space reflections that streak the lamps and windows across the
+  ripples, with the water's reflection probes where those miss. Opaque, and both faces drawn so
+  the surface shows from below.
 - Its numbers are `materials.json` "water" "shader_params": the material pipeline
   (`postprocess.py`) now writes a ShaderMaterial for a material that names a shader. The surface
   takes no baked light and casts no shadow.
@@ -250,10 +252,21 @@ kit constants: `LADDER_EVERY_M` 30, `EXIT_REACH_M` 25, `EXIT_GRID_M` 1, `LADDER_
   - Found in building: it didn't. No probe covered any water body, so at swimming height the
     surface reflected the black sky, and the first video showed the lower half of the view
     black, with the floating body lost in it.
-  - Now every water body carries outdoor, box-projected probes (`gen_level_hub.py`
+  - Every water body now carries outdoor, box-projected probes (`gen_level_hub.py`
     `water_probes`): one per 40 m of its length, 4 m past each side and 20 m tall, capturing
     0.7 m above the surface, where a swimmer's eyes are.
-  - The body is filmed from the quay.
+  - That wasn't enough: captured again with the probes, the water was still black from
+    swimming height. A diagnostic run swapped in a plain opaque glossy material, and the Cut
+    reflected the windows, the neon and the towers. The probes at night hold little light; the
+    screen-space reflections are what show the city, and they skip transparent materials.
+  - So the water is opaque: it no longer reads the screen and depth textures, which is what
+    made it transparent. The refraction and the colour by thickness go with them; at night the
+    canal's 2.3-4.5 m of murky water shows its deep colour anyway. The probes stay, for what the
+    screen doesn't hold. A test keeps the shader free of screen and depth reads and alpha
+    (`tools/material_maker/test_shader_materials.py`), and the material pipeline now refuses a
+    parameter the shader doesn't declare.
+  - A body floating in the water shows only where it breaks the surface; the capture films it
+    from the quay.
 - **A point-in-polygon test per body per tick** replaces the Area3D. The hub has three water
   bodies of 4 to 8 points, so it costs nothing that matters; a level with many would want a
   grid.

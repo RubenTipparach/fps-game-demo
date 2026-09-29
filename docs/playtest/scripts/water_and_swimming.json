@@ -43,6 +43,7 @@
   {"kill": "hub:civ_01", "at": [201.5, 1.0, 77.0]},
   {"wait": 150},
   {"face": [201.5, -2.2, 77.0]},
+  {"look": [-90, -35]},
   {"wait": 4},
   {"shot": "07_body_floating.png"},
   {"log": "the dry dock's ship: its boarding ladder"},

@@ -21,6 +21,7 @@ only the emissive cracks glowing.
 """
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -105,9 +106,21 @@ def shader_value(v):
     raise SystemExit(f"materials.json: shader parameter {v!r} is not a number, [x, y] or #rrggbb")
 
 
+def shader_uniforms(game, res_path):
+    """The uniform names a shader declares, read from the shader file itself."""
+    with open(os.path.join(game, res_path[len("res://"):])) as f:
+        return set(re.findall(r"^\s*(?:instance\s+)?uniform\s+\w+\s+(\w+)", f.read(), re.M))
+
+
 def write_shader_material(mat_dir, name, spec):
     """A material drawn by its own shader (materials.json "shader"): the normal map is its
-    normal_map parameter, and "shader_params" set the rest by uniform name."""
+    normal_map parameter, and "shader_params" set the rest by uniform name. A parameter the
+    shader doesn't declare is refused (CLAUDE.md 5.6: a misspelt or stale knob would silently do
+    nothing)."""
+    declared = shader_uniforms(os.path.dirname(mat_dir), spec["shader"])
+    unknown = sorted({"normal_map", "tile_m", "normal_strength", *spec.get("shader_params", {})} - declared)
+    if unknown:
+        raise SystemExit(f"materials.json {name}: {spec['shader']} has no uniform {', '.join(unknown)}")
     lines = ['[gd_resource type="ShaderMaterial" format=3]', "",
              f'[ext_resource type="Shader" path="{spec["shader"]}" id="1"]',
              f'[ext_resource type="Texture2D" path="res://textures/{name}_normal.png" id="2"]',
