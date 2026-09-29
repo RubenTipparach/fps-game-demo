@@ -1,0 +1,22 @@
+{"out": "/tmp/undercity_faces_tune", "god": true,
+ "steps": [
+  {"log": "tuning the conversation rig (openspec/changes/character-lighting, task 3.4): the rig's shots only, and Lin's pair; run with --fixed-fps 30"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"wait": 20},
+  {"rig": true},
+  {"goto": "hub:tank", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "tank"}, {"wait": 15},
+  {"shot": "01_tank_rig.png", "face_box": "hub:tank"}, {"key": "Escape"}, {"wait": 10},
+  {"goto": "hub:silk", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "silk"}, {"wait": 15},
+  {"shot": "02_silk_rig.png", "face_box": "hub:silk"}, {"key": "Escape"}, {"wait": 10},
+  {"goto": "hub:petra", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "petra"}, {"wait": 15},
+  {"shot": "03_petra_rig.png", "face_box": "hub:petra"}, {"key": "Escape"}, {"wait": 10},
+  {"goto": "hub:nguyen", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "nguyen"}, {"wait": 15},
+  {"shot": "04_nguyen_rig.png", "face_box": "hub:nguyen"}, {"key": "Escape"}, {"wait": 10},
+  {"rig": false},
+  {"goto": "hub:lin", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "lin"}, {"wait": 15},
+  {"shot": "05_lin_off.png", "face_box": "hub:lin"}, {"key": "Escape"}, {"wait": 10},
+  {"rig": true},
+  {"goto": "hub:lin", "distance": 1.8, "pitch": -4}, {"wait": 6}, {"talk": "lin"}, {"wait": 15},
+  {"shot": "05_lin_rig.png", "face_box": "hub:lin"}, {"key": "Escape"}, {"wait": 10},
+  {"quit": true}
+ ]}

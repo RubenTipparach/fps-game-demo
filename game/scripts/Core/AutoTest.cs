@@ -344,7 +344,7 @@ public partial class AutoTest : Node
     // The instrument for openspec/changes/character-lighting (design section 5): the speaker's head
     // box projected to the screen, written beside the step's shot for tools/measure/face_luma.py.
     // The box is 0.24 m wide and runs 0.12 m below to 0.14 m above the head's middle
-    // (NpcActor.HeadCentre), in the camera's plane.
+    // (NpcActor.FaceCentre), in the camera's plane.
     void WriteFaceBox(Undercity.Client.UndercityLevel level, string who, string shot)
     {
         var npc = level.Npcs().FirstOrDefault(n => n.StableId == who || n.NpcId == who);
@@ -354,20 +354,28 @@ public partial class AutoTest : Node
             GD.PrintErr($"[AutoTest] face_box: no '{who}', no camera, or no shot in the step");
             return;
         }
-        var middle = npc.HeadCentre;
+        var middle = npc.FaceCentre;
         var right = cam.GlobalBasis.X;
         var up = cam.GlobalBasis.Y;
         // UnprojectPosition answers in the viewport's own size (the project's 1920 x 1080 base,
         // stretched), the shot is the window's pixels: scale from one to the other.
         var vp = GetViewport();
         var toPixels = (Vector2)vp.GetTexture().GetSize() / vp.GetVisibleRect().Size;
-        var corners = new[] { (-0.12f, -0.12f), (0.12f, -0.12f), (-0.12f, 0.14f), (0.12f, 0.14f) }
-            .Select(c => cam.UnprojectPosition(middle + right * c.Item1 + up * c.Item2) * toPixels).ToArray();
+        // Metres from the eyes, measured on the conversation shots: the face runs from the chin
+        // 0.12 m below to the hairline 0.07 m above and is 0.15 m wide; the head, ears and crown
+        // included, 0.22 m wide from 0.14 m below to 0.14 m above.
+        Godot.Collections.Array Box(float halfWidth, float below, float above)
+        {
+            var c = new[] { (-halfWidth, -below), (halfWidth, -below), (-halfWidth, above), (halfWidth, above) }
+                .Select(o => cam.UnprojectPosition(middle + right * o.Item1 + up * o.Item2) * toPixels).ToArray();
+            return new Godot.Collections.Array { c.Min(p => p.X), c.Min(p => p.Y), c.Max(p => p.X), c.Max(p => p.Y) };
+        }
         var rig = GetTree().GetFirstNodeInGroup("conversation_rig");
         var box = new Godot.Collections.Dictionary
         {
             ["who"] = npc.StableId,
-            ["box"] = new Godot.Collections.Array { corners.Min(c => c.X), corners.Min(c => c.Y), corners.Max(c => c.X), corners.Max(c => c.Y) },
+            ["box"] = Box(0.075f, 0.12f, 0.07f),
+            ["head"] = Box(0.11f, 0.14f, 0.14f),
             // Which side the conversation rig put its key on; "none" before the rig exists.
             ["key_side"] = rig != null && rig.HasMeta("key_side") ? rig.GetMeta("key_side").AsString() : "none",
         };

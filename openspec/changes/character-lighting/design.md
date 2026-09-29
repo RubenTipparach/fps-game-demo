@@ -153,14 +153,16 @@ A building can name its own gel pair in the layout, as the Anchor would.
 | Target | Value |
 |---|---|
 | Face mean luma, in conversation | 95-150 |
-| Lit side / shadow side | 2.0-4.0 |
-| The rim | a strip just outside the far edge of the head is at least 20 luma above the background beside it |
-| The world | whole-frame luma outside the face box changes by less than 2 % with the rig on versus off |
+| Lit side / shadow side | 2.0-4.0, in linear light (section 8) |
+| The rim | the rig adds at least 20 luma to the head's far edge (section 8) |
+| The world | frame luma outside the speaker changes by less than 2 % with the rig on versus off (section 8) |
 
 The check:
-- A new AutoTest step, `{"face_box": "hub:tank"}`, projects the head bone's box (±0.12 m wide,
-  -0.12 to +0.14 m tall, in the camera plane) to the screen. It writes it, with the key side, to
-  a JSON file beside the shot.
+- A new AutoTest step, `{"face_box": "hub:tank"}`, projects two boxes from the eyes to the
+  screen, in the camera plane: the face (0.15 m wide, from the chin 0.12 m below to the
+  hairline 0.07 m above) and the head (0.22 m wide, 0.14 m either way). It writes them, with the
+  key side, to a JSON file beside the shot. (Designed as one head box, ±0.12 m by -0.12 to
+  +0.14 m from the head bone; section 8.)
 - `tools/measure/face_luma.py` reads the shot and the JSON and prints the four numbers.
 - The capture script takes each conversation twice, rig on and off (`{"rig": false}`), for the
   world check.
@@ -232,6 +234,22 @@ role):
   viewport's own size, the project's 1920 x 1080 base stretched to the window, while a shot is
   the window's pixels. At 1280 x 720 the first boxes sat 1.5 times too far right and down. The
   `face_box` step now scales by the shot's size over the viewport's.
+- **The instrument, corrected on the first captures:**
+  - *Where the face is.* 0.1 m up the head bone is the eyes on every body, not the middle of
+    the head, so the designed box ran from the eyes to above the crown. The point is now
+    `FaceCentre`, and the step writes a face box (chin to hairline, 0.15 m wide) for the mean
+    and the ratio, and a head box for the rim. The design's baseline was hand-placed on faces,
+    so the face box is what it measured.
+  - *The ratio is of light.* A lighting ratio in the reference (2:1 to 4:1, loop lighting) is a
+    ratio of light. Taken on stored values, 2.0 would demand 4.6:1 in light. `face_luma.py`
+    decodes sRGB before it divides the halves.
+  - *The rim is on the head.* The rig lights only characters, so the background beside the head
+    can't brighten; the head's own far edge does. The rim is what the rig adds there: the band
+    between the face box and the head box, rig on less rig off.
+  - *The world is what isn't the speaker.* The key's cone lights the speaker's shoulders by
+    design, and that counted as the world changing (4-8 %). The world is now the frame outside
+    the speaker: the head box widened threefold and run down to the frame's foot.
+    `lighting_test.tscn` already proves the rig lights only characters.
 - **Districts are level data.** `export_level_data.py` writes the layout's district outlines, and
   the core finds a speaker's district with the same polygon rule as water (`LayoutPolygon`). A
   data check refuses a gel pair for a district no level has.
@@ -253,3 +271,9 @@ role):
 
 All recommendations accepted: I9, the wrist glow always on; I10, the key and two gels; I11,
 mockup D9 approved; I12, the skin as designed. I1 builds this third.
+
+Open: **J1** (survey, 2026-09-29), how dark skin meets the face target. One key can't: Tank's
+face measured 21 without the rig and 54 with it, Petra's 100 and 140, and a key that takes Tank
+to 95 takes Petra to about 216. Recommended, provisionally: expose each face, the key scaled by
+the speaker's skin reflectance (measured from the body's skin atlas at build time), capped at 4
+times. Nothing is built for it until the answer.

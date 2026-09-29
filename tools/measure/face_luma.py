@@ -4,17 +4,25 @@ design section 5): the four numbers the targets are set on.
 
     python3 tools/measure/face_luma.py shot.png [--off shot_rig_off.png]
 
-It reads the shot and the box the AutoTest `face_box` step wrote beside it (shot.png.face.json:
-{"who": "hub:tank", "box": [x0, y0, x1, y1], "key_side": "left" | "right" | "none"}, pixels,
-the head bone's box projected to the screen; "none" before the conversation rig exists, when the
+It reads the shot and the boxes the AutoTest `face_box` step wrote beside it (shot.png.face.json:
+{"who": "hub:tank", "box": [x0, y0, x1, y1], "head": [x0, y0, x1, y1], "key_side": "left" |
+"right" | "none"}, pixels, projected from the eyes: "box" is the face, chin to hairline, "head"
+the whole head with its ears and crown; "none" before the conversation rig exists, when the
 brighter half counts as the lit one) and prints:
 
   mean       the face box's mean luma
-  lit/shadow the key side's half over the other half
-  rim        a strip just outside the head's far edge (away from the key) over the background
-             a strip further out
-  world      with --off (the same view with the rig off): how much the frame outside the face
-             box changed, percent
+  lit/shadow the key side's half of the face over the other half, in linear light: a
+             lighting ratio as a photographer's (the design's reference) is of light, so the
+             halves' stored values are decoded from sRGB before they are divided
+  rim        with --off: what the rig adds to the head's far edge (away from the key), the band
+             between the face box and the head box over its upper two thirds, rig on less rig
+             off. The rig lights only characters, so the background beside the head can't
+             brighten; the head's own edge does. Without --off, the band over the background a
+             strip further out.
+  world      with --off (the same view with the rig off): how much the frame outside the
+             speaker changed, percent. The speaker is the head box, widened threefold and run
+             down to the frame's foot: the key's cone lights their shoulders by design, and the
+             world the rig must leave alone is everything else.
 
 Luma is Rec. 709 on the stored (gamma-encoded) 0-255 values, as the baseline in the design was
 measured. When game/data/character_lighting.json exists, each number is checked against its
@@ -40,6 +48,13 @@ def luma(path):
     return rgb[..., 0] * 0.2126 + rgb[..., 1] * 0.7152 + rgb[..., 2] * 0.0722
 
 
+def linear_luma(path):
+    """Rec. 709 luminance in linear light, 0-1: each channel decoded from sRGB first."""
+    c = np.asarray(Image.open(path).convert("RGB"), dtype=np.float64) / 255.0
+    c = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+    return c[..., 0] * 0.2126 + c[..., 1] * 0.7152 + c[..., 2] * 0.0722
+
+
 def load_json(path):
     """A JSON file whose whole-line // comments JSON can't parse (the game's data files)."""
     with open(path) as f:
@@ -58,28 +73,35 @@ def measure(shot, face, off=None):
     if x1 - x0 < 4 or y1 - y0 < 4:
         raise SystemExit(f"{shot}: the face box {face['box']} is off screen or too small")
     box = y[y0:y1, x0:x1]
+    lin = linear_luma(shot)[y0:y1, x0:x1]
     mid = (x1 - x0) // 2
-    left, right = box[:, :mid].mean(), box[:, mid:].mean()
+    left, right = lin[:, :mid].mean(), lin[:, mid:].mean()
     # Before the conversation rig exists there is no key side: the brighter half is the lit one.
     key = face["key_side"] if face["key_side"] in ("left", "right") else ("left" if left >= right else "right")
     lit, shadow = (left, right) if key == "left" else (right, left)
-    out = {"who": face.get("who", "?"), "mean": box.mean(), "lit_over_shadow": lit / max(shadow, 1.0)}
+    out = {"who": face.get("who", "?"), "mean": box.mean(), "lit_over_shadow": lit / max(shadow, 1e-4)}
 
-    # The rim: outside the far edge, over the upper two thirds of the box where the hair and ears are.
-    s = max(3, int(round((x1 - x0) * RIM_STRIP)))
-    top, bottom = y0, y0 + (y1 - y0) * 2 // 3
-    if key == "left":
-        rim, bg = y[top:bottom, x1:x1 + s], y[top:bottom, x1 + 2 * s:x1 + 3 * s]
-    else:
-        rim, bg = y[top:bottom, max(0, x0 - s):x0], y[top:bottom, max(0, x0 - 3 * s):max(0, x0 - 2 * s)]
-    out["rim_over_background"] = rim.mean() - bg.mean() if rim.size and bg.size else float("nan")
-
+    # The rim: the head's far edge, over its upper two thirds where the hair and ears are.
+    hx0, hy0, hx1, hy1 = clamp_box(face.get("head", face["box"]), w, h)
+    top, bottom = hy0, hy0 + (hy1 - hy0) * 2 // 3
+    band = (slice(top, bottom), slice(x1, max(x1 + 1, hx1))) if key == "left" \
+        else (slice(top, bottom), slice(min(hx0, x0 - 1), x0))
+    y_off = None
     if off is not None:
         y_off = luma(off)
         if y_off.shape != y.shape:
             raise SystemExit(f"{off}: {y_off.shape} isn't the shot's size {y.shape}")
+    if y_off is not None:
+        out["rim_over_background"] = y[band].mean() - y_off[band].mean()
+    else:
+        s = max(3, int(round((hx1 - hx0) * RIM_STRIP)))
+        bg = y[top:bottom, hx1 + s:hx1 + 2 * s] if key == "left" else y[top:bottom, max(0, hx0 - 2 * s):max(0, hx0 - s)]
+        out["rim_over_background"] = y[band].mean() - bg.mean() if y[band].size and bg.size else float("nan")
+
+    if y_off is not None:
         mask = np.ones_like(y, dtype=bool)
-        mask[y0:y1, x0:x1] = False
+        cx, half = (hx0 + hx1) // 2, (hx1 - hx0) * 3 // 2
+        mask[hy0:, max(0, cx - half):min(w, cx + half)] = False
         on_mean, off_mean = y[mask].mean(), y_off[mask].mean()
         out["world_change_pct"] = abs(on_mean - off_mean) / max(off_mean, 1.0) * 100.0
     return out

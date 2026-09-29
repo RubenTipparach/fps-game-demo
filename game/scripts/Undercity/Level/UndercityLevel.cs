@@ -485,7 +485,7 @@ public partial class UndercityLevel : Node3D, ILevelHost
     {
         var t = State.Data.CharacterLighting;
         var cam = _player!.GetNode<Camera3D>("CameraRig/Camera3D");
-        var head = speaker.HeadCentre;
+        var head = speaker.FaceCentre;
         if (_player.GetNodeOrNull<Light3D>("CameraRig/Camera3D/Wrist") is { } wrist)
         {
             wrist.Visible = ConversationRigOn;

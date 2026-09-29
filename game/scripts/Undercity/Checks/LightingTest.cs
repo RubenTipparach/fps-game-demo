@@ -99,7 +99,7 @@ public partial class LightingTest : Node3D
         {
             return;
         }
-        var head = silk.HeadCentre;
+        var head = silk.FaceCentre;
         var district = L.Def.DistrictNear(head.X, head.Z);
         Check("Silk stands in Lantern Row", district == "lantern_row", district ?? "no district");
         var cam = L.Player.GetNode<Camera3D>("CameraRig/Camera3D");

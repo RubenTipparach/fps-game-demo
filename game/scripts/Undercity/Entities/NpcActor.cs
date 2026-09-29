@@ -257,11 +257,12 @@ public partial class NpcActor : CharacterBody3D, IWired, IInteractable, IStable,
     }
 
     /// <summary>
-    /// The middle of their head, world space: 0.1 m up the head bone (the ragdoll's 0.2 m head),
-    /// or a standing head's height when the body has no skeleton. The conversation rig lights
-    /// around it and the face-box instrument measures it.
+    /// The middle of their face, world space, at eye height: 0.1 m up the head bone (measured on
+    /// the conversation shots: the eyes sit there on every body), or a standing head's eyes when
+    /// the body has no skeleton. The conversation rig lights around it, D9's framing places it,
+    /// and the face-box instrument measures around it.
     /// </summary>
-    public Vector3 HeadCentre
+    public Vector3 FaceCentre
     {
         get
         {

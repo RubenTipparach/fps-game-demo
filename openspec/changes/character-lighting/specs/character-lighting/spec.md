@@ -2,9 +2,9 @@
 
 ### Requirement: Faces read in conversation
 In every conversation, the speaker's face SHALL have a mean Rec. 709 luma of 95-150 (0-255),
-its lit side SHALL be 2 to 4 times as bright as its shadow side, and a gel rim SHALL show
-beside the far edge of the head. The rig SHALL change the rest of the frame's luma by less
-than 2 %. The targets SHALL come from `data/character_lighting.json`, and SHALL be measured on
+its lit side SHALL receive 2 to 4 times the light of its shadow side, and a gel rim SHALL
+brighten the far edge of the head. The rig SHALL change the luma of the frame outside the
+speaker by less than 2 %. The targets SHALL come from `data/character_lighting.json`, and SHALL be measured on
 captures by `tools/measure/face_luma.py` using face boxes projected from the head bone.
 
 #### Scenario: Tank at the bar
@@ -14,7 +14,7 @@ captures by `tools/measure/face_luma.py` using face boxes projected from the hea
 
 #### Scenario: The world keeps its mood
 - **WHEN** the same conversation is captured with the rig on and with it off
-- **THEN** the luma of the frame outside the face box differs by less than 2 %
+- **THEN** the luma of the frame outside the speaker differs by less than 2 %
 
 ### Requirement: New lights touch only characters
 Characters SHALL render on a visual layer of their own as well as the world's, and the wrist
