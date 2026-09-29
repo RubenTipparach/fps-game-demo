@@ -502,6 +502,10 @@ Before claiming anything is done, run what applies:
 - **Stale mesh files survive reimport.** Godot won't overwrite existing `save_to_file` meshes
   (`models/doorway/leaf_*.res`) on reimport, so delete them before reimporting a changed
   `door_leaves.glb`.
+- **Two skills walk through these pipelines.** `.claude/skills/blender-csg-levels` (Blender
+  levels) and `.claude/skills/blender-humanoid-characters` (NPC bodies, rigs, clips, ragdolls)
+  are the how-to, with example, render and kit-copy scripts. They cite these rules and never
+  override them.
 - **Keep CI thin.** When CI is added, build logic lives in scripts that developers run too;
   workflow YAML only calls them.
 
