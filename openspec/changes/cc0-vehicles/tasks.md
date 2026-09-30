@@ -2,8 +2,9 @@
 
 The owner answered O1 on 2026-09-30: "I never approved kenneys. why quaternius doesnt work? look for
 more cco cars", and in chat: "kenney is a nogo", then "yea psx cars are nice, I'd want a consistent
-art style": every vehicle from the PSX pack, with its own textures (O5, O6). Survey O7 (the truck
-spots) and O8 (the rest of the hub) are open.
+art style": every vehicle from the PSX pack, with its own textures (O5, O6); O7 "no need for trucks
+now, just use vans"; O8 "smudge those textures, background cars can use bilinear filtering, totally
+fine".
 
 ## 1. Before
 
@@ -20,7 +21,7 @@ spots) and O8 (the rest of the hub) are open.
 - [ ] 2.3 `vehicles.json`: the pack variants; `vehicle_data.py` and its test.
 - [ ] 2.4 CLAUDE.md 13: the PSX vehicles' textures.
 - [ ] 2.5 The generator retired: `vehicle()`, its materials, textures and glbs out of the prop kit.
-- [ ] 2.6 The truck spots as O7 decides (the layout's depot spots, or trucks built to match).
+- [ ] 2.6 The layout's car spots at 5.6 x 2.6 m; the depot's truck spots become car spots (O7).
 
 ## 3. The hub
 

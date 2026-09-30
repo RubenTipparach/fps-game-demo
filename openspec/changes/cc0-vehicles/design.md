@@ -75,16 +75,26 @@ brightening, and every one passes `vehicle-fixes`' range check of 0.03 to 0.8.
 The deal is unchanged (`street-vehicles`, design section 4): a car spot deals from the cars, the
 minivan, the taxi and the box van with their colour variants.
 
-**The truck spots (survey O7).** The pack has no truck, and GGBotNet has made none (their
-OpenGameArt page: cars, a skeleton, houses, props, fonts, textures). The depot's three 8.5 m spots
-can take the pack's box vans, the layout's spots cut to a van's size (recommended: one style, no new
-art); or trucks we'd build to match, low-poly with a 128 px painted texture in the pack's palette,
-which risks a near miss of the style.
+**The truck spots (O7, 2026-09-30: "no need for trucks now, just use vans").** The depot's three
+8.5 m truck spots become car spots and take what every car spot deals, the vans among it. No truck
+is made.
 
-**The rest of the hub (survey O8).** The PSX cars are point-sampled 128 px art; the hub's walls use
-Material Maker sets at our texel density and the people are MakeHuman bodies. "A consistent art
-style" is read here as the vehicles in one style; whether the rest of the hub moves toward the PSX
-look is a larger question, asked on its own and judged on the after stills.
+**The rest of the hub (O8, 2026-09-30: "smudge those textures, background cars can use bilinear
+filtering, totally fine").** The PSX textures are filtered bilinearly with mipmaps, not
+point-sampled, so the parked cars sit softly in the background of Material Maker walls; the rest
+of the hub keeps its style.
+
+**One scale for the pack.** The pack's wheel (`Wheel/Wheel.blend`, one shared by every body) is
+0.92 units across; a car's wheel is about 0.65 m, so the whole pack scales by 0.707. Every body keeps
+its own proportions: a compact hatchback at about 4.0 m, a full-size sedan at about 5.2 m. The
+layout's car spots grow to fit the largest body the deal can put there (section 3.1).
+
+### 3.1 The spots
+
+At the pack's scale the bodies run 4.0-5.2 m long and up to about 2.4 m wide (the minivan, with its
+mirrors), against today's 4.6 x 2.0 m spots. Every car spot grows to 5.6 x 2.6 m, which the fit
+check proves for every body the deal can place; the six kerb spots move onto the road (vehicle-fixes,
+O2), and the depot's three truck spots become car spots of the same size.
 
 ## 4. How a pack enters the game
 
@@ -107,13 +117,15 @@ look is a larger question, asked on its own and judged on the after stills.
   extras, and the README's Credits list the packs; CC0 asks for no credit, the rules ask for the
   record (CLAUDE.md 5.6, borrowed code keeps its provenance).
 
-## 5. Their textures (O6, from the owner's choice)
+## 5. Their textures (O6, O8)
 
 CLAUDE.md 6.4: textures come from Material Maker at the texel density in `materials.json`. The PSX
 cars' look is their painted textures, one 128 x 128 px image over a whole car, which no Material
-Maker set at our density would reproduce; "psx cars are nice" is their look. So they keep their own
-textures, point-sampled, and CLAUDE.md 13 lists the exception: "The CC0 PSX vehicles keep their own
-textures, point-sampled, as GGBotNet painted them."
+Maker set at our density would reproduce; "psx cars are nice" is their look, and "smudge those
+textures, background cars can use bilinear filtering" says how they're drawn. So they keep their own
+textures, filtered bilinearly with mipmaps, copied into `game/textures/vehicles/psx/` with their
+provenance, and CLAUDE.md 13 lists the exception: "The CC0 PSX vehicles keep their own textures,
+filtered bilinearly (owner O6, O8)."
 
 ## 6. Checks
 

@@ -39,7 +39,8 @@ stay (they are the look; survey O5 and O6 recorded from this answer).
   a minivan (Car 4), the taxi (Car 5) and box vans (Car 8), with the pack's colour variants
   (design section 3). The police car stays out (the hub's law is MerSec, not police), the 1930s car
   stays out, and the burnt-out wreck (Car 6) is kept for the Yard. Kenney, the UAZ-452 and our
-  generated vehicles aren't used. The depot's truck spots: survey O7.
+  generated vehicles aren't used. The depot's truck spots take vans (O7: "no need for trucks now,
+  just use vans"), and every car spot grows to fit the pack's bodies at one scale (design 3.1).
 - **Pinned like the NPC packs.** `tools/deps/vehicle_packs.json` lists each pack's URL, page,
   author, licence and SHA-256; a fetch script downloads them into a cache outside the repository
   and refuses a pack whose hash differs (as `fetch_character_tools.py` does).
@@ -49,9 +50,10 @@ stay (they are the look; survey O5 and O6 recorded from this answer).
   within the triangle budget, and a provenance note beside it. The table (`vehicles.json`) names
   each variant's source; the plan, the placement, the static meshes and the checks of
   `vehicle-fixes` stay as they are.
-- **Their own textures, point-sampled.** The PSX cars' detail is in their 128 px textures;
+- **Their own textures, filtered bilinearly (O6, O8: "smudge those textures, background cars can
+  use bilinear filtering, totally fine").** The PSX cars' detail is in their 128 px textures;
   CLAUDE.md 6.4 says textures come from Material Maker at our texel density, so the exception is
-  written into CLAUDE.md 13: "the CC0 PSX vehicles keep their own textures, point-sampled".
+  written into CLAUDE.md 13.
 - **Our vehicle generator retires.** With no generated vehicle left in the hub, the vehicle builders,
   their materials and textures and their ten glbs leave the prop kit; `vehicles.json` keeps its
   schema for pack variants.
