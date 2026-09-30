@@ -7,8 +7,9 @@ model SHALL stay within its type's triangle budget (2,500 for a car or van, 3,50
 and pass the z-fighting check. The plan SHALL place a vehicle entity on every car spot, drawing
 its model from a seeded stream of its own among the variants that fit the spot, and SHALL refuse
 a plan whose model, read from the committed glb, doesn't fit inside its spot's footprint, or whose
-spot doesn't lie on one ground height under every wheel and corner. A vehicle SHALL be baked with
-the ground under it, in the sector that owns that ground.
+spot doesn't lie on one ground height under every wheel and corner. A vehicle SHALL be a static
+mesh of the level, built into the glb of the sector that owns the ground under it and baked with
+that ground.
 
 #### Scenario: A car spot
 - **WHEN** the hub's layout has a 4.6 x 2.0 m car spot
@@ -27,10 +28,10 @@ the ground under it, in the sector that owns that ground.
 - **WHEN** a car spot lies partly on a 0.15 m pavement and partly on the road
 - **THEN** the plan is refused, naming the car, its spot and the two ground heights
 
-#### Scenario: Baked with its ground
-- **WHEN** the hub is baked
-- **THEN** each parked car's body is a user of the lightmap of the sector that owns the ground under
-  it, so its shadow falls on that ground
+#### Scenario: A static mesh baked with its ground
+- **WHEN** the hub is built and baked
+- **THEN** each parked car is a static mesh in the sector that owns the ground under it, and a user
+  of that sector's lightmap, so its shadow falls on that ground
 
 ## ADDED Requirements
 

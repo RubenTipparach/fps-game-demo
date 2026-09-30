@@ -92,26 +92,45 @@ into a sector when it reaches that sector's plan geometry (`aabbs`), and entitie
 geometry. Of the 81 lights that reach a car, 11 aren't in its bake; the Wire Lane vans get 2 of 5
 and 2 of 6.
 
-### 2.2 The fix
+### 2.2 The fix: static meshes of the level
 
-- **A vehicle bakes with its ground.** `City.vehicle` places an outdoor car's entity in the sector
-  that owns the ground under it, the streets; the garage's car stays in the kiln sector with the
-  garage's floor. The streets sector's bake then has the car as an occluder of the road under it,
-  the car receives every light that reaches the streets, and the ambient occlusion under the body
-  comes from the bake.
-- **Lights count the vehicles.** `aabbs` also takes each vehicle's box (its committed glb's bounds,
-  turned to its heading), so a light that reaches only a car is shared with the car's sector.
-- **A check.** The placement test already finds every car; it also checks that each car's body is
-  a user of the LightmapGI whose sector owns the ground under it.
+The owner, 2026-09-30: "cars should be static meshes so we get it nice light baking".
+
+The cars were already static, lightmapped meshes: each glb imports with static light baking, its
+own lightmap UVs and 0.05 m texels, and all 15 bodies are users of a lightmap (2.1). What spoiled
+the baking is where they were: instanced scenes under the district sectors, whose bakes hold
+neither the road under them nor every light that reaches them. So a parked car becomes a static
+mesh of the level itself, baked with the ground it stands on:
+
+- **In the ground's sector.** The plan lists each car as a model placed in the sector that owns the
+  ground under it: the streets for every outdoor spot, the kiln for the garage's bay.
+- **Built into that sector's glb.** `build_undercity.py` imports the car's committed glb (the prop
+  kit's output, the one source of the model) into that sector at its spot and heading: its body as
+  a static mesh named `car_<id>` with its own UVs (the level's world-UV projection leaves it alone),
+  and its `-colonly` boxes beside it, so Godot gives it a static body like any level geometry. The
+  level's import then gives it lightmap UVs and bakes it with the ground under it.
+- **Fine texels on the car.** The body carries `lightmap_texel_scale` 4, so it bakes at 0.1 m
+  against the level's 0.4 m, the way interiors ask for 0.15 m (`INTERIOR_EXTRAS`).
+- **The entity stays as a marker.** `ENT_car_<n>` keeps the car's id, model and heading for the
+  level data and the tests; the importer no longer instances a scene for it.
+- **Every light reaches it.** The streets sector already bakes every light that reaches the ground,
+  and the cars stand on it, so the light-sharing gap in 2.1 closes without counting entities.
+- **A check.** The placement test finds each car's static mesh beside its marker, in the sector that
+  owns the ground under it, and a user of that sector's lightmap.
 
 ### 2.3 Enough shadow?
 
 The street lightmap's texel is 0.4 m (`UNDERCITY_TEXEL_M`), so a car's shadow spans about 11 x 4
 texels: soft, but there. Measured on the after stills from the before viewpoints: the mean
 brightness of the ground seen under a car between its wheels, against the ground 1 m beside it. If
-the bake leaves the ground under a car at more than 60% of the ground beside it, each car gets a
-contact shadow as well: a projected decal of a soft dark rectangle, 0.3 m larger than the car's
-footprint, in a generated vehicle scene. Survey O3 asks whether to add it regardless.
+the bake leaves the ground under a car at more than 60% of the ground beside it, the remedies come
+in this order, staying with baked light as the owner asked:
+
+1. the ground chunks under the car spots bake at 0.2 m (`lightmap_texel_scale` 2 on those chunks);
+2. a contact shadow under each car: a projected decal of a soft dark rectangle, 0.3 m larger than
+   the car's footprint.
+
+Survey O3 asks whether to add the contact shadow regardless.
 
 ## 3. The paint
 
@@ -168,7 +187,7 @@ Survey O4 asks whether this is bright enough; the numbers are a first pass, tune
 | Check | Where | Wanted |
 |---|---|---|
 | Every wheel on one ground | `check_vehicles`, `test_city_plan.py` | the hub passes; a spot moved back across the kerb is refused by name |
-| A car bakes with its ground | the placement test | each car's body a user of its ground's LightmapGI |
+| A car is a static mesh baked with its ground | the placement test | each car's mesh beside its marker, in its ground's sector, a user of that sector's lightmap |
 | Shadow under a car | the after stills, section 2.3 | the ground under a car at most 60% of the ground beside it |
 | Paint in range | `vehicle_data.py`, a test | a paint under 0.03 or over 0.8 refused |
 | Nothing else moved | `test_city_plan.py` | the plan equal but for the six spots and what avoids them (puddles) |
@@ -184,4 +203,6 @@ after stills from the same places. Lavapipe: the pictures show the look, not fra
 - **Moving six spots moves the puddles near them.** Puddles keep clear of fixtures, so the puddle
   list and mask change round the new spots; the puddle checks run as before.
 - **The streets sector bakes longer.** It gains 14 cars, 21,000 triangles of occluders and their
-  lightmaps, and the drydock and Lantern Row bakes lose them. The bake records its time.
+  lightmaps at 0.1 m, and the drydock and Lantern Row bakes lose them. The bake records its time.
+- **Each car is a copy in the sector's glb.** The streets glb grows by the 14 cars' meshes; the
+  vehicle glbs stay the one source, and a rebuild of the level picks up a rebuilt car.

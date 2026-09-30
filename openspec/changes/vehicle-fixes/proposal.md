@@ -20,12 +20,14 @@ game, the wheels dont align, ... also they seem to be missing underside shadows"
 - **Every wheel on the ground.** The plan refuses a car spot whose footprint doesn't lie on one
   ground height, naming the spot and what it straddles. Wire Lane's four spots and Lantern Row's
   two move onto the road beside the kerb (survey O2).
-- **Shadows under the cars.** An outdoor vehicle is placed in the sector that owns the ground
-  under it, the streets, so that sector's bake shades the ground under and beside it with the
-  car's own shadow and occlusion; the garage's car stays with the garage's floor. The hub scene
-  also counts the vehicles when it shares lights with a sector. If the 0.4 m street lightmap
-  leaves the shadow too faint by the measure in design section 2.3, a contact shadow is added
-  under each car (survey O3).
+- **Cars are static meshes of the level (owner, 2026-09-30: "cars should be static meshes so we
+  get it nice light baking").** The level build puts each car's committed model into the glb of
+  the sector that owns the ground under it, the streets (the garage's stays with the garage's
+  floor), as a static mesh with its collision and 0.1 m lightmap texels. That sector's bake then
+  shades the ground under and beside each car and lights the car with every street light. The
+  `ENT_car` entity stays as a marker. If the 0.4 m street lightmap leaves the shadow too faint by
+  the measure in design section 2.3, the ground under the spots bakes finer, then a contact shadow
+  is added (survey O3).
 - **Paint that reads at night.** A paint in `vehicles.json` names the albedo it has on the car, not
   a tint the texture darkens: the prop kit divides out the texture's mean. The paints are
   re-specified brighter (design section 3.2), a paint darker than 0.03 or brighter than 0.8 is
@@ -35,15 +37,16 @@ game, the wheels dont align, ... also they seem to be missing underside shadows"
 
 ### Modified Capabilities
 
-- `street-vehicles`: every wheel of a parked vehicle rests on the ground, and a parked vehicle is
-  baked with the ground under it.
+- `street-vehicles`: every wheel of a parked vehicle rests on the ground, and a parked vehicle is a
+  static mesh of the level, baked with the ground under it.
 
 ## Impact
 
 - `tools/levels/city_plan.py`: the one-ground rule in `check_vehicles`; the vehicle entity's
   sector; `test_city_plan.py`.
 - `tools/levels/layouts/hub.py`: six spots moved.
-- `tools/godot/gen_level_hub.py`: the vehicles' boxes count when lights are shared.
+- `tools/blender/build_undercity.py`: the cars' models built into their sector's glb;
+  `blender_level_import.gd`: the `car` kind becomes a marker.
 - `tools/blender/vehicle_data.py`, `vehicles.json`, `build_undercity_props.py`: paints as albedo,
   the range check, the clear coat.
 - A hub rebuild and bake; the placement and door tests again.

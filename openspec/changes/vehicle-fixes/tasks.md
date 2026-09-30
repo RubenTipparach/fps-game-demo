@@ -16,11 +16,14 @@ no shadow under them. Survey O2 to O4 are open.
   across the kerb.
 - [ ] 2.2 The six spots in `layouts/hub.py` onto the road, 0.2 m from the kerb (survey O2).
 
-## 3. The shadows
+## 3. Static meshes (owner, 2026-09-30)
 
-- [ ] 3.1 `City.vehicle`: an outdoor car in the streets sector.
-- [ ] 3.2 `gen_level_hub.py`: the vehicles' boxes count when lights are shared.
-- [ ] 3.3 The placement test: each car's body a user of its ground's lightmap.
+- [ ] 3.1 The plan: each car's model in the sector that owns its ground (the streets; the kiln for
+  the garage's bay).
+- [ ] 3.2 `build_undercity.py`: the car's committed glb imported into that sector's glb at its spot
+  and heading, `car_<id>`, its own UVs, its `-colonly` boxes, `lightmap_texel_scale` 4.
+- [ ] 3.3 `blender_level_import.gd`: the `car` kind a marker; the placement test finds each car's
+  static mesh in its ground's sector and in that sector's lightmap.
 
 ## 4. The paint
 
