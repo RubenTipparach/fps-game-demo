@@ -22,7 +22,7 @@ taxis and trucks, parked only. The owner, 2026-09-30: "Build them cars". This re
 |---|---|---|
 | The table | `python3 tools/blender/vehicle_data.py` | 3 types, 10 variants, valid |
 | The models | `blender -b --factory-startup -P tools/blender/build_undercity_props.py` | sedans 1,360 triangles, the taxi 1,476, vans 1,312, trucks 1,616 (budgets 2,500 and 3,500); every model clean of z-fighting; every other prop's glb byte for byte unchanged |
-| Plan | `python3 -m unittest discover -s tools/levels -p 'test_*.py'` | PLAN_RESULT |
+| Plan | `python3 -m unittest discover -s tools/levels -p 'test_*.py'` | 49 of 49, 9 of them new: every spot holds one vehicle of its size, every model parks, a truck on a car spot and a car turned across its spot are refused by name, every glb within its budget, dealing moves nothing else, and an entity named with a Godot type suffix is refused |
 | Core tests | `dotnet test core/Undercity.sln` | 212 of 212, 2 of them new: the hub's 15 parked cars in its level data, and a car with no place refused |
 | Build | `blender -b --factory-startup -P tools/blender/build_undercity.py -- hub` | the eight sectors and the skyline, 143,392 triangles (146,164 with the box cars); the 15 vehicles are instanced models, 21,208 triangles more |
 | Bake | `BRUSHFIRE_BATCH=res://levels/undercity/hub/hub.tscn:nav,lightmap` | the navmesh (4,937 polygons; 5,064 before) and all eight sectors' lightmaps in 44 minutes |
