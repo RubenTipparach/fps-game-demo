@@ -161,10 +161,12 @@ The plan writes it with the level: `game/levels/undercity/hub/hub_puddles.png`.
 - **Imported lossless, with mipmaps.** A VRAM-compressed distance would move the edges. It is
   5.2 MB in memory.
 
-**Two shader globals** carry it: `puddle_mask` (the texture) and `puddle_rect_m` (x, z, width,
-depth). `project.godot` declares them with an empty rect, so the editor and any level without
-puddles draw none. The level sets them when it loads, from its level data, the way
-`CharacterShading.Apply` sets the skin's globals. The lightmap bake runs in the editor and so sees no
+**Four shader globals** carry it: `puddle_mask` (the texture), `puddle_rect_m` (x, z, width,
+depth), and the numbers its channels decode with, `puddle_range_m` and `puddle_height_m`, from the
+level data, so the mask's writer and the shader can't disagree. (Built with four: this said two,
+with the decoding numbers left implicit.) `project.godot` declares them with an empty rect, so the
+editor and any level without puddles draw none. The level sets them when it loads, from its level
+data (`PuddleShading.Apply`), the way `CharacterShading.Apply` sets the skin's globals. The lightmap bake runs in the editor and so sees no
 puddles; they darken the ground by a few per cent, which the bounce wouldn't show.
 
 ### 3.5 Where water gathers

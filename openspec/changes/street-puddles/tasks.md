@@ -13,14 +13,15 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
 
 ## 2. Textures and shaders
 
-- [ ] 2.1 `generate_city_materials.py`: the puddle terms out of `asphalt` and `paving_wet`; the
-  gully grate's decal maps; a test that the committed ground ORM maps hold no standing water.
+- [x] 2.1 `generate_city_materials.py`: the puddle terms out of `asphalt` and `paving_wet`; the
+  gully grate's decal maps; a test that the committed ground ORM maps hold no standing water
+  (`tools/fx/test_city_materials.py`, now in `scripts/check.sh`).
 - [ ] 2.2 `rain_ripples.gdshaderinc` from `water.gdshader`'s `ripples()`; the canal includes it; the
   canal capture is unchanged.
 - [ ] 2.3 `city_ground.gdshader`: today's material, then the puddle term; `postprocess.py` writes
   the ground materials from `materials.json` (`"ripples_from": "water"`); the equivalence capture
   with no mask set.
-- [ ] 2.4 The `tools/godot` test: one ripple function, one set of numbers.
+- [x] 2.4 The `tools/godot` test: one ripple function, one set of numbers (`test_rain_ripples.py`).
 
 ## 3. The plan
 
@@ -39,9 +40,10 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
 
 ## 4. The game
 
-- [ ] 4.1 The `puddle_mask` and `puddle_rect_m` globals in `project.godot`; the level sets them on
-  load.
-- [ ] 4.2 The gully decal scene (`gen_undercity_scenes.py`) and the importer's mapping.
+- [x] 4.1 The puddle globals in `project.godot` (four: the mask, its rect and its decoding numbers);
+  the level sets them on load (`PuddleShading.cs`); `lighting_test.tscn` checks them.
+- [x] 4.2 The gully decal scene (`gen_undercity_scenes.py`) and the importer's mapping; the entity's
+  `size` extra sizes it, as the car's contact shadow does.
 - [ ] 4.3 `placement_test.tscn`: every puddle in the rain by the core's `Wetness.Sheltered`.
 - [ ] 4.4 Rebuild the sectors and bake the lightmaps.
 

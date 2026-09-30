@@ -133,6 +133,9 @@ func _undercity_scene(extras: Dictionary) -> String:
 			# a parked car's contact shadow; the car itself is a static mesh of its sector, car_<id>
 			# (openspec/changes/vehicle-fixes, design section 2.3)
 			return "res://scenes/undercity/car_shadow.tscn"
+		"gully":
+			# a kerb gully's grate over its puddle (openspec/changes/street-puddles, design section 3.2)
+			return "res://scenes/undercity/gully.tscn"
 	return UNDERCITY.get(kind, "")
 
 

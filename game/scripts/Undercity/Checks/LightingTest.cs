@@ -7,8 +7,11 @@
 // width, and the rig ramps out and is freed when the conversation ends. It also checks "Characters
 // are dry under a roof and wet in the rain": Tank behind the Anchor's bar starts dry and Dace at the
 // checkpoint gate soaked, every mesh of their bodies carries that value, their skin is drawn by the
-// skin shader, and a soaked body under a roof dries at the data's rate. Prints PASS or FAIL per
-// check and quits with 1 on any failure.
+// skin shader, and a soaked body under a roof dries at the data's rate. And that the level hands
+// its puddle mask to the ground's shader (openspec/changes/street-puddles, design section 3.7): the
+// globals hold the level data's mask, rect and decode numbers once the hub has loaded, and the
+// street's asphalt and paving are drawn by the ground shader. Prints PASS or FAIL per check and
+// quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 600 godot --headless --path game res://scenes/undercity/tests/lighting_test.tscn
 //
@@ -54,6 +57,7 @@ public partial class LightingTest : Node3D
             TheWristLight(t, bit);
             await TheRig(t, bit);
             DryIndoorsWetInTheRain(t.Wetness);
+            TheGroundDrawsThePuddles(L.AutoTestState!.Data.Levels["hub"].Puddles);
         }
         catch (Exception e)
         {
@@ -61,6 +65,30 @@ public partial class LightingTest : Node3D
         }
         GD.Print($"[lighting_test] {_checks - _fail} of {_checks} passed");
         GetTree().Quit(_fail > 0 ? 1 : 0);
+    }
+
+    private void TheGroundDrawsThePuddles(PuddlesDef? puddles)
+    {
+        Check("the hub has puddles in its level data", puddles != null, "none");
+        if (puddles is null)
+        {
+            return;
+        }
+        var rect = RenderingServer.GlobalShaderParameterGet(PuddleShading.RectM).AsVector4();
+        var want = new Vector4((float)puddles.RectM[0], (float)puddles.RectM[1], (float)puddles.RectM[2], (float)puddles.RectM[3]);
+        Check("the level hands the ground its puddle rect", rect.IsEqualApprox(want), $"{rect}, the data's {want}");
+        var mask = RenderingServer.GlobalShaderParameterGet(PuddleShading.Mask).As<Texture2D>();
+        Check("and its mask", mask?.ResourcePath == puddles.Mask, mask?.ResourcePath ?? "none");
+        var range = RenderingServer.GlobalShaderParameterGet(PuddleShading.RangeM).AsSingle();
+        var height = RenderingServer.GlobalShaderParameterGet(PuddleShading.HeightM).AsVector2();
+        Check("and the numbers its channels decode with", Mathf.IsEqualApprox(range, (float)puddles.RangeM)
+              && height.IsEqualApprox(new Vector2((float)puddles.HeightM[0], (float)puddles.HeightM[1])), $"range {range}, heights {height}");
+        foreach (var name in new[] { "asphalt", "paving_wet" })
+        {
+            var m = GD.Load<Material>($"res://materials/{name}.tres");
+            Check($"the street's {name} is drawn by the ground shader",
+                m is ShaderMaterial { Shader.ResourcePath: "res://shaders/city_ground.gdshader" }, m?.GetType().Name ?? "missing");
+        }
     }
 
     private void PeopleOnTheCharactersLayer(uint bit)

@@ -25,6 +25,8 @@ namespace Brushfire;
 ///         {"kill": "tank" | "hub:civ_01", "at": [x,y,z]} (the NPC dies and its body falls, from "at" if given;
 ///                    test only until combat lands) | {"look": [yaw, pitch]} (turn without moving)
 ///         {"face": [x,y,z]} (look at a point) | {"walk_to": [x,z], "within": m, "max": frames} (steer there, forward held)
+///         {"puddles": false} (the ground without the level's puddles: the ground shader against the material it
+///                    replaced, openspec/changes/street-puddles, design section 3.8; true: the level's again)
 ///         {"hide": "node"} | {"show": "node"} (a node of the running scene, by name) | {"camera": [x,y,z], "look_at": [x,y,z]}
 ///                    (a free camera; {"camera": false}: the player's again): openspec/changes/vehicle-fixes, design
 ///                    section 2.3, the ground under a parked car seen from above with the car hidden
@@ -221,6 +223,12 @@ public partial class AutoTest : Node
                 Input.ActionPress(pa.AsString());
                 await Frames(2);
                 Input.ActionRelease(pa.AsString());
+            }
+            if (step.TryGetValue("puddles", out var pud))
+            {
+                var hub = GetTree().CurrentScene as Undercity.Client.UndercityLevel;
+                Undercity.Client.PuddleShading.Apply(pud.AsBool() && hub?.AutoTestState is { } st
+                    ? st.Data.Levels[hub.LevelId].Puddles : null);
             }
             if (step.TryGetValue("hide", out var hide))
                 ShowNode(hide.AsString(), false);

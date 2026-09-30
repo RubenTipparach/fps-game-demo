@@ -3569,7 +3569,7 @@ class City:
         self.puddle_list, self.gullies = self.puddles()
         for gl in self.gullies:
             self.P.entity("streets", f"ENT_{gl['id']}", gl["at"][0], gl["at"][1], STREET_Z, gl["heading"],
-                          {"kind": "gully", "id": gl["id"]})
+                          {"kind": "gully", "id": gl["id"], "size": f"{GULLY_GRATE_M[0]},{GULLY_GRATE_M[1]}"})
 
     def check_puddles(self, puddles=None):
         """Every puddle lies where rain water gathers and nowhere else (openspec/changes/street-puddles,

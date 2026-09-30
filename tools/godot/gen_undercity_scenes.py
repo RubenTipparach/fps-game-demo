@@ -300,6 +300,29 @@ def searchlight():
     s.save(out("searchlight.tscn"))
 
 
+def decal(name, root, texture, size, **props):
+    """A decal scene: the level importer sizes it from its entity's "size" extra ("w,d" metres,
+    blender_level_import.gd), so `size` is only its default and its height, the reach above and
+    below the ground it projects onto."""
+    s = Scene(root, "Decal")
+    maps = {f"texture_{k}": s.ext_res("Texture2D", f"res://textures/decals/{texture}_{k}.png") for k in props.pop("maps")}
+    s.nodes[0][3].update(size=v3(*size), **maps, **props)
+    s.save(out(f"{name}.tscn"))
+
+
+def car_shadow():
+    """A parked car's contact shadow (openspec/changes/vehicle-fixes, design section 2.3): dark,
+    matte and occluded, as the road under a car parked in the rain; 0.3 m above and below the
+    ground, so it marks the tyres' feet but not the body."""
+    decal("car_shadow", "CarShadow", "car_shadow", (2.6, 0.6, 5.6), maps=("albedo", "orm"), albedo_mix=1.0)
+
+
+def gully():
+    """A kerb gully's cast-iron grate (openspec/changes/street-puddles, design section 3.2), over the
+    puddle round it: 0.45 m along the kerb and 0.25 m across it, its -Z into the road."""
+    decal("gully", "Gully", "gully", (0.45, 0.2, 0.25), maps=("albedo", "normal", "orm"), albedo_mix=1.0)
+
+
 def main():
     player()
     npc()
@@ -319,6 +342,8 @@ def main():
     blood()
     conversation_rig()
     searchlight()
+    car_shadow()
+    gully()
     print("wrote", len(os.listdir(os.path.join(GAME, "scenes", "undercity"))), "scenes to game/scenes/undercity")
 
 
