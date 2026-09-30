@@ -28,9 +28,14 @@ public static class PuddleShading
     /// <summary>The heights the mask's alpha spans, metres.</summary>
     public const string HeightM = "puddle_height_m";
 
+    /// <summary>The puddles last handed to the renderer, null for none: what a headless check reads,
+    /// since a headless run's renderer keeps no globals (lighting_test.tscn).</summary>
+    public static PuddlesDef? Applied { get; private set; }
+
     /// <summary>Hands a level's puddles to the ground shader, or none when <paramref name="puddles"/> is null.</summary>
     public static void Apply(PuddlesDef? puddles)
     {
+        Applied = puddles;
         if (puddles is null)
         {
             RenderingServer.GlobalShaderParameterSet(RectM, Vector4.Zero);

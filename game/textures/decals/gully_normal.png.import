@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://p6on2vybc67n"
+path="res://.godot/imported/gully_normal.png-c27dd8b12f3e68deda1cdc63736f0e53.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/decals/gully_normal.png"
+dest_files=["res://.godot/imported/gully_normal.png-c27dd8b12f3e68deda1cdc63736f0e53.ctex"]
 
 [params]
 

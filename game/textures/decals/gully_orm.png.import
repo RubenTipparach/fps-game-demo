@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://c7ddkba2yebou"
+path="res://.godot/imported/gully_orm.png-24afcd503467fe11bfb020808980cede.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/decals/gully_orm.png"
+dest_files=["res://.godot/imported/gully_orm.png-24afcd503467fe11bfb020808980cede.ctex"]
 
 [params]
 

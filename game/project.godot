@@ -285,3 +285,19 @@ character_skin_dry_roughness_add={
 "type": "float",
 "value": 0.0
 }
+puddle_height_m={
+"type": "vec2",
+"value": Vector2(-1, 3)
+}
+puddle_mask={
+"type": "sampler2D",
+"value": ""
+}
+puddle_range_m={
+"type": "float",
+"value": 0.5
+}
+puddle_rect_m={
+"type": "vec4",
+"value": Vector4(0, 0, 0, 0)
+}

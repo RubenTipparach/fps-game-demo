@@ -10,7 +10,8 @@
 // murky water at night, so its deep colour is what the eye would see through it anyway.
 //
 // Its numbers are the material's parameters (game/materials/materials.json "water", written into
-// materials/water.tres by tools/material_maker/postprocess.py); nothing here is tuned inline.
+// materials/water.tres by tools/material_maker/postprocess.py); nothing here is tuned inline. The
+// rain's rings are rain_ripples.gdshaderinc's, which the street's puddles draw too.
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley, specular_schlick_ggx;
 
@@ -29,41 +30,18 @@ uniform float surface_roughness : hint_range(0.0, 1.0) = 0.05;
 
 varying vec3 world_pos;
 
+#include "res://shaders/rain_ripples.gdshaderinc"
+
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-}
-
-float hash12(vec2 p) {
-	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-	p3 += dot(p3, p3.yzx + 33.33);
-	return fract((p3.x + p3.y) * p3.z);
-}
-
-// A rain drop's ring in each cell: the slope it adds to the surface, in x and z.
-vec2 ripples(vec2 p, float t) {
-	vec2 cell = floor(p / ripple_cell_m);
-	vec2 slope = vec2(0.0);
-	for (int j = -1; j <= 1; j++) {
-		for (int i = -1; i <= 1; i++) {
-			vec2 c = cell + vec2(float(i), float(j));
-			float h = hash12(c);
-			vec2 centre = (c + vec2(hash12(c + 17.1), hash12(c + 41.7))) * ripple_cell_m;
-			float age = fract(t * ripple_rate_hz + h);
-			vec2 d = p - centre;
-			float r = length(d);
-			float front = age * ripple_cell_m;
-			float ring = sin((r - front) * ripple_wave_per_m) * exp(-abs(r - front) * ripple_falloff_per_m) * (1.0 - age);
-			slope += (r > 1e-4 ? d / r : vec2(0.0)) * ring;
-		}
-	}
-	return slope * ripple_strength;
 }
 
 void fragment() {
 	vec2 uv = world_pos.xz / tile_m;
 	vec3 n1 = texture(normal_map, uv + TIME * flow_a_mps / tile_m).rgb * 2.0 - 1.0;
 	vec3 n2 = texture(normal_map, uv * 1.7 + TIME * flow_b_mps / tile_m).rgb * 2.0 - 1.0;
-	vec2 slope = (n1.xy + n2.xy) * 0.5 + ripples(world_pos.xz, TIME);
+	vec2 slope = (n1.xy + n2.xy) * 0.5 + rain_ripples(world_pos.xz, TIME, ripple_cell_m, ripple_rate_hz, ripple_strength,
+			ripple_wave_per_m, ripple_falloff_per_m);
 	vec3 n = normalize(vec3(slope, 1.0));
 	NORMAL_MAP = n * 0.5 + 0.5;
 	NORMAL_MAP_DEPTH = normal_strength;

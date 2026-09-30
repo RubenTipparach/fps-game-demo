@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://57b7u7plhvkc"
+path="res://.godot/imported/gully_albedo.png-5e323bb57771b53d5d34ce6f911e40f4.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/decals/gully_albedo.png"
+dest_files=["res://.godot/imported/gully_albedo.png-5e323bb57771b53d5d34ce6f911e40f4.ctex"]
 
 [params]
 
