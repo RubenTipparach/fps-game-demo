@@ -130,7 +130,7 @@
         <tr><td><span class="chip built">Built</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig, accepted as they look (owner J1); skin and clothes follow where a character stands, dry under a roof and wet in the rain. Tank's highlight at the bar falls from 148 to 101.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, a clear approach to every entrance, and automatic sliding doors on the 18 public entrances. The hub is rebuilt and rebaked: 46 framed doors, 244 dressing doors, 15 lots cut back, 225 lights; the doors, approaches and sliding entrances are checked in the plan and in the built level.</td></tr>
-        <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs. The plan places them where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Decided (L1 to L3): the recommended rules and amount, and ripples as a shader effect.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Puddles (F20): the street's puddles have left the ground textures, where they repeated on a 4 m grid and 328 m² of them lay under roofs. The plan places 254 where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Stills: <code>docs/screenshots/street_puddles/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Vehicles (F21): the hub's 15 parked cars are PSX Style Cars (CC0, pinned), 22 variants in their own colours, on the road beside the kerbs on one ground, and baked into the ground they stand on as static meshes of its sector. Stills: <code>docs/screenshots/vehicle_fixes/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
@@ -1315,7 +1315,7 @@
 <section id="puddles">
   <div class="sh"><span class="key">F20</span><h2>Puddles</h2><span class="spec">openspec/changes/street-puddles</span></div>
   <p class="intro">Owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?" Today the puddles are painted into the asphalt and paving textures, so the same blobs repeat every 4 m and 2 m across the whole hub, on kerbs, against walls and under roofs. The proposal takes them out of the textures, places them where rain water would gather, and draws them in the ground's shader so they ripple. The survey's answers (L1 to L3): the recommended rules and amount, and "ripples would be awesome, this should just be a shader effect, simple cheap".</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (L1 to L3)</span><span class="chip">Measured on the committed textures and plan, seed 7</span></div>
+  <div class="controls"><span class="chip built">Built: 254 puddles from the plan, drawn by the ground shader</span><span class="chip enforced">Checked: no standing water in the textures, every puddle in the rain, the mask against the plan, one ripple</span><span class="chip">Stills: docs/screenshots/street_puddles/</span></div>
   <div class="sub">
     <h3>Today and proposed <small>one real stretch round the garage, 48 x 30 m; the right panel is a sketch of the rules</small></h3>
     <div class="diagram" role="img" aria-label="Two plans of the same street: today's grid of texture puddles, including under the Skyway, and the proposed puddles along kerbs and drip edges, none under the deck">
@@ -1325,12 +1325,12 @@
   <div class="sub">
     <h3>Measured</h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th></th><th class="n">Today</th><th class="n">Proposed</th></tr></thead>
+      <thead><tr><th></th><th class="n">Before</th><th class="n">Built, seed 7</th></tr></thead>
       <tbody>
-        <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">about 451 m² (2.6 %)</td></tr>
+        <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">434 m² (2.53 %)</td></tr>
         <tr><td>Of it under a roof, where no rain falls</td><td class="n">328 m²</td><td class="n">0</td></tr>
         <tr><td>Pattern</td><td class="n">repeats every 4 m (road) and 2 m (paving)</td><td class="n">none: each puddle its own shape and size</td></tr>
-        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">about 385: 184 gutter, 66 gully, 135 drip</td></tr>
+        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">254: 156 gutter, 41 gully, 57 drip; 41 grates</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">
@@ -1352,7 +1352,7 @@
         <tr><td>The ground's shader</td><td><code>city_ground.gdshader</code> draws the asphalt and paving as today's material does. Inside a puddle it darkens the ground to 0.65-0.7 of itself, drops the roughness to 0.04 so it mirrors the neon, flattens the grain and adds the rain rings.</td></tr>
         <tr><td>The puddle mask</td><td>The plan writes it with the level: 1920 x 1360 texels, 0.125 m each. Grey is the distance to the nearest puddle's edge, so a 0.4 m gutter keeps its shape. Alpha is the height of the ground it lies on, so a kerb top or a deck above stays dry.</td></tr>
         <tr><td>Rain rings</td><td>The canal's ripple code moves into one include that both shaders use, with the canal's numbers: a drop every 0.9 m cell, 0.7 a second. A decal can't run a shader, which is why the puddles aren't decals (L3).</td></tr>
-        <tr><td>Gully grates</td><td>Decals: 66 cast-iron grates, drawn over the puddle beneath each.</td></tr>
+        <tr><td>Gully grates</td><td>Decals: 41 cast-iron grates, drawn over the puddle beneath each.</td></tr>
       </tbody></table></div>
   </div>
 </section>
@@ -1396,10 +1396,10 @@
       <thead><tr><th>Owner's report, 2026-09-30</th><th>Measured before</th><th>Now</th></tr></thead>
       <tbody>
         <tr><td>The wheels don't align</td><td>5 cars straddled a kerb, 1 or 2 wheels 0.15 m over the road</td><td>every car on one ground, checked by the plan</td></tr>
-        <tr><td>No shadow underneath</td><td>14 cars were baked in a district sector over ground the streets sector bakes, so they shaded nothing</td><td>each car is a static mesh of the sector that owns its ground, baked with it at 0.1 m texels; the shadow under each is measured from above on the after stills (design section 2.3)</td></tr>
+        <tr><td>No shadow underneath</td><td>14 cars were baked in a district sector over ground the streets sector bakes, so they shaded nothing</td><td>each car is a static mesh of the sector that owns its ground, baked with it at 0.1 m texels; the bake's shadow (0.47-0.67 of the ground beside it, lighting alone) hid under the wet road's reflections, so each car has a contact shadow, a decal that darkens, dries and occludes the ground under it: 0.30-0.63 in the finished picture, the ground under every car at the picture's floor</td></tr>
         <tr><td>A little dark</td><td>paint albedo 0.006-0.104 for seven paints; the brick walls are 0.078</td><td>the PSX textures, 0.041-0.327; a clear coat</td></tr>
       </tbody></table></div>
-    <p class="note">The placement test finds each car's static mesh in the built hub where the plan put it, with its static body, on its own sector's ground by a ray, and in that sector's lightmap. Before and after stills: <code>docs/screenshots/vehicle_fixes/</code>.</p>
+    <p class="note">The placement test finds each car's static mesh in the built hub where the plan put it, with its static body, on its own sector's ground by a ray, in that sector's lightmap, over its contact shadow sized to its mesh. Before and after stills and the shadows from above: <code>docs/screenshots/vehicle_fixes/</code>; the record: <code>docs/validation/2026-09-30-cc0-vehicles-and-fixes.md</code>.</p>
   </div>
 </section>
 

@@ -16,11 +16,12 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
 - [x] 2.1 `generate_city_materials.py`: the puddle terms out of `asphalt` and `paving_wet`; the
   gully grate's decal maps; a test that the committed ground ORM maps hold no standing water
   (`tools/fx/test_city_materials.py`, now in `scripts/check.sh`).
-- [ ] 2.2 `rain_ripples.gdshaderinc` from `water.gdshader`'s `ripples()`; the canal includes it; the
-  canal capture is unchanged.
-- [ ] 2.3 `city_ground.gdshader`: today's material, then the puddle term; `postprocess.py` writes
+- [x] 2.2 `rain_ripples.gdshaderinc` from `water.gdshader`'s `ripples()`; the canal includes it; the
+  canal capture is unchanged but for the rain streaks (random each run) and the ground round it,
+  whose textures changed (design section 3.8, built).
+- [x] 2.3 `city_ground.gdshader`: today's material, then the puddle term; `postprocess.py` writes
   the ground materials from `materials.json` (`"ripples_from": "water"`); the equivalence capture
-  with no mask set.
+  with no mask set: 0.60 luma levels of mean difference, under the 1 asked.
 - [x] 2.4 The `tools/godot` test: one ripple function, one set of numbers (`test_rain_ripples.py`).
 
 ## 3. The plan
