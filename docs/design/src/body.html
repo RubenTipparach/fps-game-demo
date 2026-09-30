@@ -130,7 +130,7 @@
         <tr><td><span class="chip built">Built</span></td><td>Faces, skin and coloured gels (F16): skin normals, the eyes' catchlight, the wrist glow and the conversation rig, accepted as they look (owner J1); skin and clothes follow where a character stands, dry under a roof and wet in the rain. Tank's highlight at the bar falls from 148 to 101.</td></tr>
         <tr><td><span class="chip enforced">Enforced</span></td><td><code>openspec/specs/level-geometry</code>: no z-fighting, frame reveals, every room carved, and every person clear of the level with their own collider. Every generator refuses a level that fails it, and the placement test checks the built hub.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, a clear approach to every entrance, and automatic sliding doors on the 18 public entrances. The hub is rebuilt and rebaked: 46 framed doors, 244 dressing doors, 15 lots cut back, 225 lights; the doors, approaches and sliding entrances are checked in the plan and in the built level.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td>Puddles (F20): the street's puddles have left the ground textures, where they repeated on a 4 m grid and 328 m² of them lay under roofs. The plan places 254 where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Stills: <code>docs/screenshots/street_puddles/</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Puddles (F20): the street's puddles have left the ground textures, where they repeated on a 4 m grid and 328 m² of them lay under roofs. The plan places 253 where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Stills: <code>docs/screenshots/street_puddles/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
         <tr><td><span class="chip built">Built</span></td><td>Vehicles (F21): the hub's 15 parked cars are PSX Style Cars (CC0, pinned), 22 variants in their own colours, on the road beside the kerbs on one ground, and baked into the ground they stand on as static meshes of its sector. Stills: <code>docs/screenshots/vehicle_fixes/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
@@ -1315,7 +1315,7 @@
 <section id="puddles">
   <div class="sh"><span class="key">F20</span><h2>Puddles</h2><span class="spec">openspec/changes/street-puddles</span></div>
   <p class="intro">Owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?" Today the puddles are painted into the asphalt and paving textures, so the same blobs repeat every 4 m and 2 m across the whole hub, on kerbs, against walls and under roofs. The proposal takes them out of the textures, places them where rain water would gather, and draws them in the ground's shader so they ripple. The survey's answers (L1 to L3): the recommended rules and amount, and "ripples would be awesome, this should just be a shader effect, simple cheap".</p>
-  <div class="controls"><span class="chip built">Built: 254 puddles from the plan, drawn by the ground shader</span><span class="chip enforced">Checked: no standing water in the textures, every puddle in the rain, the mask against the plan, one ripple</span><span class="chip">Stills: docs/screenshots/street_puddles/</span></div>
+  <div class="controls"><span class="chip built">Built: 253 puddles from the plan, drawn by the ground shader</span><span class="chip enforced">Checked: no standing water in the textures, every puddle in the rain, the mask against the plan, one ripple</span><span class="chip">Stills: docs/screenshots/street_puddles/</span></div>
   <div class="sub">
     <h3>Today and proposed <small>one real stretch round the garage, 48 x 30 m; the right panel is a sketch of the rules</small></h3>
     <div class="diagram" role="img" aria-label="Two plans of the same street: today's grid of texture puddles, including under the Skyway, and the proposed puddles along kerbs and drip edges, none under the deck">
@@ -1327,10 +1327,10 @@
     <div class="scroll"><table class="tbl">
       <thead><tr><th></th><th class="n">Before</th><th class="n">Built, seed 7</th></tr></thead>
       <tbody>
-        <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">434 m² (2.53 %)</td></tr>
+        <tr><td>Standing water</td><td class="n">2,432 m² (14.2 % of the ground)</td><td class="n">431 m² (2.51 %)</td></tr>
         <tr><td>Of it under a roof, where no rain falls</td><td class="n">328 m²</td><td class="n">0</td></tr>
         <tr><td>Pattern</td><td class="n">repeats every 4 m (road) and 2 m (paving)</td><td class="n">none: each puddle its own shape and size</td></tr>
-        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">254: 156 gutter, 41 gully, 57 drip; 41 grates</td></tr>
+        <tr><td>Puddles</td><td class="n">(a texture)</td><td class="n">253: 155 gutter, 41 gully, 57 drip; 41 grates</td></tr>
       </tbody></table></div>
   </div>
   <div class="sub">

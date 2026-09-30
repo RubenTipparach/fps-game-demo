@@ -204,7 +204,8 @@ gaps of 4-9 m, gullies 1.0-1.4 m, drips with gaps of 1.5-4 m) placed only 205 pu
 should: 26 candidates under the Skyway's deck, 12 beside a parked car, 21 drip lines within
 0.3 m of a building, 28 gutters touching a gully's puddle. L2 chose the amount, so the sizes and
 gaps above are the ones that reach it: **254 puddles (156 gutter, 41 gully, 57 drip), 434 m²,
-2.53 % of the ground**, and 41 gully grates. Every kerb of 40 m or more has
+2.53 % of the ground**, and 41 gully grates. (253 and 431 m² since vehicle-fixes moved Lantern
+Row's parked cars onto the road: one gutter puddle there no longer keeps 0.3 m from a car.) Every kerb of 40 m or more has
 a gully and at least three gutter puddles.
 
 ### 3.6 One rule each
