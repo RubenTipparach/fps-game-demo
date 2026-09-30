@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The puddle mask a city level's ground shader reads (openspec/changes/street-puddles, design
+"""The puddle mask a city level's ground shader reads (openspec/changes/archive/2026-09-30-street-puddles, design
 section 3.4), written from the level plan's puddles (city_plan.py City.puddles()).
 
     python3 tools/levels/puddle_mask.py hub     # writes game/levels/undercity/hub/hub_puddles.png

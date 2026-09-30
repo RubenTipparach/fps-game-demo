@@ -1,4 +1,4 @@
-"""One ripple for all the rain (openspec/changes/street-puddles, design section 3.3): the canal's
+"""One ripple for all the rain (openspec/changes/archive/2026-09-30-street-puddles, design section 3.3): the canal's
 water and the street's ground both include game/shaders/rain_ripples.gdshaderinc, neither defines
 a ripple of its own, and the ground's committed materials carry the water's ripple numbers, so a
 drop on a puddle and a drop on the canal can't drift apart (CLAUDE.md 5.1). It reads the committed

@@ -1,5 +1,5 @@
 // The ground shader's puddle globals: the level's puddle mask, the rect it covers, and the numbers
-// its two channels decode with (openspec/changes/street-puddles, design section 3.4). The ground
+// its two channels decode with (openspec/changes/archive/2026-09-30-street-puddles, design section 3.4). The ground
 // shader (shaders/city_ground.gdshader) reads them; project.godot declares an empty rect, so the
 // editor and the lightmap bake draw no puddles, and this sets them from the level data's
 // "puddles" when a level starts, or clears the rect for a level without any.

@@ -112,7 +112,7 @@ STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is
 NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
 PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
 PLAYER_SCRIPT = os.path.join(ROOT, "game", "scripts", "Player", "PlayerController.cs")
-# Puddles (openspec/changes/street-puddles, design section 3.5). Where rain water gathers is level
+# Puddles (openspec/changes/archive/2026-09-30-street-puddles, design section 3.5). Where rain water gathers is level
 # construction, so its numbers live here; how a puddle looks is the ground shader's (materials.json),
 # and whether a roof keeps the rain off is the core's (data/character_lighting.json, headroom_m).
 CHARACTER_LIGHTING_JSON = os.path.join(ROOT, "game", "data", "character_lighting.json")
@@ -3392,7 +3392,7 @@ class City:
             raise SystemExit(f"{self.m['id']}: {len(problems)} placements put a person inside the level:\n  "
                              + "\n  ".join(problems))
 
-    # puddles (openspec/changes/street-puddles) --------------------------------------------
+    # puddles (openspec/changes/archive/2026-09-30-street-puddles) --------------------------------------------
     def puddle_ground(self):
         """What a puddle is checked against, built once, after the rest of the level: the ground
         it may lie on by height (inset from its edges), the roofs, and what it keeps clear of. The
@@ -3422,7 +3422,7 @@ class City:
         return self._puddle_ground
 
     def puddle_problems(self, label, g, z, others=()):
-        """Why a puddle can't lie here, or [] when it can (openspec/changes/street-puddles, design
+        """Why a puddle can't lie here, or [] when it can (openspec/changes/archive/2026-09-30-street-puddles, design
         section 3.5). g is its outline, z the height of the ground it lies on, others the puddles it
         must keep PUDDLE_GAP_M from. The placement and the check both ask this, so they can't
         disagree about the rule."""
@@ -3487,7 +3487,7 @@ class City:
         return sorted(out, key=lambda e: e[0])
 
     def puddles(self):
-        """Every puddle in the level, where rain water gathers (openspec/changes/street-puddles,
+        """Every puddle in the level, where rain water gathers (openspec/changes/archive/2026-09-30-street-puddles,
         design section 3.5): round a kerb gully every GULLY_EVERY_M of kerb, in the gutters between,
         and just outside the drip edges of the awnings and the Skyway's deck. A candidate that
         breaks a rule (puddle_problems) is dropped, never moved, so the rest stay where they are.
@@ -3565,14 +3565,14 @@ class City:
 
     def place_puddles(self):
         """The level's puddles (City.puddles()) and a grate entity for each kerb gully, which the
-        importer turns into the gully decal (openspec/changes/street-puddles, design section 3.2)."""
+        importer turns into the gully decal (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2)."""
         self.puddle_list, self.gullies = self.puddles()
         for gl in self.gullies:
             self.P.entity("streets", f"ENT_{gl['id']}", gl["at"][0], gl["at"][1], STREET_Z, gl["heading"],
                           {"kind": "gully", "id": gl["id"], "size": f"{GULLY_GRATE_M[0]},{GULLY_GRATE_M[1]}"})
 
     def check_puddles(self, puddles=None):
-        """Every puddle lies where rain water gathers and nowhere else (openspec/changes/street-puddles,
+        """Every puddle lies where rain water gathers and nowhere else (openspec/changes/archive/2026-09-30-street-puddles,
         "Puddles lie where water gathers"): on open ground in the rain, within its own ground and
         PUDDLE_KERB_OFF_M in from a kerb, off the bridges, the rails, the Pit and the water, clear
         of buildings, lots, fixtures, props, solids and stairs by PUDDLE_CLEAR_M, and apart from

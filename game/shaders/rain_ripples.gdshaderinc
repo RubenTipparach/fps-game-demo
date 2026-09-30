@@ -1,4 +1,4 @@
-// Rain drops on standing water (openspec/changes/street-puddles, design section 3.3): one drop at a
+// Rain drops on standing water (openspec/changes/archive/2026-09-30-street-puddles, design section 3.3): one drop at a
 // time in each cell of a grid, its ring spreading and fading, summed over the nine cells round a
 // point. The canal (water.gdshader) and the street's puddles (city_ground.gdshader) both include it,
 // so a drop reads the same on either (CLAUDE.md 5.1: the same behaviour, the same code). Its numbers

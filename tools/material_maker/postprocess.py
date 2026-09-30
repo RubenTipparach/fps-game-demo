@@ -117,7 +117,7 @@ def shader_uniforms(game, res_path):
 
 
 # The rain's ring numbers (shaders/rain_ripples.gdshaderinc). They are set once, on the water; a
-# material that names "ripples_from" takes that material's (openspec/changes/street-puddles, design
+# material that names "ripples_from" takes that material's (openspec/changes/archive/2026-09-30-street-puddles, design
 # section 3.3: one set of numbers for all the rain).
 RIPPLES = ("ripple_cell_m", "ripple_rate_hz", "ripple_strength", "ripple_wave_per_m", "ripple_falloff_per_m")
 

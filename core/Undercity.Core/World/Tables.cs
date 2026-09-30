@@ -318,7 +318,7 @@ public sealed class LevelDef : IValidated
     public IReadOnlyList<ApproachDef> Approaches { get; init; } = Array.Empty<ApproachDef>();
 
     /// <summary>
-    /// The level's puddles and their mask, from its plan (openspec/changes/street-puddles); null for
+    /// The level's puddles and their mask, from its plan (openspec/changes/archive/2026-09-30-street-puddles); null for
     /// a level without rain.
     /// </summary>
     public PuddlesDef? Puddles { get; init; }

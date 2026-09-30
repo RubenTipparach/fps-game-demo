@@ -1,4 +1,4 @@
-// The hub's puddles (openspec/changes/street-puddles, "Puddles lie where water gathers"): every one
+// The hub's puddles (openspec/changes/archive/2026-09-30-street-puddles, "Puddles lie where water gathers"): every one
 // lies in the rain by the core's own wetness rule, the same rule that dries a character under a
 // roof, and a level's puddle data is refused when it is malformed.
 

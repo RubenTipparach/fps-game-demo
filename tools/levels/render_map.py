@@ -572,7 +572,7 @@ def draw_ladders(c, ladders):
 
 def draw_puddles(c, puddles, gullies):
     """The standing water the level plan places (city_plan.py puddles(): gutters, gullies and drip
-    lines, openspec/changes/street-puddles), and each kerb gully's grate."""
+    lines, openspec/changes/archive/2026-09-30-street-puddles), and each kerb gully's grate."""
     c.add('<g data-layer="puddles">')
     for p in puddles:
         c.add(f'<path class="puddle" d="{c.path(p["g"])}"><title>{esc(p["id"])}</title></path>')

@@ -1,4 +1,4 @@
-// The city's ground, asphalt and wet paving (openspec/changes/street-puddles, design section 3.2):
+// The city's ground, asphalt and wet paving (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2):
 // the ORMMaterial3D it replaces, drawn the same way, and the puddles the level plan placed, read
 // from the level's puddle mask. Inside a puddle the ground darkens, turns to a mirror for the
 // screen-space reflections and the probes, flattens, and the rain's rings cross it

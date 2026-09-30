@@ -3,7 +3,7 @@
 The owner, 2026-09-29: "can you make water puddles on the street less random? maybe use decals?";
 survey L1 to L3: the recommended rules and amount, and "ripples would be awesome, this should just
 be a shader effect, simple cheap"; 2026-09-30: "the street puddle pattern isn't fixed yet". This
-record covers `openspec/changes/street-puddles`, built on branch `claude/elegant-gauss-qwjhk1`
+record covers `openspec/changes/archive/2026-09-30-street-puddles`, built on branch `claude/elegant-gauss-qwjhk1`
 (RubenTipparach/fps-game-demo#6): the plan's puddles (built earlier), the ground textures without
 puddles, the ground's shader, the shared ripple, the gully decals, and the rebaked hub.
 
@@ -56,16 +56,21 @@ at seed 7 and 30 fps, before with the old ground materials and canal shader, aft
 | Still | Shows | Requirement |
 |---|---|---|
 | `before_01` / `after_01_lantern_row.png` | before, the texture's puddles repeat across the whole road; after, the road is wet asphalt and the water lies along the gutters at both kerbs, mirroring the neon | Puddles lie where water gathers |
-| `before_02` / `after_02_clinic_gully.png` | Clinic Lane's kerb; the gully isn't in the frame from street level, so `above_01` shows it | the same |
+| `before_02` / `after_02_clinic_gully.png` | Clinic Lane's kerb; the gully isn't in the frame from street level (see below) | the same |
 | `before_03` / `after_03_skyway_garage.png` | under the Skyway at the garage: dry after | the same (no puddle under a roof) |
 | `before_04` / `after_04_market_drip.png` | the market's stall awnings | the same |
 | `before_05` / `after_05_canal.png`, `canal_after_include.png` | the canal from Quay Road | Standing water ripples with the rain |
 | `equivalence_ground_shader.png`, `equivalence_orm_material.png` | the ground shader and the material it replaces, puddles off | the shader reproduces the material |
-| `above_01` to `above_03` | from above: a gully and its puddle, Lantern Row's gutters, the market's drip line | Puddles lie where water gathers |
 | `rain_on_the_gutters.mp4` | 6.9 s, 1280 x 720, with sound (`street_puddles_rain.json`, `--write-movie`): the rain on Lantern Row's gutter puddles under the neon | Standing water ripples with the rain |
 
 The screen-space reflections show the neon in a puddle: the cyan sign's reflection in the gutter
-in the video and in `after_01`.
+in the video and in `after_01`; `lantern_row_before_after.jpg` puts that pair side by side.
+
+**No still shows a gully grate clearly.** Views from above failed: a puddle mirrors the dark night
+sky and reads as black as the wet road round it. So did a low view of the Clinic Lane gully (a
+faint reflection, the grate unreadable) and of the market's drip line (the camera stood inside an
+awning). The gullies are checked by the plan's tests and the mask's; how a grate looks in the game
+is not shown here.
 
 ## What the checks establish
 

@@ -25,7 +25,7 @@ Decals (DECALS), written straight to game/textures/decals/ with lossless import 
   car_shadow        a parked car's contact shadow: dark and dry, soft-edged, stretched to the car
 
 The ground holds no standing water: the level plan places the puddles and the ground's shader
-draws them (openspec/changes/street-puddles). Every map is seeded, so the same script writes the
+draws them (openspec/changes/archive/2026-09-30-street-puddles). Every map is seeded, so the same script writes the
 same files.
 """
 import os
@@ -203,7 +203,7 @@ GULLY_PX_M = 1 / 512    # the grate's texels: 0.45 x 0.25 m at about 2 mm
 
 
 def gully():
-    """A kerb gully's cast-iron grate (openspec/changes/street-puddles, design section 3.2): a frame
+    """A kerb gully's cast-iron grate (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2): a frame
     and nine slots across it, dark, wet, metallic. Its alpha is the grate's outline, so the decal
     paints nothing past it."""
     w, h = round(0.45 / GULLY_PX_M), round(0.25 / GULLY_PX_M)

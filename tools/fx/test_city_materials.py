@@ -1,4 +1,4 @@
-"""The city ground's committed textures hold no standing water (openspec/changes/street-puddles,
+"""The city ground's committed textures hold no standing water (openspec/changes/archive/2026-09-30-street-puddles,
 design sections 3.1 and 3.7): the level plan places the puddles and the ground's shader draws them,
 so a texture that still carried its own would repeat a puddle every tile. It reads the committed
 ORM maps (CLAUDE.md 5.6, validate the real artifact).

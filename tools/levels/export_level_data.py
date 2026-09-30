@@ -81,7 +81,7 @@ def approaches(layout):
 
 
 def puddles(level_id, city):
-    """The level's puddles (city_plan.py City.puddles(), openspec/changes/street-puddles), for the
+    """The level's puddles (city_plan.py City.puddles(), openspec/changes/archive/2026-09-30-street-puddles), for the
     core's check that each lies in the rain, and the numbers the level hands the ground's shader to
     read the mask. The mask itself (puddle_mask.py) is written here too, from the same plan, so the
     list and the mask can't disagree."""

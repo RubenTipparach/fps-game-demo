@@ -9,7 +9,7 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
   the texture masks, the tile repeats, the share under a roof, the kerb and drip-edge lengths.
 - [x] 1.2 The mockup: one 48 x 30 m stretch, today's texture puddles and the rules' sketch
   (`tools/design/mockup_puddles.py`, the design page's F20).
-- [ ] 1.3 Before stills from the four capture places, and the canal view (design section 3.8).
+- [x] 1.3 Before stills from the four capture places, and the canal view (design section 3.8).
 
 ## 2. Textures and shaders
 
@@ -45,11 +45,13 @@ would be awesome, this should just be a shader effect, simple cheap" (design, Co
   the level sets them on load (`PuddleShading.cs`); `lighting_test.tscn` checks them.
 - [x] 4.2 The gully decal scene (`gen_undercity_scenes.py`) and the importer's mapping; the entity's
   `size` extra sizes it, as the car's contact shadow does.
-- [ ] 4.3 `placement_test.tscn`: every puddle in the rain by the core's `Wetness.Sheltered`.
-- [ ] 4.4 Rebuild the sectors and bake the lightmaps.
+- [x] 4.3 ~~`placement_test.tscn`~~: every puddle in the rain by the core's `Wetness.Sheltered`, checked
+  by the core's own test on the level data instead (`PuddlesTests`, design section 3.7).
+- [x] 4.4 Rebuild the sectors and bake the lightmaps (43 minutes; the streets, kiln and skyway changed).
 
 ## 5. Records
 
-- [ ] 5.1 After stills from the before places; the rain video; the heaviest view's clustered
-  elements; whether screen-space reflections show the neon in a puddle.
-- [ ] 5.2 A validation record; the design page's F20; archive.
+- [x] 5.1 After stills from the before places; the rain video (`rain_on_the_gutters.mp4`); the screen-
+  space reflections show the neon in a puddle. Not done: the heaviest view's clustered elements
+  (lavapipe has no GPU to count them on usefully), and a readable still of a gully grate.
+- [x] 5.2 A validation record; the design page's F20; archive.

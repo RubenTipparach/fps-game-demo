@@ -134,7 +134,7 @@ func _undercity_scene(extras: Dictionary) -> String:
 			# (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3)
 			return "res://scenes/undercity/car_shadow.tscn"
 		"gully":
-			# a kerb gully's grate over its puddle (openspec/changes/street-puddles, design section 3.2)
+			# a kerb gully's grate over its puddle (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2)
 			return "res://scenes/undercity/gully.tscn"
 	return UNDERCITY.get(kind, "")
 

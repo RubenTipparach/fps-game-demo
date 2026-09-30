@@ -26,7 +26,7 @@ namespace Brushfire;
 ///                    test only until combat lands) | {"look": [yaw, pitch]} (turn without moving)
 ///         {"face": [x,y,z]} (look at a point) | {"walk_to": [x,z], "within": m, "max": frames} (steer there, forward held)
 ///         {"puddles": false} (the ground without the level's puddles: the ground shader against the material it
-///                    replaced, openspec/changes/street-puddles, design section 3.8; true: the level's again)
+///                    replaced, openspec/changes/archive/2026-09-30-street-puddles, design section 3.8; true: the level's again)
 ///         {"hide": "node"} | {"show": "node"} (a node of the running scene, by name) | {"camera": [x,y,z], "look_at": [x,y,z]}
 ///                    (a free camera; {"camera": false}: the player's again): openspec/changes/archive/2026-09-30-vehicle-fixes, design
 ///                    section 2.3, the ground under a parked car seen from above with the car hidden

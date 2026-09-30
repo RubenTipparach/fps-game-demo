@@ -318,7 +318,7 @@ def car_shadow():
 
 
 def gully():
-    """A kerb gully's cast-iron grate (openspec/changes/street-puddles, design section 3.2), over the
+    """A kerb gully's cast-iron grate (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2), over the
     puddle round it: 0.45 m along the kerb and 0.25 m across it, its -Z into the road."""
     decal("gully", "Gully", "gully", (0.45, 0.2, 0.25), maps=("albedo", "normal", "orm"), albedo_mix=1.0)
 

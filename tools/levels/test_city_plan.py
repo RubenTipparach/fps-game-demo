@@ -219,7 +219,7 @@ class DoorsAreFramedShownAndReachable(unittest.TestCase):
 
 
 class PuddlesLieWhereWaterGathers(unittest.TestCase):
-    """openspec/changes/street-puddles: "Puddles lie where water gathers". The hub's puddles pass
+    """openspec/changes/archive/2026-09-30-street-puddles: "Puddles lie where water gathers". The hub's puddles pass
     the check, a puddle forced into the wrong place is refused by name, and placing them moves
     nothing else in the level."""
 

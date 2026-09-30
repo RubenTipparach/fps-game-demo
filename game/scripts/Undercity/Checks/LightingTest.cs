@@ -8,7 +8,7 @@
 // are dry under a roof and wet in the rain": Tank behind the Anchor's bar starts dry and Dace at the
 // checkpoint gate soaked, every mesh of their bodies carries that value, their skin is drawn by the
 // skin shader, and a soaked body under a roof dries at the data's rate. And that the level hands
-// its puddle mask to the ground's shader (openspec/changes/street-puddles, design section 3.7): the
+// its puddle mask to the ground's shader (openspec/changes/archive/2026-09-30-street-puddles, design section 3.7): the
 // globals hold the level data's mask, rect and decode numbers once the hub has loaded, and the
 // street's asphalt and paving are drawn by the ground shader. Prints PASS or FAIL per check and
 // quits with 1 on any failure.
