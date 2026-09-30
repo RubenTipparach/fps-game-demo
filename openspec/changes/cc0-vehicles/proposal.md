@@ -28,13 +28,18 @@ Rendered on a wet street at night under sodium lamps and neon, beside our genera
 1980s vehicles with their own grilles, lights and trim painted in; Quaternius's cars are clean
 modern cars in pastel colours; the rest read as toys, like Kenney's.
 
+**The owner's choice**, 2026-09-30, in chat: "yea psx cars are nice, I'd want a consistent art
+style". Every vehicle in the hub comes in the PSX look: GGBotNet's pack, and nothing beside it in
+another style. So the UAZ-452 and our generated vehicles leave the hub, and the pack's own textures
+stay (they are the look; survey O5 and O6 recorded from this answer).
+
 ## What Changes
 
-Proposed, pending survey O5 and O6:
-
-- **The hub's cars come from CC0 packs:** GGBotNet's PSX Style Cars for the sedans, the wagon, the
-  hatchback and the taxi, Mehozavr's UAZ-452 for the van, and our generated box trucks kept, with
-  their liveries (O5). Kenney is not used.
+- **Every vehicle from PSX Style Cars.** Sedans (Car 2, Car 5), a wagon (Car 1), a hatchback (Car 3),
+  a minivan (Car 4), the taxi (Car 5) and box vans (Car 8), with the pack's colour variants
+  (design section 3). The police car stays out (the hub's law is MerSec, not police), the 1930s car
+  stays out, and the burnt-out wreck (Car 6) is kept for the Yard. Kenney, the UAZ-452 and our
+  generated vehicles aren't used. The depot's truck spots: survey O7.
 - **Pinned like the NPC packs.** `tools/deps/vehicle_packs.json` lists each pack's URL, page,
   author, licence and SHA-256; a fetch script downloads them into a cache outside the repository
   and refuses a pack whose hash differs (as `fetch_character_tools.py` does).
@@ -44,10 +49,12 @@ Proposed, pending survey O5 and O6:
   within the triangle budget, and a provenance note beside it. The table (`vehicles.json`) names
   each variant's source; the plan, the placement, the static meshes and the checks of
   `vehicle-fixes` stay as they are.
-- **Their own textures, or ours (O6).** The PSX cars' detail is in their 128 px textures; CLAUDE.md
-  6.4 says textures come from Material Maker at our texel density. Keeping them needs an exception
-  listed in CLAUDE.md 13; the other way paints them with our materials and loses the painted
-  detail.
+- **Their own textures, point-sampled.** The PSX cars' detail is in their 128 px textures;
+  CLAUDE.md 6.4 says textures come from Material Maker at our texel density, so the exception is
+  written into CLAUDE.md 13: "the CC0 PSX vehicles keep their own textures, point-sampled".
+- **Our vehicle generator retires.** With no generated vehicle left in the hub, the vehicle builders,
+  their materials and textures and their ten glbs leave the prop kit; `vehicles.json` keeps its
+  schema for pack variants.
 
 ## Capabilities
 
@@ -60,5 +67,6 @@ Proposed, pending survey O5 and O6:
 - `tools/deps/vehicle_packs.json` and a fetch script; a conversion script in `tools/blender/`.
 - `tools/blender/vehicles.json` and `vehicle_data.py`: a variant's source; `build_undercity_props.py`
   keeps building the trucks.
-- CLAUDE.md 13, if O6 keeps the packs' textures.
+- CLAUDE.md 13: the exception for the PSX vehicles' textures.
+- `build_undercity_props.py`: the vehicle builders removed, with their materials, textures and glbs.
 - The models, the contact sheet, the hub rebuild and bake (with `vehicle-fixes`).

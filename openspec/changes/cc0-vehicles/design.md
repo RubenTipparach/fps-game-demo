@@ -50,17 +50,41 @@ What the night render shows:
 - **mehrasaur's trucks** are untextured shapes; our generated box trucks, with their liveries, do
   as well.
 
-## 3. The recommendation (survey O5)
+## 3. The owner's choice: the PSX pack, one style (2026-09-30)
 
-| Hub type | Source | Why |
-|---|---|---|
-| Sedans, wagon, hatchback | PSX Style Cars, their colour variants | the look, at a quarter of the triangles |
-| Taxi | PSX Style Cars, Car5_Taxi | a yellow cab with its roof sign |
-| Van | UAZ-452 (and PSX Car8's box van) | worn, with a wreck for the Yard |
-| Box trucks | ours, generated, with their liveries | no CC0 truck is better; the liveries are the hub's own firms |
+"yea psx cars are nice, I'd want a consistent art style". Every vehicle comes from GGBotNet's PSX
+Style Cars and nothing in another style stands beside them. `psx_pack_night.png` renders the whole
+pack at night:
 
-Kenney is not used anywhere. Quaternius's cars stay a documented option (for the towers and malls
-later, where clean modern cars fit).
+| Pack body | Is | Colour variants | Triangles | In the hub |
+|---|---|---|---|---|
+| Car 1 | a wagon | default, blue, grey, red | 438 | yes |
+| Car 2 | a sedan | default, black, red | 312 | yes |
+| Car 3 | a hatchback | default, red, yellow | 448 | yes |
+| Car 4 | a minivan | default, grey, light grey, light orange | 476 | yes, a car spot's van |
+| Car 5 | a sedan | default, green, grey | 454 | yes |
+| Car 5 taxi | the taxi | | 440 | yes |
+| Car 5 police | a police car | LA, default | 472 | no: the hub's law is MerSec, a private force (hub-combat) |
+| Car 6 | a burnt-out wreck, no wheels | | 304 | not now: the Yard's wrecks (M2) |
+| Car 7 | a 1930s car | six | 457 | no: out of place in Meridian |
+| Car 8 | a box van | default, grey, mail, purple | 376 | yes |
+
+The textures' mean albedo is 0.035 to 0.362 (median 0.081; the brick walls are 0.078): none needs
+brightening, and every one passes `vehicle-fixes`' range check of 0.03 to 0.8.
+
+The deal is unchanged (`street-vehicles`, design section 4): a car spot deals from the cars, the
+minivan, the taxi and the box van with their colour variants.
+
+**The truck spots (survey O7).** The pack has no truck, and GGBotNet has made none (their
+OpenGameArt page: cars, a skeleton, houses, props, fonts, textures). The depot's three 8.5 m spots
+can take the pack's box vans, the layout's spots cut to a van's size (recommended: one style, no new
+art); or trucks we'd build to match, low-poly with a 128 px painted texture in the pack's palette,
+which risks a near miss of the style.
+
+**The rest of the hub (survey O8).** The PSX cars are point-sampled 128 px art; the hub's walls use
+Material Maker sets at our texel density and the people are MakeHuman bodies. "A consistent art
+style" is read here as the vehicles in one style; whether the rest of the hub moves toward the PSX
+look is a larger question, asked on its own and judged on the after stills.
 
 ## 4. How a pack enters the game
 
@@ -68,33 +92,28 @@ later, where clean modern cars fit).
   URL, page, author, licence, where the licence is stated, SHA-256 and size. A fetch script
   downloads into `~/.cache/undercity/deps/` and refuses a mismatched hash. The packs never enter the
   repository (CLAUDE.md 5.6: a reference checkout is never part of a build).
-- **Converted.** `tools/blender/build_vehicles_cc0.py` reads the pinned packs and writes each chosen
-  model to `game/models/undercity/props/vehicle_<id>.glb` by the prop kit's conventions: scaled to
-  the table's real length, front along +Y, its origin at the floor centre of its footprint, its
-  wheels placed, its materials named `veh_<pack>_<name>` with point-sampled textures, `-colonly`
-  collision boxes from its body and cabin, the triangle budget and the z-fighting check. The
-  generated trucks keep coming from `build_undercity_props.py`.
-- **One table.** `vehicles.json` gives each variant a `source`: `generated` (a type row, as today)
-  or a pack model (pack id, model file, variant texture, length). `vehicle_data.py` validates both;
-  the plan, the deal, the fit and one-ground checks, the static meshes and the placement test don't
-  change.
+- **Converted.** `tools/blender/build_vehicles_cc0.py` reads the pinned pack and writes each chosen
+  body and colour variant to `game/models/undercity/props/vehicle_<id>.glb` by the prop kit's
+  conventions: scaled to the table's real length, front along +Y, its origin at the floor centre of
+  its footprint, its wheels placed, its materials named `veh_psx_<name>` with point-sampled
+  textures, `-colonly` collision boxes from its body and cabin, the triangle budget (the pack's
+  304-476 are well inside 2,500) and the z-fighting check.
+- **One table.** `vehicles.json` lists each variant's pack body, texture and real length;
+  `vehicle_data.py` validates it; the plan, the deal, the fit and one-ground checks, the static
+  meshes and the placement test don't change.
+- **The generator retires.** `vehicle()` and its materials, textures and glbs leave the prop kit,
+  and `vehicles.json` drops its generated types.
 - **Provenance.** Each converted glb records its pack, author, licence, file and SHA-256 in its
   extras, and the README's Credits list the packs; CC0 asks for no credit, the rules ask for the
   record (CLAUDE.md 5.6, borrowed code keeps its provenance).
 
-## 5. Their textures (survey O6)
+## 5. Their textures (O6, from the owner's choice)
 
-CLAUDE.md 6.4: textures come from Material Maker at the texel density in `materials.json`. The
-PSX cars' look is their painted textures, one 128 x 128 px image over a whole car, which no Material
-Maker set at our density would reproduce. Two ways:
-
-| | Keep their textures | Paint them with our materials |
-|---|---|---|
-| Look | as in the night render: painted grilles, lamps, trim | our chipped paint and texel density; the painted detail is lost, and the 300-triangle bodies look bare |
-| Rules | an exception in CLAUDE.md 13: "CC0 vehicle packs keep their own textures, point-sampled" | no exception |
-| Work | convert and pin | convert, re-UV, and model the lamps and grilles back |
-
-Recommended: keep their textures, with the exception written down.
+CLAUDE.md 6.4: textures come from Material Maker at the texel density in `materials.json`. The PSX
+cars' look is their painted textures, one 128 x 128 px image over a whole car, which no Material
+Maker set at our density would reproduce; "psx cars are nice" is their look. So they keep their own
+textures, point-sampled, and CLAUDE.md 13 lists the exception: "The CC0 PSX vehicles keep their own
+textures, point-sampled, as GGBotNet painted them."
 
 ## 6. Checks
 
@@ -109,5 +128,6 @@ Recommended: keep their textures, with the exception written down.
 
 - **Links move.** Drive folders and OpenGameArt files can change or vanish; the pinned hashes catch
   a change, and the converted glbs are committed, so the game never depends on the link.
-- **Mixed styles.** Pixel-art cars beside our Material Maker walls and generated trucks; the night
-  render suggests they sit well at street distance. Checked again on the hub's after stills.
+- **One style among the vehicles, another in the walls.** Pixel-art cars beside Material Maker
+  walls; the night renders suggest they sit well at street distance. Checked on the after stills,
+  and asked as O8.

@@ -32,7 +32,8 @@ the hub uses is open again (O1, survey O5; openspec/changes/cc0-vehicles).
 
 - [ ] 4.1 `vehicle_data.py`: paints as albedo, the 0.03-0.8 range and the tint check, and a test.
 - [ ] 4.2 The builder divides out the texture's mean; the clear coat in the material writer.
-- [ ] 4.3 The paints in `vehicles.json` re-specified (survey O4); the contact sheet again.
+- [ ] 4.3 ~~The paints re-specified~~: withdrawn, the generated cars leave the hub (cc0-vehicles);
+  the range check (4.1) applies to the PSX textures instead.
 
 ## 5. The hub
 

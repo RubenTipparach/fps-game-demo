@@ -217,3 +217,7 @@ after stills from the same places. Lavapipe: the pictures show the look, not fra
   out. Which models the hub uses, ours or CC0 packs, is `openspec/changes/cc0-vehicles` and survey
   O5. The kerb, the static meshes and the one-ground rule hold whichever it is; the paint section
   applies to the models we generate.
+- **O5, O6** (chat, 2026-09-30: "yea psx cars are nice, I'd want a consistent art style"): every
+  vehicle comes from the PSX pack with its own textures (`cc0-vehicles`). The paint re-specification
+  (section 3.2) is withdrawn with the generated cars; the range check stays and applies to every
+  vehicle texture's mean albedo, which the PSX textures pass (0.035 to 0.362).

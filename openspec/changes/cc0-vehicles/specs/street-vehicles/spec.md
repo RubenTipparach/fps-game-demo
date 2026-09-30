@@ -11,6 +11,10 @@ collision boxes, the triangle budget) and SHALL record its pack, file and hash.
 - **WHEN** a pack's download no longer matches its pinned SHA-256
 - **THEN** the fetch stops, naming the pack and both hashes
 
+#### Scenario: One style
+- **WHEN** the hub is built
+- **THEN** every parked vehicle is a model converted from the PSX Style Cars pack
+
 #### Scenario: A converted car
 - **WHEN** a PSX Style Cars sedan is converted
 - **THEN** its glb is its table length long, faces +Y, stands on its origin's floor, has its
