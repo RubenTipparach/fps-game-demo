@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://bj8sfniu5vm37"
+path="res://.godot/imported/box_van_mail.png-16a7a817176f20e0041692efa968195c.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/box_van_mail.png"
+dest_files=["res://.godot/imported/box_van_mail.png-16a7a817176f20e0041692efa968195c.ctex"]
 
 [params]
 

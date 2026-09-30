@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://0t6nwxqtnpur"
+path="res://.godot/imported/minivan_tan.png-4d292b84c7cf8146797d4aec891074c7.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/minivan_tan.png"
+dest_files=["res://.godot/imported/minivan_tan.png-4d292b84c7cf8146797d4aec891074c7.ctex"]
 
 [params]
 

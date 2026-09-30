@@ -132,7 +132,7 @@
         <tr><td><span class="chip built">Built</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, a clear approach to every entrance, and automatic sliding doors on the 18 public entrances. The hub is rebuilt and rebaked: 46 framed doors, 244 dressing doors, 15 lots cut back, 225 lights; the doors, approaches and sliding entrances are checked in the plan and in the built level.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs. The plan places them where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Decided (L1 to L3): the recommended rules and amount, and ripples as a shader effect.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
-        <tr><td><span class="chip built">Built</span></td><td>Vehicles (F21): the hub's box cars are now ten generated models, sedans, a taxi, vans and box trucks, 1,312-1,616 triangles each, dealt onto its 15 car spots by the plan. Stills: <code>docs/screenshots/street_vehicles/</code>.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Vehicles (F21): the hub's 15 parked cars are PSX Style Cars (CC0, pinned), 22 variants in their own colours, on the road beside the kerbs on one ground, and baked into the ground they stand on as static meshes of its sector. Stills: <code>docs/screenshots/vehicle_fixes/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
       </tbody></table></div>
     </div>
@@ -1359,57 +1359,47 @@
 
 <!-- ========================================================= F21 -->
 <section id="vehicles">
-  <div class="sh"><span class="key">F21</span><h2>Vehicles</h2><span class="spec">openspec/changes/archive/2026-09-30-street-vehicles</span></div>
-  <p class="intro">Owner, 2026-09-29: better car modelling. Every parked car was a box with a smaller box on top and four wheels, about 170 triangles, painted in wall materials. Now the prop kit builds ten vehicles from a table, and the plan deals one onto each of the hub's 15 car spots.</p>
-  <div class="controls"><span class="chip built">Built: ten models, placed by the plan</span><span class="chip enforced">Checked: budgets, z-fighting, the fit to each spot, the built level</span><span class="chip">Stills: docs/screenshots/street_vehicles/</span></div>
+  <div class="sh"><span class="key">F21</span><h2>Vehicles</h2><span class="spec">openspec/changes/cc0-vehicles, openspec/changes/vehicle-fixes</span></div>
+  <p class="intro">Owner, 2026-09-30: "yea psx cars are nice, I'd want a consistent art style", "cars should be static meshes so we get it nice light baking", and the cars were dark, their wheels didn't meet the ground and nothing shaded the road under them. Every parked car is now a body of GGBotNet's PSX Style Cars (CC0) in one of its own colours, parked on the road beside the kerb and baked into the ground it stands on.</p>
+  <div class="controls"><span class="chip built">Built: 22 models from the pinned pack, 15 parked</span><span class="chip enforced">Checked: the pin, budgets, flush faces, the fit and one ground, the built level and its lightmaps</span><span class="chip">Stills: docs/screenshots/cc0_vehicles/, docs/screenshots/vehicle_fixes/</span></div>
   <div class="sub">
-    <h3>The models</h3>
+    <h3>The models <small>cc0-vehicles</small></h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th>Type</th><th>Variants</th><th>Spot</th><th class="n">Triangles</th><th class="n">Budget</th></tr></thead>
+      <thead><tr><th>Body (pack file)</th><th>Colours</th><th>Length x width, m</th><th class="n">Triangles</th></tr></thead>
       <tbody>
-        <tr><td>Sedan</td><td>maroon, teal, grey, black</td><td>4.6 x 2.0 m</td><td class="n">1,360</td><td class="n">2,500</td></tr>
-        <tr><td>Taxi</td><td>cream, a chequer band from arch to arch, a lit TAXI sign</td><td>4.6 x 2.0 m</td><td class="n">1,476</td><td class="n">2,500</td></tr>
-        <tr><td>Compact van</td><td>white, olive, rust</td><td>4.6 x 2.0 m</td><td class="n">1,312</td><td class="n">2,500</td></tr>
-        <tr><td>Box truck</td><td>Kosei Cold Chain, Low Harbor Salvage (invented firms)</td><td>8.5 x 2.8 m</td><td class="n">1,616</td><td class="n">3,500</td></tr>
+        <tr><td>Wagon (Car 1)</td><td>green, blue, grey, red</td><td>4.36 x 1.81</td><td class="n">438</td></tr>
+        <tr><td>Sedan (Car 2)</td><td>navy, black, maroon</td><td>4.63 x 2.05</td><td class="n">312</td></tr>
+        <tr><td>Hatchback (Car 3)</td><td>green, red, yellow</td><td>3.98 x 1.88</td><td class="n">448</td></tr>
+        <tr><td>Minivan (Car 4)</td><td>blue, grey, silver, tan</td><td>4.46 x 2.41</td><td class="n">476</td></tr>
+        <tr><td>Full-size saloon (Car 5)</td><td>red, green, grey</td><td>5.22 x 1.97</td><td class="n">454</td></tr>
+        <tr><td>Taxi (Car 5)</td><td>the taxi</td><td>5.18 x 1.97</td><td class="n">440</td></tr>
+        <tr><td>Box van (Car 8)</td><td>white, grey, mail, purple</td><td>4.89 x 2.24</td><td class="n">376</td></tr>
       </tbody></table></div>
-    <p class="note">Each body is the prop kit's own pieces: the lower body cut at the wheel arches, a tapered cabin with glass panes standing 3-10 mm proud, 12-sided tyres with hub discs, bumpers, lenses, plates with invented codes, door seams, and collision boxes. The paint is the kit's chipped painted metal, so the wear comes with it. Parked only (M3); the Yard's wrecks come later from these vehicles (M2).</p>
+    <p class="note">The pack is pinned by SHA-256 in <code>tools/deps/vehicle_packs.json</code>, beside the NPC packs, and converted by <code>tools/blender/build_vehicles_cc0.py</code>: one scale from the pack's wheel (0.709 m a unit, a 0.65 m wheel), turned to face +Y, on the floor, collision boxes, the 2,500 budget, and the pack, author, licence and hash in each glb. Each car keeps its own 128 px texture, filtered bilinearly (O8), with a clear coat for the rain; the textures' mean albedo is 0.041-0.327, inside the 0.03-0.8 range the table checks. Left out: the police car (the hub's law is MerSec), the 1930s car, the wreck (kept for the Yard) and the snow textures. A triangle-level check found one flaw in the pack, a 1.7 mm sliver under Car 5's bumper, which the converter mends. Our generator is retired. Sheet: <code>docs/screenshots/cc0_vehicles/vehicles_sheet.png</code>.</p>
   </div>
   <div class="sub">
-    <h3>On the hub's spots, seed 7</h3>
+    <h3>Where they park, seed 7 <small>vehicle-fixes</small></h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th>Where</th><th>Spots</th><th>Dealt</th></tr></thead>
+      <thead><tr><th>Where</th><th>Spots, 5.6 x 2.6 m</th><th>Dealt</th></tr></thead>
       <tbody>
-        <tr><td>Wire Lane's kerb</td><td>4</td><td>van olive, van white, sedan teal, sedan black</td></tr>
-        <tr><td>Lantern Row, either side of Pachinko Sunrise</td><td>2</td><td>taxi, sedan grey</td></tr>
-        <tr><td>Clinic Lane, nose to tail</td><td>5</td><td>sedan maroon, van rust, taxi, sedan maroon, sedan teal</td></tr>
-        <tr><td>The depot yard</td><td>3</td><td>truck Kosei, truck salvage, truck salvage</td></tr>
-        <tr><td>The Kings' Garage bay</td><td>1</td><td>van rust</td></tr>
+        <tr><td>Lantern Row, on the road by the south kerb (x 12-46.5)</td><td>4</td><td>full-size red, wagon green, box van purple, full-size grey</td></tr>
+        <tr><td>Lantern Row, by the north kerb, either side of Pachinko Sunrise</td><td>2</td><td>sedan black, box van grey</td></tr>
+        <tr><td>Quay Road, 0.2 m off the quay's edge</td><td>5</td><td>wagon blue, sedan navy, sedan maroon, minivan grey, minivan silver</td></tr>
+        <tr><td>The depot yard (car spots now, O7)</td><td>3</td><td>wagon grey, box van white, hatchback red</td></tr>
+        <tr><td>The Kings' Garage bay</td><td>1</td><td>minivan tan</td></tr>
       </tbody></table></div>
-    <p class="note">Each spot size deals its variants like a shuffled deck from a seeded stream of its own, so every model parks somewhere before any repeats and no other draw in the hub moves. The plan refuses a model that doesn't fit its spot, read from the committed glb. Survey O1 asks whether to keep this look: the look-gate stills put ours beside Kenney's CC0 cars.</p>
+    <p class="note">One deck of the 22 variants, shuffled from the vehicles' own seeded stream: 15 spots, 15 different cars, and no other draw in the hub moves. Each spot sits 0.2 m off its kerb where the kerb comes nearest. The plan refuses a car that doesn't fit its spot or doesn't stand on one ground (a 5 x 3 grid under it within 0.01 m); that rule also moved Quay Road's spots off the quay's raised edge. The MerSec pair's beat moved to Lantern Row's north half, past the cars.</p>
   </div>
   <div class="sub">
-    <h3>Fixes proposed <small>openspec/changes/vehicle-fixes</small></h3>
+    <h3>Baked with the ground <small>vehicle-fixes</small></h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th>Owner's report, 2026-09-30</th><th>Measured</th><th>Proposed</th></tr></thead>
+      <thead><tr><th>Owner's report, 2026-09-30</th><th>Measured before</th><th>Now</th></tr></thead>
       <tbody>
-        <tr><td>The wheels don't align</td><td>5 cars straddle a kerb: 1 or 2 wheels hang 0.15 m over the road</td><td>the six Wire Lane and Lantern Row spots move onto the road; the plan refuses a spot across a kerb (O2)</td></tr>
-        <tr><td>No shadow underneath</td><td>14 cars were baked in a district sector over ground the streets sector bakes, so they shade nothing</td><td>cars become static meshes of the level (owner, 2026-09-30), built into the streets' glb and baked with the road at 0.1 m texels; finer ground or a contact shadow only if the baked shadow measures faint (O3)</td></tr>
-        <tr><td>A little dark</td><td>paint albedo 0.006-0.104 for seven paints; the brick walls are 0.078</td><td>a paint names its albedo on the car, 0.04-0.60; a range check; a clear coat for the neon (O4)</td></tr>
+        <tr><td>The wheels don't align</td><td>5 cars straddled a kerb, 1 or 2 wheels 0.15 m over the road</td><td>every car on one ground, checked by the plan</td></tr>
+        <tr><td>No shadow underneath</td><td>14 cars were baked in a district sector over ground the streets sector bakes, so they shaded nothing</td><td>each car is a static mesh of the sector that owns its ground, baked with it at 0.1 m texels; the shadow under each is measured from above on the after stills (design section 2.3)</td></tr>
+        <tr><td>A little dark</td><td>paint albedo 0.006-0.104 for seven paints; the brick walls are 0.078</td><td>the PSX textures, 0.041-0.327; a clear coat</td></tr>
       </tbody></table></div>
-    <p class="note"><span class="chip proposed">Proposed · decided (O2 to O4)</span> Measured on the built hub at seed 7; the before stills are in <code>docs/screenshots/vehicle_fixes/</code>.</p>
-  </div>
-  <div class="sub">
-    <h3>Which cars <small>openspec/changes/cc0-vehicles</small></h3>
-    <div class="scroll"><table class="tbl">
-      <thead><tr><th>PSX Style Cars (GGBotNet, CC0)</th><th>Colour variants</th><th class="n">Triangles</th><th>In the hub</th></tr></thead>
-      <tbody>
-        <tr><td>Sedans (Car 2, Car 5)</td><td>6</td><td class="n">312, 454</td><td>yes</td></tr>
-        <tr><td>Wagon, hatchback, minivan (Car 1, 3, 4)</td><td>11</td><td class="n">438-476</td><td>yes</td></tr>
-        <tr><td>Taxi (Car 5)</td><td>1</td><td class="n">440</td><td>yes</td></tr>
-        <tr><td>Box van (Car 8)</td><td>4, mail among them</td><td class="n">376</td><td>yes; the depot's spots too if O7 says so</td></tr>
-        <tr><td>Police car, 1930s car, burnt-out wreck</td><td></td><td class="n">304-472</td><td>no; the wreck kept for the Yard</td></tr>
-      </tbody></table></div>
-    <p class="note"><span class="chip proposed">Proposed · decided (O5, O6), asked (O7, O8)</span> The owner, 2026-09-30: "yea psx cars are nice, I'd want a consistent art style". Every vehicle from the PSX pack, with its own point-sampled textures (albedo 0.035-0.36, median 0.081, about the brick's 0.078); Kenney, the UAZ-452 and our generated vehicles aren't used. Quaternius only failed through poly.pizza, which sits behind Cloudflare's bot challenge. The pack is pinned by SHA-256 like the NPC packs and converted to our conventions. Renders: <code>docs/screenshots/cc0_vehicles/psx_pack_night.png</code>, <code>cc0_gate_night.png</code>.</p>
+    <p class="note">The placement test finds each car's static mesh in the built hub where the plan put it, with its static body, on its own sector's ground by a ray, and in that sector's lightmap. Before and after stills: <code>docs/screenshots/vehicle_fixes/</code>.</p>
   </div>
 </section>
 

@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://cjle7ijnwohhs"
+path="res://.godot/imported/wagon_blue.png-88061c79b75e2bc83673f59a7ca1a599.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/wagon_blue.png"
+dest_files=["res://.godot/imported/wagon_blue.png-88061c79b75e2bc83673f59a7ca1a599.ctex"]
 
 [params]
 

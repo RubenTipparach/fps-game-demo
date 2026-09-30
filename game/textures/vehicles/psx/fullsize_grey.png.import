@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://dxj6uf5st2ytk"
+path="res://.godot/imported/fullsize_grey.png-1dac3badd158d0bc72307b32b898c25f.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/fullsize_grey.png"
+dest_files=["res://.godot/imported/fullsize_grey.png-1dac3badd158d0bc72307b32b898c25f.ctex"]
 
 [params]
 

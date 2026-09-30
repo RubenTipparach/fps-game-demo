@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://bi3blpx248beq"
+path="res://.godot/imported/hatchback_green.png-22accb7624ca12fac657ba80c881b2fa.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/hatchback_green.png"
+dest_files=["res://.godot/imported/hatchback_green.png-22accb7624ca12fac657ba80c881b2fa.ctex"]
 
 [params]
 

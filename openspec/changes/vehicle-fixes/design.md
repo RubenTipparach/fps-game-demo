@@ -154,6 +154,18 @@ in this order, staying with baked light as the owner asked:
 
 Survey O3 asks whether to add the contact shadow regardless.
 
+**The instrument (written before it was built).** The player's eye can't see the ground under a
+car: the body covers it. So two AutoTest steps, `{"hide": "<node>"}` and `{"show": "<node>"}` (a
+node of the running scene by name) and `{"camera": [x, y, z], "look_at": [x, y, z]}` (a free
+camera; `{"camera": false}` returns to the player's), look straight down on each outdoor car from
+7 m, once with the car and once without it. The ground's lightmap holds the car's shadow either
+way, because the bake saw the car. `tools/measure/car_shadow.py` finds the car's silhouette as the
+pixels the two stills disagree on, takes the metre from the silhouette's long side and the model's
+length (`vehicle_data.model_bounds`), and prints the hidden still's mean linear brightness inside
+the silhouette shrunk by a quarter of its width (the ground between the wheels) over the mean in a
+band 1 m wide round it, 0.3 m out. Under 0.6 is enough shadow. The instrument changes nothing in
+the game: the steps only run from a script.
+
 ## 3. The paint
 
 ### 3.1 Measured

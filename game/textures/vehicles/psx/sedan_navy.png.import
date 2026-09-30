@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://bix3iljxwsnsf"
+path="res://.godot/imported/sedan_navy.png-7fc57c76817609b519df24d909cff2ad.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/sedan_navy.png"
+dest_files=["res://.godot/imported/sedan_navy.png-7fc57c76817609b519df24d909cff2ad.ctex"]
 
 [params]
 

@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://cyqgftot6hen1"
+path="res://.godot/imported/taxi.png-570e87e8408222e4605b35331d98ac26.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/taxi.png"
+dest_files=["res://.godot/imported/taxi.png-570e87e8408222e4605b35331d98ac26.ctex"]
 
 [params]
 

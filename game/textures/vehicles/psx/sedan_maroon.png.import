@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://dunchvray7il3"
+path="res://.godot/imported/sedan_maroon.png-dbfb78647f6a218ab7766821241d51fe.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/sedan_maroon.png"
+dest_files=["res://.godot/imported/sedan_maroon.png-dbfb78647f6a218ab7766821241d51fe.ctex"]
 
 [params]
 

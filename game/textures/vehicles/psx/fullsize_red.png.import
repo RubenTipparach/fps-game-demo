@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://cx1grik5l1kof"
+path="res://.godot/imported/fullsize_red.png-40207711248d29c328a00156ff70d8e8.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/fullsize_red.png"
+dest_files=["res://.godot/imported/fullsize_red.png-40207711248d29c328a00156ff70d8e8.ctex"]
 
 [params]
 

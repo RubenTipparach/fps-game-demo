@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://cgm5xlhoi0nfn"
+path="res://.godot/imported/wagon_grey.png-96566e9e1d8e4b05ef3aafb25b63dc75.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/vehicles/psx/wagon_grey.png"
+dest_files=["res://.godot/imported/wagon_grey.png-96566e9e1d8e4b05ef3aafb25b63dc75.ctex"]
 
 [params]
 
