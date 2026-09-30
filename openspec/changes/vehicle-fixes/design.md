@@ -166,6 +166,27 @@ the silhouette shrunk by a quarter of its width (the ground between the wheels) 
 band 1 m wide round it, 0.3 m out. Under 0.6 is enough shadow. The instrument changes nothing in
 the game: the steps only run from a script.
 
+**Measured (2026-09-30, after the bake).** Over the 14 outdoor cars, the ground under a hidden car
+reads 0.84 to 2.70 of the ground beside it in the finished picture: no shadow shows. Godot's
+lighting-only view (albedo white, no reflections), over four of them, reads 0.56 (Lantern Row's
+green wagon), 0.72, 0.70 and 0.71: the bake does hold a soft shadow under each car, about 11 x 5
+of the street's 0.4 m texels. What hides it is the wet road, drawn mostly by its reflections of
+the lamps and the neon over an albedo of 0.031; a bake darkens light, never a reflection. Faint by
+the 60% rule, so a remedy. Finer ground texels (remedy 1) would sharpen the baked shadow without
+showing it through the reflections, so this goes to remedy 2, the contact shadow (survey O3: "the
+contact shadow only if the shadow measures faint").
+
+**The contact shadow, for a wet street.** Under a car parked in the rain the road stays dry: no
+film of water to mirror the lamps. So the contact shadow is a decal (`scenes/undercity/car_shadow.tscn`)
+the size of the car's footprint plus 0.3 m: its albedo darkens the ground under the car toward
+black, and its ORM sets roughness 1, dry and matte, which puts out the reflections there. Both
+fade to nothing over the outer third, so the edge is soft. Its textures are generated with the
+city's other decals (`tools/fx/generate_city_materials.py`, `car_shadow`). The decal is the car's
+`ENT_car` entity: the level importer instances it where it made a marker, sized by the entity's
+`size` extra ("width,length", metres), which the plan writes from the committed model's footprint.
+It reaches 0.3 m above and below the ground, so it marks the tyres' feet but not the body. The
+target is the same measure on the finished picture: under 0.6.
+
 ## 3. The paint
 
 ### 3.1 Measured

@@ -163,6 +163,7 @@ PROP_EXTRAS = {"visibility_range_end_m": 70.0}
 # A parked car bakes at a quarter of the level's texel, 0.1 m (openspec/changes/vehicle-fixes, design section 2.2).
 CAR_EXTRAS = {"visibility_range_end_m": 70.0, "lightmap_texel_scale": 4.0}
 GROUND_AGREE_M = 0.01    # a parked car's ground: every point under it within this of the others
+CAR_SHADOW_MARGIN_M = 0.3   # a car's contact shadow is its footprint this much longer and wider (vehicle-fixes, 2.3)
 # the water's surface refracts and reflects what is around it (shaders/water.gdshader): it takes no
 # baked light and casts no shadow
 WATER_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
@@ -1982,7 +1983,9 @@ class City:
         and the tests. Its front runs along the spot's long side, toward the spot's angle (the layout
         says which way a row faces). The variants are dealt like a deck, shuffled from the vehicles'
         own stream, so each shows once before any repeats and no other draw in the level moves.
-        `sector` is the building's for a spot indoors (the garage's bay), else the streets'."""
+        `sector` is the building's for a spot indoors (the garage's bay), else the streets'. The
+        ENT_car becomes the car's contact shadow in the game, a decal sized by its "size" extra:
+        the model's footprint, CAR_SHADOW_MARGIN_M longer and wider (design section 2.3)."""
         cx, cy, sw, sh, ang = fx[1:6]
         if not self.vehicle_deck:
             self.vehicle_deck = sorted(v["id"] for v in VEHICLES["variants"])
@@ -1996,8 +1999,10 @@ class City:
         v = self.vehicles[-1]
         self.P.model(sector, f"car_{n:03d}", f"models/undercity/props/vehicle_{model}.glb", cx, cy, z, heading,
                      CAR_EXTRAS)
+        (x0, y0, _), (x1, y1, _) = vehicle_data.model_bounds(model)
         self.P.entity(sector, v["name"], cx, cy, z, heading,
-                      {"kind": "car", "id": v["name"][len("ENT_car_"):], "model": model})
+                      {"kind": "car", "id": v["name"][len("ENT_car_"):], "model": model,
+                       "size": f"{x1 - x0 + CAR_SHADOW_MARGIN_M:.2f},{y1 - y0 + CAR_SHADOW_MARGIN_M:.2f}"})
 
     @staticmethod
     def footprint(v, models=vehicle_data.MODELS):

@@ -172,12 +172,16 @@ public partial class PlacementTest : Node3D
     /// <summary>A parked car's lightmap texel over the level's (city_plan.py, CAR_EXTRAS): 0.1 m against 0.4 m.</summary>
     private const float CarTexelScale = 4f;
 
+    /// <summary>How much longer and wider a car's contact shadow is than its footprint, metres (city_plan.py, CAR_SHADOW_MARGIN_M).</summary>
+    private const float CarShadowMarginM = 0.3f;
+
     // Every parked vehicle in the level data is a static mesh of the level, car_<id>, built into the
     // sector that owns the ground under it (openspec/changes/vehicle-fixes, design section 2.2): where
     // and as the plan put it, beside its ENT_car marker, with its static body, the ground a ray finds
     // under it belonging to its own sector, and a user of that sector's baked lightmap, at the car's
-    // texel scale. The lightmap is read from the level's committed .lmbake, so the check holds after
-    // a bake, not before one.
+    // texel scale; its ENT_car is its contact shadow, a decal under it the size of the mesh's own
+    // footprint plus the margin (design section 2.3). The lightmap is read from the level's committed
+    // .lmbake, so the check holds after a bake, not before one.
     private void CheckParkedCars()
     {
         var level = LevelDir.TrimEnd('/').Split('/')[^1];
@@ -215,6 +219,10 @@ public partial class PlacementTest : Node3D
             var material = mesh.GetActiveMaterial(0)?.ResourceName ?? "";
             var ground = body is null ? null : GroundSector(at, body.GetRid());
             var users = sector is null ? null : LightmapUsers(level, sector, lightmaps);
+            var box = mesh.GetAabb();
+            var shadow = marker as Decal;
+            var shadowOff = shadow is null ? float.PositiveInfinity
+                : Mathf.Max(Mathf.Abs(shadow.Size.X - box.Size.X - CarShadowMarginM), Mathf.Abs(shadow.Size.Z - box.Size.Z - CarShadowMarginM));
             if (marker.GetMeta("model", "").AsString() != car.Model || material != $"veh_psx_{car.Model}")
             {
                 Fail($"{who}: the built level has model '{marker.GetMeta("model", "")}', material '{material}'");
@@ -243,10 +251,15 @@ public partial class PlacementTest : Node3D
             {
                 Fail($"{who}: not a user of the {sector} sector's lightmap ({level}_{sector}.lmbake)");
             }
+            else if (shadowOff > 0.02f)
+            {
+                Fail($"{who}: its contact shadow is {(shadow is null ? "missing" : $"{shadow.Size.X:0.00} x {shadow.Size.Z:0.00} m")}, "
+                     + $"not its {box.Size.X:0.00} x {box.Size.Z:0.00} m footprint plus {CarShadowMarginM} m");
+            }
             else
             {
                 GD.Print($"PASS [placement_test] {who} at ({at.X:0.#}, {at.Z:0.#}) facing {heading:0.#}: a static mesh of the "
-                         + $"{sector} sector on its ground, with its body, in its lightmap");
+                         + $"{sector} sector on its ground, with its body, in its lightmap, over its contact shadow");
             }
         }
     }

@@ -5,12 +5,19 @@ The plan SHALL refuse a parked car outdoors whose footprint doesn't lie on one g
 height over a 5 x 3 grid across the footprint, its corners among the points, SHALL agree within
 0.01 m. A car indoors stands on its room's one floor. A parked car SHALL be a static mesh of the
 level, built into the glb of the sector that owns the ground under it at the plan's place and
-heading, with its collision, beside an `ENT_car` marker, and SHALL be a user of that sector's
-baked lightmap at a quarter of the level's texel.
+heading, with its collision, and SHALL be a user of that sector's baked lightmap at a quarter of
+the level's texel. Its `ENT_car` entity SHALL be its contact shadow: a decal centred under it,
+0.3 m longer and wider than the committed model's footprint, that darkens the ground and makes it
+matte, as a road stays dry under a car parked in the rain.
 
 #### Scenario: Across a kerb
 - **WHEN** a car spot lies partly on a 0.15 m pavement and partly on the road
 - **THEN** the plan is refused, naming the car, its place and the two ground heights
+
+#### Scenario: A contact shadow
+- **WHEN** the hub is built
+- **THEN** each parked car's entity is a decal centred under it, the size of its model's footprint
+  plus 0.3 m
 
 #### Scenario: A static mesh baked with its ground
 - **WHEN** the hub is built and baked

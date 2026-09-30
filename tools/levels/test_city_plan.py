@@ -334,7 +334,10 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
             self.assertEqual(f"models/undercity/props/vehicle_{v['model']}.glb", m["path"])
             self.assertEqual(CP.CAR_EXTRAS, m["extras"], "bakes at 0.1 m, a quarter of the level's texel")
             ent = next(e for s in plan["sectors"] for e in s["entities"] if e["name"] == v["name"])
-            self.assertEqual((m["pos"], m["heading"]), (ent["pos"], ent["heading"]), "the marker stands on its car")
+            self.assertEqual((m["pos"], m["heading"]), (ent["pos"], ent["heading"]), "the contact shadow lies under its car")
+            (x0, y0, _), (x1, y1, _) = CP.vehicle_data.model_bounds(v["model"])
+            self.assertEqual(f"{x1 - x0 + 0.3:.2f},{y1 - y0 + 0.3:.2f}", ent["extras"]["size"],
+                             f"{v['name']}: the shadow is the committed model's footprint, 0.3 m longer and wider")
         self.assertEqual(sorted(models), sorted(f"car_{v['name'][len('ENT_car_'):]}" for v in self.city.vehicles),
                          "no model in the plan but the cars")
 
