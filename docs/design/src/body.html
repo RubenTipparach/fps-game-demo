@@ -1396,7 +1396,19 @@
         <tr><td>No shadow underneath</td><td>14 cars were baked in a district sector over ground the streets sector bakes, so they shade nothing</td><td>cars become static meshes of the level (owner, 2026-09-30), built into the streets' glb and baked with the road at 0.1 m texels; finer ground or a contact shadow only if the baked shadow measures faint (O3)</td></tr>
         <tr><td>A little dark</td><td>paint albedo 0.006-0.104 for seven paints; the brick walls are 0.078</td><td>a paint names its albedo on the car, 0.04-0.60; a range check; a clear coat for the neon (O4)</td></tr>
       </tbody></table></div>
-    <p class="note"><span class="chip proposed">Proposed</span> Measured on the built hub at seed 7; the before stills are in <code>docs/screenshots/vehicle_fixes/</code>.</p>
+    <p class="note"><span class="chip proposed">Proposed · decided (O2 to O4)</span> Measured on the built hub at seed 7; the before stills are in <code>docs/screenshots/vehicle_fixes/</code>.</p>
+  </div>
+  <div class="sub">
+    <h3>Which cars <small>openspec/changes/cc0-vehicles</small></h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>CC0 pack</th><th>What it has</th><th class="n">Triangles</th><th>Reads at night as</th></tr></thead>
+      <tbody>
+        <tr><td>GGBotNet, PSX Style Cars</td><td>sedans, a hatchback, a wagon, a taxi, a police car, box and mail vans; 128 px painted textures</td><td class="n">304-476</td><td>worn 1980s cars (recommended)</td></tr>
+        <tr><td>Mehozavr, UAZ-452</td><td>a utility van and its wreck</td><td class="n">1,014</td><td>a worn van (recommended)</td></tr>
+        <tr><td>Quaternius, Cars</td><td>7 cars: sedans, sports cars, an SUV, a taxi, a police car</td><td class="n">2,954-3,294</td><td>clean, modern, pastel</td></tr>
+        <tr><td>mehrasaur, 3D Vehicles Pack</td><td>trucks, a bus, jeeps, a pickup; untextured</td><td class="n">about 2,700</td><td>bare shapes</td></tr>
+      </tbody></table></div>
+    <p class="note"><span class="chip proposed">Proposed · asked (O5, O6)</span> Kenney is out (O1). Quaternius only failed through poly.pizza, which sits behind Cloudflare's bot challenge; quaternius.com's own downloads work. The packs would be pinned by SHA-256 like the NPC packs and converted to our conventions; our generated box trucks stay. Render: <code>docs/screenshots/cc0_vehicles/cc0_gate_night.png</code>.</p>
   </div>
 </section>
 
@@ -1435,7 +1447,7 @@
 <section id="weapon-bob">
   <div class="sh"><span class="key">F23</span><h2>The gun while walking</h2><span class="spec">openspec/changes/weapon-bob</span></div>
   <p class="intro">Owner, 2026-09-29: "Huh gun is shaking up and down violently. That shouldn't happen. Gun should maybe have a low frequency sine wave while walking". Measured on a walk and a sprint down Lantern Row with the Kestrel drawn: the runner moves at Brushfire's arena pace with a person's 1.15 m step, so the gait takes 6.5 footsteps a second, and the view bobs on <code>|sin|</code>, which turns sharply at every footstep. The gun hangs from the view.</p>
-  <div class="controls"><span class="chip proposed">Proposed · asked (N1 to N3)</span><span class="chip">Measured: AutoTest trace, seed 7, 60 fps</span></div>
+  <div class="controls"><span class="chip proposed">Proposed · decided (N1 to N3)</span><span class="chip">Measured: AutoTest trace, seed 7, 60 fps</span></div>
   <div class="sub">
     <h3>Measured and proposed</h3>
     <div class="scroll"><table class="tbl">
@@ -1443,11 +1455,11 @@
       <tbody>
         <tr><td>Ground speed</td><td class="n">7.5 m/s</td><td class="n">10.5 m/s</td><td class="n">7.5 m/s</td><td class="n">10.5 m/s</td></tr>
         <tr><td>Footsteps a second</td><td class="n">6.5</td><td class="n">9.1</td><td class="n">2.0</td><td class="n">2.6</td></tr>
-        <tr><td>The view's bob</td><td class="n">4.9 cm at 6.5 Hz</td><td class="n">6.5 cm at 8.7 Hz</td><td class="n">1 cm at 2.0 Hz</td><td class="n">1 cm at 2.6 Hz</td></tr>
+        <tr><td>The view's bob</td><td class="n">4.9 cm at 6.5 Hz</td><td class="n">6.5 cm at 8.7 Hz</td><td class="n">none (N2)</td><td class="n">none (N2)</td></tr>
         <tr><td>Its sharpest turn</td><td class="n">11.5 g</td><td class="n">21.6 g</td><td class="n">0.08 g</td><td class="n">0.14 g</td></tr>
         <tr><td>The gun's sway</td><td class="n">4.6 mm up and down, 4.1&#176; roll, at 6.5 Hz</td><td class="n">5.7 mm, 5.4&#176;</td><td class="n">6 mm up and down at 2.0 Hz, 10 mm side to side at 1.0 Hz, 1.5&#176; roll</td><td class="n">1.5 times that, at 2.6 and 1.3 Hz</td></tr>
       </tbody></table></div>
-    <p class="note">One gait drives the view, the gun and the footstep sounds, with its numbers in <code>game/data/view_motion.json</code>. A check measures the motion the way the trace did: footsteps a second, the sway's frequency, the view's peak acceleration, and no sharp turns.</p>
+    <p class="note">One gait drives the gun and the footstep sounds, with its numbers in <code>game/data/view_motion.json</code>. Decided: N1 "very slightly, sine steps", so the gun sways at half the first proposal; N2 "no view bobing while moving", so the view holds still and the Options head-bob row goes; N3, the pace stays for now. A check measures the motion the way the trace did: footsteps a second, the sway's frequency, the view's offset, and no sharp turns.</p>
   </div>
 </section>
 
@@ -1457,7 +1469,7 @@
   <p class="intro">Questions for the owner live in one place: the owner survey, a doc with options, a recommendation and an answer column for each. This page doesn't repeat them, so there's only one copy to answer.</p>
   <div class="q">
     <h4><a href="https://claude.ai/artifact/Bp34gDXJnZW3EP1uHVLM6J">Undercity: owner survey</a></h4>
-    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag">J1 faces (answered)</span><span class="tag">K1 to K3 doorways (answered)</span><span class="tag">L1 to L3 puddles (answered)</span><span class="tag y">N1 to N3 the gun while walking</span></div>
+    <div class="opts"><span class="tag y">A1 hostages</span><span class="tag">B1 to B4 systems</span><span class="tag">C1, C2 art and levels</span><span class="tag mock" style="color:var(--pink)">D1 to D7 mockups</span><span class="tag y">G1 to G3 next slice</span><span class="tag">H1 to H3 NPC bodies (conditional)</span><span class="tag">I1 to I15 playtest 2 (answered)</span><span class="tag mock" style="color:var(--pink)">D8, D9 mockups (approved)</span><span class="tag">J1 faces (answered)</span><span class="tag">K1 to K3 doorways (answered)</span><span class="tag">L1 to L3 puddles (answered)</span><span class="tag">N1 to N3 the gun while walking (answered)</span><span class="tag">O1 to O4 the cars (answered)</span><span class="tag y">O5, O6 which cars</span></div>
     <p class="rec"><b>How</b>Fill the answer column or comment on a row. A blank counts as accepting the recommendation unless you say otherwise.</p>
   </div>
 </section>

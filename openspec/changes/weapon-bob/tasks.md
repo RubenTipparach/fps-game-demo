@@ -1,7 +1,7 @@
 # Tasks
 
-The owner reported it on 2026-09-29. Survey N1 to N3 are open; the recommendations are marked
-provisional.
+The owner reported it on 2026-09-29 and answered survey N1 to N3 on 2026-09-30: a very slight
+sway on sine steps, no view bob, the pace kept for now (design, Owner decisions).
 
 ## 1. Before
 
@@ -13,8 +13,9 @@ provisional.
 
 - [ ] 2.1 `game/data/view_motion.json` and its schema in `Undercity.Core`, validated, with a
   core test.
-- [ ] 2.2 `Gait.cs`: the capped cadence, the view's and the gun's offsets; `UpdateCamera` and
-  `AnimateViewmodel` call it, and the footsteps follow its phase.
+- [ ] 2.2 `Gait.cs`: the capped cadence and the gun's offsets; `AnimateViewmodel` calls it, the
+  footsteps follow its phase, and `UpdateCamera` no longer bobs the view.
+- [ ] 2.3 The Options screen's head-bob row and its setting removed (N2).
 
 ## 3. Checks and records
 

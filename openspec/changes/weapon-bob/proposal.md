@@ -20,20 +20,24 @@ runner takes 6.5 footsteps a second, three times a sprinter's pace. The view bob
 view and adds a 4 degree roll. At 30 frames a second that is a bounce every 4-5 frames. Sprinting
 is worse: 6.5 cm at 8.7 Hz, 21.6 g.
 
+**The owner's answers** (survey, 2026-09-30): N1 "very slightly, sine steps"; N2 "no view bobing
+while moving"; N3 "recommended" (the pace stays for now).
+
 ## What Changes
 
 - **Footsteps at a person's pace.** The gait keeps following ground speed but never takes more
   than 2.0 steps a second walking or 2.6 sprinting. The footstep sounds follow it.
-- **The gun sways on slow sines:** a figure-eight, 1.0 Hz side to side and 2.0 Hz up and down at a
-  walk, a few millimetres and under a degree of roll, 1.5 times that sprinting. No corners.
-- **The view barely bobs:** 1 cm, smooth, from 4.9 cm with a corner. The Options toggle still
-  turns it off.
-- **One gait function** for the view, the gun and the footsteps, with its numbers in
+- **The gun sways very slightly on slow sines (N1):** a figure-eight, 1.0 Hz side to side and 2.0 Hz
+  up and down at a walk, 1.5 to 2.5 mm and under half a degree of roll, 1.5 times that sprinting.
+  No corners.
+- **The view doesn't bob (N2):** from 4.9 cm with a corner to none. The Options screen's head-bob
+  row goes with it.
+- **One gait function** for the gun and the footsteps, with its numbers in
   `game/data/view_motion.json`, validated by the core.
 - **Checks** measure the motion the way this proposal did: footsteps a second, the sway's
-  frequency, the view's peak acceleration, and no corners.
+  frequency, the view's offset, and no corners.
 
-Not in this change: the runner's walking and sprinting speeds (survey N3).
+Not in this change: the runner's walking and sprinting speeds (N3: kept for now).
 
 ## Capabilities
 

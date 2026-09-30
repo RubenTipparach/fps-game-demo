@@ -206,3 +206,14 @@ after stills from the same places. Lavapipe: the pictures show the look, not fra
   lightmaps at 0.1 m, and the drydock and Lantern Row bakes lose them. The bake records its time.
 - **Each car is a copy in the sector's glb.** The streets glb grows by the 14 cars' meshes; the
   vehicle glbs stay the one source, and a rebuild of the level picks up a rebuilt car.
+
+## Owner decisions (2026-09-30)
+
+- "cars should be static meshes so we get it nice light baking": section 2.2.
+- **O2, O3, O4** left blank (recommendation accepted): the six spots move onto the road beside the
+  kerb; bake first, with finer ground or a contact shadow only if the shadow measures faint; the
+  paints of section 3.2, tuned on the after stills.
+- **O1** "I never approved kenneys. why quaternius doesnt work? look for more cco cars": Kenney is
+  out. Which models the hub uses, ours or CC0 packs, is `openspec/changes/cc0-vehicles` and survey
+  O5. The kerb, the static meshes and the one-ground rule hold whichever it is; the paint section
+  applies to the models we generate.

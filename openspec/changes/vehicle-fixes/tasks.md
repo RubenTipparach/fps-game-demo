@@ -1,7 +1,10 @@
 # Tasks
 
 The owner reported on 2026-09-30: the cars are dark, their wheels don't meet the ground, and there's
-no shadow under them. Survey O2 to O4 are open.
+no shadow under them; and directed that cars be static meshes for the light baking. Survey O2 to O4
+were left blank on 2026-09-30, the recommendations accepted: on the road beside the kerb, bake first
+with the contact shadow only if the shadow measures faint, and the proposed paints. Which models
+the hub uses is open again (O1, survey O5; openspec/changes/cc0-vehicles).
 
 ## 1. Before
 
