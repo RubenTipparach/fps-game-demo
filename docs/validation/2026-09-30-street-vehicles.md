@@ -27,7 +27,7 @@ taxis and trucks, parked only. The owner, 2026-09-30: "Build them cars". This re
 | Build | `blender -b --factory-startup -P tools/blender/build_undercity.py -- hub` | the eight sectors and the skyline, 143,392 triangles (146,164 with the box cars); the 15 vehicles are instanced models, 21,208 triangles more |
 | Bake | `BRUSHFIRE_BATCH=res://levels/undercity/hub/hub.tscn:nav,lightmap` | the navmesh (4,937 polygons; 5,064 before) and all eight sectors' lightmaps in 44 minutes |
 | Placement test | `placement_test.tscn` | 705 of 705: the 690 placements of before, and all 15 parked cars where the plan put them, facing its way, with their collision |
-| Every other check | `scripts/check.sh` | CHECK_RESULT |
+| Every other check | `scripts/check.sh` | all passed on the rebuilt hub: UI 312 of 312, swimming 18 of 18, combat 23 of 23, character lighting 24 of 24, sliding entrances 10 of 10 |
 | OpenSpec | `openspec validate --all` | all valid |
 | Dash check | CLAUDE.md section 4 | clean |
 
