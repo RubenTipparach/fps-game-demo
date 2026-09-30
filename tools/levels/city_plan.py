@@ -302,6 +302,21 @@ def unit(dx, dy):
     return (dx / L, dy / L) if L > 1e-9 else (1.0, 0.0)
 
 
+# Godot's scene importer turns a node whose name carries one of these words after "-", "_" or "$"
+# into another type ("Node type customization using name suffixes"; the presets set
+# nodes/use_node_type_suffixes). Godot 4.7.2 made "ENT_vehicle_008" a VehicleBody3D named "ENT_008"
+# with the empty under it, and the level importer then freed both (openspec/changes/street-vehicles,
+# design section 4). An entity's name must not carry one.
+GODOT_TYPE_SUFFIXES = ("colonly", "convcolonly", "convcol", "col", "navmesh", "rigid", "vehicle", "wheel",
+                       "occonly", "occ", "noimp")
+
+
+def godot_type_suffix(name):
+    """The type suffix Godot's importer would read in a node name, or None."""
+    m = re.search(r"[-_$](" + "|".join(GODOT_TYPE_SUFFIXES) + r")(?=$|[-_.\d])", name.lower())
+    return m.group(0) if m else None
+
+
 def heading_of(dx, dy):
     """Compass heading (0 = north = -y, 90 = east) of a layout direction."""
     return (math.degrees(math.atan2(dx, -dy)) + 360.0) % 360.0
@@ -506,6 +521,10 @@ class Plan:
         self.zgroup(group)["details"].append(((lo[0], lo[2], lo[1]), (hi[0], hi[2], hi[1]), label))
 
     def entity(self, sector, name, x, y, z, heading=0.0, extras=None, preview=None):
+        suffix = godot_type_suffix(name)
+        if suffix:
+            raise SystemExit(f"entity {name}: Godot's importer reads '{suffix}' in a node name as a node type "
+                             f"and rebuilds the node (GODOT_TYPE_SUFFIXES); name the kind another way")
         self.sector(sector)["entities"].append({"name": name, "pos": p3(x, y, z), "heading": r4(heading),
                                                 "extras": extras or {}, "preview": preview})
 
@@ -1943,7 +1962,7 @@ class City:
 
     def vehicle(self, sector, fx, z):
         """A parked vehicle on a car spot (openspec/changes/street-vehicles, design section 4): an
-        ENT_vehicle the importer turns into the variant's model, its front along the spot's long
+        ENT_car the importer turns into the variant's model, its front along the spot's long
         side, toward the spot's angle (the layout says which way a row faces). The variants made
         for the spot's size are dealt like a deck, shuffled from a stream of that size's own, so
         each shows once before any repeats and no other draw in the level moves."""
@@ -1956,11 +1975,11 @@ class City:
         model = deck["left"].pop()
         a = math.radians(ang if sw >= sh else ang + 90.0)
         heading = heading_of(math.cos(a), math.sin(a))
-        self.vehicles.append({"name": f"ENT_vehicle_{len(self.vehicles) + 1:03d}", "model": model, "at": (cx, cy, z),
+        self.vehicles.append({"name": f"ENT_car_{len(self.vehicles) + 1:03d}", "model": model, "at": (cx, cy, z),
                               "heading": heading, "spot": fx})
         v = self.vehicles[-1]
         self.P.entity(sector, v["name"], cx, cy, z, heading,
-                      {"kind": "vehicle", "id": v["name"][len("ENT_vehicle_"):], "model": model})
+                      {"kind": "car", "id": v["name"][len("ENT_car_"):], "model": model})
 
     @staticmethod
     def vehicle_problems(v, models=vehicle_data.MODELS):

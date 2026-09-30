@@ -28,13 +28,15 @@ sedans, vans, taxis and trucks, parked only.
 
 ## 3. The hub
 
-- [x] 3.1 `City.car()` and `City.truck()` out; `ENT_vehicle` entities with their own stream;
+- [x] 3.1 `City.car()` and `City.truck()` out; `ENT_car` entities with their own stream;
   `check_vehicles` reading the committed glbs; `test_city_plan.py` refuses a model that
   doesn't fit.
 - [x] 3.2 The importer's `vehicle` kind; the import presets.
 
   Built: 15 spots dealt from a deck per spot size (design section 4); only the box cars left
   the plan. The presets are the prop kit's own (`import_presets.write`, static lightmaps).
+  The entities are `ENT_car_<n>`, not `ENT_vehicle_<n>`: Godot reads `_vehicle` as a node type
+  (design section 4).
 - [ ] 3.3 Rebuild the sectors, bake, `placement_test.tscn`.
 
 ## 4. Records

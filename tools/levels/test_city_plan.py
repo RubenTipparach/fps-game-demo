@@ -300,7 +300,7 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
         m, _ = CP.load("hub")
         self.assertEqual(sorted(car_spots(m)), sorted(tuple(v["spot"]) for v in self.city.vehicles))
         names = [e["name"] for s in self.city.P.to_json()["sectors"] for e in s["entities"]
-                 if e["name"].startswith("ENT_vehicle_")]
+                 if e["name"].startswith("ENT_car_")]
         self.assertEqual(sorted(names), sorted(v["name"] for v in self.city.vehicles))
 
     def test_a_car_spot_takes_a_car_or_van_and_a_depot_spot_a_truck(self):
@@ -334,6 +334,16 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
             tris = glb_triangles(os.path.join(CP.vehicle_data.MODELS, f"vehicle_{v['id']}.glb"))
             self.assertLessEqual(tris, CP.vehicle_data.budget(CP.VEHICLES, v["type"]), v["id"])
 
+    def test_an_entity_named_with_a_godot_type_suffix_is_refused(self):
+        # Godot 4.7.2 imported "ENT_vehicle_008" as a VehicleBody3D named "ENT_008", and the level
+        # importer freed it with the empty under it: every parked vehicle went missing
+        with self.assertRaisesRegex(SystemExit, "ENT_vehicle_008: Godot's importer reads '_vehicle'"):
+            self.city.P.entity("streets", "ENT_vehicle_008", 0.0, 0.0, 0.0)
+        for name in ("ENT_door_col", "ENT_crate-rigid", "ENT_x_navmesh_2"):
+            self.assertIsNotNone(CP.godot_type_suffix(name), name)
+        for name in ("ENT_car_008", "ENT_civ_12", "ENT_collector_1", "ENT_occupant_3", "ENT_wheelhouse"):
+            self.assertIsNone(CP.godot_type_suffix(name), f"{name} carries no suffix")
+
     def test_dealing_the_vehicles_moves_nothing_else(self):
         m, ents = CP.load("hub")
         empty = CP.City(m, ents)
@@ -342,7 +352,7 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
             empty.build()
         parked, empty = self.city.P.to_json(), empty.P.to_json()
         for s in parked["sectors"]:
-            s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_vehicle_")]
+            s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_car_")]
         del parked["stats"], empty["stats"]     # counts of what's compared, the vehicles included
         self.assertTrue(parked == empty, "the vehicles draw from their own seeded streams, so nothing else in the plan moves")
 

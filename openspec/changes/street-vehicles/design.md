@@ -158,8 +158,9 @@ text upright from outside).
 
 ## 4. In the hub
 
-- `City.car()` and `City.truck()` are removed. A car spot writes `ENT_vehicle_<n>` at the spot's
-  centre, heading along its long side, with extras `kind` "vehicle" and `model`.
+- `City.car()` and `City.truck()` are removed. A car spot writes `ENT_car_<n>` at the spot's
+  centre, heading along its long side, with extras `kind` "car" and `model` (drafted as
+  `ENT_vehicle_<n>`; see "As built" below).
 - The model is drawn per spot from a stream of its own, `f"{seed}:vehicles:{spot}"`, among the
   variants that fit the spot, so no other draw in the hub moves (the lesson of `hub-doorways`,
   design section 3.11). Expected on today's 14 spots: 6 sedans, 2 taxis, 3 vans, 3 trucks.
@@ -172,7 +173,14 @@ text upright from outside).
   toward the spot's angle, so the layout says which way a row faces. An outdoor spot still counts
   as a prop, so the props after it keep their names and every other stall its light: against the
   committed plan, only the 14 box cars and the garage's box car are gone, and nothing else moved.
-- `blender_level_import.gd` maps `kind` "vehicle" to `models/undercity/props/vehicle_<model>.glb`.
+- `blender_level_import.gd` maps `kind` "car" to `models/undercity/props/vehicle_<model>.glb`.
+
+  **As built: `ENT_car_<n>`, kind "car".** Godot's scene importer reads `_vehicle` in a node's name
+  as a node type (its name suffixes, on in every preset): Godot 4.7.2 imported `ENT_vehicle_008` as
+  a VehicleBody3D named `ENT_008` with the empty under it, and the level importer freed both, so no
+  parked vehicle reached the game and the sector's import script stopped with an error. The kind is
+  "car", the layout's own name for the spot; `Plan.entity` refuses any entity name carrying one of
+  Godot's type suffixes (`GODOT_TYPE_SUFFIXES`), and a test pins it.
   The glb carries its `-colonly` boxes, so Godot gives it a static body.
 - `import_presets.py` imports the vehicle glbs as static lightmapped props (UV2, like the prop
   kit's static props), so they bake with the level.
@@ -190,7 +198,7 @@ text upright from outside).
 | A variant too long for a 4.6 m spot is refused | `test_city_plan.py` | refused, naming spot and model |
 | A car turned across its spot is refused | `test_city_plan.py` | refused; either way round along it fits |
 | Every committed glb within its budget | `test_city_plan.py`, counting the glb's indices | all ten |
-| Dealing the vehicles moves nothing else | `test_city_plan.py`, the plan with and without them | equal but for the `ENT_vehicle` entities |
+| Dealing the vehicles moves nothing else | `test_city_plan.py`, the plan with and without them | equal but for the `ENT_car` entities |
 | People stand clear of every vehicle | `city_plan.py` standing checks and `placement_test.tscn` | clean |
 
 ## 6. Captures

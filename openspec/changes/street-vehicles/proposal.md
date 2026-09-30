@@ -37,7 +37,7 @@ lights, bumpers, arches or doors, and the paints are wall materials.
   `game/models/undercity/props/vehicle_<id>.glb` with its collision boxes. Budget: 2,500 triangles
   for a car or van, 3,500 for a truck.
 - **The hub places models, not boxes.** `City.car()` and `City.truck()` go. Each car spot writes an
-  `ENT_vehicle_<n>` entity whose `model` extra names a variant, drawn from a seeded stream of its
+  `ENT_car_<n>` entity whose `model` extra names a variant, drawn from a seeded stream of its
   own, so nothing else in the hub moves. The importer instances the model's glb. The rail wagons
   (`City.wagon()`) stay as they are.
 - **The look is checked before it's built out.** The first sedan is rendered beside a Kenney Car
@@ -62,9 +62,9 @@ Yard's wrecks (the scrap-kings-yard change retools these vehicles, per M2).
   lenses, plates) and textures (plates, the taxi sign), and the budget check.
 - `tools/blender/vehicles.json` (new) and its schema in `tools/blender/vehicle_data.py` (new, on
   `tablekit.py`, so an unknown key is an error).
-- `tools/levels/city_plan.py`: `City.car()` and `City.truck()` removed; `ENT_vehicle` entities;
+- `tools/levels/city_plan.py`: `City.car()` and `City.truck()` removed; `ENT_car` entities;
   `check_vehicles`.
-- `game/addons/brushfire_tools/blender_level_import.gd`: `kind` "vehicle" instances
+- `game/addons/brushfire_tools/blender_level_import.gd`: `kind` "car" instances
   `models/undercity/props/vehicle_<model>.glb`.
 - `tools/godot/import_presets.py`: the vehicle glbs as static lightmapped props.
 - A rebuild of the hub's sectors and a lightmap bake.

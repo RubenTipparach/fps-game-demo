@@ -127,8 +127,9 @@ func _undercity_scene(extras: Dictionary) -> String:
 		"sliding_door":
 			# a public entrance, by its size and face (tools/godot/detailing.py, SLIDING_LEAVES)
 			return "res://scenes/undercity/doors/sliding_%s.tscn" % str(extras.get("leaf", ""))
-		"vehicle":
-			# a parked vehicle, the prop kit's model with its collision (openspec/changes/street-vehicles)
+		"car":
+			# a parked vehicle, the prop kit's model with its collision (openspec/changes/street-vehicles);
+			# not "vehicle", which Godot's importer reads as a node type in the entity's name
 			return "res://models/undercity/props/vehicle_%s.glb" % str(extras.get("model", ""))
 	return UNDERCITY.get(kind, "")
 
