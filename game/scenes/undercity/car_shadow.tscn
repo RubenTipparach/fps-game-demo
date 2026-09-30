@@ -1,10 +1,10 @@
 [gd_scene format=3]
 
-[ext_resource type="Texture2D" path="res://textures/decals/car_shadow_albedo.png" id="1_albedo"]
-[ext_resource type="Texture2D" path="res://textures/decals/car_shadow_orm.png" id="2_orm"]
+[ext_resource type="Texture2D" path="res://textures/decals/car_shadow_albedo.png" id="1_car_shadow_a"]
+[ext_resource type="Texture2D" path="res://textures/decals/car_shadow_orm.png" id="2_car_shadow_o"]
 
 [node name="CarShadow" type="Decal"]
 size = Vector3(2.6, 0.6, 5.6)
-texture_albedo = ExtResource("1_albedo")
-texture_orm = ExtResource("2_orm")
+texture_albedo = ExtResource("1_car_shadow_a")
+texture_orm = ExtResource("2_car_shadow_o")
 albedo_mix = 1.0

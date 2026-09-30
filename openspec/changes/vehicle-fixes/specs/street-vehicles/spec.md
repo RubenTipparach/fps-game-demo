@@ -7,8 +7,8 @@ height over a 5 x 3 grid across the footprint, its corners among the points, SHA
 level, built into the glb of the sector that owns the ground under it at the plan's place and
 heading, with its collision, and SHALL be a user of that sector's baked lightmap at a quarter of
 the level's texel. Its `ENT_car` entity SHALL be its contact shadow: a decal centred under it,
-0.3 m longer and wider than the committed model's footprint, that darkens the ground and makes it
-matte, as a road stays dry under a car parked in the rain.
+0.3 m longer and wider than the committed model's footprint, that darkens the ground, makes it
+matte and occludes it, as a road stays dry and hidden from the sky under a car parked in the rain.
 
 #### Scenario: Across a kerb
 - **WHEN** a car spot lies partly on a 0.15 m pavement and partly on the road

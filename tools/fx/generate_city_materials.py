@@ -236,13 +236,15 @@ def gully():
 CAR_SHADOW_PX = (64, 128)     # across, along: the decal stretches it to the car's footprint plus 0.3 m
 CAR_SHADOW_EDGE = 1 / 3       # the share of each half-side over which it fades to nothing
 CAR_SHADOW_PEAK = 0.9         # its strength under the car's middle
+CAR_SHADOW_AO = 0.15          # the sky a car hides from the ground under it: the baked light and the reflections
 
 
 def car_shadow():
     """A parked car's contact shadow (openspec/changes/vehicle-fixes, design section 2.3): under a
-    car parked in the rain the road stays dry, so the decal darkens the ground (albedo black) and
-    makes it matte (roughness 1), which puts out the wet road's reflections there. Its alpha, the
-    mask for both, is full under the middle and fades to nothing over the outer third of each
+    car parked in the rain the road stays dry and the car hides the sky, so the decal darkens the
+    ground (albedo black), makes it matte (roughness 1) and occludes it (ambient occlusion
+    CAR_SHADOW_AO), which dims the baked light and the reflections there alike. Its alpha, the mask
+    for all three, is full under the middle and fades to nothing over the outer third of each
     half-side, smoothly, so the edge is soft at any car's size."""
     w, h = CAR_SHADOW_PX
     y, x = (np.mgrid[0:h, 0:w].astype(np.float32) + 0.5)
@@ -255,7 +257,7 @@ def car_shadow():
     out = os.path.join(GAME, "textures", "decals")
     os.makedirs(out, exist_ok=True)
     albedo = np.dstack([np.zeros((h, w, 3), np.float32), alpha])
-    ormap = np.dstack([np.ones((h, w)), np.ones((h, w)), np.zeros((h, w))]).astype(np.float32)
+    ormap = np.dstack([np.full((h, w), CAR_SHADOW_AO), np.ones((h, w)), np.zeros((h, w))]).astype(np.float32)
     for kind, data, mode in (("albedo", albedo, "RGBA"), ("orm", ormap, "RGB")):
         img = Image.fromarray((np.clip(data, 0, 1) * 255 + 0.5).astype(np.uint8), mode)
         img.save(os.path.join(out, f"car_shadow_{kind}.png"), optimize=True)

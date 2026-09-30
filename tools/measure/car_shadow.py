@@ -11,12 +11,14 @@ stills disagree on (the largest such region), takes the metre from the silhouett
 the model's length (tools/blender/vehicle_data.py, model_bounds: the committed glb), and prints
 one JSON line:
 
-  under    the hidden still's mean linear luminance inside the silhouette shrunk by a quarter of
+  under    the hidden still's median linear luminance inside the silhouette shrunk by a quarter of
            its width from each side: the ground between the wheels
   beside   the same in a band round the silhouette from 0.3 m to 1.3 m out
   ratio    under over beside; the design's threshold is 0.6
 
-Luminance is Rec. 709 on the stills' values decoded from sRGB. It lives in tools/measure beside the
+Luminance is Rec. 709 on the stills' values decoded from sRGB. A median, not a mean: the HUD's
+crosshair sits in the middle of the view, right over the car, and rain streaks cross the frame;
+at night the ground is so dark (about 0.002) that a few near-white pixels would outweigh it. It lives in tools/measure beside the
 other instruments that read the game's captures, and changes nothing in the game.
 """
 import argparse
@@ -66,7 +68,7 @@ def measure(with_path, without_path, model):
     out = ndimage.distance_transform_edt(~car)
     band = (out > BAND_M[0] * px_per_m) & (out <= BAND_M[1] * px_per_m)
     lum = linear_luma(b)
-    under, beside = float(lum[inside].mean()), float(lum[band].mean())
+    under, beside = float(np.median(lum[inside])), float(np.median(lum[band]))
     return {"model": model, "under": round(under, 4), "beside": round(beside, 4), "ratio": round(under / beside, 3),
             "px_per_m": round(px_per_m, 1), "under_px": int(inside.sum()), "beside_px": int(band.sum())}
 

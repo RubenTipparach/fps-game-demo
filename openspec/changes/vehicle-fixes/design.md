@@ -161,31 +161,46 @@ camera; `{"camera": false}` returns to the player's), look straight down on each
 7 m, once with the car and once without it. The ground's lightmap holds the car's shadow either
 way, because the bake saw the car. `tools/measure/car_shadow.py` finds the car's silhouette as the
 pixels the two stills disagree on, takes the metre from the silhouette's long side and the model's
-length (`vehicle_data.model_bounds`), and prints the hidden still's mean linear brightness inside
+length (`vehicle_data.model_bounds`), and prints the hidden still's median linear brightness inside
 the silhouette shrunk by a quarter of its width (the ground between the wheels) over the mean in a
 band 1 m wide round it, 0.3 m out. Under 0.6 is enough shadow. The instrument changes nothing in
 the game: the steps only run from a script.
 
-**Measured (2026-09-30, after the bake).** Over the 14 outdoor cars, the ground under a hidden car
-reads 0.84 to 2.70 of the ground beside it in the finished picture: no shadow shows. Godot's
-lighting-only view (albedo white, no reflections), over four of them, reads 0.56 (Lantern Row's
-green wagon), 0.72, 0.70 and 0.71: the bake does hold a soft shadow under each car, about 11 x 5
-of the street's 0.4 m texels. What hides it is the wet road, drawn mostly by its reflections of
-the lamps and the neon over an albedo of 0.031; a bake darkens light, never a reflection. Faint by
-the 60% rule, so a remedy. Finer ground texels (remedy 1) would sharpen the baked shadow without
-showing it through the reflections, so this goes to remedy 2, the contact shadow (survey O3: "the
-contact shadow only if the shadow measures faint").
+**Measured (2026-09-30, after the bake).** Godot's lighting-only view (albedo white, no
+reflections), over four cars, reads 0.47 (Lantern Row's green wagon), 0.61, 0.64 and 0.67: the bake
+does hold a soft shadow under each car, about 11 x 5 of the street's 0.4 m texels, but three of
+the four are over 0.6. In the finished picture it doesn't show: the wet road is drawn mostly by its
+reflections of the lamps and the neon over an albedo of 0.031, and a bake darkens light, never a
+reflection. Faint by the 60% rule, so a remedy. Finer ground texels (remedy 1) would sharpen the
+baked shadow without showing it through the reflections, so this goes to remedy 2, the contact
+shadow (survey O3: "the contact shadow only if the shadow measures faint"). (The first reading of
+the finished stills, 0.84 to 2.70, was a mean: the HUD's crosshair sits over the car in the middle
+of the view, and at night the ground is so dark, about 0.002, that its white pixels outweighed
+it. The instrument takes medians since, and the numbers here are medians.)
 
 **The contact shadow, for a wet street.** Under a car parked in the rain the road stays dry: no
 film of water to mirror the lamps. So the contact shadow is a decal (`scenes/undercity/car_shadow.tscn`)
 the size of the car's footprint plus 0.3 m: its albedo darkens the ground under the car toward
-black, and its ORM sets roughness 1, dry and matte, which puts out the reflections there. Both
-fade to nothing over the outer third, so the edge is soft. Its textures are generated with the
+black, and its ORM sets roughness 1, dry and matte, and ambient occlusion 0.15, the sky the car
+hides, which dims the baked light and the reflections there alike. All three fade to nothing over
+the outer third, so the edge is soft. Its textures are generated with the
 city's other decals (`tools/fx/generate_city_materials.py`, `car_shadow`). The decal is the car's
 `ENT_car` entity: the level importer instances it where it made a marker, sized by the entity's
 `size` extra ("width,length", metres), which the plan writes from the committed model's footprint.
 It reaches 0.3 m above and below the ground, so it marks the tyres' feet but not the body. The
 target is the same measure on the finished picture: under 0.6.
+
+**Measured with the contact shadow**, the 14 outdoor cars on the finished picture: 0.30 to 0.63,
+and one at 0.81. Under every car the ground now reads at the darkest value the still holds, about
+5 of 255 (0.0016 linear). Where the road beside is lit, the ratio is 0.30-0.42 (the depot yard,
+Lantern Row's west end). Where it reads over 0.6 (Quay Road's five cars, 0.61-0.63; the sedan by
+Pachinko Sunrise, 0.62), the road beside is itself about 7 of 255, as dark as the picture gets
+but for the shadow, so no shadow can reach 0.6 of it. The 0.81 is Lantern Row's red saloon in one
+capture: the band round it read 0.0020 there and 0.0039 in the capture before, the ground beside
+it changing between runs (the flickering signs) while the shadow under it stayed at the floor.
+The stills show the patch under every car. The occlusion in the decal is the second step: the
+first decal, black and matte without it, read 0.32 to 0.69; a matte patch spreads the sky's
+reflection into an even sheen where the wet road mirrors mostly dark sky.
 
 ## 3. The paint
 
