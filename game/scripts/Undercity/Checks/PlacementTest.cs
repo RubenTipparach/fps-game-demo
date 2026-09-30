@@ -71,7 +71,11 @@ public partial class PlacementTest : Node3D
             }
             foreach (var f in glbs)
             {
-                AddChild(GD.Load<PackedScene>($"{LevelDir}/{f}").Instantiate());
+                // Named after its file (hub_streets): every sector glb's root is the level's name,
+                // and the car checks tell sectors apart by it (SectorOf).
+                var sector = GD.Load<PackedScene>($"{LevelDir}/{f}").Instantiate();
+                sector.Name = f.GetBaseName();
+                AddChild(sector);
             }
             // The level's trimeshes are one-sided, and a query ignores a face it sees from
             // behind, so a body whose centre is inside a solid (a counter, a hull) would touch
@@ -247,7 +251,8 @@ public partial class PlacementTest : Node3D
         }
     }
 
-    /// <summary>The sector a node was built into: its sector glb's root, "hub_streets" for the streets.</summary>
+    /// <summary>The sector a node was built into, from its sector glb's root, which _Ready names
+    /// after the file ("hub_streets" for the streets).</summary>
     private string? SectorOf(Node node)
     {
         var level = LevelDir.TrimEnd('/').Split('/')[^1];
