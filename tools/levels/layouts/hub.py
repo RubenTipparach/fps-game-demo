@@ -13,7 +13,7 @@ def viaduct_y(x):
 
 
 # A car spot, length x width: the longest body the deal places (the full-size saloon, 5.22 m) and the
-# widest (the minivan, 2.41 m with its mirrors), with room round them (openspec/changes/cc0-vehicles,
+# widest (the minivan, 2.41 m with its mirrors), with room round them (openspec/changes/archive/2026-09-30-cc0-vehicles,
 # design section 3.1).
 CAR_L, CAR_W = 5.6, 2.6
 
@@ -269,7 +269,7 @@ MAP = {
          ("rect", 125, 105, 128, 108.5, "fix-lt")] +             # Skyway service lift
         # parked cars on Lantern Row's road, each spot's long side 0.2 m off the kerb where the kerb
         # comes nearest (the pavement strips are irregular), on its south side and on its north
-        # (openspec/changes/vehicle-fixes, design section 1.3; survey O2), and none in front of
+        # (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.3; survey O2), and none in front of
         # Pachinko Sunrise's entrance (openspec/changes/hub-doorways)
         [("orect", x, y, CAR_L, CAR_W, 0, "car") for x, y in ((12, 40.99), (23.5, 40.65), (35, 40.41), (46.5, 40.07))] +
         [("orect", x, y, CAR_L, CAR_W, 0, "car") for x, y in ((150, 36.5), (168, 37.65))] +

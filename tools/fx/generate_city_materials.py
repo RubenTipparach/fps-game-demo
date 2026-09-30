@@ -240,7 +240,7 @@ CAR_SHADOW_AO = 0.15          # the sky a car hides from the ground under it: th
 
 
 def car_shadow():
-    """A parked car's contact shadow (openspec/changes/vehicle-fixes, design section 2.3): under a
+    """A parked car's contact shadow (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3): under a
     car parked in the rain the road stays dry and the car hides the sky, so the decal darkens the
     ground (albedo black), makes it matte (roughness 1) and occludes it (ambient occlusion
     CAR_SHADOW_AO), which dims the baked light and the reflections there alike. Its alpha, the mask

@@ -553,7 +553,7 @@ Nothing is an exception until it is listed here with its reason.
   PSX Style Cars, pinned by hash in `tools/deps/vehicle_packs.json`, into `vehicle_<id>.glb`. The
   pack's 128 px painted textures are the cars' look, which no Material Maker set at our texel density
   reproduces (6.4), and the pack's own `.blend` files, pinned, are the editable source (6.1)
-  (`openspec/changes/cc0-vehicles`, design sections 4 and 5).
+  (`openspec/changes/archive/2026-09-30-cc0-vehicles`, design sections 4 and 5).
 - **The first RPG spike is parked, not built.** `docs/spikes/rpg-core/` holds an early sketch
   of the inventory, dialog and disguise code. It predates these rules and doesn't compile. It
   is kept as reference for the OpenSpec changes and is not part of any build.

@@ -4,7 +4,7 @@ The owner, 2026-09-30: the cars were "a little dark in game, the wheels dont ali
 shadow under them; "cars should be static meshes so we get it nice light baking"; "kenney is a
 nogo"; "yea psx cars are nice, I'd want a consistent art style"; survey O7 "no need for trucks now,
 just use vans" and O8 "smudge those textures, background cars can use bilinear filtering". This
-record covers `openspec/changes/cc0-vehicles` and `openspec/changes/vehicle-fixes`, built on branch
+record covers `openspec/changes/archive/2026-09-30-cc0-vehicles` and `openspec/changes/archive/2026-09-30-vehicle-fixes`, built on branch
 `claude/elegant-gauss-qwjhk1` (RubenTipparach/fps-game-demo#6).
 
 ## Environment
@@ -33,6 +33,7 @@ record covers `openspec/changes/cc0-vehicles` and `openspec/changes/vehicle-fixe
 | Placement test | `placement_test.tscn` | 705 of 705: every car a static mesh of the sector that owns its ground (14 in the streets', the garage's van in the kiln's), where and as the plan put it, with its body, a ray under it landing on its own sector's ground, a user of that sector's lightmap, over its contact shadow sized to its mesh |
 | Combat test | `combat_test.tscn` | 23 of 23 after a fix to the test (below) |
 | Lighting test | `lighting_test.tscn` | 29 of 29 |
+| Every check | `scripts/check.sh` | all passed on the rebaked hub (with street-puddles' ground): placement 705, UI 312, swimming 18, combat 23, lighting 29, sliding entrances 10 |
 | OpenSpec | `openspec validate --all` | all valid |
 | Dash check | CLAUDE.md section 4 | clean |
 
@@ -95,7 +96,7 @@ cars from above, with the car and hidden, brightened threefold.
 ## What they don't
 
 - **Frame time.** Lavapipe has no GPU; nothing here measures what 15 cars and their decals cost.
-- **The look.** The stills show eight places and the sheet 22 models; bilinear PSX textures beside
-  Material Maker walls are the owner's call on the stills (O6, O8).
+- **The look,** beyond the owner's word on the stills (2026-09-30: "ok looks good", "new cars are
+  dope"): the stills show eight places and the sheet 22 models.
 - **The shadow's strength everywhere.** The measure covers the 14 outdoor cars from above, at seed
   7, in one sitting; the garage's van under its roof isn't measured.

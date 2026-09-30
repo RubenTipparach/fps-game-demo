@@ -291,7 +291,7 @@ after stills from the same places. Lavapipe: the pictures show the look, not fra
   kerb; bake first, with finer ground or a contact shadow only if the shadow measures faint; the
   paints of section 3.2, tuned on the after stills.
 - **O1** "I never approved kenneys. why quaternius doesnt work? look for more cco cars": Kenney is
-  out. Which models the hub uses, ours or CC0 packs, is `openspec/changes/cc0-vehicles` and survey
+  out. Which models the hub uses, ours or CC0 packs, is `openspec/changes/archive/2026-09-30-cc0-vehicles` and survey
   O5. The kerb, the static meshes and the one-ground rule hold whichever it is; the paint section
   applies to the models we generate.
 - **O5, O6** (chat, 2026-09-30: "yea psx cars are nice, I'd want a consistent art style"): every

@@ -42,7 +42,7 @@ const TRIGGER_SCRIPT := "res://scripts/World/Trigger.cs"
 ## Undercity entities (tools/levels/layouts/<level>_entities.py), by their "kind" extra. Loot picks
 ## its scene by "model", doors and exits by "style" (see _undercity_scene). A parked car is a static
 ## mesh of its sector (car_<id>, built by build_undercity.py), so its ENT_car is its contact shadow,
-## a decal sized by the "size" extra (openspec/changes/vehicle-fixes, design sections 2.2 and 2.3).
+## a decal sized by the "size" extra (openspec/changes/archive/2026-09-30-vehicle-fixes, design sections 2.2 and 2.3).
 const UNDERCITY := {
 	"npc": "res://scenes/undercity/npc.tscn",
 	"civ": "res://scenes/undercity/npc.tscn",
@@ -131,7 +131,7 @@ func _undercity_scene(extras: Dictionary) -> String:
 			return "res://scenes/undercity/doors/sliding_%s.tscn" % str(extras.get("leaf", ""))
 		"car":
 			# a parked car's contact shadow; the car itself is a static mesh of its sector, car_<id>
-			# (openspec/changes/vehicle-fixes, design section 2.3)
+			# (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3)
 			return "res://scenes/undercity/car_shadow.tscn"
 		"gully":
 			# a kerb gully's grate over its puddle (openspec/changes/street-puddles, design section 3.2)

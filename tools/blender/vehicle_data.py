@@ -1,9 +1,9 @@
 """The parked vehicles' table (tools/blender/vehicles.json): its schema, loader and checks.
 
-It owns what the vehicle table may say (openspec/changes/cc0-vehicles, design section 4): the pinned
+It owns what the vehicle table may say (openspec/changes/archive/2026-09-30-cc0-vehicles, design section 4): the pinned
 pack every vehicle is converted from, the pack's scale, each body's file and real length, the
 variants the hub places (a body in one of its own colour textures), the triangle budget, and the
-range a vehicle's albedo must fall in (openspec/changes/vehicle-fixes, design section 3.2). It
+range a vehicle's albedo must fall in (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 3.2). It
 lives in tools/blender as plain Python with no bpy, on tablekit.py, the one validator the Blender
 tables share, so the level plan (tools/levels/city_plan.py) and the converter
 (build_vehicles_cc0.py) read the same checked table, and a misspelt key stops both (CLAUDE.md 5.6).
@@ -32,7 +32,7 @@ TABLE = os.path.join(HERE, "vehicles.json")
 
 # A vehicle's mean albedo, linear: from a very dark paint to a very light one. The texture a car
 # wears is its colour, so a texture outside this range is a car that reads black or glows in the
-# baked light (openspec/changes/vehicle-fixes, design section 3.2).
+# baked light (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 3.2).
 ALBEDO_RANGE = (0.03, 0.8)
 
 BODY = Obj({
@@ -176,7 +176,7 @@ def mean_albedo(path):
 
 def committed_problems(table, models=MODELS, textures=TEXTURES):
     """What's wrong with the committed files a table names: each variant's glb and texture must
-    exist, and the texture's albedo must lie in ALBEDO_RANGE (openspec/changes/cc0-vehicles, design
+    exist, and the texture's albedo must lie in ALBEDO_RANGE (openspec/changes/archive/2026-09-30-cc0-vehicles, design
     section 6). An empty list when they're all there and in range."""
     lo, hi = ALBEDO_RANGE
     problems = []

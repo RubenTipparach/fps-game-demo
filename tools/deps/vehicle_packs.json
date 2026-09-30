@@ -1,5 +1,5 @@
 {
-  "_comment": "The allowlist of packs the parked-vehicle build may read (openspec/changes/cc0-vehicles, design section 4). Each pack is pinned by the SHA-256 of its download. tools/deps/fetch_character_tools.py fetches every list in tools/deps into a cache outside the repository and refuses a pack whose hash differs; tools/blender/build_vehicles_cc0.py converts the chosen models from the verified pack only. The pack never enters the repository: only the converted models and the textures they use do, with this record of where they came from.",
+  "_comment": "The allowlist of packs the parked-vehicle build may read (openspec/changes/archive/2026-09-30-cc0-vehicles, design section 4). Each pack is pinned by the SHA-256 of its download. tools/deps/fetch_character_tools.py fetches every list in tools/deps into a cache outside the repository and refuses a pack whose hash differs; tools/blender/build_vehicles_cc0.py converts the chosen models from the verified pack only. The pack never enters the repository: only the converted models and the textures they use do, with this record of where they came from.",
   "packs": [
     {
       "id": "psx_style_cars",

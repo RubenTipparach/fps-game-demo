@@ -15,7 +15,7 @@ It lives in tools/blender because a model is a file built by a committed script 
 and it is separate from the prop kit (build_undercity_props.py) because it converts a mesh
 someone else made rather than modelling one: it reads the pack only through
 tools/deps/fetch_character_tools.py, which refuses a download whose SHA-256 differs from its pin
-(openspec/changes/cc0-vehicles, design section 4). The pack's .blend files, pinned by hash, are
+(openspec/changes/archive/2026-09-30-cc0-vehicles, design section 4). The pack's .blend files, pinned by hash, are
 the editable source; the repository keeps the table, this script and what it writes (CLAUDE.md 13).
 
 What a converted vehicle is (the prop kit's brief, build_undercity_props.py):
@@ -26,7 +26,7 @@ What a converted vehicle is (the prop kit's brief, build_undercity_props.py):
   * The origin is the floor centre of the footprint: the lowest point on z 0, the box's middle on
     x and y.
   * Its material is "veh_psx_<id>", the pack's texture filtered bilinearly with mipmaps (owner O8,
-    "smudge those textures"), and a clear coat for the rain (openspec/changes/vehicle-fixes, design
+    "smudge those textures"), and a clear coat for the rain (openspec/changes/archive/2026-09-30-vehicle-fixes, design
     section 3.2).
   * Collision is a "BodyCollision-colonly" object of plain boxes: the lower body over the whole
     footprint up to the belt line, and the cabin above it, both read from the mesh.

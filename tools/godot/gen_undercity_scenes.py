@@ -311,7 +311,7 @@ def decal(name, root, texture, size, **props):
 
 
 def car_shadow():
-    """A parked car's contact shadow (openspec/changes/vehicle-fixes, design section 2.3): dark,
+    """A parked car's contact shadow (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3): dark,
     matte and occluded, as the road under a car parked in the rain; 0.3 m above and below the
     ground, so it marks the tyres' feet but not the body."""
     decal("car_shadow", "CarShadow", "car_shadow", (2.6, 0.6, 5.6), maps=("albedo", "orm"), albedo_mix=1.0)

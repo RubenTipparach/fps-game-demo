@@ -1,4 +1,4 @@
-"""The triangle-level z-fighting check (CLAUDE.md 7.2; openspec/changes/cc0-vehicles, design
+"""The triangle-level z-fighting check (CLAUDE.md 7.2; openspec/changes/archive/2026-09-30-cc0-vehicles, design
 section 6): detailing.coplanar_triangle_report finds faces of one mesh that share a plane, face the
 same way and overlap, which is how a converted pack model, built from no registered boxes, is
 held to the rule.

@@ -28,7 +28,7 @@ namespace Brushfire;
 ///         {"puddles": false} (the ground without the level's puddles: the ground shader against the material it
 ///                    replaced, openspec/changes/street-puddles, design section 3.8; true: the level's again)
 ///         {"hide": "node"} | {"show": "node"} (a node of the running scene, by name) | {"camera": [x,y,z], "look_at": [x,y,z]}
-///                    (a free camera; {"camera": false}: the player's again): openspec/changes/vehicle-fixes, design
+///                    (a free camera; {"camera": false}: the player's again): openspec/changes/archive/2026-09-30-vehicle-fixes, design
 ///                    section 2.3, the ground under a parked car seen from above with the car hidden
 /// </summary>
 public partial class AutoTest : Node
@@ -49,7 +49,7 @@ public partial class AutoTest : Node
     Camera3D _freeCam;
 
     /// <summary>Hides or shows every drawn node of the running scene with this name (a measurement
-    /// instrument: openspec/changes/vehicle-fixes, design section 2.3). A marker of the same name
+    /// instrument: openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3). A marker of the same name
     /// draws nothing, so it's left alone.</summary>
     void ShowNode(string name, bool visible)
     {
@@ -62,7 +62,7 @@ public partial class AutoTest : Node
     }
 
     /// <summary>A free camera at a point looking at another, made current; false hands the view
-    /// back to the player's camera (a measurement instrument: openspec/changes/vehicle-fixes, design
+    /// back to the player's camera (a measurement instrument: openspec/changes/archive/2026-09-30-vehicle-fixes, design
     /// section 2.3).</summary>
     void FreeCamera(Variant at, Variant lookAt)
     {

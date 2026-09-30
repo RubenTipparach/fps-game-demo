@@ -7,7 +7,7 @@ It lives in tools/deps, beside the lists it reads, and is plain Python with no B
 because the builds (tools/blender/build_npcs.py, build_npc_clips.py, build_vehicles_cc0.py) import
 it inside Blender to resolve every asset against the same packs the fetch verified
 (openspec/changes/archive/2026-09-28-npc-characters, design section 2;
-openspec/changes/cc0-vehicles, design section 4). One implementation of the pin.
+openspec/changes/archive/2026-09-30-cc0-vehicles, design section 4). One implementation of the pin.
 
 The cache is $UNDERCITY_DEPS, or ~/.cache/undercity/deps when that is unset. It must not be
 inside the repository: the packs are 340 MB, and one of them is a GPL tool that never ships.

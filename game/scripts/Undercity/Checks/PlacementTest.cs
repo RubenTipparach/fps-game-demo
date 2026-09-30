@@ -13,7 +13,7 @@
 // level's baked navmesh must reach the runner's spawn (openspec/changes/hub-doorways, "Every
 // door opens onto ground a person can reach"). Every parked vehicle in the level data (the plan's
 // list) stands in the built level as a static mesh of the sector that owns its ground, where and as
-// the plan put it, with its collision, baked in that sector's lightmap (openspec/changes/vehicle-fixes).
+// the plan put it, with its collision, baked in that sector's lightmap (openspec/changes/archive/2026-09-30-vehicle-fixes).
 // Prints PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
@@ -176,7 +176,7 @@ public partial class PlacementTest : Node3D
     private const float CarShadowMarginM = 0.3f;
 
     // Every parked vehicle in the level data is a static mesh of the level, car_<id>, built into the
-    // sector that owns the ground under it (openspec/changes/vehicle-fixes, design section 2.2): where
+    // sector that owns the ground under it (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2): where
     // and as the plan put it, beside its ENT_car marker, with its static body, the ground a ray finds
     // under it belonging to its own sector, and a user of that sector's baked lightmap, at the car's
     // texel scale; its ENT_car is its contact shadow, a decal under it the size of the mesh's own

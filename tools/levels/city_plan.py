@@ -160,7 +160,7 @@ DOOR_FACES = {"-z": 0, "+z": 1, "+v": 2, "+u": 3, "-v": 4, "-u": 5}   # edge_box
 SIGN_COLOURS = [("neon_pink", "pink"), ("neon_cyan", "cyan"), ("lamp_glow", "warm_sign")]
 CORONA_EXTRAS = {"gi_mode": 0, "cast_shadow": 0, "visibility_range_end_m": 110.0}
 PROP_EXTRAS = {"visibility_range_end_m": 70.0}
-# A parked car bakes at a quarter of the level's texel, 0.1 m (openspec/changes/vehicle-fixes, design section 2.2).
+# A parked car bakes at a quarter of the level's texel, 0.1 m (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2).
 CAR_EXTRAS = {"visibility_range_end_m": 70.0, "lightmap_texel_scale": 4.0}
 GROUND_AGREE_M = 0.01    # a parked car's ground: every point under it within this of the others
 CAR_SHADOW_MARGIN_M = 0.3   # a car's contact shadow is its footprint this much longer and wider (vehicle-fixes, 2.3)
@@ -536,7 +536,7 @@ class Plan:
         """A committed model (a glb under game/) built into the sector's glb as static geometry at
         a point and heading: its meshes keep their own UVs and materials, its "-colonly" objects
         stay its collision, and each is renamed after `name` (build_undercity.py). A parked car
-        is one (openspec/changes/vehicle-fixes, design section 2.2)."""
+        is one (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2)."""
         suffix = godot_type_suffix(name)
         if suffix:
             raise SystemExit(f"model {name}: Godot's importer reads '{suffix}' in a node name as a node type")
@@ -1977,7 +1977,7 @@ class City:
 
     def vehicle(self, sector, fx, z):
         """A parked vehicle on a car spot (openspec/changes/archive/2026-09-30-street-vehicles, design section 4;
-        openspec/changes/vehicle-fixes, design section 2.2): the variant's committed model, built into
+        openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2): the variant's committed model, built into
         the sector that owns the ground under it as a static mesh of the level, so it bakes with that
         ground and every light that reaches it, and an ENT_car marker beside it for the level data
         and the tests. Its front runs along the spot's long side, toward the spot's angle (the layout
@@ -2019,7 +2019,7 @@ class City:
         """What's wrong with one placed vehicle: its committed model's footprint, turned to its
         heading, must lie inside its spot's footprint, and outdoors on one ground: the ground
         height over a 5 x 3 grid across the footprint (its corners and its wheels among the points)
-        must agree within GROUND_AGREE_M (openspec/changes/vehicle-fixes, design section 1.2). A
+        must agree within GROUND_AGREE_M (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.2). A
         spot indoors stands on its room's one floor."""
         corners, ((x0, y0, _), (x1, y1, _)) = self.footprint(v, models)
         cx, cy, _ = v["at"]
@@ -2039,7 +2039,7 @@ class City:
         return out
 
     def check_vehicles(self):
-        """Every parked vehicle fits its spot and stands on one ground (openspec/changes/vehicle-fixes,
+        """Every parked vehicle fits its spot and stands on one ground (openspec/changes/archive/2026-09-30-vehicle-fixes,
         "Parked vehicles are generated models placed by the plan"), read from the committed glb.
         Refuses the plan, naming each car, its spot and model."""
         problems = [p for v in self.vehicles for p in self.vehicle_problems(v)]

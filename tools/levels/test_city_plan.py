@@ -293,8 +293,8 @@ def car_spots(node):
 
 
 class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
-    """openspec/changes/vehicle-fixes: "Parked vehicles are generated models placed by the plan",
-    and openspec/changes/cc0-vehicles. Every car spot holds one model that fits it and stands on one
+    """openspec/changes/archive/2026-09-30-vehicle-fixes: "Parked vehicles are generated models placed by the plan",
+    and openspec/changes/archive/2026-09-30-cc0-vehicles. Every car spot holds one model that fits it and stands on one
     ground, read from the committed glb; each is a static model of the sector that owns its ground;
     a model that doesn't fit, or a spot across a kerb, is refused by name; dealing the models moves
     nothing else in the plan."""
@@ -358,7 +358,7 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
 
     def test_a_spot_across_a_kerb_is_refused_naming_the_car_and_the_heights(self):
         # the street-vehicles layout's spot on Lantern Row's south pavement, which hung a van's
-        # wheels over the road (openspec/changes/vehicle-fixes, design section 1.1)
+        # wheels over the road (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.1)
         car = next(v for v in self.city.vehicles if v["spot"][1] == 12)
         old = ("orect", 12, 43.3, 5.6, 2.6, 0, "car")
         problems = self.city.vehicle_problems(dict(car, at=(12, 43.3, car["at"][2]), spot=old))
@@ -402,7 +402,7 @@ class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
 
 
 class TheVehicleTableIsThePinnedPack(unittest.TestCase):
-    """openspec/changes/cc0-vehicles, "A vehicle taken from a CC0 pack is pinned and recorded": the
+    """openspec/changes/archive/2026-09-30-cc0-vehicles, "A vehicle taken from a CC0 pack is pinned and recorded": the
     table names a pinned pack, its variants name bodies it has and textures beside them, and the
     committed models and textures are all there with their albedo in range."""
 

@@ -1,11 +1,11 @@
 {
-  "_comment": "The hub's parked vehicles: every one a body of GGBotNet's PSX Style Cars in one of its own colour textures (openspec/changes/cc0-vehicles; owner, 2026-09-30: \"yea psx cars are nice, I'd want a consistent art style\"; survey O7: vans, no trucks). Validated by vehicle_data.py; converted by build_vehicles_cc0.py into game/models/undercity/props/vehicle_<id>.glb and game/textures/vehicles/psx/<id>.png. Paths are relative to the pack's root. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
+  "_comment": "The hub's parked vehicles: every one a body of GGBotNet's PSX Style Cars in one of its own colour textures (openspec/changes/archive/2026-09-30-cc0-vehicles; owner, 2026-09-30: \"yea psx cars are nice, I'd want a consistent art style\"; survey O7: vans, no trucks). Validated by vehicle_data.py; converted by build_vehicles_cc0.py into game/models/undercity/props/vehicle_<id>.glb and game/textures/vehicles/psx/<id>.png. Paths are relative to the pack's root. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
   "pack": "psx_style_cars",
   "_comment_scale": "The pack's one wheel sets its scale: every body keeps its own proportions, a compact hatchback beside a full-size sedan (design section 3).",
   "wheel_blend": "Wheel/Wheel.blend",
   "wheel_d_m": 0.65,
   "budget_tris": 2500,
-  "_comment_material": "Over each pack texture, filtered bilinearly (owner O8): a matt base and a glossy clear coat, the rain on the paint (openspec/changes/vehicle-fixes, design section 3.2).",
+  "_comment_material": "Over each pack texture, filtered bilinearly (owner O8): a matt base and a glossy clear coat, the rain on the paint (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 3.2).",
   "material": {"roughness": 0.6, "clearcoat": 1.0, "clearcoat_roughness": 0.1},
   "bodies": {
     "wagon": {"is": "Car 1, an estate car", "blend": "Car 01/Car.blend", "length_m": 4.36},

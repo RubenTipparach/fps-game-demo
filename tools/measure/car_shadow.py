@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measures how much a parked car darkens the baked ground under it (openspec/changes/vehicle-fixes,
+"""Measures how much a parked car darkens the baked ground under it (openspec/changes/archive/2026-09-30-vehicle-fixes,
 design section 2.3): the ground between its wheels over the ground 1 m beside it.
 
     python3 tools/measure/car_shadow.py with.png without.png --model <variant id>

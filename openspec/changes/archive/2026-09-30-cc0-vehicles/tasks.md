@@ -28,5 +28,6 @@ fine".
 
 ## 3. The hub
 
-- [ ] 3.1 The contact sheet; the hub rebuilt and baked with `vehicle-fixes`; after stills.
-- [ ] 3.2 A validation record; the design page's F21; the spec delta into `openspec/specs`; archive.
+- [x] 3.1 The contact sheet; the hub rebuilt and baked with `vehicle-fixes`; after stills. The owner,
+  2026-09-30, on the stills: "ok looks good", "new cars are dope".
+- [x] 3.2 A validation record; the design page's F21; the spec delta into `openspec/specs`; archive.
