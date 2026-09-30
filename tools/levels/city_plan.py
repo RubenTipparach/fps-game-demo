@@ -305,7 +305,7 @@ def unit(dx, dy):
 # Godot's scene importer turns a node whose name carries one of these words after "-", "_" or "$"
 # into another type ("Node type customization using name suffixes"; the presets set
 # nodes/use_node_type_suffixes). Godot 4.7.2 made "ENT_vehicle_008" a VehicleBody3D named "ENT_008"
-# with the empty under it, and the level importer then freed both (openspec/changes/street-vehicles,
+# with the empty under it, and the level importer then freed both (openspec/changes/archive/2026-09-30-street-vehicles,
 # design section 4). An entity's name must not carry one.
 GODOT_TYPE_SUFFIXES = ("colonly", "convcolonly", "convcol", "col", "navmesh", "rigid", "vehicle", "wheel",
                        "occonly", "occ", "noimp")
@@ -1961,7 +1961,7 @@ class City:
             P.light(sector, "stall", gx, gy, z + 1.95, corona_at=(gx, gy, z + 2.05))
 
     def vehicle(self, sector, fx, z):
-        """A parked vehicle on a car spot (openspec/changes/street-vehicles, design section 4): an
+        """A parked vehicle on a car spot (openspec/changes/archive/2026-09-30-street-vehicles, design section 4): an
         ENT_car the importer turns into the variant's model, its front along the spot's long
         side, toward the spot's angle (the layout says which way a row faces). The variants made
         for the spot's size are dealt like a deck, shuffled from a stream of that size's own, so
@@ -1999,7 +1999,7 @@ class City:
                 f"{min(sw, sh):g} m spot at ({cx:.1f}, {cy:.1f})"]
 
     def check_vehicles(self):
-        """Every parked vehicle fits its spot (openspec/changes/street-vehicles, "Parked vehicles
+        """Every parked vehicle fits its spot (openspec/changes/archive/2026-09-30-street-vehicles, "Parked vehicles
         are generated models placed by the plan"), read from the committed glb. Refuses the plan,
         naming each spot and model."""
         problems = [p for v in self.vehicles for p in self.vehicle_problems(v)]

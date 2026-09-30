@@ -1,5 +1,5 @@
 {
-  "_comment": "The hub's parked vehicles (openspec/changes/street-vehicles; owner, survey M1-M3). Validated by vehicle_data.py; built by build_undercity_props.py into game/models/undercity/props/vehicle_<id>.glb. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
+  "_comment": "The hub's parked vehicles (openspec/changes/archive/2026-09-30-street-vehicles; owner, survey M1-M3). Validated by vehicle_data.py; built by build_undercity_props.py into game/models/undercity/props/vehicle_<id>.glb. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
   "budget": {"car_tris": 2500, "truck_tris": 3500},
   "paints": {
     "maroon": "#5c1a1f", "teal": "#1d5c5e", "grey": "#6c7176", "black": "#17191c",

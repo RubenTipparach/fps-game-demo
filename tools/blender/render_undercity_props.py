@@ -9,7 +9,7 @@ printed pivots check what the game loads (CLAUDE.md 5.6, validate the real artif
 
 Run:  blender -b --factory-startup -P tools/blender/render_undercity_props.py [-- vehicles]
 Writes docs/screenshots/undercity/props_sheet.png and prints each moving part's pivot; with
-"vehicles", the parked vehicles' sheet instead (openspec/changes/street-vehicles, task 2.3),
+"vehicles", the parked vehicles' sheet instead (openspec/changes/archive/2026-09-30-street-vehicles, task 2.3),
 docs/screenshots/street_vehicles/vehicles_sheet.png.
 """
 import math

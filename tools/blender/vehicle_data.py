@@ -1,6 +1,6 @@
 """The parked vehicles' table (tools/blender/vehicles.json): its schema and loader.
 
-It owns what a vehicle table may say (openspec/changes/street-vehicles, design section 3.3):
+It owns what a vehicle table may say (openspec/changes/archive/2026-09-30-street-vehicles, design section 3.3):
 body types with their measurements and side profiles, the paints, the variants the hub places,
 and the triangle budgets. It lives in tools/blender as plain Python with no bpy, on tablekit.py,
 the one validator the Blender tables share, so the level plan (tools/levels/city_plan.py) and the

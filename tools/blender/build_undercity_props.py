@@ -110,7 +110,7 @@ MATERIALS = {
 # upright from outside) instead of world UVs: a screen, a label, a lens, a whole crate face.
 FITTED = {"terminal_screen", "mersec_label", "led_red", "led_amber", "led_cyan", "crate", "crate_stencil"}
 
-# The parked vehicles (openspec/changes/street-vehicles, design section 3.4), from their table: a
+# The parked vehicles (openspec/changes/archive/2026-09-30-street-vehicles, design section 3.4), from their table: a
 # paint per colour (the painted-metal texture's chips and grime, glossy for the rain), the glass
 # and lenses, and per variant its plate, the taxi's sign and band, and the trucks' marks.
 VEHICLES = vehicle_data.load()
@@ -1333,7 +1333,7 @@ def _pane(k, corners, normal, mat="car_glass"):
 
 
 def vehicle(v):
-    """A parked vehicle from its table row (openspec/changes/street-vehicles, design section 3.2):
+    """A parked vehicle from its table row (openspec/changes/archive/2026-09-30-street-vehicles, design section 3.2):
     the lower body in pieces between the wheel arches, a tapered cabin with its glass, wheels,
     bumpers, lamps, plates and door seams, and the variant's extras (the taxi's sign and band, a
     truck's cargo box with its livery and roll-up door). Front +Y, the origin under its middle."""
@@ -1488,7 +1488,7 @@ PROPS = {
     # a public entrance's leaves, one per size and face (openspec/changes/hub-doorways): moving, so probe-lit
     **{f"sliding_{detailing.sliding_tag(w, h, face)}": (sliding_leaf(face, w, h), DYNAMIC)
        for w, h, face in detailing.SLIDING_LEAVES},
-    # the parked vehicles (openspec/changes/street-vehicles): baked with the level they stand in
+    # the parked vehicles (openspec/changes/archive/2026-09-30-street-vehicles): baked with the level they stand in
     **{f"vehicle_{v['id']}": (vehicle(v), STATIC) for v in VEHICLES["variants"]},
 }
 

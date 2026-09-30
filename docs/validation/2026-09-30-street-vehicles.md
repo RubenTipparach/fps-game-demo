@@ -2,7 +2,7 @@
 
 The owner, 2026-09-29: better car modelling; survey M1 to M3: our own generator, sedans, vans,
 taxis and trucks, parked only. The owner, 2026-09-30: "Build them cars". This record covers
-`openspec/changes/street-vehicles`, built on branch `claude/elegant-gauss-qwjhk1`
+`openspec/changes/archive/2026-09-30-street-vehicles`, built on branch `claude/elegant-gauss-qwjhk1`
 (RubenTipparach/fps-game-demo#6): the generator, the plan's placement, and the rebuilt, rebaked hub.
 
 ## Environment

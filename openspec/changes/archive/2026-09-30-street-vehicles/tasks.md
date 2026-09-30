@@ -46,6 +46,9 @@ sedans, vans, taxis and trucks, parked only.
 
 ## 4. Records
 
-- [ ] 4.1 After stills from the before places; triangle counts; the bake time against the last.
-- [ ] 4.2 A validation record; the design page's F21; move the requirement into
+- [x] 4.1 After stills from the before places; triangle counts; the bake time against the last.
+
+  Built: `after_01` to `after_05` and `before_after.jpg`; the sectors 143,392 triangles and the
+  vehicles 21,208; the bake 44 minutes (not timed against the last in one sitting).
+- [x] 4.2 A validation record; the design page's F21; move the requirement into
   `openspec/specs/street-vehicles`; archive.

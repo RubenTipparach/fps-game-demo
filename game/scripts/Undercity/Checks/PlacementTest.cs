@@ -13,7 +13,7 @@
 // level's baked navmesh must reach the runner's spawn (openspec/changes/hub-doorways, "Every
 // door opens onto ground a person can reach"). Every parked vehicle in the level data (the plan's
 // list) stands in the built level as its model, where and as the plan put it, with its collision
-// (openspec/changes/street-vehicles). Prints PASS or FAIL per check and quits with 1 on any failure.
+// (openspec/changes/archive/2026-09-30-street-vehicles). Prints PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
 //

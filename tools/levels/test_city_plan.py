@@ -288,7 +288,7 @@ def car_spots(node):
 
 
 class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
-    """openspec/changes/street-vehicles: "Parked vehicles are generated models placed by the
+    """openspec/changes/archive/2026-09-30-street-vehicles: "Parked vehicles are generated models placed by the
     plan". Every car spot holds one model that fits it, read from the committed glb; a model that
     doesn't fit is refused by name; dealing the models moves nothing else in the plan."""
 

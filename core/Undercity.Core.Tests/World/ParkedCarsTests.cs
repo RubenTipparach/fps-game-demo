@@ -1,4 +1,4 @@
-// The hub's parked vehicles in the level data (openspec/changes/street-vehicles): one per car
+// The hub's parked vehicles in the level data (openspec/changes/archive/2026-09-30-street-vehicles): one per car
 // spot of the plan, each with a model, a place and a heading, and what validation refuses. The
 // placement test finds each of them in the built level.
 

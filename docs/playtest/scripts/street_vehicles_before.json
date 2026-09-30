@@ -1,6 +1,6 @@
 {"out": "/tmp/undercity_vehicles_before", "god": true,
  "steps": [
-  {"log": "street vehicles (openspec/changes/street-vehicles): the hub as committed, before the change: box cars"},
+  {"log": "street vehicles (openspec/changes/archive/2026-09-30-street-vehicles): the hub as committed, before the change: box cars"},
   {"scene": "res://levels/undercity/hub/hub.tscn"},
   {"wait": 20},
   {"log": "Lantern Row: the two cars at the kerb by Pachinko Sunrise"},

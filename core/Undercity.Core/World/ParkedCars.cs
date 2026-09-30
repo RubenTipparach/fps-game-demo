@@ -1,5 +1,5 @@
 // A level's parked vehicles (data/levels/<id>.json "cars", exported from the level's plan): each
-// car spot's model, where it stands and which way it faces (openspec/changes/street-vehicles).
+// car spot's model, where it stands and which way it faces (openspec/changes/archive/2026-09-30-street-vehicles).
 //
 // It lives in the core beside the level's other placements so the level data is validated in one
 // place, and so the in-engine placement check compares the built level with the plan's own list

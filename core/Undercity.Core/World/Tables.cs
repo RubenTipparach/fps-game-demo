@@ -324,7 +324,7 @@ public sealed class LevelDef : IValidated
     public PuddlesDef? Puddles { get; init; }
 
     /// <summary>
-    /// The level's parked vehicles, from its plan (openspec/changes/street-vehicles); none for a
+    /// The level's parked vehicles, from its plan (openspec/changes/archive/2026-09-30-street-vehicles); none for a
     /// level without car spots.
     /// </summary>
     public IReadOnlyList<ParkedCarDef> Cars { get; init; } = Array.Empty<ParkedCarDef>();
