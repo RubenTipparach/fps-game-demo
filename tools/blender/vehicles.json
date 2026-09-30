@@ -1,0 +1,56 @@
+{
+  "_comment": "The hub's parked vehicles (openspec/changes/street-vehicles; owner, survey M1-M3). Validated by vehicle_data.py; built by build_undercity_props.py into game/models/undercity/props/vehicle_<id>.glb. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
+  "budget": {"car_tris": 2500, "truck_tris": 3500},
+  "paints": {
+    "maroon": "#5c1a1f", "teal": "#1d5c5e", "grey": "#6c7176", "black": "#17191c",
+    "white": "#c8c6bd", "olive": "#4f5532", "rust": "#7a3f24", "taxi": "#d9c27c",
+    "truck_red": "#7a1f1a"
+  },
+  "types": {
+    "sedan": {
+      "_comment": "4.28 m of body; bumpers and plates bring it to 4.38 m, inside the Kings' Garage's 4.4 m bay.",
+      "spot": "car", "length_m": 4.28, "width_m": 1.78,
+      "wheel_r_m": 0.31, "tyre_w_m": 0.2, "track_m": 1.5, "axles_m": [-1.29, 1.29], "clearance_m": 0.2,
+      "body_top_m": [[-2.14, 0.62], [-1.6, 0.8], [1.58, 0.8], [2.14, 0.64]],
+      "cabin_m": [[-1.42, 0.77], [-0.82, 1.37], [0.48, 1.37], [1.32, 0.77]], "taper": 0.82,
+      "windows_y_m": [[-1.35, -0.2], [-0.12, 1.25]],
+      "bumper_z_m": [0.26, 0.42], "head_z_m": [0.47, 0.58], "tail_z_m": [0.47, 0.58], "lamp_w_m": 0.34,
+      "seams_y_m": [-0.9, -0.16, 0.9],
+      "band_z_m": [0.6, 0.68]
+    },
+    "van": {
+      "spot": "car", "length_m": 4.28, "width_m": 1.84,
+      "wheel_r_m": 0.32, "tyre_w_m": 0.2, "track_m": 1.56, "axles_m": [-1.38, 1.38], "clearance_m": 0.2,
+      "body_top_m": [[-2.14, 1.0], [1.5, 1.0], [2.14, 0.72]],
+      "cabin_m": [[-2.12, 0.97], [-2.08, 1.9], [0.72, 1.9], [1.55, 0.97]], "taper": 0.9,
+      "windows_y_m": [[-0.02, 1.45]],
+      "bumper_z_m": [0.24, 0.42], "head_z_m": [0.5, 0.62], "tail_z_m": [0.52, 0.92], "lamp_w_m": 0.14,
+      "seams_y_m": [-0.95, -0.05, 0.95]
+    },
+    "truck": {
+      "_comment": "A box truck for the depot's 8.5 x 2.8 m bays: the cab's lower body starts behind it, at the cargo box.",
+      "spot": "truck", "length_m": 8.3, "width_m": 2.5,
+      "wheel_r_m": 0.47, "tyre_w_m": 0.28, "track_m": 2.0, "axles_m": [-3.1, -1.95, 2.95], "clearance_m": 0.5,
+      "body_top_m": [[1.52, 1.55], [3.7, 1.55], [4.15, 1.25]],
+      "cabin_m": [[1.54, 1.5], [1.58, 2.7], [3.55, 2.7], [3.88, 1.5]], "taper": 0.94,
+      "windows_y_m": [[2.45, 3.5]],
+      "bumper_z_m": [0.55, 0.85], "head_z_m": [0.95, 1.12], "tail_z_m": [1.15, 1.32], "lamp_w_m": 0.3,
+      "seams_y_m": [2.35],
+      "cargo": {"y_m": [-4.15, 1.45], "z_m": [1.05, 3.45], "width_m": 2.5}
+    }
+  },
+  "variants": [
+    {"id": "sedan_maroon", "type": "sedan", "paint": "maroon", "plate": "MRD 4417"},
+    {"id": "sedan_teal", "type": "sedan", "paint": "teal", "plate": "LHB 2093"},
+    {"id": "sedan_grey", "type": "sedan", "paint": "grey", "plate": "SMP 7710"},
+    {"id": "sedan_black", "type": "sedan", "paint": "black", "plate": "KSN 0338"},
+    {"id": "taxi", "type": "sedan", "paint": "taxi", "plate": "TX 1186", "roof_sign": "TAXI", "chequer": true},
+    {"id": "van_white", "type": "van", "paint": "white", "plate": "DRY 5521"},
+    {"id": "van_olive", "type": "van", "paint": "olive", "plate": "TNS 3304"},
+    {"id": "van_rust", "type": "van", "paint": "rust", "plate": "KLN 8867"},
+    {"id": "truck_kosei", "type": "truck", "paint": "white", "plate": "KSI 0072",
+     "livery": {"text": "KOSEI COLD CHAIN", "ground": "#e8e6df", "ink": "#1d3a6b"}},
+    {"id": "truck_salvage", "type": "truck", "paint": "truck_red", "plate": "LHS 4410",
+     "livery": {"text": "LOW HARBOR SALVAGE", "ground": "#2b2f33", "ink": "#e0b43a"}}
+  ]
+}

@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/props/taxi_chequer.png" id="1"]
+
+[resource]
+resource_name = "taxi_chequer"
+texture_filter = 5
+albedo_color = Color(1, 1, 1, 1.0)
+albedo_texture = ExtResource("1")
+metallic = 0.0
+roughness = 0.35

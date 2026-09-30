@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/props/taxi_sign_emission.png" id="1"]
+
+[resource]
+resource_name = "taxi_sign"
+texture_filter = 5
+albedo_color = Color(0.35, 0.3, 0.12, 1.0)
+metallic = 0.0
+roughness = 0.4
+emission_enabled = true
+emission = Color(1, 0.82, 0.35, 1.0)
+emission_operator = 1
+emission_energy_multiplier = 2.5
+emission_texture = ExtResource("1")

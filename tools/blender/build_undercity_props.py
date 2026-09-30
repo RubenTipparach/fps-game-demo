@@ -47,6 +47,7 @@ from blendkit import GAME, HERE, MANIFEST, collection, material  # noqa: E402
 from build_props import Kit, export, reset  # noqa: E402  (also puts tools/godot on sys.path)
 
 import import_presets  # noqa: E402  (tools/godot: the one writer of .glb.import presets)
+import vehicle_data  # noqa: E402  (tools/blender/vehicles.json, validated: the parked vehicles)
 import detailing  # noqa: E402  (the sliding leaves' catalogue and sizes)
 from detailing import assert_no_zfighting  # noqa: E402
 
@@ -108,6 +109,28 @@ MATERIALS = {
 # Faces of these materials get UVs fitted to their own rectangle (0..1 across the face, read
 # upright from outside) instead of world UVs: a screen, a label, a lens, a whole crate face.
 FITTED = {"terminal_screen", "mersec_label", "led_red", "led_amber", "led_cyan", "crate", "crate_stencil"}
+
+# The parked vehicles (openspec/changes/street-vehicles, design section 3.4), from their table: a
+# paint per colour (the painted-metal texture's chips and grime, glossy for the rain), the glass
+# and lenses, and per variant its plate, the taxi's sign and band, and the trucks' marks.
+VEHICLES = vehicle_data.load()
+MATERIALS.update({f"car_paint_{n}": paint(vehicle_data.parse_hex(c, n), 0.35) for n, c in VEHICLES["paints"].items()})
+MATERIALS.update({
+    "car_glass": dict(color=(0.07, 0.08, 0.09), roughness=0.06),
+    "car_lens_head": dict(color=(0.82, 0.82, 0.76), roughness=0.08),
+    "car_lens_tail": dict(color=(0.45, 0.03, 0.03), roughness=0.12),
+    "taxi_sign": dict(color=(0.35, 0.3, 0.12), roughness=0.4, emission=(1.0, 0.82, 0.35), energy=2.5,
+                      emission_tex="taxi_sign_emission"),
+    "taxi_chequer": dict(albedo="taxi_chequer", roughness=0.35),
+    "rollup_door": dict(albedo="rollup_door", roughness=0.55, metallic=0.2),
+})
+for _v in VEHICLES["variants"]:
+    MATERIALS[f"car_plate_{_v['id']}"] = dict(albedo=f"car_plate_{_v['id']}", roughness=0.45)
+    FITTED.add(f"car_plate_{_v['id']}")
+    if _v["livery"]:
+        MATERIALS[f"truck_livery_{_v['id']}"] = dict(albedo=f"truck_livery_{_v['id']}", roughness=0.5)
+        FITTED.add(f"truck_livery_{_v['id']}")
+FITTED.update({"taxi_sign", "taxi_chequer", "rollup_door"})
 
 
 def _fmt(c):
@@ -422,6 +445,39 @@ def write_textures():
     save_png(os.path.join(TEX_DIR, "mersec_label.png"), lab)
 
 
+def write_vehicle_textures():
+    """The vehicles' generated textures: each variant's plate (its invented code), the taxi's sign
+    and chequer band, the trucks' liveries (invented firms) and the roll-up door's slats."""
+    os.makedirs(TEX_DIR, exist_ok=True)
+    for v in VEHICLES["variants"]:
+        plate = np.zeros((64, 256, 3), np.float32) + np.array((0.86, 0.84, 0.7), np.float32)
+        plate[2:5, 2:-2] = plate[-5:-2, 2:-2] = 0.1
+        plate[2:-2, 2:5] = plate[2:-2, -5:-2] = 0.1
+        m = text_mask(v["plate"], 5)
+        stamp(plate, m, (64 - m.shape[0]) // 2, (256 - m.shape[1]) // 2, (0.08, 0.08, 0.1))
+        save_png(os.path.join(TEX_DIR, f"car_plate_{v['id']}.png"), plate)
+        if v["livery"]:
+            lv = v["livery"]
+            ground = np.array(vehicle_data.parse_hex(lv["ground"], "ground"), np.float32)
+            ink = vehicle_data.parse_hex(lv["ink"], "ink")
+            img = np.zeros((320, 1024, 3), np.float32) + ground
+            img[250:266, 40:-40] = ink                                  # a rule under the name
+            m = text_mask(lv["text"], max(4, min(12, 940 // (len(lv["text"]) * 6))))
+            stamp(img, m, (240 - m.shape[0]) // 2 + 10, (1024 - m.shape[1]) // 2, ink)
+            save_png(os.path.join(TEX_DIR, f"truck_livery_{v['id']}.png"), img)
+    sign = np.zeros((80, 256, 3), np.float32)
+    m = text_mask("TAXI", 8)
+    stamp(sign, m, (80 - m.shape[0]) // 2, (256 - m.shape[1]) // 2, (1.0, 1.0, 1.0))
+    save_png(os.path.join(TEX_DIR, "taxi_sign_emission.png"), sign)
+    rows, cols, cell = 2, 44, 16                                        # a band of 44 x 2 squares
+    yy, xx = np.mgrid[0:rows * cell, 0:cols * cell] // cell
+    chq = np.where(((yy + xx) % 2 == 0)[..., None], (0.07, 0.07, 0.07), (0.9, 0.87, 0.74)).astype(np.float32)
+    save_png(os.path.join(TEX_DIR, "taxi_chequer.png"), chq)
+    y = np.arange(256)
+    slat = 0.42 + 0.14 * np.sin((y % 32) / 32.0 * np.pi) - 0.12 * ((y % 32) < 3)
+    save_png(os.path.join(TEX_DIR, "rollup_door.png"), np.repeat(np.repeat(slat[:, None, None], 256, 1), 3, 2).astype(np.float32))
+
+
 # ----------------------------------------------------------------------------- modelling kit
 
 def G(p):
@@ -464,6 +520,16 @@ class PropKit(Kit):
         bmesh.ops.dissolve_limit(bm, angle_limit=math.radians(0.5), verts=bm.verts[:], edges=bm.edges[:])
         bm.normal_update()
         self._add(bm, mat, bevel)
+
+    def prism(self, profile, x0, x1, mat, taper=1.0, bevel=0.0):
+        """A side profile ([y, z] points, convex) extruded across x0..x1, its width scaled by
+        `taper` at the profile's top (a car's tumblehome), as a convex hull."""
+        zs = [z for _, z in profile]
+        z0, z1 = min(zs), max(zs)
+
+        def s(z):
+            return 1.0 - (1.0 - taper) * (z - z0) / max(z1 - z0, 1e-9)
+        self.hull([(x * s(z), y, z) for y, z in profile for x in (x0, x1)], mat, bevel)
 
     def obox(self, c, u, v, n, hu, hv, n0, n1, mat, bevel=0.0):
         """A box on a sloped face: centre c, half sizes hu along u and hv along v, n0..n1 along n."""
@@ -1218,6 +1284,176 @@ def prosthetic(coll, reg):
 
 ACCESSORIES = (umbrella, cigarette, bag, briefcase, cap, beanie, headphones, visor, respirator, implant, prosthetic)
 
+# ----------------------------------------------------------------------------- vehicles
+
+_top_z = vehicle_data.top_z
+
+
+def _under(chain, y0, y1, zb):
+    """The outline under the top line from y0 to y1, down to zb: convex where the line is."""
+    return ([(y0, zb), (y0, _top_z(chain, y0))] + [(y, z) for y, z in chain if y0 < y < y1]
+            + [(y1, _top_z(chain, y1)), (y1, zb)])
+
+
+def _inset(poly, m):
+    """A convex polygon ([y, z], counter-clockwise) moved m in from every edge."""
+    lines = []
+    for (ay, az), (by, bz) in zip(poly, poly[1:] + poly[:1]):
+        dy, dz = by - ay, bz - az
+        ln = math.hypot(dy, dz)
+        ny, nz = -dz / ln, dy / ln                                  # inward for counter-clockwise
+        lines.append(((ay + ny * m, az + nz * m), (dy, dz)))
+    out = []
+    for (p, d), (q, e) in zip(lines[-1:] + lines[:-1], lines):
+        den = d[0] * e[1] - d[1] * e[0]
+        t = ((q[0] - p[0]) * e[1] - (q[1] - p[1]) * e[0]) / den
+        out.append((p[0] + d[0] * t, p[1] + d[1] * t))
+    return out
+
+
+def _clip_y(poly, y0, y1):
+    """A convex polygon ([y, z]) cut to y0 <= y <= y1 (Sutherland-Hodgman, two half-planes)."""
+    for keep in (lambda p: p[0] >= y0, lambda p: p[0] <= y1):
+        edge = y0 if keep((y0 + 1, 0)) and not keep((y0 - 1, 0)) else y1
+        out = []
+        for a, b in zip(poly, poly[1:] + poly[:1]):
+            if keep(a):
+                out.append(a)
+            if keep(a) != keep(b):
+                t = (edge - a[0]) / (b[0] - a[0])
+                out.append((edge, a[1] + (b[1] - a[1]) * t))
+        poly = out
+    return poly
+
+
+def _pane(k, corners, normal, mat="car_glass"):
+    """A pane of glass standing 3-10 mm proud of a face, on its outline's corners."""
+    n = Vector(normal).normalized()
+    k.hull([Vector(c) + n * t for c in corners for t in (0.003, 0.010)], mat)
+
+
+def vehicle(v):
+    """A parked vehicle from its table row (openspec/changes/street-vehicles, design section 3.2):
+    the lower body in pieces between the wheel arches, a tapered cabin with its glass, wheels,
+    bumpers, lamps, plates and door seams, and the variant's extras (the taxi's sign and band, a
+    truck's cargo box with its livery and roll-up door). Front +Y, the origin under its middle."""
+    ty = VEHICLES["types"][v["type"]]
+
+    def build(coll, reg):
+        k = PropKit("Body", coll, reg)
+        paint_m = f"car_paint_{v['paint']}"
+        half, hw = ty["length_m"] / 2, ty["width_m"] / 2
+        r, gap, zb = ty["wheel_r_m"], ty["arch_gap_m"], ty["clearance_m"]
+        chain = ty["body_top_m"]
+        ylo, yhi = chain[0][0], chain[-1][0]
+        arch_top = 2 * r + gap
+        arches = sorted((a - r - gap, a + r + gap) for a in ty["axles_m"] if ylo < a < yhi)
+        cuts = [ylo] + [c for a0, a1 in arches for c in (max(a0, ylo), min(a1, yhi))] + [yhi]
+        for i, (y0, y1) in enumerate(zip(cuts, cuts[1:])):
+            if y1 - y0 < 1e-3:
+                continue
+            bottom = arch_top if i % 2 else zb                      # odd pieces sit over an arch
+            if bottom > min(_top_z(chain, y0), _top_z(chain, y1)) - 0.04:
+                raise SystemExit(f"[undercity_props] {v['id']}: the arch at y {y0:g}-{y1:g} cuts through the body")
+            k.prism(_under(chain, y0, y1, bottom), -hw, hw, paint_m, bevel=0.012)
+        well = ty["track_m"] / 2 - ty["tyre_w_m"] / 2 - 0.03
+        for a0, a1 in arches:                                       # the dark well between a pair of wheels
+            k.box((-well, a0, zb), (well, a1, arch_top), "rubber", bevel=0.0)
+
+        # the cabin: rear-bottom, rear-top, front-top, front-bottom
+        cab = ty["cabin_m"]
+        cz0, cz1 = cab[0][1], cab[1][1]
+        chw = hw - 0.03
+        k.prism(cab, -chw, chw, paint_m, taper=ty["taper"], bevel=0.012)
+
+        def cab_hw(z):
+            return chw * (1.0 - (1.0 - ty["taper"]) * (z - cz0) / (cz1 - cz0))
+        m = ty["glass_margin_m"]
+        ccy, ccz = sum(p[0] for p in cab) / 4, sum(p[1] for p in cab) / 4
+        for bot, top in ((cab[3], cab[2]), (cab[0], cab[1])):      # the windscreen, the rear screen
+            dy, dz = top[0] - bot[0], top[1] - bot[1]
+            ln = math.hypot(dy, dz)
+            n = Vector((0.0, -dz, dy)) / ln
+            if n.y * ((bot[0] + top[0]) / 2 - ccy) + n.z * ((bot[1] + top[1]) / 2 - ccz) < 0:
+                n = -n
+            corners = []
+            for s_ in (m / ln, 1.0 - 0.6 * m / ln):
+                y, z = bot[0] + dy * s_, bot[1] + dz * s_
+                corners += [(sx * (cab_hw(z) - m), y, z) for sx in (-1, 1)]
+            _pane(k, corners, n)
+        ccw = [cab[3], cab[2], cab[1], cab[0]]                      # counter-clockwise in (y, z)
+        slope = chw * (1.0 - ty["taper"]) / (cz1 - cz0)
+        for wy0, wy1 in ty["windows_y_m"]:
+            outline = _clip_y(_inset(ccw, m), wy0, wy1)
+            if len(outline) < 3:
+                raise SystemExit(f"[undercity_props] {v['id']}: the window at y {wy0:g}-{wy1:g} is off the cabin")
+            for sx in (-1, 1):
+                _pane(k, [(sx * cab_hw(z), y, z) for y, z in outline], (sx, 0.0, slope))
+
+        # wheels: a tyre and a hub disc 2 cm proud of it
+        tw, tx = ty["tyre_w_m"], ty["track_m"] / 2
+        for a in ty["axles_m"]:
+            for sx in (-1, 1):
+                k.cyl((sx * tx, a, r), r, tw, "x", "rubber", bevel=0.015, segments=12)
+                k.cyl((sx * (tx + tw / 2 + 0.01), a, r), r * 0.55, 0.02, "x", "gunmetal", segments=12)
+
+        # bumpers, lamps, plates
+        bz0, bz1 = ty["bumper_z_m"]
+        for sy in (-1, 1):
+            k.box((-(hw - 0.05), sy * (half - 0.03), bz0), (hw - 0.05, sy * (half + 0.04), bz1), "rubber", bevel=0.01)
+            pz = (bz0 + bz1) / 2
+            k.box((-0.18, sy * (half + 0.04), pz - 0.05), (0.18, sy * (half + 0.052), pz + 0.05),
+                  f"car_plate_{v['id']}", bevel=0.0)
+            lz0, lz1 = ty["head_z_m"] if sy > 0 else ty["tail_z_m"]
+            lens = "car_lens_head" if sy > 0 else "car_lens_tail"
+            for sx in (-1, 1):
+                x0, x1 = sx * (hw - 0.08 - ty["lamp_w_m"]), sx * (hw - 0.08)
+                k.box((x0, sy * (half - 0.01), lz0), (x1, sy * (half + 0.012), lz1), lens, bevel=0.004)
+
+        # door seams down the lower body's sides, broken where a taxi's band runs over them
+        band = ty["band_z_m"] if v["chequer"] else None
+        by0, by1 = arches[0][1] + 0.05, arches[-1][0] - 0.05              # the band runs arch to arch
+        for sy_ in ty["seams_y_m"]:
+            runs = [(zb + 0.06, _top_z(chain, sy_) - 0.05)]
+            if band and by0 < sy_ < by1:
+                runs = [(runs[0][0], band[0] - 0.002), (band[1] + 0.002, runs[0][1])]
+            for sx in (-1, 1):
+                for z0, z1 in runs:
+                    k.box((sx * (hw - 0.002), sy_ - 0.006, z0), (sx * (hw + 0.004), sy_ + 0.006, z1), "rubber", bevel=0.0)
+
+        collide = [((-hw, ylo, zb), (hw, yhi, max(z for _, z in chain))),
+                   ((-chw, min(p[0] for p in cab), cz0), (chw, max(p[0] for p in cab), cz1))]
+
+        # the variant's extras
+        if band:
+            for sx in (-1, 1):
+                k.box((sx * (hw - 0.003), by0, band[0]), (sx * (hw + 0.008), by1, band[1]), "taxi_chequer", bevel=0.0)
+        if v["roof_sign"]:
+            yc = (cab[1][0] + cab[2][0]) / 2
+            k.box((-0.35, yc - 0.07, cz1 - 0.01), (0.35, yc + 0.07, cz1 + 0.2), "white_plastic", bevel=0.01)
+            for sy in (-1, 1):
+                k.box((-0.3, yc + sy * 0.07, cz1 + 0.03), (0.3, yc + sy * 0.082, cz1 + 0.17), "taxi_sign", bevel=0.0)
+        cargo = ty["cargo"]
+        if cargo is not None:
+            (cy0, cy1), (kz0, kz1), cw = cargo["y_m"], cargo["z_m"], cargo["width_m"] / 2
+            k.box((-cw, cy0, kz0), (cw, cy1, kz1), paint_m, bevel=0.02)
+            for sx in (-1, 1):
+                k.box((sx * 0.35, cy0 + 0.05, zb), (sx * 0.5, ylo + 0.3, kz0), "gunmetal", bevel=0.0)     # a chassis rail
+            if v["livery"]:
+                for sx in (-1, 1):
+                    k.box((sx * (cw - 0.003), cy0 + 0.15, kz0 + 0.25), (sx * (cw + 0.01), cy1 - 0.15, kz1 - 0.25),
+                          f"truck_livery_{v['id']}", bevel=0.0)
+            door_z0 = max(kz0 + 0.08, ty["tail_z_m"][1] + 0.05)          # the tail lamps sit on the sill below it
+            k.box((-(cw - 0.12), cy0 - 0.012, door_z0), (cw - 0.12, cy0 + 0.003, kz1 - 0.12), "rollup_door", bevel=0.0)
+            collide.append(((-cw, cy0, kz0), (cw, cy1, kz1)))
+            collide.append(((-0.5, cy0 + 0.05, zb), (0.5, ylo + 0.3, kz0)))
+        body = k.finish("Body")
+        return [body, collision(coll, "Body", collide)]
+    return build
+
+
+VEHICLE_BUDGET = {f"vehicle_{v['id']}": vehicle_data.budget(VEHICLES, v["type"]) for v in VEHICLES["variants"]}
+
 STATIC, DYNAMIC = 2, 3   # Godot's meshes/light_baking: static lightmaps, or lit by probes
 # name -> (builder, light baking). Moving and vanishing props are dynamic, so no stale bake.
 PROPS = {
@@ -1252,6 +1488,8 @@ PROPS = {
     # a public entrance's leaves, one per size and face (openspec/changes/hub-doorways): moving, so probe-lit
     **{f"sliding_{detailing.sliding_tag(w, h, face)}": (sliding_leaf(face, w, h), DYNAMIC)
        for w, h, face in detailing.SLIDING_LEAVES},
+    # the parked vehicles (openspec/changes/street-vehicles): baked with the level they stand in
+    **{f"vehicle_{v['id']}": (vehicle(v), STATIC) for v in VEHICLES["variants"]},
 }
 
 
@@ -1267,7 +1505,7 @@ def build(name, fn, light_baking):
     objs = fn(coll, reg)
     assert_no_zfighting(name, [], props=reg)
     tris = triangles(objs)
-    budget = ACCESSORY_TRIS if fn in ACCESSORIES else MAX_TRIS
+    budget = VEHICLE_BUDGET.get(name, ACCESSORY_TRIS if fn in ACCESSORIES else MAX_TRIS)
     if tris >= budget:
         raise SystemExit(f"[undercity_props] {name}: {tris} triangles, over the {budget} budget")
     rel = f"models/undercity/props/{name}.glb"
@@ -1287,10 +1525,14 @@ def main():
     reset()
     bpy.context.scene.name = "UndercityProps"
     write_textures()
+    write_vehicle_textures()
     write_materials()
-    counts = {name: build(name, fn, gi) for name, (fn, gi) in PROPS.items()}
-    bpy.ops.wm.save_as_mainfile(filepath=BLEND, relative_remap=True, compress=True)
-    print("[undercity_props] saved", BLEND)
+    only = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []     # name prefixes, to build a few
+    counts = {name: build(name, fn, gi) for name, (fn, gi) in PROPS.items()
+              if not only or any(name.startswith(o) for o in only)}
+    if not only:                        # the .blend holds every prop, so a partial build leaves it be
+        bpy.ops.wm.save_as_mainfile(filepath=BLEND, relative_remap=True, compress=True)
+        print("[undercity_props] saved", BLEND)
     print("[undercity_props] triangles:", ", ".join(f"{k} {v}" for k, v in counts.items()))
 
 

@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/props/painted_metal.png" id="1"]
+[ext_resource type="Texture2D" path="res://textures/rust_metal_normal.png" id="2"]
+
+[resource]
+resource_name = "car_paint_teal"
+texture_filter = 5
+albedo_color = Color(0.1137, 0.3608, 0.3686, 1.0)
+albedo_texture = ExtResource("1")
+metallic = 0.0
+roughness = 0.35
+normal_enabled = true
+normal_scale = 0.3
+normal_texture = ExtResource("2")

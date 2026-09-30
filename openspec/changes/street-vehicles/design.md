@@ -32,6 +32,13 @@ The owner took the recommendation. Before building out, the first sedan is rende
 Kenney sedan and a Quaternius sedan, in the kit's studio light, so the choice can be overruled on
 sight (task 1.2).
 
+**As built (2026-09-30):** the gate compares ours with Kenney's only. Quaternius's pack is served
+from poly.pizza, which this container's network can't reach. `look_gate_cars.png` and
+`look_gate_vans.png` in `docs/screenshots/street_vehicles/` show our sedan, taxi, van and truck
+beside Kenney's sedan, taxi, van and delivery truck, each scaled to ours, in one light: ours read as
+grimy 1980s vehicles, Kenney's as toys (big wheels, fat bumpers, pastel paint). The Kenney models
+were used for that render only, from the scratchpad, and are not in the repository.
+
 ## 3. The generator
 
 ### 3.1 In the prop kit
@@ -86,7 +93,25 @@ optional field takes its code default, numbers must be finite).
 }
 ```
 
-The profile numbers above are a first draft, tuned on the first render. The variants:
+The profile numbers above are a first draft, tuned on the first render.
+
+**As built.** The committed table differs from the draft in shape, not in purpose:
+
+| Draft | Built | Why |
+|---|---|---|
+| `profile_m`, one closed outline | `body_top_m`, the lower body's top line rear to front, and `clearance_m` under it | the builder cuts the lower body at the arches and needs its height at any y |
+| `greenhouse_m` | `cabin_m`, four points, and `windows_y_m` for the side windows | the cabin is painted and the glass sits on it (section 3.2, as built) |
+| `wheelbase_m` | `axles_m`, each axle's y | a truck has three axles |
+| taxi, a type with `like` | taxi, a sedan variant with `roof_sign` and `chequer` | one body, two liveries; no inheritance to validate |
+| `grime` per variant | none | the kit's `painted_metal` texture already carries chips and grime under every paint |
+| lengths 4.5-4.55 m | 4.28 m | bumpers and plates bring a car to 4.38 m, inside the garage's 4.4 m spot |
+
+It also carries `bumper_z_m`, `head_z_m`, `tail_z_m`, `lamp_w_m`, `seams_y_m`, `band_z_m` (the taxi's
+band), `cargo` (a truck's box) and per variant `plate` (an invented code) and `livery` (a truck's
+cargo sides). `vehicle_data.py` refuses, by path: a top line that doesn't run rear to front, a
+wheel past the body, tyres past the sides, a lamp or bumper under the clearance, a door seam over an
+arch, a band off the sides, a cargo box outside the vehicle, an unknown type or paint, and a
+repeated id. The variants:
 
 | Type | Variants | Fits a spot of |
 |---|---|---|
@@ -94,6 +119,27 @@ The profile numbers above are a first draft, tuned on the first render. The vari
 | Taxi | one livery (cream with a chequer band) | 4.6 x 2.0 m |
 | Compact van | white, olive, rust | 4.6 x 2.0 m |
 | Box truck | two cargo liveries (invented firms) | 8.5 x 2.8 m |
+
+**As built, a body piece by piece** (`vehicle()` in the prop kit):
+
+| Piece | How | Material |
+|---|---|---|
+| Lower body | a prism under the top line for each run between the arches, full height; over each arch a prism from the arch's top (2r + 0.06 m) | paint, bevel 0.012 m |
+| Wheel wells | a box inside each arch, between the tyres | `rubber` |
+| Cabin | one prism of `cabin_m`, 0.03 m in from the sides, `taper` at the roof | paint |
+| Glass | panes 3-10 mm proud of the cabin: windscreen and rear screen on its sloped faces, side windows the cabin's outline inset by `glass_margin_m` and cut to `windows_y_m` | `car_glass` |
+| Wheels | tyre `cyl` of 12 sides, hub disc 0.02 m proud | `rubber`, `gunmetal` |
+| Bumpers, lamps, plates | boxes: bumpers 0.04 m proud, lamps 0.012 m, plates 0.012 m proud of the bumper | `rubber`, `car_lens_*`, `car_plate_<id>` |
+| Door seams | thin strips 4 mm proud down the lower body, broken where the taxi's band runs | `rubber` |
+| Taxi | roof sign box with a lit `TAXI` panel 12 mm proud each way; a chequer band from arch to arch, 8 mm proud | `white_plastic`, `taxi_sign`, `taxi_chequer` |
+| Truck | cargo box; livery panels on its sides 10 mm proud; a roll-up door 12 mm proud, above the tail lamps' sill; two chassis rails | paint, `truck_livery_<id>`, `rollup_door`, `gunmetal` |
+| Collision | boxes: the lower body, the cabin; a truck's cargo box and rails | `-colonly` |
+
+Triangles: sedans 1,360, the taxi 1,476, vans 1,312, trucks 1,616 (budgets 2,500 and 3,500). Every
+model passes the z-fighting check. The first build found two overlaps the checker would have
+refused, both fixed in the builder: the truck's tail lamps on the roll-up door's plane (the door
+now starts above them) and the taxi's band 4 mm off the door seams' faces (the seams now break
+round it).
 
 ### 3.4 Materials
 
@@ -104,6 +150,12 @@ The kit's own `MATERIALS`, written as `game/materials/props/*.tres` like the oth
 (emissive, `emission_operator` 1, CLAUDE.md 11). Grime is a darker, rougher band low on the body,
 from a generated mask, so a variant's `grime` is a number in the table, not another material.
 
+**As built:** paints are the kit's `paint()` (the `painted_metal` albedo tinted, roughness 0.35),
+so wear comes with the texture and there is no grime number. `car_glass` is (0.07, 0.08, 0.09) at
+roughness 0.06: at the first render's near black it read as flat black card. Each variant has its
+own `car_plate_<id>`, each truck its `truck_livery_<id>`, all FITTED (UVs 0..1 across each face, the
+text upright from outside).
+
 ## 4. In the hub
 
 - `City.car()` and `City.truck()` are removed. A car spot writes `ENT_vehicle_<n>` at the spot's
@@ -111,6 +163,15 @@ from a generated mask, so a variant's `grime` is a number in the table, not anot
 - The model is drawn per spot from a stream of its own, `f"{seed}:vehicles:{spot}"`, among the
   variants that fit the spot, so no other draw in the hub moves (the lesson of `hub-doorways`,
   design section 3.11). Expected on today's 14 spots: 6 sedans, 2 taxis, 3 vans, 3 trucks.
+
+  **As built:** `{spot}` is the spot's size, "car" or "truck". One draw per spot gave four maroon
+  sedans, three taxis, three rust vans and no teal, grey, white or olive, so each size deals its
+  variants like a deck, shuffled from its stream: every variant shows once before any repeats.
+  There are 15 spots, the garage's bay among them. Seed 7 deals 6 sedans (every paint), 2 taxis,
+  4 vans (every paint) and 3 trucks (both liveries). A vehicle faces along its spot's long side,
+  toward the spot's angle, so the layout says which way a row faces. An outdoor spot still counts
+  as a prop, so the props after it keep their names and every other stall its light: against the
+  committed plan, only the 14 box cars and the garage's box car are gone, and nothing else moved.
 - `blender_level_import.gd` maps `kind` "vehicle" to `models/undercity/props/vehicle_<model>.glb`.
   The glb carries its `-colonly` boxes, so Godot gives it a static body.
 - `import_presets.py` imports the vehicle glbs as static lightmapped props (UV2, like the prop
@@ -127,13 +188,17 @@ from a generated mask, so a variant's `grime` is a number in the table, not anot
 | Every placed model fits its spot's footprint | `city_plan.check_vehicles`, reading each committed glb's POSITION bounds | all 14 fit |
 | The table is valid | `python3 tools/blender/vehicle_data.py` | OK |
 | A variant too long for a 4.6 m spot is refused | `test_city_plan.py` | refused, naming spot and model |
+| A car turned across its spot is refused | `test_city_plan.py` | refused; either way round along it fits |
+| Every committed glb within its budget | `test_city_plan.py`, counting the glb's indices | all ten |
+| Dealing the vehicles moves nothing else | `test_city_plan.py`, the plan with and without them | equal but for the `ENT_vehicle` entities |
 | People stand clear of every vehicle | `city_plan.py` standing checks and `placement_test.tscn` | clean |
 
 ## 6. Captures
 
 - **The look gate** (task 1.2): our first sedan beside the Kenney and Quaternius sedans, three
   views each, same light. For the owner before the other types are built.
-- A contact sheet of all ten models (`render_undercity_props.py`).
+- A contact sheet of all ten models (`render_undercity_props.py -- vehicles`, which writes
+  `docs/screenshots/street_vehicles/vehicles_sheet.png`; the prop sheet leaves the vehicles out).
 - Before and after stills in the hub at seed 7: Lantern Row's kerb, the Kings' Garage forecourt,
   the depot yard's trucks, and Clinic Lane.
 - Lavapipe: the pictures are proof of the look, not of frame time.

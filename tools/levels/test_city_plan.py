@@ -6,8 +6,10 @@ it ("People stand clear of the level"). Each test builds on the committed hub.
 """
 import contextlib
 import io
+import json
 import math
 import os
+import struct
 import sys
 import unittest
 from unittest import mock
@@ -272,6 +274,86 @@ class PuddlesLieWhereWaterGathers(unittest.TestCase):
             s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_gully_")]
         del wet["stats"], dry["stats"]    # counts of what's compared, gullies included
         self.assertTrue(wet == dry, "puddles draw from their own seeded streams, so nothing else in the plan moves")
+
+
+def car_spots(node):
+    """Every car spot in a layout: its ("orect", cx, cy, w, h, angle, "car") shapes, wherever they are."""
+    if isinstance(node, dict):
+        return [fx for v in node.values() for fx in car_spots(v)]
+    if isinstance(node, (list, tuple)):
+        if node and node[-1] == "car" and node[0] == "orect":
+            return [tuple(node)]
+        return [fx for v in node for fx in car_spots(v)]
+    return []
+
+
+class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
+    """openspec/changes/street-vehicles: "Parked vehicles are generated models placed by the
+    plan". Every car spot holds one model that fits it, read from the committed glb; a model that
+    doesn't fit is refused by name; dealing the models moves nothing else in the plan."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.city = built_hub()
+
+    def test_every_car_spot_holds_one_vehicle(self):
+        m, _ = CP.load("hub")
+        self.assertEqual(sorted(car_spots(m)), sorted(tuple(v["spot"]) for v in self.city.vehicles))
+        names = [e["name"] for s in self.city.P.to_json()["sectors"] for e in s["entities"]
+                 if e["name"].startswith("ENT_vehicle_")]
+        self.assertEqual(sorted(names), sorted(v["name"] for v in self.city.vehicles))
+
+    def test_a_car_spot_takes_a_car_or_van_and_a_depot_spot_a_truck(self):
+        for v in self.city.vehicles:
+            _, _, _, sw, sh, _, _ = v["spot"]
+            truck = max(sw, sh) > 7
+            self.assertEqual(v["model"].startswith("truck_"), truck, f"{v['name']} on a {sw:g} x {sh:g} m spot")
+
+    def test_every_model_parks_somewhere(self):
+        self.assertEqual({v["model"] for v in self.city.vehicles}, {v["id"] for v in CP.VEHICLES["variants"]},
+                         "the deck deals each variant once before any repeats")
+
+    def test_every_vehicle_fits_its_spot(self):
+        self.city.check_vehicles()
+
+    def test_a_truck_on_a_car_spot_is_refused_naming_the_spot_and_the_model(self):
+        car = next(v for v in self.city.vehicles if v["model"].startswith("sedan_"))
+        problems = self.city.vehicle_problems(dict(car, model="truck_kosei"))
+        self.assertEqual(1, len(problems), problems)
+        self.assertIn(f"{car['name']} (truck_kosei, 8.40 x 2.52 m) doesn't fit its 4.6 x 2 m spot", problems[0])
+
+    def test_a_car_turned_across_its_spot_is_refused(self):
+        car = self.city.vehicles[1]
+        self.assertEqual([], self.city.vehicle_problems(dict(car, heading=car["heading"] + 180.0)),
+                         "the spot fits either way round")
+        self.assertEqual(1, len(self.city.vehicle_problems(dict(car, heading=car["heading"] + 90.0))),
+                         "across the spot the car sticks out of its sides")
+
+    def test_every_model_stays_in_its_triangle_budget(self):
+        for v in CP.VEHICLES["variants"]:
+            tris = glb_triangles(os.path.join(CP.vehicle_data.MODELS, f"vehicle_{v['id']}.glb"))
+            self.assertLessEqual(tris, CP.vehicle_data.budget(CP.VEHICLES, v["type"]), v["id"])
+
+    def test_dealing_the_vehicles_moves_nothing_else(self):
+        m, ents = CP.load("hub")
+        empty = CP.City(m, ents)
+        with mock.patch.object(CP.City, "vehicle", lambda self, sector, fx, z: None), \
+                contextlib.redirect_stdout(io.StringIO()):
+            empty.build()
+        parked, empty = self.city.P.to_json(), empty.P.to_json()
+        for s in parked["sectors"]:
+            s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_vehicle_")]
+        del parked["stats"], empty["stats"]     # counts of what's compared, the vehicles included
+        self.assertTrue(parked == empty, "the vehicles draw from their own seeded streams, so nothing else in the plan moves")
+
+
+def glb_triangles(path):
+    """The visible triangles in a glb: its meshes' index counts over three, collision aside."""
+    with open(path, "rb") as f:
+        data = f.read()
+    j = json.loads(data[20:20 + struct.unpack("<I", data[12:16])[0]])
+    return sum(j["accessors"][prim["indices"]]["count"] // 3 for node in j["nodes"] if "mesh" in node
+               and "colonly" not in node.get("name", "") for prim in j["meshes"][node["mesh"]]["primitives"])
 
 
 if __name__ == "__main__":

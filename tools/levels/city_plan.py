@@ -58,6 +58,8 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
 import render_map as RM  # noqa: E402
 import detailing  # noqa: E402
 import skyline  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, "tools", "blender"))
+import vehicle_data  # noqa: E402  (the parked vehicles' table and their committed models)
 
 # ----------------------------------------------------------------------------- the city kit
 # Generic construction rules shared by every city level. Level-specific numbers (district
@@ -247,6 +249,9 @@ def water_data():
     with open(WATER_JSON) as f:
         # the game's data files allow whole-line // comments (Undercity.Core JsonData)
         return json.loads("".join(line for line in f if not line.lstrip().startswith("//")))
+
+
+VEHICLES = vehicle_data.load()   # tools/blender/vehicles.json: the variants a car spot draws from
 
 
 def wetness_data():
@@ -586,6 +591,8 @@ class City:
         # water bodies, deepest first, cut so they don't overlap
         bodies = sorted([w for w in m.get("water", [])], key=lambda w: w.get("bed_m", -4.5))
         self.waters = []
+        self.vehicles = []          # the parked vehicles, as City.vehicle() places them
+        self.vehicle_decks = {}     # per spot size, the variants still to deal
         taken = Polygon()
         for w in bodies:
             g = RM.water_geom(w).difference(taken)
@@ -1739,12 +1746,18 @@ class City:
         g = RM.shape_geom(fx)
         c = g.centroid
         inside = room_building is not None
+        if not inside:
+            # counted for every outdoor fixture, a vehicle's spot too, so the props after it keep
+            # their names and their draws (every other stall has a light)
+            self.nprop = getattr(self, "nprop", 0) + 1
+        if cls == "car":
+            self.vehicle(sector, fx, FLOOR_Z if inside else self.ground_level(c.x, c.y))
+            return
         if inside:
             z = FLOOR_Z
             prims = P.obj(sector, "interior", name=f"interior_{room_building['id']}", col="col")
         else:
             z = self.ground_level(c.x, c.y)
-            self.nprop = getattr(self, "nprop", 0) + 1
             pname = f"prop_{cls.replace('-', '_')}_{self.nprop:03d}"
             prims = P.obj(sector, "prop", col="col", extras=PROP_EXTRAS, origin=(c.x, c.y, z), name=pname)
         zg = owner if inside else "exterior"
@@ -1757,14 +1770,8 @@ class City:
                 cx, cy, sw, sh, ang = (x0 + x1) / 2, (y0 + y1) / 2, max(w, d), min(w, d), 0.0 if w >= d else 90.0
             self.stall(sector, prims, cx, cy, z, sw, sh, ang, light=(not inside and self.nprop % 2 == 0))
             return
-        if cls in ("car", "container"):
-            cx, cy, sw, sh, ang = fx[1:6]
-            if cls == "container":
-                self.wagon(prims, cx, cy, z, sw, sh, ang)
-            elif sw * sh > 16 or max(sw, sh) > 7:
-                self.truck(prims, cx, cy, z, sw, sh, ang)
-            else:
-                self.car(prims, cx, cy, z, sw, sh, ang, owner)
+        if cls == "container":
+            self.wagon(prims, *fx[1:3], z, *fx[3:6])
             return
         if cls == "crate":
             cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
@@ -1934,48 +1941,51 @@ class City:
         if light:
             P.light(sector, "stall", gx, gy, z + 1.95, corona_at=(gx, gy, z + 2.05))
 
-    def car(self, prims, cx, cy, z, sw, sh, ang, owner):
-        ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        rng = random.Random(f"{self.P.seed}:car:{cx:.1f}:{cy:.1f}")
-        paint = ["gunmetal", "gunmetal_light", "rust_metal", "tech_panel"][int(rng.random() * 4)]
-        L_, W_ = (sw, sh) if sw >= sh else (sh, sw)
-        if sh > sw:
-            ux, uy = -uy, ux
-        vx, vy = -uy, ux
+    def vehicle(self, sector, fx, z):
+        """A parked vehicle on a car spot (openspec/changes/street-vehicles, design section 4): an
+        ENT_vehicle the importer turns into the variant's model, its front along the spot's long
+        side, toward the spot's angle (the layout says which way a row faces). The variants made
+        for the spot's size are dealt like a deck, shuffled from a stream of that size's own, so
+        each shows once before any repeats and no other draw in the level moves."""
+        cx, cy, sw, sh, ang = fx[1:6]
+        spot = "truck" if sw * sh > 16 or max(sw, sh) > 7 else "car"
+        deck = self.vehicle_decks.setdefault(spot, {"rng": random.Random(f"{self.P.seed}:vehicles:{spot}"), "left": []})
+        if not deck["left"]:
+            deck["left"] = sorted(v["id"] for v in VEHICLES["variants"] if VEHICLES["types"][v["type"]]["spot"] == spot)
+            deck["rng"].shuffle(deck["left"])
+        model = deck["left"].pop()
+        a = math.radians(ang if sw >= sh else ang + 90.0)
+        heading = heading_of(math.cos(a), math.sin(a))
+        self.vehicles.append({"name": f"ENT_vehicle_{len(self.vehicles) + 1:03d}", "model": model, "at": (cx, cy, z),
+                              "heading": heading, "spot": fx})
+        v = self.vehicles[-1]
+        self.P.entity(sector, v["name"], cx, cy, z, heading,
+                      {"kind": "vehicle", "id": v["name"][len("ENT_vehicle_"):], "model": model})
 
-        def Lp(u, v):
-            return (cx + ux * u + vx * v, cy + uy * u + vy * v)
-        hl, hw = L_ / 2, W_ / 2
-        prims.append(hexa([Lp(-hl, -hw), Lp(hl, -hw), Lp(hl, hw), Lp(-hl, hw)], z + 0.32, z + 0.95, paint))
-        cab_b = [Lp(-0.36 * L_, -hw * 0.92), Lp(0.18 * L_, -hw * 0.92), Lp(0.18 * L_, hw * 0.92), Lp(-0.36 * L_, hw * 0.92)]
-        cab_t = [Lp(-0.28 * L_, -hw * 0.78), Lp(0.06 * L_, -hw * 0.78), Lp(0.06 * L_, hw * 0.78), Lp(-0.28 * L_, hw * 0.78)]
-        prims.append(hexa_pts([(*p, z + 0.95) for p in cab_b] + [(*p, z + 1.45) for p in cab_t],
-                              [paint, paint, "window_dark", "window_dark", "window_dark", "window_dark"]))
-        for pu in (-0.32 * L_, 0.32 * L_):
-            for side in (-1, 1):
-                wx, wy = Lp(pu, side * (hw - 0.02))
-                prims.append(cyl(wx - vx * side * 0.0, wy - vy * side * 0.0, z + 0.33, 0.33, 0.24 * side, "rubber",
-                                 seg=10, axis=(vx, vy, 0.0)))
+    @staticmethod
+    def vehicle_problems(v, models=vehicle_data.MODELS):
+        """What's wrong with one placed vehicle: its committed model's footprint, turned to its
+        heading, must lie inside its spot's footprint."""
+        (x0, y0, _), (x1, y1, _) = vehicle_data.model_bounds(v["model"], models)
+        h = math.radians(v["heading"])
+        fx_, fy_ = math.sin(h), -math.cos(h)            # the front, in layout axes (heading_of's inverse)
+        rx, ry = -fy_, fx_                              # its right: the model's +x
+        cx, cy, _ = v["at"]
+        corners = [(cx + rx * x + fx_ * y, cy + ry * x + fy_ * y) for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1))]
+        spot = RM.shape_geom(v["spot"])
+        if spot.buffer(1e-6).contains(Polygon(corners)):
+            return []
+        _, _, _, sw, sh, _ = v["spot"][:6]
+        return [f"{v['name']} ({v['model']}, {y1 - y0:.2f} x {x1 - x0:.2f} m) doesn't fit its {max(sw, sh):g} x "
+                f"{min(sw, sh):g} m spot at ({cx:.1f}, {cy:.1f})"]
 
-    def truck(self, prims, cx, cy, z, sw, sh, ang):
-        ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        L_, W_ = (sw, sh) if sw >= sh else (sh, sw)
-        if sh > sw:
-            ux, uy = -uy, ux
-        vx, vy = -uy, ux
-
-        def Lp(u, v):
-            return (cx + ux * u + vx * v, cy + uy * u + vy * v)
-        hl, hw = L_ / 2, W_ / 2
-        prims.append(hexa([Lp(-hl, -hw), Lp(0.26 * L_, -hw), Lp(0.26 * L_, hw), Lp(-hl, hw)], z + 0.9, z + 3.4, "rust_metal"))
-        prims.append(hexa([Lp(0.28 * L_, -hw), Lp(hl, -hw), Lp(hl, hw), Lp(0.28 * L_, hw)], z + 0.5, z + 2.6,
-                          ["gunmetal", "gunmetal", "gunmetal", "window_dark", "gunmetal", "window_dark"]))
-        prims.append(hexa([Lp(-hl + 0.2, -hw + 0.3), Lp(hl - 0.2, -hw + 0.3), Lp(hl - 0.2, hw - 0.3), Lp(-hl + 0.2, hw - 0.3)],
-                          z + 0.45, z + 0.9, "gunmetal"))
-        for pu in (-0.36 * L_, -0.2 * L_, 0.36 * L_):
-            for side in (-1, 1):
-                wx, wy = Lp(pu, side * (hw - 0.05))
-                prims.append(cyl(wx, wy, z + 0.45, 0.45, 0.3 * side, "rubber", seg=10, axis=(vx, vy, 0.0)))
+    def check_vehicles(self):
+        """Every parked vehicle fits its spot (openspec/changes/street-vehicles, "Parked vehicles
+        are generated models placed by the plan"), read from the committed glb. Refuses the plan,
+        naming each spot and model."""
+        problems = [p for v in self.vehicles for p in self.vehicle_problems(v)]
+        if problems:
+            raise SystemExit(f"{self.m['id']}: {len(problems)} vehicles don't fit their spots:\n  " + "\n  ".join(problems))
 
     def wagon(self, prims, cx, cy, z, sw, sh, ang):
         ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
@@ -3554,6 +3564,7 @@ class City:
         self.check_doors()
         self.check_exits()
         self.check_standing_room()
+        self.check_vehicles()
         self.place_puddles()
         self.check_puddles()
         return self.P
