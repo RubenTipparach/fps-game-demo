@@ -7,7 +7,8 @@ no shadow under them. Survey O2 to O4 are open.
 
 - [x] 1.1 Measure: the ground under every car's wheels, the lightmaps' users, the lights reaching
   each car against its bake, the paints' albedo (design sections 1.1, 2.1, 3.1).
-- [ ] 1.2 Before stills (`docs/playtest/scripts/vehicle_fixes_before.json`).
+- [x] 1.2 Before stills (`docs/playtest/scripts/vehicle_fixes_before.json`): five, in
+  `docs/screenshots/vehicle_fixes/`.
 
 ## 2. The wheels
 
