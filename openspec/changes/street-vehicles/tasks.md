@@ -12,7 +12,7 @@ sedans, vans, taxis and trucks, parked only.
   Stills in `docs/screenshots/street_vehicles/`, and a survey row for the owner.
 
   Built: Kenney only, since Quaternius's host is out of this container's reach (design
-  section 2); the sedan, taxi, van and truck beside Kenney's. Survey M4.
+  section 2); the sedan, taxi, van and truck beside Kenney's. Survey O1.
 - [ ] 1.3 Before stills from the four hub places (design section 6).
 
 ## 2. The generator
