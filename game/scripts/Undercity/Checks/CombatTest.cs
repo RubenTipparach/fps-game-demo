@@ -123,7 +123,9 @@ public partial class CombatTest : Node3D
             P.Velocity = Vector3.Zero;
             P.ResetPhysicsInterpolation();
             await Ticks(2);
-            if (!npc.ClearLine(P.EyePosition))
+            // Both lines: the NPC must see the runner, and the shot must reach the point it's aimed
+            // at. A parked car can hide a chest while the eyes see each other over its roof.
+            if (!npc.ClearLine(P.EyePosition) || !ShotLineClear(target))
             {
                 continue;
             }
@@ -132,6 +134,14 @@ public partial class CombatTest : Node3D
             return true;
         }
         return false;
+    }
+
+    /// <summary>Whether nothing of the world stands between the runner's eye and <paramref name="at"/>: the line a shot flies.</summary>
+    private bool ShotLineClear(Vector3 at)
+    {
+        var query = PhysicsRayQueryParameters3D.Create(P.EyePosition, at, Brushfire.Layers.World);
+        query.Exclude = new Godot.Collections.Array<Rid> { P.GetRid() };
+        return P.GetWorld3D().DirectSpaceState.IntersectRay(query).Count == 0;
     }
 
     private void Aim(Vector3 at)
