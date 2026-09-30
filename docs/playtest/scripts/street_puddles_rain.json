@@ -1,0 +1,11 @@
+{"out": "/tmp/undercity_street_puddles_rain", "god": true,
+ "steps": [
+  {"log": "street puddles: 6 s of rain on Lantern Row's south gutter puddles under its neon (design section 3.8), --write-movie at --fixed-fps 30"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"wait": 20},
+  {"teleport": [79.0, 0.0, 39.2], "yaw": 0, "pitch": 0},
+  {"wait": 10},
+  {"face": [85.5, -0.6, 41.8]},
+  {"wait": 180},
+  {"quit": true}
+ ]}

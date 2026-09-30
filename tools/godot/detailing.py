@@ -508,6 +508,67 @@ def zfight_report(airs, details=(), props=(), merged=False):
     return sorted(conflicts)
 
 
+def coplanar_triangle_report(tris, plane_tol=0.005, angle_tol_deg=1.0, overlap_tol=0.001):
+    """Pairs of triangles in one mesh that share a plane, face the same way and overlap: the
+    z-fighting a converted mesh (a pack's model, which isn't built from registered boxes) can
+    carry, such as a decal face laid flush on the body. tris is [(p0, p1, p2), ...] in metres.
+    Faces back to back are fine (CLAUDE.md 7.2), and so are neighbours that only share an edge:
+    two triangles overlap when they cross by more than overlap_tol on every separating axis."""
+    import math
+    cos_tol = math.cos(math.radians(angle_tol_deg))
+
+    def sub(a, b):
+        return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+
+    def cross(a, b):
+        return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+    def dot(a, b):
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+    planes = []
+    for t in tris:
+        n = cross(sub(t[1], t[0]), sub(t[2], t[0]))
+        ln = math.sqrt(dot(n, n))
+        planes.append(None if ln < 1e-9 else (tuple(c / ln for c in n), dot(n, t[0]) / ln))
+
+    def flat(t, n):                             # the triangle in its plane's own 2D axes
+        u = cross(n, (1.0, 0.0, 0.0) if abs(n[0]) < 0.9 else (0.0, 1.0, 0.0))
+        lu = math.sqrt(dot(u, u))
+        u = tuple(c / lu for c in u)
+        v = cross(n, u)
+        return [(dot(p, u), dot(p, v)) for p in t]
+
+    def cross_by(a, b):                         # least penetration over the six edge normals
+        depth = math.inf
+        for poly in (a, b):
+            for i in range(3):
+                (x0, y0), (x1, y1) = poly[i], poly[(i + 1) % 3]
+                ax = (y0 - y1, x1 - x0)
+                la = math.hypot(*ax)
+                if la < 1e-12:
+                    return 0.0
+                pa = [(x * ax[0] + y * ax[1]) / la for x, y in a]
+                pb = [(x * ax[0] + y * ax[1]) / la for x, y in b]
+                depth = min(depth, min(max(pa), max(pb)) - max(min(pa), min(pb)))
+                if depth <= 0.0:
+                    return depth
+        return depth
+    found = []
+    for i in range(len(tris)):
+        if planes[i] is None:
+            continue
+        ni, di = planes[i]
+        for j in range(i + 1, len(tris)):
+            if planes[j] is None:
+                continue
+            nj, dj = planes[j]
+            if dot(ni, nj) < cos_tol or abs(di - dj) > plane_tol:
+                continue
+            if cross_by(flat(tris[i], ni), flat(tris[j], ni)) > overlap_tol:
+                found.append((i, j))
+    return found
+
+
 def assert_no_zfighting(level, airs, details=(), props=(), merged=False):
     conflicts = zfight_report(airs, details, props, merged)
     if conflicts:

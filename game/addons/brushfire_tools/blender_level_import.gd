@@ -40,7 +40,9 @@ const SCENES := {
 const TRIGGER_SCRIPT := "res://scripts/World/Trigger.cs"
 
 ## Undercity entities (tools/levels/layouts/<level>_entities.py), by their "kind" extra. Loot picks
-## its scene by "model", doors and exits by "style" (see _undercity_scene).
+## its scene by "model", doors and exits by "style" (see _undercity_scene). A parked car is a static
+## mesh of its sector (car_<id>, built by build_undercity.py), so its ENT_car is its contact shadow,
+## a decal sized by the "size" extra (openspec/changes/archive/2026-09-30-vehicle-fixes, design sections 2.2 and 2.3).
 const UNDERCITY := {
 	"npc": "res://scenes/undercity/npc.tscn",
 	"civ": "res://scenes/undercity/npc.tscn",
@@ -127,11 +129,18 @@ func _undercity_scene(extras: Dictionary) -> String:
 		"sliding_door":
 			# a public entrance, by its size and face (tools/godot/detailing.py, SLIDING_LEAVES)
 			return "res://scenes/undercity/doors/sliding_%s.tscn" % str(extras.get("leaf", ""))
+		"car":
+			# a parked car's contact shadow; the car itself is a static mesh of its sector, car_<id>
+			# (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3)
+			return "res://scenes/undercity/car_shadow.tscn"
+		"gully":
+			# a kerb gully's grate over its puddle (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2)
+			return "res://scenes/undercity/gully.tscn"
 	return UNDERCITY.get(kind, "")
 
 
 ## An Undercity entity: its scene, with every extra as metadata (the game reads "id" and the rest),
-## in the group "ent_<kind>", and its trigger box sized from a "size" extra ("w,d" metres).
+## in the group "ent_<kind>", and its trigger box, or its decal, sized from a "size" extra ("w,d" metres).
 func _undercity_entity(scene_path: String, extras: Dictionary) -> Node3D:
 	var node := (load(scene_path) as PackedScene).instantiate() as Node3D
 	var kind := str(extras.get("kind", ""))
@@ -146,6 +155,9 @@ func _undercity_entity(scene_path: String, extras: Dictionary) -> Node3D:
 		var box := (shape.shape as BoxShape3D).duplicate() as BoxShape3D
 		box.size = Vector3(float(wd[0]), box.size.y, float(wd[1]))
 		shape.shape = box
+	if node is Decal and extras.has("size"):
+		var wd := str(extras["size"]).split(",")
+		(node as Decal).size = Vector3(float(wd[0]), (node as Decal).size.y, float(wd[1]))
 	return node
 
 

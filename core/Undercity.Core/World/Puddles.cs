@@ -1,6 +1,6 @@
 // A level's puddles (data/levels/<id>.json "puddles", exported from the level's plan): where rain
 // water stands, and how to read the mask the ground's shader draws them from
-// (openspec/changes/street-puddles, design sections 3.4 and 3.5).
+// (openspec/changes/archive/2026-09-30-street-puddles, design sections 3.4 and 3.5).
 //
 // It lives in the core because where the rain falls is one rule. A puddle may lie only where the
 // core's wetness rule says a character would get wet (Wetness.Sheltered), and the check that

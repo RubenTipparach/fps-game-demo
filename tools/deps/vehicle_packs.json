@@ -1,0 +1,18 @@
+{
+  "_comment": "The allowlist of packs the parked-vehicle build may read (openspec/changes/archive/2026-09-30-cc0-vehicles, design section 4). Each pack is pinned by the SHA-256 of its download. tools/deps/fetch_character_tools.py fetches every list in tools/deps into a cache outside the repository and refuses a pack whose hash differs; tools/blender/build_vehicles_cc0.py converts the chosen models from the verified pack only. The pack never enters the repository: only the converted models and the textures they use do, with this record of where they came from.",
+  "packs": [
+    {
+      "id": "psx_style_cars",
+      "name": "PSX Style Cars by GGBotNet, the August 2023 release",
+      "author": "GGBotNet",
+      "file": "psx_style_cars_by_ggbot_august2023.zip",
+      "fetch": "http",
+      "url": "https://opengameart.org/sites/default/files/psx_style_cars_by_ggbot_august2023.zip",
+      "page": "https://opengameart.org/content/psx-style-cars",
+      "sha256": "db67b0b0fbaa02454a5d000dc9ec1cc53f360e8f41ab44f3fb1c7e8f71e699e4",
+      "size_bytes": 2610303,
+      "licence": "CC0 1.0",
+      "licence_stated_in": "The pack's OpenGameArt page, whose licence field reads CC0 (fetched 2026-09-30); the zip carries no licence file of its own, only a link to the author's itch.io page (GGBot - itch.io.URL)."
+    }
+  ]
+}

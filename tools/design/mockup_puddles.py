@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw the street-puddles mockup for the design page (openspec/changes/street-puddles, design
+"""Draw the street-puddles mockup for the design page (openspec/changes/archive/2026-09-30-street-puddles, design
 section 2): one real stretch of the hub, 48 x 30 m round the garage under the Skyway, twice.
 
     python3 tools/design/mockup_puddles.py

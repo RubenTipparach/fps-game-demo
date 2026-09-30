@@ -489,7 +489,8 @@ Before claiming anything is done, run what applies:
   `slag_works.map`, `level_trenchbroom.tscn`, `cistern.glb`, `level_blender.tscn`,
   `scenes/**`, the design maps under `docs/design/maps/`, and the NPC pipeline's output
   (`models/characters/*.glb`, `animations/undercity_clips.glb`, `animations/bonemaps/*.tres`;
-  README, "Undercity's NPC bodies").
+  README, "Undercity's NPC bodies"), and the vehicle converter's (`models/undercity/props/vehicle_*.glb`,
+  `textures/vehicles/psx/`, `materials/props/veh_psx_*.tres`).
 - **Rebuild and bake** with the `BRUSHFIRE_BATCH=... godot --editor --path game` command in
   README.md.
   - It needs Xvfb (`DISPLAY=:99`) and Vulkan (lavapipe), and takes about 15 minutes per level.
@@ -547,6 +548,12 @@ Nothing is an exception until it is listed here with its reason.
   rebuilds every body byte for byte from `tools/blender/npcs.json` and the SHA-pinned packs, and
   each body's `.blend` is 12.5 MB, about 275 MB for the 22 bodies. The table is the editable
   source (owner, survey H1, 2026-09-28, approved conditionally).
+- **The CC0 PSX vehicles keep their own textures, filtered bilinearly (owner O6, O8), and commit
+  their table and glbs, not a `.blend`.** `tools/blender/build_vehicles_cc0.py` converts GGBotNet's
+  PSX Style Cars, pinned by hash in `tools/deps/vehicle_packs.json`, into `vehicle_<id>.glb`. The
+  pack's 128 px painted textures are the cars' look, which no Material Maker set at our texel density
+  reproduces (6.4), and the pack's own `.blend` files, pinned, are the editable source (6.1)
+  (`openspec/changes/archive/2026-09-30-cc0-vehicles`, design sections 4 and 5).
 - **The first RPG spike is parked, not built.** `docs/spikes/rpg-core/` holds an early sketch
   of the inventory, dialog and disguise code. It predates these rules and doesn't compile. It
   is kept as reference for the OpenSpec changes and is not part of any build.

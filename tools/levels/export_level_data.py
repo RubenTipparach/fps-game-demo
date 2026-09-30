@@ -81,7 +81,7 @@ def approaches(layout):
 
 
 def puddles(level_id, city):
-    """The level's puddles (city_plan.py City.puddles(), openspec/changes/street-puddles), for the
+    """The level's puddles (city_plan.py City.puddles(), openspec/changes/archive/2026-09-30-street-puddles), for the
     core's check that each lies in the rain, and the numbers the level hands the ground's shader to
     read the mask. The mask itself (puddle_mask.py) is written here too, from the same plan, so the
     list and the mask can't disagree."""
@@ -124,6 +124,10 @@ def export(level_id):
         out["shelters"] = shelters(level_id, plan)
         out["approaches"] = approaches(layout)
         out["puddles"] = puddles(level_id, city)
+        # The parked vehicles, for the placement test to find in the built level (openspec/changes/archive/2026-09-30-street-vehicles).
+        out["cars"] = [{"id": v["name"][len("ENT_car_"):], "model": v["model"],
+                        "at": [round(v["at"][0], 3), round(v["at"][1], 3)], "heading_deg": round(v["heading"], 3)}
+                       for v in city.vehicles]
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:

@@ -25,6 +25,11 @@ namespace Brushfire;
 ///         {"kill": "tank" | "hub:civ_01", "at": [x,y,z]} (the NPC dies and its body falls, from "at" if given;
 ///                    test only until combat lands) | {"look": [yaw, pitch]} (turn without moving)
 ///         {"face": [x,y,z]} (look at a point) | {"walk_to": [x,z], "within": m, "max": frames} (steer there, forward held)
+///         {"puddles": false} (the ground without the level's puddles: the ground shader against the material it
+///                    replaced, openspec/changes/archive/2026-09-30-street-puddles, design section 3.8; true: the level's again)
+///         {"hide": "node"} | {"show": "node"} (a node of the running scene, by name) | {"camera": [x,y,z], "look_at": [x,y,z]}
+///                    (a free camera; {"camera": false}: the player's again): openspec/changes/archive/2026-09-30-vehicle-fixes, design
+///                    section 2.3, the ground under a parked car seen from above with the car hidden
 /// </summary>
 public partial class AutoTest : Node
 {
@@ -39,6 +44,48 @@ public partial class AutoTest : Node
         Active = true;
         ProcessMode = ProcessModeEnum.Always;
         _ = Run(OS.GetEnvironment("BRUSHFIRE_AUTOTEST"));
+    }
+
+    Camera3D _freeCam;
+
+    /// <summary>Hides or shows every drawn node of the running scene with this name (a measurement
+    /// instrument: openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3). A marker of the same name
+    /// draws nothing, so it's left alone.</summary>
+    void ShowNode(string name, bool visible)
+    {
+        var found = GetTree().CurrentScene?.FindChildren(name, nameof(GeometryInstance3D), true, false)
+            .OfType<GeometryInstance3D>().ToList();
+        if (found == null || found.Count == 0)
+            GD.PrintErr($"[AutoTest] no drawn node {name} to {(visible ? "show" : "hide")}");
+        foreach (var n in found ?? new())
+            n.Visible = visible;
+    }
+
+    /// <summary>A free camera at a point looking at another, made current; false hands the view
+    /// back to the player's camera (a measurement instrument: openspec/changes/archive/2026-09-30-vehicle-fixes, design
+    /// section 2.3).</summary>
+    void FreeCamera(Variant at, Variant lookAt)
+    {
+        if (at.VariantType == Variant.Type.Bool)
+        {
+            _freeCam?.QueueFree();
+            _freeCam = null;
+            PlayerController.Instance?.GetNodeOrNull<Camera3D>("CameraRig/Camera3D")?.MakeCurrent();
+            return;
+        }
+        if (_freeCam == null)
+        {
+            _freeCam = new Camera3D { Name = "AutoTestCamera" };
+            GetTree().CurrentScene.AddChild(_freeCam);
+        }
+        var a = at.AsGodotArray();
+        var l = lookAt.AsGodotArray();
+        var from = new Vector3((float)a[0], (float)a[1], (float)a[2]);
+        var to = new Vector3((float)l[0], (float)l[1], (float)l[2]);
+        // straight down needs an up that isn't the view's own axis
+        var up = Mathf.Abs((to - from).Normalized().Y) > 0.99f ? Vector3.Forward : Vector3.Up;
+        _freeCam.LookAtFromPosition(from, to, up);
+        _freeCam.MakeCurrent();
     }
 
     async Task Frames(int n)
@@ -177,6 +224,18 @@ public partial class AutoTest : Node
                 await Frames(2);
                 Input.ActionRelease(pa.AsString());
             }
+            if (step.TryGetValue("puddles", out var pud))
+            {
+                var hub = GetTree().CurrentScene as Undercity.Client.UndercityLevel;
+                Undercity.Client.PuddleShading.Apply(pud.AsBool() && hub?.AutoTestState is { } st
+                    ? st.Data.Levels[hub.LevelId].Puddles : null);
+            }
+            if (step.TryGetValue("hide", out var hide))
+                ShowNode(hide.AsString(), false);
+            if (step.TryGetValue("show", out var show))
+                ShowNode(show.AsString(), true);
+            if (step.TryGetValue("camera", out var cam))
+                FreeCamera(cam, step.TryGetValue("look_at", out var la) ? la : default);
             if (step.TryGetValue("shot", out var shot))
             {
                 await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);

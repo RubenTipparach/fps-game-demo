@@ -73,12 +73,26 @@
   "asphalt": {
     "tile_m": 4.0,
     "normal_scale": 0.8,
-    "source": "procedural: tools/fx/generate_city_materials.py"
+    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/city_ground.gdshader with the level's puddles (openspec/changes/archive/2026-09-30-street-puddles)",
+    "shader": "res://shaders/city_ground.gdshader",
+    "ripples_from": "water",
+    "shader_params": {
+      "puddle_darken": 0.65, "puddle_roughness": 0.04, "puddle_edge_m": 0.04,
+      "puddle_noise_m": 0.05, "puddle_noise_wavelength_m": 0.3,
+      "puddle_height_tol_m": 0.03, "puddle_up_min": 0.9
+    }
   },
   "paving_wet": {
     "tile_m": 2.0,
     "normal_scale": 0.9,
-    "source": "procedural: tools/fx/generate_city_materials.py"
+    "source": "procedural: tools/fx/generate_city_materials.py; drawn by shaders/city_ground.gdshader with the level's puddles (openspec/changes/archive/2026-09-30-street-puddles)",
+    "shader": "res://shaders/city_ground.gdshader",
+    "ripples_from": "water",
+    "shader_params": {
+      "puddle_darken": 0.7, "puddle_roughness": 0.04, "puddle_edge_m": 0.04,
+      "puddle_noise_m": 0.05, "puddle_noise_wavelength_m": 0.3,
+      "puddle_height_tol_m": 0.03, "puddle_up_min": 0.9
+    }
   },
   "window_lit_warm": {
     "tile_m": 1.5,

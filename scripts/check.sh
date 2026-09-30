@@ -22,9 +22,10 @@ step "Level plans: z-fighting, carved rooms, ways out of the water, people clear
 python3 tools/levels/city_plan.py hub --stats >/dev/null
 python3 -m unittest discover -s tools/levels -p 'test_*.py'
 
-step "Generated materials are current (character-lighting, the water's shader material)"
+step "Generated materials are current (character-lighting, the water and the ground, no standing water in its textures)"
 python3 -m unittest discover -s tools/godot -p 'test_*.py'
 python3 -m unittest discover -s tools/material_maker -p 'test_*.py'
+python3 -m unittest discover -s tools/fx -p 'test_*.py'
 
 step "Generated level data is current"
 python3 tools/levels/export_level_data.py >/dev/null

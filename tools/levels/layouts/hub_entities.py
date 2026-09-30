@@ -64,7 +64,7 @@ NPCS = [
     _npc("mersec_gate", (168, 161), 0),
     _npc("mersec_station", (120, 30.4), 180),
     _npc("mersec_desk", (228, 132.2), 270),
-    _npc("mersec_patrol_a", (40, 39), 90, patrol=PATROL, patrol_start=0),
+    _npc("mersec_patrol_a", (40, 37.8), 90, patrol=PATROL, patrol_start=0),
     _npc("mersec_patrol_b", (146, 96), 135, patrol=PATROL, patrol_start=3),
     _npc("skiv", (50, 146), 270),
     _npc("jax", (181.7, 119.2), 270),

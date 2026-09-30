@@ -1,0 +1,13 @@
+{"out": "/tmp/undercity_street_puddles_equivalence", "god": true,
+ "steps": [
+  {"log": "street puddles: the ground shader with no puddles against the ORMMaterial3D it replaced (design section 3.8); run once with each material, --fixed-fps 30"},
+  {"scene": "res://levels/undercity/hub/hub.tscn"},
+  {"wait": 20},
+  {"puddles": false},
+  {"teleport": [62.0, 0.0, 38.5], "yaw": 0, "pitch": 0},
+  {"wait": 30},
+  {"face": [85.0, 0.0, 41.5]},
+  {"wait": 4},
+  {"shot": "equivalence.png"},
+  {"quit": true}
+ ]}

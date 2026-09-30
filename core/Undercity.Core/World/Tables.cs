@@ -318,10 +318,16 @@ public sealed class LevelDef : IValidated
     public IReadOnlyList<ApproachDef> Approaches { get; init; } = Array.Empty<ApproachDef>();
 
     /// <summary>
-    /// The level's puddles and their mask, from its plan (openspec/changes/street-puddles); null for
+    /// The level's puddles and their mask, from its plan (openspec/changes/archive/2026-09-30-street-puddles); null for
     /// a level without rain.
     /// </summary>
     public PuddlesDef? Puddles { get; init; }
+
+    /// <summary>
+    /// The level's parked vehicles, from its plan (openspec/changes/archive/2026-09-30-street-vehicles); none for a
+    /// level without car spots.
+    /// </summary>
+    public IReadOnlyList<ParkedCarDef> Cars { get; init; } = Array.Empty<ParkedCarDef>();
 
     /// <summary>The id of the district the point (x, y) in layout metres lies in, or null outside them all.</summary>
     public string? DistrictAt(double x, double y) => Districts.FirstOrDefault(d => d.Contains(x, y))?.Id;
@@ -389,6 +395,14 @@ public sealed class LevelDef : IValidated
             a.Validate(Id, errors);
         }
         Puddles?.Validate(Id, errors);
+        foreach (var dup in Cars.GroupBy(c => c.Id).Where(g => g.Count() > 1))
+        {
+            errors.Add($"levels.{Id}: car '{dup.Key}' is given twice");
+        }
+        foreach (var c in Cars)
+        {
+            c.Validate(Id, errors);
+        }
         foreach (var id in ids.Where(i => !i.StartsWith(Id + ":", StringComparison.Ordinal)))
         {
             errors.Add($"levels.{Id}: stable id '{id}' must start with '{Id}:'");
