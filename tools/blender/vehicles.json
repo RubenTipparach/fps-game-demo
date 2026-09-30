@@ -1,56 +1,44 @@
 {
-  "_comment": "The hub's parked vehicles (openspec/changes/archive/2026-09-30-street-vehicles; owner, survey M1-M3). Validated by vehicle_data.py; built by build_undercity_props.py into game/models/undercity/props/vehicle_<id>.glb. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
-  "budget": {"car_tris": 2500, "truck_tris": 3500},
-  "paints": {
-    "maroon": "#5c1a1f", "teal": "#1d5c5e", "grey": "#6c7176", "black": "#17191c",
-    "white": "#c8c6bd", "olive": "#4f5532", "rust": "#7a3f24", "taxi": "#d9c27c",
-    "truck_red": "#7a1f1a"
+  "_comment": "The hub's parked vehicles: every one a body of GGBotNet's PSX Style Cars in one of its own colour textures (openspec/changes/cc0-vehicles; owner, 2026-09-30: \"yea psx cars are nice, I'd want a consistent art style\"; survey O7: vans, no trucks). Validated by vehicle_data.py; converted by build_vehicles_cc0.py into game/models/undercity/props/vehicle_<id>.glb and game/textures/vehicles/psx/<id>.png. Paths are relative to the pack's root. Metres; x right, y front, z up; the origin is the floor centre of the footprint.",
+  "pack": "psx_style_cars",
+  "_comment_scale": "The pack's one wheel sets its scale: every body keeps its own proportions, a compact hatchback beside a full-size sedan (design section 3).",
+  "wheel_blend": "Wheel/Wheel.blend",
+  "wheel_d_m": 0.65,
+  "budget_tris": 2500,
+  "_comment_material": "Over each pack texture, filtered bilinearly (owner O8): a matt base and a glossy clear coat, the rain on the paint (openspec/changes/vehicle-fixes, design section 3.2).",
+  "material": {"roughness": 0.6, "clearcoat": 1.0, "clearcoat_roughness": 0.1},
+  "bodies": {
+    "wagon": {"is": "Car 1, an estate car", "blend": "Car 01/Car.blend", "length_m": 4.36},
+    "sedan": {"is": "Car 2, a four-door saloon", "blend": "Car 02/Car2.blend", "length_m": 4.63},
+    "hatchback": {"is": "Car 3, a compact hatchback", "blend": "Car 03/Car3.blend", "length_m": 3.98},
+    "minivan": {"is": "Car 4, a minivan", "blend": "Car 04/Car4.blend", "length_m": 4.46},
+    "fullsize": {"is": "Car 5, a full-size saloon", "blend": "Car 05/Car5.blend", "length_m": 5.22},
+    "taxi": {"is": "Car 5 as a taxi", "blend": "Car 05/Car5_Taxi.blend", "length_m": 5.17},
+    "box_van": {"is": "Car 8, a box van", "blend": "Car 08/Car8.blend", "length_m": 4.89}
   },
-  "types": {
-    "sedan": {
-      "_comment": "4.28 m of body; bumpers and plates bring it to 4.38 m, inside the Kings' Garage's 4.4 m bay.",
-      "spot": "car", "length_m": 4.28, "width_m": 1.78,
-      "wheel_r_m": 0.31, "tyre_w_m": 0.2, "track_m": 1.5, "axles_m": [-1.29, 1.29], "clearance_m": 0.2,
-      "body_top_m": [[-2.14, 0.62], [-1.6, 0.8], [1.58, 0.8], [2.14, 0.64]],
-      "cabin_m": [[-1.42, 0.77], [-0.82, 1.37], [0.48, 1.37], [1.32, 0.77]], "taper": 0.82,
-      "windows_y_m": [[-1.35, -0.2], [-0.12, 1.25]],
-      "bumper_z_m": [0.26, 0.42], "head_z_m": [0.47, 0.58], "tail_z_m": [0.47, 0.58], "lamp_w_m": 0.34,
-      "seams_y_m": [-0.9, -0.16, 0.9],
-      "band_z_m": [0.6, 0.68]
-    },
-    "van": {
-      "spot": "car", "length_m": 4.28, "width_m": 1.84,
-      "wheel_r_m": 0.32, "tyre_w_m": 0.2, "track_m": 1.56, "axles_m": [-1.38, 1.38], "clearance_m": 0.2,
-      "body_top_m": [[-2.14, 1.0], [1.5, 1.0], [2.14, 0.72]],
-      "cabin_m": [[-2.12, 0.97], [-2.08, 1.9], [0.72, 1.9], [1.55, 0.97]], "taper": 0.9,
-      "windows_y_m": [[-0.02, 1.45]],
-      "bumper_z_m": [0.24, 0.42], "head_z_m": [0.5, 0.62], "tail_z_m": [0.52, 0.92], "lamp_w_m": 0.14,
-      "seams_y_m": [-0.95, -0.05, 0.95]
-    },
-    "truck": {
-      "_comment": "A box truck for the depot's 8.5 x 2.8 m bays: the cab's lower body starts behind it, at the cargo box.",
-      "spot": "truck", "length_m": 8.3, "width_m": 2.5,
-      "wheel_r_m": 0.47, "tyre_w_m": 0.28, "track_m": 2.0, "axles_m": [-3.1, -1.95, 2.95], "clearance_m": 0.5,
-      "body_top_m": [[1.52, 1.55], [3.7, 1.55], [4.15, 1.25]],
-      "cabin_m": [[1.54, 1.5], [1.58, 2.7], [3.55, 2.7], [3.88, 1.5]], "taper": 0.94,
-      "windows_y_m": [[2.45, 3.5]],
-      "bumper_z_m": [0.55, 0.85], "head_z_m": [0.95, 1.12], "tail_z_m": [1.15, 1.32], "lamp_w_m": 0.3,
-      "seams_y_m": [2.35],
-      "cargo": {"y_m": [-4.15, 1.45], "z_m": [1.05, 3.45], "width_m": 2.5}
-    }
-  },
+  "_comment_left_out": "Car 5 police (the hub's law is MerSec, a private force), Car 6 (a burnt-out wreck, for the Yard later), Car 7 (a 1930s car), and every snow texture (Meridian's weather is rain).",
   "variants": [
-    {"id": "sedan_maroon", "type": "sedan", "paint": "maroon", "plate": "MRD 4417"},
-    {"id": "sedan_teal", "type": "sedan", "paint": "teal", "plate": "LHB 2093"},
-    {"id": "sedan_grey", "type": "sedan", "paint": "grey", "plate": "SMP 7710"},
-    {"id": "sedan_black", "type": "sedan", "paint": "black", "plate": "KSN 0338"},
-    {"id": "taxi", "type": "sedan", "paint": "taxi", "plate": "TX 1186", "roof_sign": "TAXI", "chequer": true},
-    {"id": "van_white", "type": "van", "paint": "white", "plate": "DRY 5521"},
-    {"id": "van_olive", "type": "van", "paint": "olive", "plate": "TNS 3304"},
-    {"id": "van_rust", "type": "van", "paint": "rust", "plate": "KLN 8867"},
-    {"id": "truck_kosei", "type": "truck", "paint": "white", "plate": "KSI 0072",
-     "livery": {"text": "KOSEI COLD CHAIN", "ground": "#e8e6df", "ink": "#1d3a6b"}},
-    {"id": "truck_salvage", "type": "truck", "paint": "truck_red", "plate": "LHS 4410",
-     "livery": {"text": "LOW HARBOR SALVAGE", "ground": "#2b2f33", "ink": "#e0b43a"}}
+    {"id": "wagon_green", "body": "wagon", "texture": "Car 01/car.png"},
+    {"id": "wagon_blue", "body": "wagon", "texture": "Car 01/car_blue.png"},
+    {"id": "wagon_grey", "body": "wagon", "texture": "Car 01/car_gray.png"},
+    {"id": "wagon_red", "body": "wagon", "texture": "Car 01/car_red.png"},
+    {"id": "sedan_navy", "body": "sedan", "texture": "Car 02/car2.png"},
+    {"id": "sedan_black", "body": "sedan", "texture": "Car 02/car2_black.png"},
+    {"id": "sedan_maroon", "body": "sedan", "texture": "Car 02/car2_red.png"},
+    {"id": "hatchback_green", "body": "hatchback", "texture": "Car 03/car3.png"},
+    {"id": "hatchback_red", "body": "hatchback", "texture": "Car 03/car3_red.png"},
+    {"id": "hatchback_yellow", "body": "hatchback", "texture": "Car 03/car3_yellow.png"},
+    {"id": "minivan_blue", "body": "minivan", "texture": "Car 04/car4.png"},
+    {"id": "minivan_grey", "body": "minivan", "texture": "Car 04/car4_grey.png"},
+    {"id": "minivan_silver", "body": "minivan", "texture": "Car 04/car4_lightgrey.png"},
+    {"id": "minivan_tan", "body": "minivan", "texture": "Car 04/car4_lightorange.png"},
+    {"id": "fullsize_red", "body": "fullsize", "texture": "Car 05/car5.png"},
+    {"id": "fullsize_green", "body": "fullsize", "texture": "Car 05/car5_green.png"},
+    {"id": "fullsize_grey", "body": "fullsize", "texture": "Car 05/car5_grey.png"},
+    {"id": "taxi", "body": "taxi", "texture": "Car 05/car5_taxi.png"},
+    {"id": "box_van_white", "body": "box_van", "texture": "Car 08/Car8.png"},
+    {"id": "box_van_grey", "body": "box_van", "texture": "Car 08/Car8_grey.png"},
+    {"id": "box_van_mail", "body": "box_van", "texture": "Car 08/Car8_mail.png"},
+    {"id": "box_van_purple", "body": "box_van", "texture": "Car 08/Car8_purple.png"}
   ]
 }

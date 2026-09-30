@@ -4,12 +4,10 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dh7hd1b41q4sj"
-path="res://.godot/imported/sliding_steel_400x300.glb-a0df2812c5ec79bc3e006e5f5d4ba048.scn"
 
 [deps]
 
 source_file="res://models/undercity/props/sliding_steel_400x300.glb"
-dest_files=["res://.godot/imported/sliding_steel_400x300.glb-a0df2812c5ec79bc3e006e5f5d4ba048.scn"]
 
 [params]
 
@@ -41,6 +39,110 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "materials": {
+"tech_panel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/tech_panel.tres"
+},
+"concrete": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/concrete.tres"
+},
+"ceiling_tiles": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/ceiling_tiles.tres"
+},
+"floor_tiles": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/floor_tiles.tres"
+},
+"crate": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/crate.tres"
+},
+"crate_large": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/crate_large.tres"
+},
+"hazard_stripes": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/hazard_stripes.tres"
+},
+"light_panel": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/light_panel.tres"
+},
+"rust_metal": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/rust_metal.tres"
+},
+"brick_wall": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/brick_wall.tres"
+},
+"stone_blocks": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/stone_blocks.tres"
+},
+"diamond_plate": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/diamond_plate.tres"
+},
+"lava": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/lava.tres"
+},
+"sky_night": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_night.tres"
+},
+"sky_storm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_storm.tres"
+},
+"sky_moon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/sky_moon.tres"
+},
+"asphalt": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/asphalt.tres"
+},
+"paving_wet": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/paving_wet.tres"
+},
+"window_lit_warm": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_lit_warm.tres"
+},
+"window_lit_cool": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_lit_cool.tres"
+},
+"window_dark": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/window_dark.tres"
+},
+"glass": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/glass.tres"
+},
+"neon_pink": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/neon_pink.tres"
+},
+"neon_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/neon_cyan.tres"
+},
+"water": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/water.tres"
+},
+"awning": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/awning.tres"
+},
 "ammo_olive": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/ammo_olive.tres"
@@ -52,14 +154,6 @@ _subresources={
 "armor_red": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/armor_red.tres"
-},
-"asphalt": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/asphalt.tres"
-},
-"awning": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/awning.tres"
 },
 "barrel": {
 "use_external/enabled": true,
@@ -81,146 +175,17 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/brass.tres"
 },
-"brick_wall": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/brick_wall.tres"
-},
 "canvas": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/canvas.tres"
-},
-"car_glass": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_glass.tres"
-},
-"car_lens_head": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_lens_head.tres"
-},
-"car_lens_tail": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_lens_tail.tres"
-},
-"car_paint_black": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_black.tres"
-},
-"car_paint_grey": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_grey.tres"
-},
-"car_paint_maroon": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_maroon.tres"
-},
-"car_paint_olive": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_olive.tres"
-},
-"car_paint_rust": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_rust.tres"
-},
-"car_paint_taxi": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_taxi.tres"
-},
-"car_paint_teal": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_teal.tres"
-},
-"car_paint_truck_red": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_truck_red.tres"
-},
-"car_paint_white": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_paint_white.tres"
-},
-"car_plate_sedan_black": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_sedan_black.tres"
-},
-"car_plate_sedan_grey": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_sedan_grey.tres"
-},
-"car_plate_sedan_maroon": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_sedan_maroon.tres"
-},
-"car_plate_sedan_teal": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_sedan_teal.tres"
-},
-"car_plate_taxi": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_taxi.tres"
-},
-"car_plate_truck_kosei": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_truck_kosei.tres"
-},
-"car_plate_truck_salvage": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_truck_salvage.tres"
-},
-"car_plate_van_olive": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_van_olive.tres"
-},
-"car_plate_van_rust": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_van_rust.tres"
-},
-"car_plate_van_white": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/car_plate_van_white.tres"
 },
 "cardboard": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/cardboard.tres"
 },
-"ceiling_tiles": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/ceiling_tiles.tres"
-},
-"concrete": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/concrete.tres"
-},
-"corona_cool": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/fx/corona_cool.tres"
-},
-"corona_cyan": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/fx/corona_cyan.tres"
-},
-"corona_pink": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/fx/corona_pink.tres"
-},
-"corona_warm": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/fx/corona_warm.tres"
-},
-"crate": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/crate.tres"
-},
-"crate_large": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/crate_large.tres"
-},
 "crate_stencil": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/crate_stencil.tres"
-},
-"diamond_plate": {
-"use_external/enabled": true,
-"use_external/fallback_path": "res://materials/diamond_plate.tres",
-"use_external/path": "res://materials/diamond_plate.tres"
 },
 "door_metal": {
 "use_external/enabled": true,
@@ -238,15 +203,6 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/fabric_rust.tres"
 },
-"floor_tiles": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/floor_tiles.tres"
-},
-"glass": {
-"use_external/enabled": true,
-"use_external/fallback_path": "res://materials/glass.tres",
-"use_external/path": "res://materials/glass.tres"
-},
 "gun_wood": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/gun_wood.tres"
@@ -258,10 +214,6 @@ _subresources={
 "gunmetal_light": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/gunmetal_light.tres"
-},
-"hazard_stripes": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/hazard_stripes.tres"
 },
 "hazard_triplanar": {
 "use_external/enabled": true,
@@ -283,10 +235,6 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/lamp_glow.tres"
 },
-"lava": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/lava.tres"
-},
 "led_amber": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/led_amber.tres"
@@ -303,10 +251,6 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/light_fixture.tres"
 },
-"light_panel": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/light_panel.tres"
-},
 "megahealth": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/megahealth.tres"
@@ -314,14 +258,6 @@ _subresources={
 "mersec_label": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/mersec_label.tres"
-},
-"neon_cyan": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/neon_cyan.tres"
-},
-"neon_pink": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/neon_pink.tres"
 },
 "paint_grimy": {
 "use_external/enabled": true,
@@ -343,106 +279,145 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/paper_white.tres"
 },
-"paving_wet": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/paving_wet.tres"
-},
 "red_cross": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/red_cross.tres"
-},
-"rollup_door": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/rollup_door.tres"
 },
 "rubber": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/rubber.tres"
 },
-"rust_metal": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/rust_metal.tres"
-},
 "shell_red": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/shell_red.tres"
-},
-"sky_moon": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/sky_moon.tres"
-},
-"sky_night": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/sky_night.tres"
-},
-"sky_storm": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/sky_storm.tres"
-},
-"skyline": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/skyline/skyline.tres"
 },
 "status_light": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/status_light.tres"
 },
-"stone_blocks": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/stone_blocks.tres"
-},
 "stripe_yellow": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/stripe_yellow.tres"
-},
-"taxi_chequer": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/taxi_chequer.tres"
-},
-"taxi_sign": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/taxi_sign.tres"
-},
-"tech_panel": {
-"use_external/enabled": true,
-"use_external/fallback_path": "res://materials/tech_panel.tres",
-"use_external/path": "res://materials/tech_panel.tres"
 },
 "terminal_screen": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/terminal_screen.tres"
 },
-"truck_livery_truck_kosei": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/truck_livery_truck_kosei.tres"
-},
-"truck_livery_truck_salvage": {
-"use_external/enabled": true,
-"use_external/path": "res://materials/props/truck_livery_truck_salvage.tres"
-},
 "umbrella_nylon": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/umbrella_nylon.tres"
 },
-"water": {
+"veh_psx_box_van_grey": {
 "use_external/enabled": true,
-"use_external/path": "res://materials/water.tres"
+"use_external/path": "res://materials/props/veh_psx_box_van_grey.tres"
+},
+"veh_psx_box_van_mail": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_mail.tres"
+},
+"veh_psx_box_van_purple": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_purple.tres"
+},
+"veh_psx_box_van_white": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_white.tres"
+},
+"veh_psx_fullsize_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_green.tres"
+},
+"veh_psx_fullsize_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_grey.tres"
+},
+"veh_psx_fullsize_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_red.tres"
+},
+"veh_psx_hatchback_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_green.tres"
+},
+"veh_psx_hatchback_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_red.tres"
+},
+"veh_psx_hatchback_yellow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_yellow.tres"
+},
+"veh_psx_minivan_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_blue.tres"
+},
+"veh_psx_minivan_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_grey.tres"
+},
+"veh_psx_minivan_silver": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_silver.tres"
+},
+"veh_psx_minivan_tan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_tan.tres"
+},
+"veh_psx_sedan_black": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_black.tres"
+},
+"veh_psx_sedan_maroon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_maroon.tres"
+},
+"veh_psx_sedan_navy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_navy.tres"
+},
+"veh_psx_taxi": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_taxi.tres"
+},
+"veh_psx_wagon_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_blue.tres"
+},
+"veh_psx_wagon_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_green.tres"
+},
+"veh_psx_wagon_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_grey.tres"
+},
+"veh_psx_wagon_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_red.tres"
 },
 "white_plastic": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/white_plastic.tres"
 },
-"window_dark": {
+"corona_warm": {
 "use_external/enabled": true,
-"use_external/path": "res://materials/window_dark.tres"
+"use_external/path": "res://materials/fx/corona_warm.tres"
 },
-"window_lit_cool": {
+"corona_cool": {
 "use_external/enabled": true,
-"use_external/path": "res://materials/window_lit_cool.tres"
+"use_external/path": "res://materials/fx/corona_cool.tres"
 },
-"window_lit_warm": {
+"corona_pink": {
 "use_external/enabled": true,
-"use_external/path": "res://materials/window_lit_warm.tres"
+"use_external/path": "res://materials/fx/corona_pink.tres"
+},
+"corona_cyan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/fx/corona_cyan.tres"
+},
+"skyline": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/skyline/skyline.tres"
 }
 }
 }

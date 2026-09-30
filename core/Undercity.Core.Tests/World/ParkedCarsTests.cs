@@ -1,6 +1,7 @@
-// The hub's parked vehicles in the level data (openspec/changes/archive/2026-09-30-street-vehicles): one per car
-// spot of the plan, each with a model, a place and a heading, and what validation refuses. The
-// placement test finds each of them in the built level.
+// The hub's parked vehicles in the level data (openspec/changes/archive/2026-09-30-street-vehicles;
+// openspec/changes/cc0-vehicles, vehicle-fixes): one per car spot of the plan, each with a model, a
+// place and a heading, and what validation refuses. The placement test finds each of them in the
+// built level.
 
 using Undercity.Core.World;
 
@@ -12,9 +13,10 @@ public sealed class ParkedCarsTests
     public void Every_car_spot_of_the_hub_holds_a_parked_car()
     {
         var hub = TestData.Data.Levels["hub"];
-        // 14 spots on the streets and the Kings' Garage bay (design section 4).
+        // 14 spots on the streets and the Kings' Garage bay; the deck of 22 pack variants deals
+        // each once before any repeats, so 15 spots show 15 different cars.
         Assert.Equal(15, hub.Cars.Count);
-        Assert.Equal(10, hub.Cars.Select(c => c.Model).Distinct().Count());
+        Assert.Equal(15, hub.Cars.Select(c => c.Model).Distinct().Count());
         var errors = new List<string>();
         hub.Validate(errors);
         Assert.Empty(errors);

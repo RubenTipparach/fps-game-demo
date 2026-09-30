@@ -52,7 +52,9 @@ their bodies started 0.32 m up, which hid it.
 ### 1.2 The rule
 
 `check_vehicles` also refuses a spot whose footprint doesn't lie on one ground: the ground height
-at the four wheels' contact points and the footprint's four corners must agree within 0.01 m. The
+over a 5 x 3 grid across the footprint (its corners, the middles of its sides, and points between;
+the wheels stand inside it) must agree within 0.01 m. (Built: the grid replaced "the four wheels'
+contact points", because a converted pack model carries no axle data; the grid is a superset.) The
 message names the car, its spot and the heights it found (`car_002 at (12.0, 43.3) straddles a
 kerb: ground at 0.00 and 0.15 m under it`). A test breaks the hub on purpose and checks the name.
 
@@ -62,6 +64,26 @@ The six spots move off the pavement onto the road, their long side 0.2 m from th
 spot's y is set per spot in `layouts/hub.py` from the kerb line in 1.1, so the irregular strip on
 Wire Lane doesn't force one y for the row. The rule checks the result; the standing-room and
 puddle checks run on the new spots as on any fixture.
+
+Built (2026-09-30), with the spots at 5.6 x 2.6 m (cc0-vehicles, 3.1). The kerb was measured at
+1 cm steps across each spot's length, and the spot's long side put 0.2 m off where it comes
+nearest:
+
+| Spot | Road | Kerb, nearest | Spot centre |
+|---|---|---|---|
+| x 12 | Lantern Row, south kerb | y 42.49 | y 40.99 |
+| x 23.5 | Lantern Row, south kerb | y 42.15 | y 40.65 |
+| x 35 | Lantern Row, south kerb | y 41.91 | y 40.41 |
+| x 46.5 | Lantern Row, south kerb | y 41.57 | y 40.07 |
+| x 150 | Lantern Row, north kerb | y 35.00 | y 36.50 |
+| x 168 | Lantern Row, north kerb | y 36.15 | y 37.65 |
+
+(The "Wire Lane" of 1.1 is Lantern Row's stretch west of Wire Lane's mouth.) The rule found two
+more: the five Quay Road spots, 2.0 m wide on a road that starts at the quay's raised edge (x 214.0),
+caught that edge at 2.6 m, so they moved to x 215.5, 0.2 m off it. On the road, the south-kerb cars
+stood in the MerSec pair's beat, which the standing-room check refused; the beat's stop at (40, 39)
+moved to (40, 37.8) and its corner off Stair Lane from (56, 42.5) to (56, 38.2), so the pair walks
+Lantern Row's north half, past the cars.
 
 Survey O2 offers the other way: leave the cars half on the pavement and roll each one 5.7 degrees
 (atan 0.15 / 1.5) onto its kerb, as cars in a slum are parked. That needs a tilted placement, a
@@ -181,6 +203,13 @@ paint is a plain dielectric at roughness 0.35, so it doesn't catch the neon eith
   material writer learns the two keys.
 
 Survey O4 asks whether this is bright enough; the numbers are a first pass, tuned on the after stills.
+
+**Built (2026-09-30), after cc0-vehicles.** The generated cars left the hub, and with them the
+tinted paints: a PSX car's texture is its own colour, not a tint over a paint texture, so there is
+nothing to divide out and no paint to re-specify. What stays is the range: `vehicle_data.py` reads
+each committed texture's mean linear albedo (0.041 to 0.327 across the 22) and refuses one outside
+0.03-0.8, naming it. The clear coat is on each car's material (`veh_psx_<id>.tres`: roughness 0.6,
+clear coat 1.0 at roughness 0.1, from `vehicles.json`'s "material").
 
 ## 4. Checks
 

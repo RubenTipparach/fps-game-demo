@@ -15,13 +15,16 @@ fine".
 
 ## 2. The packs
 
-- [ ] 2.1 `tools/deps/vehicle_packs.json` and the fetch script, refusing a changed hash.
-- [ ] 2.2 `build_vehicles_cc0.py`: the chosen bodies and colour variants to `vehicle_<id>.glb` by the
-  kit's conventions, with provenance; the budget and z-fighting checks.
-- [ ] 2.3 `vehicles.json`: the pack variants; `vehicle_data.py` and its test.
-- [ ] 2.4 CLAUDE.md 13: the PSX vehicles' textures.
-- [ ] 2.5 The generator retired: `vehicle()`, its materials, textures and glbs out of the prop kit.
-- [ ] 2.6 The layout's car spots at 5.6 x 2.6 m; the depot's truck spots become car spots (O7).
+- [x] 2.1 `tools/deps/vehicle_packs.json` and the fetch script, refusing a changed hash: the script now reads
+  every `tools/deps/*_packs.json`, and each pin records its author.
+- [x] 2.2 `build_vehicles_cc0.py`: the chosen bodies and colour variants to `vehicle_<id>.glb` by the
+  kit's conventions, with provenance; the budget and z-fighting checks (a triangle-level check,
+  `detailing.coplanar_triangle_report`, and its test).
+- [x] 2.3 `vehicles.json`: the pack variants; `vehicle_data.py` and its test.
+- [x] 2.4 CLAUDE.md 13: the PSX vehicles' textures (and 11: the converter's output is generated).
+- [x] 2.5 The generator retired: `vehicle()`, its materials, textures and glbs out of the prop kit.
+- [x] 2.6 The layout's car spots at 5.6 x 2.6 m (`CAR_L`, `CAR_W`); the depot's truck spots become car
+  spots (O7).
 
 ## 3. The hub
 

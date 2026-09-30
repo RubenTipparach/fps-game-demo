@@ -39,8 +39,10 @@ const SCENES := {
 }
 const TRIGGER_SCRIPT := "res://scripts/World/Trigger.cs"
 
-## Undercity entities (tools/levels/layouts/<level>_entities.py), by their "kind" extra. Loot and
-## parked vehicles pick their scene by "model", doors and exits by "style" (see _undercity_scene).
+## Undercity entities (tools/levels/layouts/<level>_entities.py), by their "kind" extra. Loot picks
+## its scene by "model", doors and exits by "style" (see _undercity_scene). A parked car is a static
+## mesh of its sector (car_<id>, built by build_undercity.py), so its ENT_car is only a marker
+## (openspec/changes/vehicle-fixes, design section 2.2).
 const UNDERCITY := {
 	"npc": "res://scenes/undercity/npc.tscn",
 	"civ": "res://scenes/undercity/npc.tscn",
@@ -127,10 +129,6 @@ func _undercity_scene(extras: Dictionary) -> String:
 		"sliding_door":
 			# a public entrance, by its size and face (tools/godot/detailing.py, SLIDING_LEAVES)
 			return "res://scenes/undercity/doors/sliding_%s.tscn" % str(extras.get("leaf", ""))
-		"car":
-			# a parked vehicle, the prop kit's model with its collision (openspec/changes/archive/2026-09-30-street-vehicles);
-			# not "vehicle", which Godot's importer reads as a node type in the entity's name
-			return "res://models/undercity/props/vehicle_%s.glb" % str(extras.get("model", ""))
 	return UNDERCITY.get(kind, "")
 
 

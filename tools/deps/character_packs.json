@@ -4,6 +4,7 @@
     {
       "id": "mpfb",
       "name": "MPFB 2.0.17, the MakeHuman plugin for Blender",
+      "author": "The MakeHuman team",
       "file": "mpfb-2.0.17.zip",
       "fetch": "http",
       "url": "https://extensions.blender.org/download/sha256:4f0a879d64a39bf646fbf5f53601ac678855da329d650617dca5737548239a87/add-on-mpfb-v2.0.17.zip",
@@ -16,6 +17,7 @@
     {
       "id": "makehuman_system_assets_cc0",
       "name": "MakeHuman system assets, the CC0 pack (skins, eyes, brows, lashes, hair, proxies, clothes)",
+      "author": "The MakeHuman community",
       "file": "makehuman_system_assets_cc0.zip",
       "fetch": "http",
       "url": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
@@ -28,6 +30,7 @@
     {
       "id": "universal_animation_library_standard",
       "name": "Universal Animation Library, Standard (Quaternius), the 2025-03-25 build",
+      "author": "Quaternius",
       "file": "ual_standard.zip",
       "fetch": "manual",
       "_comment_fetch": "Pinned to the build the spike measured and game/animations/ual/ ships. On 2026-09-28 the only download (quaternius.itch.io/universal-animation-library, upload 'Universal Animation Library[Standard].zip') serves a newer build: UAL1_Standard.glb dated 2026-06-16, SHA-256 cc73fc4e495b82958207316596317a3f40b9fa38065bde1027937452da537724, with a different file layout. So this pin can't be downloaded any more, and the fetch asks for a verified copy in the cache instead of fetching a different file.",

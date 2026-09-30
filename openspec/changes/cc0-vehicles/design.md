@@ -85,9 +85,26 @@ point-sampled, so the parked cars sit softly in the background of Material Maker
 of the hub keeps its style.
 
 **One scale for the pack.** The pack's wheel (`Wheel/Wheel.blend`, one shared by every body) is
-0.92 units across; a car's wheel is about 0.65 m, so the whole pack scales by 0.707. Every body keeps
-its own proportions: a compact hatchback at about 4.0 m, a full-size sedan at about 5.2 m. The
-layout's car spots grow to fit the largest body the deal can put there (section 3.1).
+0.9172 units across; a car's wheel is about 0.65 m, so the whole pack scales by 0.7087 (the converter
+measures the wheel each run). Every body keeps its own proportions: a compact hatchback at about
+4.0 m, a full-size sedan at about 5.2 m. The layout's car spots grow to fit the largest body the deal
+can put there (section 3.1).
+
+**The variants (`vehicles.json`, built).** Seven bodies in their own colour textures, 22 variants;
+the snow textures are left out (Meridian's weather is rain):
+
+| Body | Pack file | Length x width x height, m | Triangles | Variants |
+|---|---|---|---|---|
+| wagon | Car 01 | 4.36 x 1.81 x 1.54 | 438 | green, blue, grey, red |
+| sedan | Car 02 | 4.63 x 2.05 x 1.56 | 312 | navy, black, maroon |
+| hatchback | Car 03 | 3.98 x 1.88 x 1.52 | 448 | green, red, yellow |
+| minivan | Car 04 | 4.46 x 2.41 x 1.94 | 476 | blue, grey, silver, tan |
+| fullsize | Car 05 | 5.22 x 1.97 x 1.45 | 454 | red, green, grey |
+| taxi | Car 05 taxi | 5.18 x 1.97 x 1.59 | 440 | the taxi |
+| box_van | Car 08 | 4.89 x 2.24 x 2.29 | 376 | white, grey, mail, purple |
+
+Widths include the mirrors. The textures' mean albedo runs 0.041 (hatchback green) to 0.327 (box
+van white), inside the 0.03-0.8 range.
 
 ### 3.1 The spots
 
@@ -104,10 +121,20 @@ O2), and the depot's three truck spots become car spots of the same size.
   repository (CLAUDE.md 5.6: a reference checkout is never part of a build).
 - **Converted.** `tools/blender/build_vehicles_cc0.py` reads the pinned pack and writes each chosen
   body and colour variant to `game/models/undercity/props/vehicle_<id>.glb` by the prop kit's
-  conventions: scaled to the table's real length, front along +Y, its origin at the floor centre of
-  its footprint, its wheels placed, its materials named `veh_psx_<name>` with point-sampled
-  textures, `-colonly` collision boxes from its body and cabin, the triangle budget (the pack's
-  304-476 are well inside 2,500) and the z-fighting check.
+  conventions: scaled by the pack's wheel and checked against the table's real length to 1 cm, front
+  along +Y (the pack's cars face -Y, so each turns 180 degrees), its origin at the floor centre of
+  its footprint, its material `veh_psx_<id>` over the variant's texture, filtered bilinearly (O8),
+  `-colonly` collision boxes (the lower body up to the bonnet's height over the whole footprint,
+  and the cabin above it), the triangle budget (the pack's 312-476 are well inside 2,500) and the
+  z-fighting check.
+- **The z-fighting check on a mesh.** The box checker (`detailing.assert_no_zfighting`) only knows
+  registered boxes, and a pack's body is one mesh, so `detailing.coplanar_triangle_report` checks
+  every pair of its triangles, as Blender tessellates them, by the same rule and tolerances: the
+  same plane within 5 mm, the same facing within 1 degree, and an overlap over 1 mm. It found one
+  fault in the pack: Car 5 and its taxi lap the two ends of the front bumper's underside over its
+  middle by 1.7 mm, facing the road. The converter mends such a sliver by moving the vertex onto
+  the face's edge, and refuses a move over 5 mm as a modelling fault rather than a sliver; the
+  four moves are printed by the build.
 - **One table.** `vehicles.json` lists each variant's pack body, texture and real length;
   `vehicle_data.py` validates it; the plan, the deal, the fit and one-ground checks, the static
   meshes and the placement test don't change.
@@ -132,8 +159,9 @@ filtered bilinearly (owner O6, O8)."
 | Check | Where | Wanted |
 |---|---|---|
 | A pack's hash | the fetch script | a changed download refused, naming the pack |
-| Each converted model | `build_vehicles_cc0.py` | within budget, no z-fighting, front +Y, origin at the footprint's floor centre, collision present |
-| The table | `vehicle_data.py`, a test | a pack variant naming an unpinned pack or a missing model file refused |
+| Each converted model | `build_vehicles_cc0.py` | within budget, no coplanar overlapping triangles, front +Y, origin at the footprint's floor centre, the table's length, collision present |
+| The table | `vehicle_data.py`, a test | a pack variant naming an unpinned pack, a body it doesn't have, a texture from another body's folder, or a missing model or texture refused; every texture's mean albedo in 0.03-0.8 |
+| The mesh check | `tools/godot/test_coplanar_triangles.py` | a flush decal found; neighbours, faces back to back, a face 1 cm proud and a degenerate triangle passed |
 | The hub | as `vehicle-fixes` | every car fits its spot, on one ground, a static mesh baked with its ground |
 
 ## Risks

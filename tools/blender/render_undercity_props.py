@@ -9,8 +9,9 @@ printed pivots check what the game loads (CLAUDE.md 5.6, validate the real artif
 
 Run:  blender -b --factory-startup -P tools/blender/render_undercity_props.py [-- vehicles]
 Writes docs/screenshots/undercity/props_sheet.png and prints each moving part's pivot; with
-"vehicles", the parked vehicles' sheet instead (openspec/changes/archive/2026-09-30-street-vehicles, task 2.3),
-docs/screenshots/street_vehicles/vehicles_sheet.png.
+"vehicles", the parked vehicles' sheet instead: every variant in tools/blender/vehicles.json, as
+build_vehicles_cc0.py converted it (openspec/changes/cc0-vehicles, task 3.1),
+docs/screenshots/cc0_vehicles/vehicles_sheet.png.
 """
 import math
 import os
@@ -24,14 +25,15 @@ from mathutils import Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_undercity_props as kit  # noqa: E402
+import vehicle_data  # noqa: E402  (the converted vehicles' table)
 from blendkit import GAME, ROOT  # noqa: E402
 
-# The two sheets: which props each shows, where it goes and its title.
+# The two sheets: the models each shows, where it goes and its title.
 SHEETS = {
-    "props": (lambda name: not name.startswith("vehicle_"),
+    "props": (lambda: list(kit.PROPS),
               os.path.join(ROOT, "docs", "screenshots", "undercity", "props_sheet.png"), "undercity prop kit"),
-    "vehicles": (lambda name: name.startswith("vehicle_"),
-                 os.path.join(ROOT, "docs", "screenshots", "street_vehicles", "vehicles_sheet.png"), "parked vehicles"),
+    "vehicles": (lambda: [f"vehicle_{v['id']}" for v in vehicle_data.load()["variants"]],
+                 os.path.join(ROOT, "docs", "screenshots", "cc0_vehicles", "vehicles_sheet.png"), "parked vehicles"),
 }
 CELL_W, CELL_H, LABEL_H, COLS = 480, 400, 34, 4
 STRIP_W, STRIP_H = CELL_W * COLS, 300
@@ -218,12 +220,9 @@ def label(img, text):
 def main():
     """Import, lay out, light and render the row and every cell, then compose the sheet."""
     which = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "props"
-    shows, out, title = SHEETS[which]
+    names, out, title = SHEETS[which]
     sc = setup()
-    props = {}
-    for name in kit.PROPS:
-        if shows(name):
-            props[name] = import_prop(name)
+    props = {name: import_prop(name) for name in names()}
     remap_materials(set(bpy.data.materials))
 
     # Lay the props out in a row, left to right as the camera sees it (toward -X, since the
@@ -303,7 +302,7 @@ def main():
         img = render(sc, os.path.join(tmp, f"{name}_{len(cells)}.png"), CELL_W, CELL_H)
         short = name.removeprefix("vehicle_")         # the sheet's title says they're vehicles
         text = short if not pose else f"{short} {pose[2]}"
-        cells.append(label(img, f"{text}  {tris[name]} tris" if not pose else text))
+        cells.append(label(img, f"{text} {tris[name]} tris" if not pose else text))
         if moved:
             moved.rotation_euler = (0.0, 0.0, 0.0)
 

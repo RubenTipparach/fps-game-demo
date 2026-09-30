@@ -1,11 +1,13 @@
-"""Fetches the pinned character packs into a cache outside the repository, and checks them.
+"""Fetches the pinned packs into a cache outside the repository, and checks them.
 
-It owns the allowlist in tools/deps/character_packs.json: reading it, where the cache is, the
-SHA-256 check of every pack, unpacking a verified pack, and telling whether a file on disk is
-a file of a pack. It lives in tools/deps, beside the list it reads, and is plain Python with
-no Blender import, because the NPC builds (tools/blender/build_npcs.py, build_npc_clips.py)
-import it inside Blender to resolve every asset against the same packs the fetch verified
-(openspec/changes/archive/2026-09-28-npc-characters, design section 2). One implementation of the pin.
+It owns the allowlists in tools/deps/*_packs.json (character_packs.json for the NPC bodies,
+vehicle_packs.json for the parked vehicles): reading them, where the cache is, the SHA-256 check
+of every pack, unpacking a verified pack, and telling whether a file on disk is a file of a pack.
+It lives in tools/deps, beside the lists it reads, and is plain Python with no Blender import,
+because the builds (tools/blender/build_npcs.py, build_npc_clips.py, build_vehicles_cc0.py) import
+it inside Blender to resolve every asset against the same packs the fetch verified
+(openspec/changes/archive/2026-09-28-npc-characters, design section 2;
+openspec/changes/cc0-vehicles, design section 4). One implementation of the pin.
 
 The cache is $UNDERCITY_DEPS, or ~/.cache/undercity/deps when that is unset. It must not be
 inside the repository: the packs are 340 MB, and one of them is a GPL tool that never ships.
@@ -28,11 +30,12 @@ import zlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 MANIFEST = os.path.join(HERE, "character_packs.json")
+MANIFESTS = sorted(os.path.join(HERE, f) for f in os.listdir(HERE) if f.endswith("_packs.json"))
 STAMP = ".undercity_pack.json"
 CHUNK = 1 << 20
 USER_AGENT = "undercity-fetch-character-tools/1"
 
-PACK_KEYS = ("id", "name", "file", "fetch", "url", "page", "sha256", "size_bytes", "licence", "licence_stated_in")
+PACK_KEYS = ("id", "name", "author", "file", "fetch", "url", "page", "sha256", "size_bytes", "licence", "licence_stated_in")
 FETCH_KINDS = ("http", "manual")
 
 
@@ -41,7 +44,7 @@ class PackError(RuntimeError):
 
 
 def load_packs(path=MANIFEST):
-    """Read and validate character_packs.json. Returns the packs as a list, in file order."""
+    """Read and validate one pack list (character_packs.json by default). Returns its packs, in file order."""
     try:
         with open(path, encoding="utf-8") as f:
             raw = json.load(f)
@@ -82,12 +85,24 @@ def load_packs(path=MANIFEST):
     return packs
 
 
+def load_all(paths=None):
+    """Every pack of every list in tools/deps (*_packs.json), in file order; an id twice is refused."""
+    packs, seen = [], {}
+    for path in paths if paths is not None else MANIFESTS:
+        for p in load_packs(path):
+            if p["id"] in seen:
+                raise PackError(f"{path}: pack id {p['id']!r} is also in {seen[p['id']]}")
+            seen[p["id"]] = path
+            packs.append(p)
+    return packs
+
+
 def pack_by_id(pack_id, packs=None):
     """The pack with this id, or PackError."""
-    for p in packs if packs is not None else load_packs():
+    for p in packs if packs is not None else load_all():
         if p["id"] == pack_id:
             return p
-    raise PackError(f"pack {pack_id!r} is not in {MANIFEST}")
+    raise PackError(f"pack {pack_id!r} is in none of {', '.join(os.path.basename(m) for m in MANIFESTS)}")
 
 
 def cache_dir():
@@ -121,7 +136,7 @@ def verify(pack):
                         f"run python3 tools/deps/fetch_character_tools.py")
     got = sha256_of(path)
     if got != pack["sha256"]:
-        raise PackError(f"pack {pack['id']}: {path} has SHA-256 {got}, the pin in character_packs.json is "
+        raise PackError(f"pack {pack['id']}: {path} has SHA-256 {got}, its pin in tools/deps is "
                         f"{pack['sha256']}; nothing is built from it (delete it and fetch again)")
     return path
 
@@ -135,7 +150,7 @@ def fetch(pack, log=print):
         return path
     if pack["fetch"] == "manual":
         raise PackError(f"pack {pack['id']}: the pinned file can't be downloaded automatically (see _comment_fetch in "
-                        f"{MANIFEST}); put a copy with SHA-256 {pack['sha256']} at {path} and run this again")
+                        f"its list in tools/deps); put a copy with SHA-256 {pack['sha256']} at {path} and run this again")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     part = path + ".part"
     log(f"fetching {pack['id']}: {pack['url']}")
@@ -210,7 +225,7 @@ class Allowlist:
     and CRC-32 match the member. Anything else belongs to no pack."""
 
     def __init__(self, roots, packs=None):
-        packs = packs if packs is not None else load_packs()
+        packs = packs if packs is not None else load_all()
         self.roots = [(os.path.realpath(d), pack_by_id(pid, packs)) for pid, d in sorted(roots.items())]
         self._members = {p["id"]: members(p) for _, p in self.roots}
         self._checked = {}
@@ -235,7 +250,7 @@ class Allowlist:
 def main(argv):
     only = argv[argv.index("--only") + 1] if "--only" in argv else None
     try:
-        packs = load_packs()
+        packs = load_all()
         if only:
             packs = [pack_by_id(only, packs)]
         print(f"cache: {cache_dir()}")

@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://textures/vehicles/psx/minivan_blue.png" id="1"]
+
+[resource]
+resource_name = "veh_psx_minivan_blue"
+texture_filter = 3
+albedo_texture = ExtResource("1")
+metallic = 0.0
+roughness = 0.6
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_roughness = 0.1

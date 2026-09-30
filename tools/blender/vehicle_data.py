@@ -1,13 +1,14 @@
-"""The parked vehicles' table (tools/blender/vehicles.json): its schema and loader.
+"""The parked vehicles' table (tools/blender/vehicles.json): its schema, loader and checks.
 
-It owns what a vehicle table may say (openspec/changes/archive/2026-09-30-street-vehicles, design section 3.3):
-body types with their measurements and side profiles, the paints, the variants the hub places,
-and the triangle budgets. It lives in tools/blender as plain Python with no bpy, on tablekit.py,
-the one validator the Blender tables share, so the level plan (tools/levels/city_plan.py) and the
-prop kit (build_undercity_props.py) read the same checked table, and a misspelt key stops both
-(CLAUDE.md 5.6).
+It owns what the vehicle table may say (openspec/changes/cc0-vehicles, design section 4): the pinned
+pack every vehicle is converted from, the pack's scale, each body's file and real length, the
+variants the hub places (a body in one of its own colour textures), the triangle budget, and the
+range a vehicle's albedo must fall in (openspec/changes/vehicle-fixes, design section 3.2). It
+lives in tools/blender as plain Python with no bpy, on tablekit.py, the one validator the Blender
+tables share, so the level plan (tools/levels/city_plan.py) and the converter
+(build_vehicles_cc0.py) read the same checked table, and a misspelt key stops both (CLAUDE.md 5.6).
 
-    python3 tools/blender/vehicle_data.py            # validates the committed table
+    python3 tools/blender/vehicle_data.py            # validates the table and the committed files
 
 Axes are the prop kit's: metres, x right, y front, z up; a model's origin is the floor centre of
 its footprint, and its front faces +y.
@@ -19,121 +20,71 @@ import struct
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-MODELS = os.path.join(HERE, "..", "..", "game", "models", "undercity", "props")   # vehicle_<id>.glb
+GAME = os.path.join(HERE, "..", "..", "game")
+MODELS = os.path.join(GAME, "models", "undercity", "props")          # vehicle_<id>.glb
+TEXTURES = os.path.join(GAME, "textures", "vehicles", "psx")         # <id>.png, the variant's own texture
 sys.path.insert(0, HERE)
-from tablekit import Bool, DataError, Int, List, Map, Num, Obj, Str, Vec, parse_hex  # noqa: E402
+sys.path.insert(0, os.path.join(HERE, "..", "deps"))
+from tablekit import DataError, Int, List, Map, Num, Obj, Str  # noqa: E402
+import fetch_character_tools as deps  # noqa: E402  (the pinned packs: tools/deps/*_packs.json)
 
 TABLE = os.path.join(HERE, "vehicles.json")
-SPOTS = ("car", "truck")        # the layout's two sizes of parking spot (city_plan.py, a "car" fixture)
 
-POINT = Vec(2)                  # [y, z], metres
+# A vehicle's mean albedo, linear: from a very dark paint to a very light one. The texture a car
+# wears is its colour, so a texture outside this range is a car that reads black or glows in the
+# baked light (openspec/changes/vehicle-fixes, design section 3.2).
+ALBEDO_RANGE = (0.03, 0.8)
 
-TYPE = Obj({
-    "spot": Str(choices=SPOTS),
-    "length_m": Num(lo=1.0, hi=12.0),
-    "width_m": Num(lo=1.0, hi=3.0),
-    "wheel_r_m": Num(lo=0.15, hi=0.7),
-    "tyre_w_m": Num(lo=0.1, hi=0.5),
-    "track_m": Num(lo=0.8, hi=2.6),
-    "axles_m": List(Num(), min_len=2),                 # each axle's y
-    "clearance_m": Num(lo=0.05, hi=1.0),                # the lower body's underside
-    "arch_gap_m": Num(0.06, lo=0.0, hi=0.3),            # a wheel arch's clearance round the tyre
-    "body_top_m": List(POINT, min_len=2),               # the lower body's top line, rear to front
-    "cabin_m": List(POINT, min_len=4),                  # rear-bottom, rear-top, front-top, front-bottom
-    "taper": Num(1.0, lo=0.5, hi=1.0),                  # the cabin's width at its top over at its belt
-    "windows_y_m": List(Vec(2), min_len=1),             # each side window's [y0, y1]
-    "glass_margin_m": Num(0.07, lo=0.02, hi=0.3),       # a pane's inset from the cabin's edges (the pillars)
-    "bumper_z_m": Vec(2),
-    "head_z_m": Vec(2),
-    "tail_z_m": Vec(2),
-    "lamp_w_m": Num(0.3, lo=0.1, hi=0.8),
-    "seams_y_m": List(Num(), default=[]),               # dark door seams down the lower body's sides
-    "band_z_m": Vec(2, default=None),                   # where a taxi's chequer band runs, or null
-    "cargo": Obj({                                      # a box truck's body, or null
-        "y_m": Vec(2), "z_m": Vec(2), "width_m": Num(lo=1.0, hi=3.0),
-    }, default=None),
+BODY = Obj({
+    "is": Str(),                                        # what the body is, for the table's reader
+    "blend": Str(),                                     # the pack's .blend, relative to the pack's root
+    "length_m": Num(lo=2.0, hi=12.0),                   # its real length at the pack's scale, checked by the converter
 })
 
 VARIANT = Obj({
     "id": Str(),
-    "type": Str(),
-    "paint": Str(),
-    "plate": Str(),                                     # an invented plate code
-    "roof_sign": Str(None, nullable=True),              # the taxi's lit roof sign
-    "chequer": Bool(False),                             # the taxi's band
-    "livery": Obj({"text": Str(), "ground": Str(), "ink": Str()}, default=None),   # a truck's cargo sides
+    "body": Str(),
+    "texture": Str(),                                   # one of the body's own colour textures, relative to the pack's root
+})
+
+LOOK = Obj({                                            # the material over the pack's texture
+    "roughness": Num(0.6, lo=0.0, hi=1.0),
+    "clearcoat": Num(1.0, lo=0.0, hi=1.0),              # the rain's gloss over the paint (vehicle-fixes, 3.2)
+    "clearcoat_roughness": Num(0.1, lo=0.0, hi=1.0),
 })
 
 SCHEMA = Obj({
-    "budget": Obj({"car_tris": Int(lo=100), "truck_tris": Int(lo=100)}),
-    "paints": Map(Str()),
-    "types": Map(TYPE),
+    "pack": Str(),                                      # a pack id pinned in tools/deps/*_packs.json
+    "wheel_blend": Str(),                               # the pack's one wheel, which sets its scale
+    "wheel_d_m": Num(lo=0.3, hi=1.5),                   # that wheel's real diameter
+    "budget_tris": Int(lo=100),                         # a vehicle's drawn triangles
+    "material": LOOK,
+    "bodies": Map(BODY),
     "variants": List(VARIANT, min_len=1),
 })
 
 
-def validate(raw, path="vehicles.json"):
+def validate(raw, path="vehicles.json", packs=None):
     """The table with defaults filled in, or DataError naming the first bad field."""
     t = SCHEMA.check(raw, path, {})
-    for name, hexcode in t["paints"].items():
-        parse_hex(hexcode, f"{path}.paints.{name}")
-    for name, ty in t["types"].items():
-        p = f"{path}.types.{name}"
-        half = ty["length_m"] / 2
-        ys = [pt[0] for pt in ty["body_top_m"]]
-        starts_at_rear = abs(ys[0] + half) < 1e-6 or ty["cargo"] is not None   # a truck's cab starts at its cargo
-        if ys != sorted(ys) or not starts_at_rear or abs(ys[-1] - half) > 1e-6:
-            raise DataError(f"{p}.body_top_m: runs rear to front, from y {-half:g} (or a cargo box) to the front, y {half:g}")
-        if len(ty["cabin_m"]) != 4:
-            raise DataError(f"{p}.cabin_m: four points, rear-bottom, rear-top, front-top, front-bottom")
-        for axle in ty["axles_m"]:
-            if abs(axle) + ty["wheel_r_m"] > half:
-                raise DataError(f"{p}.axles_m: the wheel at y {axle:g} sticks out past the body")
-        if ty["track_m"] / 2 + ty["tyre_w_m"] / 2 > ty["width_m"] / 2:
-            raise DataError(f"{p}.track_m: the tyres stick out past the body's sides")
-        for key in ("bumper_z_m", "head_z_m", "tail_z_m"):
-            lo, hi = ty[key]
-            if not ty["clearance_m"] <= lo < hi:
-                raise DataError(f"{p}.{key}: needs clearance <= low < high")
-        if ty["cargo"] is not None:
-            y0, y1 = ty["cargo"]["y_m"]
-            if not -half - 1e-6 <= y0 < y1 < half:
-                raise DataError(f"{p}.cargo.y_m: inside the vehicle, rear to front")
-        gap = ty["wheel_r_m"] + ty["arch_gap_m"]
-        for i, y in enumerate(ty["seams_y_m"]):
-            if not ys[0] < y < ys[-1] or any(abs(y - a) <= gap for a in ty["axles_m"]):
-                raise DataError(f"{p}.seams_y_m[{i}]: {y:g} is off the doors, over a wheel arch or past the body")
-        if ty["band_z_m"] is not None:                  # the band runs between the first and last arch
-            lo, hi = ty["band_z_m"]
-            y0, y1 = min(ty["axles_m"]) + gap, max(ty["axles_m"]) - gap
-            top = min([top_z(ty["body_top_m"], y) for y in (y0, y1)]
-                      + [z for y, z in ty["body_top_m"] if y0 < y < y1])
-            if not ty["clearance_m"] < lo < hi < top:
-                raise DataError(f"{p}.band_z_m: on the lower body's sides between the arches, low < high")
+    try:
+        deps.pack_by_id(t["pack"], packs)
+    except deps.PackError as e:
+        raise DataError(f"{path}.pack: {e}") from None
     seen = set()
     for i, v in enumerate(t["variants"]):
         p = f"{path}.variants[{i}]"
         if v["id"] in seen:
             raise DataError(f"{p}.id: '{v['id']}' is used twice")
+        if not v["id"].replace("_", "").isalnum() or v["id"] != v["id"].lower():
+            raise DataError(f"{p}.id: '{v['id']}' names files; lower case, digits and underscores")
         seen.add(v["id"])
-        if v["type"] not in t["types"]:
-            raise DataError(f"{p}.type: no type '{v['type']}'")
-        if v["paint"] not in t["paints"]:
-            raise DataError(f"{p}.paint: no paint '{v['paint']}'")
-        if v["chequer"] and t["types"][v["type"]]["band_z_m"] is None:
-            raise DataError(f"{p}.chequer: its type '{v['type']}' has no band_z_m to run a band along")
-        if v["livery"] is not None:
-            for key in ("ground", "ink"):
-                parse_hex(v["livery"][key], f"{p}.livery.{key}")
+        if v["body"] not in t["bodies"]:
+            raise DataError(f"{p}.body: no body '{v['body']}'")
+        folder = os.path.dirname(t["bodies"][v["body"]]["blend"])
+        if os.path.dirname(v["texture"]) != folder or not v["texture"].lower().endswith(".png"):
+            raise DataError(f"{p}.texture: '{v['texture']}' is not a .png beside its body's blend in '{folder}'")
     return t
-
-
-def top_z(chain, y):
-    """The height of a top line ([y, z] points, rear to front) at y."""
-    for (y0, z0), (y1, z1) in zip(chain, chain[1:]):
-        if y0 - 1e-9 <= y <= y1 + 1e-9:
-            return z0 + (z1 - z0) * ((y - y0) / (y1 - y0) if y1 > y0 else 0.0)
-    raise DataError(f"y {y:g} is off the body's top line")
 
 
 def load(path=TABLE):
@@ -141,11 +92,19 @@ def load(path=TABLE):
         return validate(json.load(f), os.path.basename(path))
 
 
+def model_path(variant_id, models=MODELS):
+    return os.path.join(models, f"vehicle_{variant_id}.glb")
+
+
+def texture_path(variant_id, textures=TEXTURES):
+    return os.path.join(textures, f"{variant_id}.png")
+
+
 def model_bounds(variant_id, models=MODELS):
     """The committed model's box as (lo, hi) in the kit's axes (x right, y front, z up), from its
     glb's POSITION bounds, which glTF requires, so a check reads what the game loads rather than
     what the table meant (CLAUDE.md 5.6). The glb is y up with its front toward -z."""
-    path = os.path.join(models, f"vehicle_{variant_id}.glb")
+    path = model_path(variant_id, models)
     with open(path, "rb") as f:
         data = f.read()
     if data[:4] != b"glTF":
@@ -165,12 +124,77 @@ def model_bounds(variant_id, models=MODELS):
     return (lo[0], -hi[2], lo[1]), (hi[0], -lo[2], hi[1])
 
 
-def budget(table, type_name):
-    """The triangle budget of a type's models: a truck's, or a car's (cars and vans)."""
-    spot = table["types"][type_name]["spot"]
-    return table["budget"]["truck_tris" if spot == "truck" else "car_tris"]
+def png_rgb(path):
+    """An 8-bit, non-interlaced RGB or RGBA PNG's pixels as rows of (r, g, b) bytes. The standard
+    library's own reader, because the check runs inside Blender too, whose Python has no imaging
+    library; any other PNG is refused by name."""
+    import zlib
+    with open(path, "rb") as f:
+        data = f.read()
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        raise DataError(f"{path}: not a PNG")
+    pos, idat, head = 8, [], None
+    while pos < len(data):
+        n, kind = struct.unpack(">I4s", data[pos:pos + 8])
+        body = data[pos + 8:pos + 8 + n]
+        if kind == b"IHDR":
+            head = struct.unpack(">IIBBBBB", body)
+        elif kind == b"IDAT":
+            idat.append(body)
+        pos += 12 + n
+    w, h, depth, colour, _, _, interlace = head
+    if depth != 8 or colour not in (2, 6) or interlace:
+        raise DataError(f"{path}: an 8-bit RGB or RGBA PNG without interlacing, please (depth {depth}, colour type {colour})")
+    bpp = 3 if colour == 2 else 4
+    raw, stride, prev, rows = zlib.decompress(b"".join(idat)), w * bpp, bytearray(w * bpp), []
+    for y in range(h):
+        kind, line = raw[y * (stride + 1)], bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for i in range(stride):                             # undo the row's filter (PNG spec, section 9)
+            a = line[i - bpp] if i >= bpp else 0
+            b, c = prev[i], prev[i - bpp] if i >= bpp else 0
+            if kind == 1:
+                line[i] = (line[i] + a) & 255
+            elif kind == 2:
+                line[i] = (line[i] + b) & 255
+            elif kind == 3:
+                line[i] = (line[i] + (a + b) // 2) & 255
+            elif kind == 4:
+                pa, pb, pc = abs(b - c), abs(a - c), abs(a + b - 2 * c)
+                line[i] = (line[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+        rows.append([tuple(line[x * bpp:x * bpp + 3]) for x in range(w)])
+        prev = line
+    return rows
+
+
+def mean_albedo(path):
+    """A texture's mean linear albedo: its pixels' sRGB values decoded and averaged over the
+    image and its three channels."""
+    linear = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in (i / 255.0 for i in range(256))]
+    rows = png_rgb(path)
+    return sum(linear[c] for row in rows for px in row for c in px) / (3 * len(rows) * len(rows[0]))
+
+
+def committed_problems(table, models=MODELS, textures=TEXTURES):
+    """What's wrong with the committed files a table names: each variant's glb and texture must
+    exist, and the texture's albedo must lie in ALBEDO_RANGE (openspec/changes/cc0-vehicles, design
+    section 6). An empty list when they're all there and in range."""
+    lo, hi = ALBEDO_RANGE
+    problems = []
+    for v in table["variants"]:
+        for what, path in (("model", model_path(v["id"], models)), ("texture", texture_path(v["id"], textures))):
+            if not os.path.isfile(path):
+                problems.append(f"{v['id']}: its {what} {os.path.relpath(path)} is missing")
+        tex = texture_path(v["id"], textures)
+        if os.path.isfile(tex):
+            albedo = mean_albedo(tex)
+            if not lo <= albedo <= hi:
+                problems.append(f"{v['id']}: its texture's mean albedo {albedo:.3f} is outside {lo:g}-{hi:g}")
+    return problems
 
 
 if __name__ == "__main__":
     t = load()
-    print(f"vehicles.json OK: {len(t['types'])} types, {len(t['variants'])} variants")
+    bad = committed_problems(t)
+    if bad:
+        raise SystemExit("vehicles.json: " + "; ".join(bad))
+    print(f"vehicles.json OK: {len(t['bodies'])} bodies, {len(t['variants'])} variants, every model and texture committed")

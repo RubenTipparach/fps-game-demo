@@ -24,8 +24,11 @@ import os
 import re
 import sys
 
-import numpy as np
-from PIL import Image
+try:
+    import numpy as np
+    from PIL import Image
+except ImportError:     # Blender's Python has neither; the vehicle converter only writes import presets from here
+    np = Image = None
 
 TEXTURE_SIZE = 1024
 
