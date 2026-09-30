@@ -400,7 +400,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14px}
         <tr><td><span class="chip built">Built</span></td><td>Doorways (F19): every door framed by E1M3's rules, a door on every building that faces a street, a clear approach to every entrance, and automatic sliding doors on the 18 public entrances. The hub is rebuilt and rebaked: 46 framed doors, 244 dressing doors, 15 lots cut back, 225 lights; the doors, approaches and sliding entrances are checked in the plan and in the built level.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Puddles (F20): the street's puddles leave the ground textures, where they repeat on a 4 m grid and 328 m² of them lie under roofs. The plan places them where water gathers (gutters, drip edges, gullies), and the ground's shader draws them, rippling with the canal's rain rings. Decided (L1 to L3): the recommended rules and amount, and ripples as a shader effect.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>The Drains, the Yard, combat, the minigames and augmentations. Their sections below are still designs.</td></tr>
-        <tr><td><span class="chip proposed">Proposed</span></td><td>Vehicles (F21): the hub's 14 box cars become generated sedans, taxis, vans and trucks from the prop kit, placed by the plan. Decided (M1 to M3): our own generator, parked only.</td></tr>
+        <tr><td><span class="chip built">Built</span></td><td>Vehicles (F21): the hub's box cars are now ten generated models, sedans, a taxi, vans and box trucks, 1,312-1,616 triangles each, dealt onto its 15 car spots by the plan. Stills: <code>docs/screenshots/street_vehicles/</code>.</td></tr>
         <tr><td><span class="chip proposed">Proposed</span></td><td>Street ads (F22): 27 street signs become about 230, in seven kinds from one builder and an invented-brand catalogue, dense on the market streets, Hong Kong at night as the reference. Decided (M4 to M7).</td></tr>
       </tbody></table></div>
     </div>
@@ -4042,19 +4042,32 @@ SHED</title></path>
 <!-- ========================================================= F21 -->
 <section id="vehicles">
   <div class="sh"><span class="key">F21</span><h2>Vehicles</h2><span class="spec">openspec/changes/street-vehicles</span></div>
-  <p class="intro">Owner, 2026-09-29: better car modelling. Today every parked car is a box with a smaller box on top and four wheels, about 170 triangles, painted in wall materials. The proposal builds sedans, taxis, vans and trucks in the prop kit from a table, and the plan places them on the same 14 spots.</p>
-  <div class="controls"><span class="chip proposed">Proposed · decided (M1 to M3)</span><span class="chip">Measured on the committed plan, seed 7</span></div>
+  <p class="intro">Owner, 2026-09-29: better car modelling. Every parked car was a box with a smaller box on top and four wheels, about 170 triangles, painted in wall materials. Now the prop kit builds ten vehicles from a table, and the plan deals one onto each of the hub's 15 car spots.</p>
+  <div class="controls"><span class="chip built">Built: ten models, placed by the plan</span><span class="chip enforced">Checked: budgets, z-fighting, the fit to each spot, the built level</span><span class="chip">Stills: docs/screenshots/street_vehicles/</span></div>
   <div class="sub">
     <h3>The models</h3>
     <div class="scroll"><table class="tbl">
-      <thead><tr><th>Type</th><th>Variants</th><th>Spot</th><th class="n">Budget</th></tr></thead>
+      <thead><tr><th>Type</th><th>Variants</th><th>Spot</th><th class="n">Triangles</th><th class="n">Budget</th></tr></thead>
       <tbody>
-        <tr><td>Sedan</td><td>maroon, teal, grey, black</td><td>4.6 x 2.0 m</td><td class="n">2,500 triangles</td></tr>
-        <tr><td>Taxi</td><td>cream with a chequer band, a lit roof sign</td><td>4.6 x 2.0 m</td><td class="n">2,500</td></tr>
-        <tr><td>Compact van</td><td>white, olive, rust</td><td>4.6 x 2.0 m</td><td class="n">2,500</td></tr>
-        <tr><td>Box truck</td><td>two invented cargo firms</td><td>8.5 x 2.8 m</td><td class="n">3,500</td></tr>
+        <tr><td>Sedan</td><td>maroon, teal, grey, black</td><td>4.6 x 2.0 m</td><td class="n">1,360</td><td class="n">2,500</td></tr>
+        <tr><td>Taxi</td><td>cream, a chequer band from arch to arch, a lit TAXI sign</td><td>4.6 x 2.0 m</td><td class="n">1,476</td><td class="n">2,500</td></tr>
+        <tr><td>Compact van</td><td>white, olive, rust</td><td>4.6 x 2.0 m</td><td class="n">1,312</td><td class="n">2,500</td></tr>
+        <tr><td>Box truck</td><td>Kosei Cold Chain, Low Harbor Salvage (invented firms)</td><td>8.5 x 2.8 m</td><td class="n">1,616</td><td class="n">3,500</td></tr>
       </tbody></table></div>
-    <p class="note">Built with the prop kit's own pieces: a side profile extruded into nose, sill and tail with the wheel arches between, a raked glass greenhouse with pillars, bumpers, lenses and plates. The first sedan is rendered beside a Kenney and a Quaternius sedan (both CC0) before the rest are built, so the look can be overruled on sight. Parked only (M3); the Yard's wrecks come later from these vehicles (M2).</p>
+    <p class="note">Each body is the prop kit's own pieces: the lower body cut at the wheel arches, a tapered cabin with glass panes standing 3-10 mm proud, 12-sided tyres with hub discs, bumpers, lenses, plates with invented codes, door seams, and collision boxes. The paint is the kit's chipped painted metal, so the wear comes with it. Parked only (M3); the Yard's wrecks come later from these vehicles (M2).</p>
+  </div>
+  <div class="sub">
+    <h3>On the hub's spots, seed 7</h3>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Where</th><th>Spots</th><th>Dealt</th></tr></thead>
+      <tbody>
+        <tr><td>Wire Lane's kerb</td><td>4</td><td>van olive, van white, sedan teal, sedan black</td></tr>
+        <tr><td>Lantern Row, either side of Pachinko Sunrise</td><td>2</td><td>taxi, sedan grey</td></tr>
+        <tr><td>Clinic Lane, nose to tail</td><td>5</td><td>sedan maroon, van rust, taxi, sedan maroon, sedan teal</td></tr>
+        <tr><td>The depot yard</td><td>3</td><td>truck Kosei, truck salvage, truck salvage</td></tr>
+        <tr><td>The Kings' Garage bay</td><td>1</td><td>van rust</td></tr>
+      </tbody></table></div>
+    <p class="note">Each spot size deals its variants like a shuffled deck from a seeded stream of its own, so every model parks somewhere before any repeats and no other draw in the hub moves. The plan refuses a model that doesn't fit its spot, read from the committed glb. Survey O1 asks whether to keep this look: the look-gate stills put ours beside Kenney's CC0 cars.</p>
   </div>
 </section>
 

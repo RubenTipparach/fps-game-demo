@@ -28226,5 +28226,142 @@
     ]
    }
   ]
- }
+ },
+ "cars": [
+  {
+   "id": "001",
+   "model": "van_rust",
+   "at": [
+    170,
+    119.5
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "002",
+   "model": "van_olive",
+   "at": [
+    12.0,
+    43.3
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "003",
+   "model": "van_white",
+   "at": [
+    23.5,
+    43.3
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "004",
+   "model": "sedan_teal",
+   "at": [
+    35.0,
+    43.3
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "005",
+   "model": "sedan_black",
+   "at": [
+    46.5,
+    43.3
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "006",
+   "model": "taxi",
+   "at": [
+    150,
+    34.6
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "007",
+   "model": "sedan_grey",
+   "at": [
+    168,
+    34.6
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "008",
+   "model": "sedan_maroon",
+   "at": [
+    215,
+    80
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "009",
+   "model": "van_rust",
+   "at": [
+    215,
+    88
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "010",
+   "model": "taxi",
+   "at": [
+    215,
+    96
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "011",
+   "model": "sedan_maroon",
+   "at": [
+    215,
+    104
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "012",
+   "model": "sedan_teal",
+   "at": [
+    215,
+    112
+   ],
+   "heading_deg": 180.0
+  },
+  {
+   "id": "013",
+   "model": "truck_kosei",
+   "at": [
+    228,
+    80
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "014",
+   "model": "truck_salvage",
+   "at": [
+    228,
+    87
+   ],
+   "heading_deg": 90.0
+  },
+  {
+   "id": "015",
+   "model": "truck_salvage",
+   "at": [
+    228,
+    94
+   ],
+   "heading_deg": 90.0
+  }
+ ]
 }

@@ -11,8 +11,9 @@
 // wall, or a bag hanging into a counter, fails (openspec/changes/archive/2026-09-29-crowd-variety, task 3.3). From
 // 1 m outside every exterior door of an enterable building (the level data's "approaches"), the
 // level's baked navmesh must reach the runner's spawn (openspec/changes/hub-doorways, "Every
-// door opens onto ground a person can reach"). Prints PASS or FAIL per check and quits with 1 on
-// any failure.
+// door opens onto ground a person can reach"). Every parked vehicle in the level data (the plan's
+// list) stands in the built level as its model, where and as the plan put it, with its collision
+// (openspec/changes/street-vehicles). Prints PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
 //
@@ -91,6 +92,7 @@ public partial class PlacementTest : Node3D
             }
             CheckSpawns();
             CheckLadders();
+            CheckParkedCars();
             await CheckApproaches();
             await CheckAccessories();
         }
@@ -156,6 +158,67 @@ public partial class PlacementTest : Node3D
 
     // Every exterior door's approach reaches the runner's spawn on the level's baked navmesh: the
     // walk starts 1 m outside the door, on the navmesh there, and must end at the spawn.
+    /// <summary>How far a parked vehicle may stand from its place in the level data, metres.</summary>
+    private const float CarPlaceToleranceM = 0.05f;
+
+    /// <summary>How far a parked vehicle's heading may be from the level data's, degrees.</summary>
+    private const float CarHeadingToleranceDeg = 1f;
+
+    private void CheckParkedCars()
+    {
+        var level = LevelDir.TrimEnd('/').Split('/')[^1];
+        var def = GameData.Load(new GodotDataSource()).Levels.GetValueOrDefault(level);
+        if (def is null)
+        {
+            return;
+        }
+        var built = GetTree().GetNodesInGroup("ent_car").OfType<Node3D>()
+            .ToDictionary(n => n.GetMeta("id", "").AsString(), StringComparer.Ordinal);
+        foreach (var extra in built.Keys.Where(id => def.Cars.All(c => c.Id != id)).Order(StringComparer.Ordinal))
+        {
+            _people++;
+            Fail($"car_{extra}: in the built level, not in the level data");
+        }
+        foreach (var car in def.Cars)
+        {
+            _people++;
+            var who = $"car_{car.Id} ({car.Model})";
+            if (!built.TryGetValue(car.Id, out var node))
+            {
+                Fail($"{who}: missing from the built level");
+                continue;
+            }
+            var model = node.GetMeta("model", "").AsString();
+            var at = node.GlobalPosition;
+            var off = new Vector2(at.X - (float)car.At[0], at.Z - (float)car.At[1]).Length();
+            var front = -node.GlobalBasis.Z;
+            var heading = Mathf.PosMod(Mathf.RadToDeg(Mathf.Atan2(front.X, -front.Z)), 360f);
+            var turn = Mathf.Abs(Mathf.PosMod(heading - (float)car.HeadingDeg + 180f, 360f) - 180f);
+            var body = node.FindChildren("*", nameof(StaticBody3D), true, false).OfType<StaticBody3D>()
+                .FirstOrDefault(b => b.GetChildren().OfType<CollisionShape3D>().Any());
+            if (model != car.Model)
+            {
+                Fail($"{who}: the built level has model '{model}'");
+            }
+            else if (off > CarPlaceToleranceM)
+            {
+                Fail($"{who}: stands {off:0.00} m from ({car.At[0]}, {car.At[1]})");
+            }
+            else if (turn > CarHeadingToleranceDeg)
+            {
+                Fail($"{who}: faces {heading:0.#} degrees, not {car.HeadingDeg:0.#}");
+            }
+            else if (body is null)
+            {
+                Fail($"{who}: has no collision");
+            }
+            else
+            {
+                GD.Print($"PASS [placement_test] {who} at ({at.X:0.#}, {at.Z:0.#}) facing {heading:0.#}, with its collision");
+            }
+        }
+    }
+
     private async Task CheckApproaches()
     {
         var level = LevelDir.TrimEnd('/').Split('/')[^1];

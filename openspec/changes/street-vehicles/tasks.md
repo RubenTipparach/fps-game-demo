@@ -13,7 +13,9 @@ sedans, vans, taxis and trucks, parked only.
 
   Built: Kenney only, since Quaternius's host is out of this container's reach (design
   section 2); the sedan, taxi, van and truck beside Kenney's. Survey O1.
-- [ ] 1.3 Before stills from the four hub places (design section 6).
+- [x] 1.3 Before stills from the four hub places (design section 6).
+
+  Built: five places, the garage's bay among them (`street_vehicles_before.json`).
 
 ## 2. The generator
 
@@ -37,7 +39,10 @@ sedans, vans, taxis and trucks, parked only.
   the plan. The presets are the prop kit's own (`import_presets.write`, static lightmaps).
   The entities are `ENT_car_<n>`, not `ENT_vehicle_<n>`: Godot reads `_vehicle` as a node type
   (design section 4).
-- [ ] 3.3 Rebuild the sectors, bake, `placement_test.tscn`.
+- [x] 3.3 Rebuild the sectors, bake, `placement_test.tscn`.
+
+  Built: 44 minutes for the eight sectors; the placement test also finds every parked car of the
+  level data (`cars`) in the built level, with its collision: 705 of 705.
 
 ## 4. Records
 

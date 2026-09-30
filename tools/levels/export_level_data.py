@@ -124,6 +124,10 @@ def export(level_id):
         out["shelters"] = shelters(level_id, plan)
         out["approaches"] = approaches(layout)
         out["puddles"] = puddles(level_id, city)
+        # The parked vehicles, for the placement test to find in the built level (openspec/changes/street-vehicles).
+        out["cars"] = [{"id": v["name"][len("ENT_car_"):], "model": v["model"],
+                        "at": [round(v["at"][0], 3), round(v["at"][1], 3)], "heading_deg": round(v["heading"], 3)}
+                       for v in city.vehicles]
     # Stable ids share one namespace across kinds; spawns, beds and stashes are placements only.
     seen = set()
     for e in ents:
