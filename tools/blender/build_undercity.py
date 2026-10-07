@@ -20,6 +20,9 @@ Object naming in each glb (Godot's import suffixes decide collision):
   interior_<building>-col         an enterable interior; extras: visibility range, lightmap texel scale
   prop_<kind>_<n>-col             a small prop; extras: visibility range
   corona_<n>                      a light's corona; extras: no GI, no shadow, visibility range
+  car_<n>, car_<n>_box-colonly    a parked car: a committed model placed by the plan (Plan.model),
+                                  its own UVs and materials, its collision boxes; extras: visibility
+                                  range, lightmap texel scale, and the model's provenance
   ENT_<kind>_<id>                 entity empties; extras arrive in Godot (blender_level_import.gd)
 
 Set UNDERCITY_PYTHON to the python3 that has shapely if it isn't the one on PATH.
@@ -387,6 +390,37 @@ def run_plan(level):
         os.remove(path)
 
 
+def build_model(m, coll):
+    """A committed model the plan placed in this sector (Plan.model): its glb imported as it is,
+    at its point and heading, and built into the sector as static geometry. Its drawn mesh is named
+    after the placement, its "-colonly" object "<name>_box-colonly" so Godot makes it the mesh's
+    static body, and the placement's extras go on the drawn mesh. Its UVs and materials are its own:
+    no world UVs. A material the import had to rename (a name the scene already has) is the
+    scene's, so the sector's import preset maps it by name."""
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=os.path.join(GAME, m["path"]))
+    objs = sorted((o for o in bpy.data.objects if o not in before), key=lambda o: o.name)
+    drawn = [o for o in objs if "-colonly" not in o.name]
+    if len(drawn) != 1 or any(o.type != "MESH" or o.parent is not None for o in objs):
+        raise SystemExit(f"[undercity] {m['path']}: expected one drawn mesh and its collision, loose, got "
+                         f"{[(o.name, o.type) for o in objs]}")
+    for o in objs:
+        for c in list(o.users_collection):
+            c.objects.unlink(o)
+        coll.objects.link(o)
+        o.name = o.data.name = m["name"] if o in drawn else f"{m['name']}_box-colonly"
+        o.location = V(m["pos"])
+        o.rotation_mode = "XYZ"
+        o.rotation_euler = (0.0, 0.0, math.radians(-m["heading"]))
+        for slot in o.material_slots:
+            base = slot.material.name.rsplit(".", 1)[0] if slot.material else None
+            if base and base != slot.material.name and base in bpy.data.materials:
+                slot.material = bpy.data.materials[base]
+    for k, v in m["extras"].items():
+        drawn[0][k] = v
+    return drawn[0]
+
+
 def build_sector(sec, root):
     coll = bpy.data.collections.new(f"sector_{sec['name']}")
     root.children.link(coll)
@@ -417,6 +451,8 @@ def build_sector(sec, root):
         coll.objects.link(ob)
         project_uvs(me, ob.matrix_world)
         made.append(ob)
+    for m in sec.get("models", []):
+        made.append(build_model(m, coll))
     ents = []
     for e in sec["entities"]:
         em = bpy.data.objects.new(e["name"], None)

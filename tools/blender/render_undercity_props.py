@@ -7,8 +7,11 @@ degrees about Godot Z; door.tscn swings the hinge about Godot Y). It imports the
 game/models/undercity/props/<name>.glb files, not undercity_props.blend, so the sheet and the
 printed pivots check what the game loads (CLAUDE.md 5.6, validate the real artifact).
 
-Run:  blender -b --factory-startup -P tools/blender/render_undercity_props.py
-Writes docs/screenshots/undercity/props_sheet.png and prints each moving part's pivot.
+Run:  blender -b --factory-startup -P tools/blender/render_undercity_props.py [-- vehicles]
+Writes docs/screenshots/undercity/props_sheet.png and prints each moving part's pivot; with
+"vehicles", the parked vehicles' sheet instead: every variant in tools/blender/vehicles.json, as
+build_vehicles_cc0.py converted it (openspec/changes/archive/2026-09-30-cc0-vehicles, task 3.1),
+docs/screenshots/cc0_vehicles/vehicles_sheet.png.
 """
 import math
 import os
@@ -22,9 +25,16 @@ from mathutils import Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_undercity_props as kit  # noqa: E402
+import vehicle_data  # noqa: E402  (the converted vehicles' table)
 from blendkit import GAME, ROOT  # noqa: E402
 
-SHEET = os.path.join(ROOT, "docs", "screenshots", "undercity", "props_sheet.png")
+# The two sheets: the models each shows, where it goes and its title.
+SHEETS = {
+    "props": (lambda: list(kit.PROPS),
+              os.path.join(ROOT, "docs", "screenshots", "undercity", "props_sheet.png"), "undercity prop kit"),
+    "vehicles": (lambda: [f"vehicle_{v['id']}" for v in vehicle_data.load()["variants"]],
+                 os.path.join(ROOT, "docs", "screenshots", "cc0_vehicles", "vehicles_sheet.png"), "parked vehicles"),
+}
 CELL_W, CELL_H, LABEL_H, COLS = 480, 400, 34, 4
 STRIP_W, STRIP_H = CELL_W * COLS, 300
 WALL_Y = -0.5            # the back wall's face: wall-mounted props hang on it
@@ -209,10 +219,10 @@ def label(img, text):
 
 def main():
     """Import, lay out, light and render the row and every cell, then compose the sheet."""
+    which = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "props"
+    names, out, title = SHEETS[which]
     sc = setup()
-    props = {}
-    for name in kit.PROPS:
-        props[name] = import_prop(name)
+    props = {name: import_prop(name) for name in names()}
     remap_materials(set(bpy.data.materials))
 
     # Lay the props out in a row, left to right as the camera sees it (toward -X, since the
@@ -267,7 +277,7 @@ def main():
     # 2. One close view per prop (and the two open poses), the others hidden.
     cam.data.type = "PERSP"
     cam.data.lens = 50.0
-    shots = [(name, None) for name in props] + [(name, pose) for name, pose in POSES.items()]
+    shots = [(name, None) for name in props] + [(name, pose) for name, pose in POSES.items() if name in props]
     cells = []
     for name, pose in shots:
         for other, objs in props.items():
@@ -290,17 +300,18 @@ def main():
         for lt in (key, rim, fill):
             aim(lt, c)
         img = render(sc, os.path.join(tmp, f"{name}_{len(cells)}.png"), CELL_W, CELL_H)
-        text = name if not pose else f"{name} {pose[2]}"
-        cells.append(label(img, f"{text}  {tris[name]} tris" if not pose else text))
+        short = name.removeprefix("vehicle_")         # the sheet's title says they're vehicles
+        text = short if not pose else f"{short} {pose[2]}"
+        cells.append(label(img, f"{text} {tris[name]} tris" if not pose else text))
         if moved:
             moved.rotation_euler = (0.0, 0.0, 0.0)
 
     rows = [np.concatenate(cells[i:i + COLS] + [np.zeros_like(cells[0])] * (COLS - len(cells[i:i + COLS])), 1)
             for i in range(0, len(cells), COLS)]
-    sheet = np.concatenate([label(strip, f"undercity prop kit: {len(props)} props at night")] + rows, 0)
-    os.makedirs(os.path.dirname(SHEET), exist_ok=True)
-    kit.save_png(SHEET, sheet)
-    print("[props_sheet] wrote", SHEET)
+    sheet = np.concatenate([label(strip, f"{title}: {len(props)} models at night")] + rows, 0)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    kit.save_png(out, sheet)
+    print("[props_sheet] wrote", out)
 
 
 if __name__ == "__main__":

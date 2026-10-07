@@ -58,6 +58,8 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "godot"))
 import render_map as RM  # noqa: E402
 import detailing  # noqa: E402
 import skyline  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, "tools", "blender"))
+import vehicle_data  # noqa: E402  (the parked vehicles' table and their committed models)
 
 # ----------------------------------------------------------------------------- the city kit
 # Generic construction rules shared by every city level. Level-specific numbers (district
@@ -110,7 +112,7 @@ STANDING_STEP_M = 0.02  # a detail whose top is this close to a person's feet is
 NPC_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "npc.tscn")
 PLAYER_SCENE = os.path.join(ROOT, "game", "scenes", "undercity", "player.tscn")
 PLAYER_SCRIPT = os.path.join(ROOT, "game", "scripts", "Player", "PlayerController.cs")
-# Puddles (openspec/changes/street-puddles, design section 3.5). Where rain water gathers is level
+# Puddles (openspec/changes/archive/2026-09-30-street-puddles, design section 3.5). Where rain water gathers is level
 # construction, so its numbers live here; how a puddle looks is the ground shader's (materials.json),
 # and whether a roof keeps the rain off is the core's (data/character_lighting.json, headroom_m).
 CHARACTER_LIGHTING_JSON = os.path.join(ROOT, "game", "data", "character_lighting.json")
@@ -158,6 +160,10 @@ DOOR_FACES = {"-z": 0, "+z": 1, "+v": 2, "+u": 3, "-v": 4, "-u": 5}   # edge_box
 SIGN_COLOURS = [("neon_pink", "pink"), ("neon_cyan", "cyan"), ("lamp_glow", "warm_sign")]
 CORONA_EXTRAS = {"gi_mode": 0, "cast_shadow": 0, "visibility_range_end_m": 110.0}
 PROP_EXTRAS = {"visibility_range_end_m": 70.0}
+# A parked car bakes at a quarter of the level's texel, 0.1 m (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2).
+CAR_EXTRAS = {"visibility_range_end_m": 70.0, "lightmap_texel_scale": 4.0}
+GROUND_AGREE_M = 0.01    # a parked car's ground: every point under it within this of the others
+CAR_SHADOW_MARGIN_M = 0.3   # a car's contact shadow is its footprint this much longer and wider (vehicle-fixes, 2.3)
 # the water's surface refracts and reflects what is around it (shaders/water.gdshader): it takes no
 # baked light and casts no shadow
 WATER_EXTRAS = {"gi_mode": 0, "cast_shadow": 0}
@@ -249,6 +255,9 @@ def water_data():
         return json.loads("".join(line for line in f if not line.lstrip().startswith("//")))
 
 
+VEHICLES = vehicle_data.load()   # tools/blender/vehicles.json: the variants a car spot draws from
+
+
 def wetness_data():
     """The core's wetness rule's numbers (data/character_lighting.json "wetness"), so a puddle and
     a character agree about which roofs keep the rain off."""
@@ -295,6 +304,21 @@ def oriented(pg):
 def unit(dx, dy):
     L = math.hypot(dx, dy)
     return (dx / L, dy / L) if L > 1e-9 else (1.0, 0.0)
+
+
+# Godot's scene importer turns a node whose name carries one of these words after "-", "_" or "$"
+# into another type ("Node type customization using name suffixes"; the presets set
+# nodes/use_node_type_suffixes). Godot 4.7.2 made "ENT_vehicle_008" a VehicleBody3D named "ENT_008"
+# with the empty under it, and the level importer then freed both (openspec/changes/archive/2026-09-30-street-vehicles,
+# design section 4). An entity's name must not carry one.
+GODOT_TYPE_SUFFIXES = ("colonly", "convcolonly", "convcol", "col", "navmesh", "rigid", "vehicle", "wheel",
+                       "occonly", "occ", "noimp")
+
+
+def godot_type_suffix(name):
+    """The type suffix Godot's importer would read in a node name, or None."""
+    m = re.search(r"[-_$](" + "|".join(GODOT_TYPE_SUFFIXES) + r")(?=$|[-_.\d])", name.lower())
+    return m.group(0) if m else None
 
 
 def heading_of(dx, dy):
@@ -439,7 +463,7 @@ class Plan:
 
     def sector(self, name):
         if name not in self.sectors:
-            self.sectors[name] = {"name": name, "objects": {}, "entities": []}
+            self.sectors[name] = {"name": name, "objects": {}, "entities": [], "models": []}
             self.order.append(name)
         return self.sectors[name]
 
@@ -501,8 +525,23 @@ class Plan:
         self.zgroup(group)["details"].append(((lo[0], lo[2], lo[1]), (hi[0], hi[2], hi[1]), label))
 
     def entity(self, sector, name, x, y, z, heading=0.0, extras=None, preview=None):
+        suffix = godot_type_suffix(name)
+        if suffix:
+            raise SystemExit(f"entity {name}: Godot's importer reads '{suffix}' in a node name as a node type "
+                             f"and rebuilds the node (GODOT_TYPE_SUFFIXES); name the kind another way")
         self.sector(sector)["entities"].append({"name": name, "pos": p3(x, y, z), "heading": r4(heading),
                                                 "extras": extras or {}, "preview": preview})
+
+    def model(self, sector, name, path, x, y, z, heading=0.0, extras=None):
+        """A committed model (a glb under game/) built into the sector's glb as static geometry at
+        a point and heading: its meshes keep their own UVs and materials, its "-colonly" objects
+        stay its collision, and each is renamed after `name` (build_undercity.py). A parked car
+        is one (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2)."""
+        suffix = godot_type_suffix(name)
+        if suffix:
+            raise SystemExit(f"model {name}: Godot's importer reads '{suffix}' in a node name as a node type")
+        self.sector(sector)["models"].append({"name": name, "path": path, "pos": p3(x, y, z), "heading": r4(heading),
+                                              "extras": dict(extras or {})})
 
     def light(self, sector, kind, x, y, z, corona_at=None, energy=None, rng=None):
         """A baked light (ENT_light) with its corona. The caller builds the visible fixture."""
@@ -544,7 +583,7 @@ class Plan:
         for name in self.order:
             s = self.sectors[name]
             objs = [o for o in s["objects"].values() if o["prims"]]
-            out["sectors"].append({"name": name, "objects": objs, "entities": s["entities"]})
+            out["sectors"].append({"name": name, "objects": objs, "entities": s["entities"], "models": s["models"]})
         out["stats"] = self.stats()
         out["probes"] = self.probes
         out["rooms"] = self.rooms_out
@@ -556,7 +595,7 @@ class Plan:
             s = self.sectors[name]
             objs = [o for o in s["objects"].values() if o["prims"]]
             st[name] = {"objects": len(objs), "prims": sum(len(o["prims"]) for o in objs),
-                        "entities": len(s["entities"]),
+                        "entities": len(s["entities"]), "models": len(s["models"]),
                         "lights": sum(1 for e in s["entities"] if e["preview"])}
         st["_lights"] = self.lights
         return st
@@ -586,6 +625,8 @@ class City:
         # water bodies, deepest first, cut so they don't overlap
         bodies = sorted([w for w in m.get("water", [])], key=lambda w: w.get("bed_m", -4.5))
         self.waters = []
+        self.vehicles = []          # the parked vehicles, as City.vehicle() places them
+        self.vehicle_deck = []      # the variants still to deal, shuffled from the vehicles' own stream
         taken = Polygon()
         for w in bodies:
             g = RM.water_geom(w).difference(taken)
@@ -1739,12 +1780,18 @@ class City:
         g = RM.shape_geom(fx)
         c = g.centroid
         inside = room_building is not None
+        if not inside:
+            # counted for every outdoor fixture, a vehicle's spot too, so the props after it keep
+            # their names and their draws (every other stall has a light)
+            self.nprop = getattr(self, "nprop", 0) + 1
+        if cls == "car":        # in the sector that owns its ground: the streets outdoors
+            self.vehicle(sector if inside else "streets", fx, FLOOR_Z if inside else self.ground_level(c.x, c.y))
+            return
         if inside:
             z = FLOOR_Z
             prims = P.obj(sector, "interior", name=f"interior_{room_building['id']}", col="col")
         else:
             z = self.ground_level(c.x, c.y)
-            self.nprop = getattr(self, "nprop", 0) + 1
             pname = f"prop_{cls.replace('-', '_')}_{self.nprop:03d}"
             prims = P.obj(sector, "prop", col="col", extras=PROP_EXTRAS, origin=(c.x, c.y, z), name=pname)
         zg = owner if inside else "exterior"
@@ -1757,14 +1804,8 @@ class City:
                 cx, cy, sw, sh, ang = (x0 + x1) / 2, (y0 + y1) / 2, max(w, d), min(w, d), 0.0 if w >= d else 90.0
             self.stall(sector, prims, cx, cy, z, sw, sh, ang, light=(not inside and self.nprop % 2 == 0))
             return
-        if cls in ("car", "container"):
-            cx, cy, sw, sh, ang = fx[1:6]
-            if cls == "container":
-                self.wagon(prims, cx, cy, z, sw, sh, ang)
-            elif sw * sh > 16 or max(sw, sh) > 7:
-                self.truck(prims, cx, cy, z, sw, sh, ang)
-            else:
-                self.car(prims, cx, cy, z, sw, sh, ang, owner)
+        if cls == "container":
+            self.wagon(prims, *fx[1:3], z, *fx[3:6])
             return
         if cls == "crate":
             cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
@@ -1934,48 +1975,76 @@ class City:
         if light:
             P.light(sector, "stall", gx, gy, z + 1.95, corona_at=(gx, gy, z + 2.05))
 
-    def car(self, prims, cx, cy, z, sw, sh, ang, owner):
-        ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        rng = random.Random(f"{self.P.seed}:car:{cx:.1f}:{cy:.1f}")
-        paint = ["gunmetal", "gunmetal_light", "rust_metal", "tech_panel"][int(rng.random() * 4)]
-        L_, W_ = (sw, sh) if sw >= sh else (sh, sw)
-        if sh > sw:
-            ux, uy = -uy, ux
-        vx, vy = -uy, ux
+    def vehicle(self, sector, fx, z):
+        """A parked vehicle on a car spot (openspec/changes/archive/2026-09-30-street-vehicles, design section 4;
+        openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2): the variant's committed model, built into
+        the sector that owns the ground under it as a static mesh of the level, so it bakes with that
+        ground and every light that reaches it, and an ENT_car marker beside it for the level data
+        and the tests. Its front runs along the spot's long side, toward the spot's angle (the layout
+        says which way a row faces). The variants are dealt like a deck, shuffled from the vehicles'
+        own stream, so each shows once before any repeats and no other draw in the level moves.
+        `sector` is the building's for a spot indoors (the garage's bay), else the streets'. The
+        ENT_car becomes the car's contact shadow in the game, a decal sized by its "size" extra:
+        the model's footprint, CAR_SHADOW_MARGIN_M longer and wider (design section 2.3)."""
+        cx, cy, sw, sh, ang = fx[1:6]
+        if not self.vehicle_deck:
+            self.vehicle_deck = sorted(v["id"] for v in VEHICLES["variants"])
+            random.Random(f"{self.P.seed}:vehicles:{len(self.vehicles)}").shuffle(self.vehicle_deck)
+        model = self.vehicle_deck.pop()
+        a = math.radians(ang if sw >= sh else ang + 90.0)
+        heading = heading_of(math.cos(a), math.sin(a))
+        n = len(self.vehicles) + 1
+        self.vehicles.append({"name": f"ENT_car_{n:03d}", "model": model, "at": (cx, cy, z), "heading": heading,
+                              "spot": fx, "sector": sector, "inside": sector != "streets"})
+        v = self.vehicles[-1]
+        self.P.model(sector, f"car_{n:03d}", f"models/undercity/props/vehicle_{model}.glb", cx, cy, z, heading,
+                     CAR_EXTRAS)
+        (x0, y0, _), (x1, y1, _) = vehicle_data.model_bounds(model)
+        self.P.entity(sector, v["name"], cx, cy, z, heading,
+                      {"kind": "car", "id": v["name"][len("ENT_car_"):], "model": model,
+                       "size": f"{x1 - x0 + CAR_SHADOW_MARGIN_M:.2f},{y1 - y0 + CAR_SHADOW_MARGIN_M:.2f}"})
 
-        def Lp(u, v):
-            return (cx + ux * u + vx * v, cy + uy * u + vy * v)
-        hl, hw = L_ / 2, W_ / 2
-        prims.append(hexa([Lp(-hl, -hw), Lp(hl, -hw), Lp(hl, hw), Lp(-hl, hw)], z + 0.32, z + 0.95, paint))
-        cab_b = [Lp(-0.36 * L_, -hw * 0.92), Lp(0.18 * L_, -hw * 0.92), Lp(0.18 * L_, hw * 0.92), Lp(-0.36 * L_, hw * 0.92)]
-        cab_t = [Lp(-0.28 * L_, -hw * 0.78), Lp(0.06 * L_, -hw * 0.78), Lp(0.06 * L_, hw * 0.78), Lp(-0.28 * L_, hw * 0.78)]
-        prims.append(hexa_pts([(*p, z + 0.95) for p in cab_b] + [(*p, z + 1.45) for p in cab_t],
-                              [paint, paint, "window_dark", "window_dark", "window_dark", "window_dark"]))
-        for pu in (-0.32 * L_, 0.32 * L_):
-            for side in (-1, 1):
-                wx, wy = Lp(pu, side * (hw - 0.02))
-                prims.append(cyl(wx - vx * side * 0.0, wy - vy * side * 0.0, z + 0.33, 0.33, 0.24 * side, "rubber",
-                                 seg=10, axis=(vx, vy, 0.0)))
+    @staticmethod
+    def footprint(v, models=vehicle_data.MODELS):
+        """A placed vehicle's footprint corners (layout axes), from its committed model's box turned
+        to its heading, and the model's (lo, hi)."""
+        (x0, y0, _), (x1, y1, _) = lo_hi = vehicle_data.model_bounds(v["model"], models)
+        h = math.radians(v["heading"])
+        fx_, fy_ = math.sin(h), -math.cos(h)            # the front, in layout axes (heading_of's inverse)
+        rx, ry = -fy_, fx_                              # its right: the model's +x
+        cx, cy, _ = v["at"]
+        return [(cx + rx * x + fx_ * y, cy + ry * x + fy_ * y) for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1))], lo_hi
 
-    def truck(self, prims, cx, cy, z, sw, sh, ang):
-        ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-        L_, W_ = (sw, sh) if sw >= sh else (sh, sw)
-        if sh > sw:
-            ux, uy = -uy, ux
-        vx, vy = -uy, ux
+    def vehicle_problems(self, v, models=vehicle_data.MODELS):
+        """What's wrong with one placed vehicle: its committed model's footprint, turned to its
+        heading, must lie inside its spot's footprint, and outdoors on one ground: the ground
+        height over a 5 x 3 grid across the footprint (its corners and its wheels among the points)
+        must agree within GROUND_AGREE_M (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.2). A
+        spot indoors stands on its room's one floor."""
+        corners, ((x0, y0, _), (x1, y1, _)) = self.footprint(v, models)
+        cx, cy, _ = v["at"]
+        _, _, _, sw, sh, _ = v["spot"][:6]
+        out = []
+        if not RM.shape_geom(v["spot"]).buffer(1e-6).contains(Polygon(corners)):
+            out.append(f"{v['name']} ({v['model']}, {y1 - y0:.2f} x {x1 - x0:.2f} m) doesn't fit its {max(sw, sh):g} x "
+                       f"{min(sw, sh):g} m spot at ({cx:.1f}, {cy:.1f})")
+        if not v.get("inside"):
+            a, b, _, d = corners
+            grid = [(a[0] + (b[0] - a[0]) * i / 2 + (d[0] - a[0]) * j / 4, a[1] + (b[1] - a[1]) * i / 2 + (d[1] - a[1]) * j / 4)
+                    for i in range(3) for j in range(5)]
+            zs = sorted({round(self.ground_level(x, y), 3) for x, y in grid})
+            if zs[-1] - zs[0] > GROUND_AGREE_M:
+                out.append(f"{v['name']} at ({cx:.1f}, {cy:.1f}) straddles a kerb: ground at "
+                           + " and ".join(f"{z:.2f}" for z in zs) + " m under it")
+        return out
 
-        def Lp(u, v):
-            return (cx + ux * u + vx * v, cy + uy * u + vy * v)
-        hl, hw = L_ / 2, W_ / 2
-        prims.append(hexa([Lp(-hl, -hw), Lp(0.26 * L_, -hw), Lp(0.26 * L_, hw), Lp(-hl, hw)], z + 0.9, z + 3.4, "rust_metal"))
-        prims.append(hexa([Lp(0.28 * L_, -hw), Lp(hl, -hw), Lp(hl, hw), Lp(0.28 * L_, hw)], z + 0.5, z + 2.6,
-                          ["gunmetal", "gunmetal", "gunmetal", "window_dark", "gunmetal", "window_dark"]))
-        prims.append(hexa([Lp(-hl + 0.2, -hw + 0.3), Lp(hl - 0.2, -hw + 0.3), Lp(hl - 0.2, hw - 0.3), Lp(-hl + 0.2, hw - 0.3)],
-                          z + 0.45, z + 0.9, "gunmetal"))
-        for pu in (-0.36 * L_, -0.2 * L_, 0.36 * L_):
-            for side in (-1, 1):
-                wx, wy = Lp(pu, side * (hw - 0.05))
-                prims.append(cyl(wx, wy, z + 0.45, 0.45, 0.3 * side, "rubber", seg=10, axis=(vx, vy, 0.0)))
+    def check_vehicles(self):
+        """Every parked vehicle fits its spot and stands on one ground (openspec/changes/archive/2026-09-30-vehicle-fixes,
+        "Parked vehicles are generated models placed by the plan"), read from the committed glb.
+        Refuses the plan, naming each car, its spot and model."""
+        problems = [p for v in self.vehicles for p in self.vehicle_problems(v)]
+        if problems:
+            raise SystemExit(f"{self.m['id']}: {len(problems)} vehicle problems:\n  " + "\n  ".join(problems))
 
     def wagon(self, prims, cx, cy, z, sw, sh, ang):
         ux, uy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
@@ -3323,7 +3392,7 @@ class City:
             raise SystemExit(f"{self.m['id']}: {len(problems)} placements put a person inside the level:\n  "
                              + "\n  ".join(problems))
 
-    # puddles (openspec/changes/street-puddles) --------------------------------------------
+    # puddles (openspec/changes/archive/2026-09-30-street-puddles) --------------------------------------------
     def puddle_ground(self):
         """What a puddle is checked against, built once, after the rest of the level: the ground
         it may lie on by height (inset from its edges), the roofs, and what it keeps clear of. The
@@ -3353,7 +3422,7 @@ class City:
         return self._puddle_ground
 
     def puddle_problems(self, label, g, z, others=()):
-        """Why a puddle can't lie here, or [] when it can (openspec/changes/street-puddles, design
+        """Why a puddle can't lie here, or [] when it can (openspec/changes/archive/2026-09-30-street-puddles, design
         section 3.5). g is its outline, z the height of the ground it lies on, others the puddles it
         must keep PUDDLE_GAP_M from. The placement and the check both ask this, so they can't
         disagree about the rule."""
@@ -3418,7 +3487,7 @@ class City:
         return sorted(out, key=lambda e: e[0])
 
     def puddles(self):
-        """Every puddle in the level, where rain water gathers (openspec/changes/street-puddles,
+        """Every puddle in the level, where rain water gathers (openspec/changes/archive/2026-09-30-street-puddles,
         design section 3.5): round a kerb gully every GULLY_EVERY_M of kerb, in the gutters between,
         and just outside the drip edges of the awnings and the Skyway's deck. A candidate that
         breaks a rule (puddle_problems) is dropped, never moved, so the rest stay where they are.
@@ -3496,14 +3565,14 @@ class City:
 
     def place_puddles(self):
         """The level's puddles (City.puddles()) and a grate entity for each kerb gully, which the
-        importer turns into the gully decal (openspec/changes/street-puddles, design section 3.2)."""
+        importer turns into the gully decal (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2)."""
         self.puddle_list, self.gullies = self.puddles()
         for gl in self.gullies:
             self.P.entity("streets", f"ENT_{gl['id']}", gl["at"][0], gl["at"][1], STREET_Z, gl["heading"],
-                          {"kind": "gully", "id": gl["id"]})
+                          {"kind": "gully", "id": gl["id"], "size": f"{GULLY_GRATE_M[0]},{GULLY_GRATE_M[1]}"})
 
     def check_puddles(self, puddles=None):
-        """Every puddle lies where rain water gathers and nowhere else (openspec/changes/street-puddles,
+        """Every puddle lies where rain water gathers and nowhere else (openspec/changes/archive/2026-09-30-street-puddles,
         "Puddles lie where water gathers"): on open ground in the rain, within its own ground and
         PUDDLE_KERB_OFF_M in from a kerb, off the bridges, the rails, the Pit and the water, clear
         of buildings, lots, fixtures, props, solids and stairs by PUDDLE_CLEAR_M, and apart from
@@ -3554,6 +3623,7 @@ class City:
         self.check_doors()
         self.check_exits()
         self.check_standing_room()
+        self.check_vehicles()
         self.place_puddles()
         self.check_puddles()
         return self.P

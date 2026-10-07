@@ -148,6 +148,14 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/exit_glow.tres"
 },
+"fabric_navy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/fabric_navy.tres"
+},
+"fabric_rust": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/fabric_rust.tres"
+},
 "floor_tiles": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://materials/floor_tiles.tres",
@@ -256,6 +264,10 @@ _subresources={
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/paint_safe.tres"
 },
+"paper_white": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/paper_white.tres"
+},
 "paving_wet": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/paving_wet.tres"
@@ -266,7 +278,6 @@ _subresources={
 },
 "rubber": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://materials/props/rubber.tres",
 "use_external/path": "res://materials/props/rubber.tres"
 },
 "rust_metal": {
@@ -315,6 +326,98 @@ _subresources={
 "terminal_screen": {
 "use_external/enabled": true,
 "use_external/path": "res://materials/props/terminal_screen.tres"
+},
+"umbrella_nylon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/umbrella_nylon.tres"
+},
+"veh_psx_box_van_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_grey.tres"
+},
+"veh_psx_box_van_mail": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_mail.tres"
+},
+"veh_psx_box_van_purple": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_purple.tres"
+},
+"veh_psx_box_van_white": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_box_van_white.tres"
+},
+"veh_psx_fullsize_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_green.tres"
+},
+"veh_psx_fullsize_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_grey.tres"
+},
+"veh_psx_fullsize_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_fullsize_red.tres"
+},
+"veh_psx_hatchback_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_green.tres"
+},
+"veh_psx_hatchback_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_red.tres"
+},
+"veh_psx_hatchback_yellow": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_hatchback_yellow.tres"
+},
+"veh_psx_minivan_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_blue.tres"
+},
+"veh_psx_minivan_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_grey.tres"
+},
+"veh_psx_minivan_silver": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_silver.tres"
+},
+"veh_psx_minivan_tan": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_minivan_tan.tres"
+},
+"veh_psx_sedan_black": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_black.tres"
+},
+"veh_psx_sedan_maroon": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_maroon.tres"
+},
+"veh_psx_sedan_navy": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_sedan_navy.tres"
+},
+"veh_psx_taxi": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_taxi.tres"
+},
+"veh_psx_wagon_blue": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_blue.tres"
+},
+"veh_psx_wagon_green": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_green.tres"
+},
+"veh_psx_wagon_grey": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_grey.tres"
+},
+"veh_psx_wagon_red": {
+"use_external/enabled": true,
+"use_external/path": "res://materials/props/veh_psx_wagon_red.tres"
 },
 "water": {
 "use_external/enabled": true,

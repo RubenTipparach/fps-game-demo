@@ -74,21 +74,26 @@ The phase keeps coming from ground speed, but a footstep is never quicker than a
 At a slow walk (under 2.3 m/s) nothing changes: the cap only bites at the arena pace. The
 footstep sounds follow the same phase, so they slow to match.
 
-### 3.2 The gun: a slow figure-eight on sines
+### 3.2 The gun: a slight, slow figure-eight on sines
 
-    side   = sin(phase)       * 5.0 mm  (one sway a stride: 1.0 Hz walking, 1.3 Hz sprinting)
-    height = -cos(2 * phase)  * 3.0 mm  (one dip a footstep: 2.0 Hz, 2.6 Hz; smooth, no corner)
-    roll   = sin(phase)       * 0.75 degrees
+The owner, N1: "very slightly, sine steps". The sway stays on sines in step with the capped
+footsteps, at half the first proposal's size:
+
+    side   = sin(phase)       * 2.5 mm  (one sway a stride: 1.0 Hz walking, 1.3 Hz sprinting)
+    height = -cos(2 * phase)  * 1.5 mm  (one dip a footstep: 2.0 Hz, 2.6 Hz; smooth, no corner)
+    roll   = sin(phase)       * 0.4 degrees
 
 Sprinting scales all three by 1.5. The weight (speed over walking speed) fades them in and out
-as today. Peak acceleration of the height at a walk: 0.003 m x (2 pi x 2.0 Hz)² = 0.47 m/s².
+as today. Peak acceleration of the height at a walk: 0.0015 m x (2 pi x 2.0 Hz)² = 0.24 m/s². The
+numbers are a first pass, tuned on the after video.
 
-### 3.3 The view: small and smooth
+### 3.3 The view: no bob
 
-    height = -cos(2 * phase) * 5 mm, side = sin(phase) * 3 mm   (1 cm peak to peak, from 4.9)
-
-Peak acceleration at a walk: 0.79 m/s² (0.08 g), from 11.5 g. The Options screen's head bob
-toggle still turns it off; the gun's sway stays, as it is part of holding a gun.
+The owner, N2: "no view bobing while moving". The view doesn't bob: `UpdateCamera` sets no
+offset from the gait, and its peak vertical acceleration while walking is 0, from 11.5 g. The
+gun's slight sway stays, as it is part of holding a gun. The Options screen's head-bob row goes
+with the view's bob: it would turn off nothing (a row removed from the approved D7 screen; its
+setting is dropped from the save and ignored in an old one).
 
 ### 3.4 One implementation, in data
 
@@ -97,8 +102,8 @@ toggle still turns it off; the gun's sway stays, as it is part of holding a gun.
   controller and the weapon both call it; neither keeps its own formula.
 - **The numbers** go to `game/data/view_motion.json` (units in the keys: `step_m`,
   `max_cadence_walk_hz`, `max_cadence_sprint_hz`, `gun_side_m`, `gun_height_m`, `gun_roll_deg`,
-  `sprint_scale`, `view_height_m`, `view_side_m`), validated on load by the core like every data
-  file, with its schema class in `Undercity.Core`.
+  `sprint_scale`), validated on load by the core like every data file, with its schema class in
+  `Undercity.Core`. The view has no bob, so no view knobs.
 - **The reference maps** use the same player, so they take the new gait too. They are kept as
   level-building references (CLAUDE.md 1), not for their feel.
 
@@ -107,9 +112,9 @@ toggle still turns it off; the gun's sway stays, as it is part of holding a gun.
 | Check | Where | Today | After |
 |---|---|---|---|
 | The data file loads, a misspelt key or a cadence of 0 is refused | `Undercity.Core.Tests` | | passes |
-| Walking: footsteps at most 2.0 a second, the gun's height no faster than 2.1 Hz, the view's peak acceleration under 1 m/s² | an in-engine view test, the `trace` measurement headless | 6.5, 6.5 Hz, 113 m/s² | passes |
-| Sprinting: at most 2.6 footsteps a second, under 1.5 m/s² | the same | 9.1, 212 m/s² | passes |
-| Neither the gun nor the view has a corner: the largest change in the view's vertical speed between frames stays under 0.05 m/s at 60 fps | the same | 1.89 m/s walking, 3.53 sprinting | passes |
+| Walking: footsteps at most 2.0 a second, the gun's height no faster than 2.1 Hz, the view's height offset from the gait 0 | an in-engine view test, the `trace` measurement headless | 6.5, 6.5 Hz, 4.9 cm | passes |
+| Sprinting: at most 2.6 footsteps a second, the view's offset 0 | the same | 9.1, 4.9 cm | passes |
+| The gun has no corner: the largest change in its vertical speed between frames stays under 0.02 m/s at 60 fps | the same | 1.89 m/s walking, 3.53 sprinting (the view's today) | passes |
 
 ### 3.6 Captures
 
@@ -119,14 +124,14 @@ the Kestrel drawn, before and after, side by side, at 30 fps.
 ## Risks / Trade-offs
 
 - **Floaty footsteps.** Two footsteps a second at 7.5 m/s is a 3.75 m stride, longer than any
-  person's. The sounds and the sway will feel unhurried against the ground rushing past. That
-  is the pace question (Non-Goals), and the survey asks it (N3).
+  person's. The sounds and the sway will feel unhurried against the ground rushing past. The
+  owner kept the pace for now (N3); a slower pace is its own change.
 - **The reference maps change feel.** Accepted: they are references for building levels.
 
-## Owner questions (survey, section N)
+## Owner decisions (survey N1 to N3, 2026-09-30)
 
-- **N1** How the gun sways: slow and in step with footsteps capped at a person's pace
-  (recommended) / a fixed slow sway whatever the pace / today's, smoothed.
-- **N2** The view's own bob: small and smooth, 1 cm (recommended) / off by default / today's.
-- **N3** The runner's pace: keep 7.5 and 10.5 m/s for now (recommended) / a slower, immersive
-  sim pace, as its own change.
+- **N1** "very slightly, sine steps": the gun sways on sines in step with capped footsteps, at half
+  the first proposal's size (section 3.2).
+- **N2** "no view bobing while moving": the view doesn't bob; the Options row goes (section 3.3).
+- **N3** "recommended": the runner's pace stays at 7.5 and 10.5 m/s for now; a slower pace is its
+  own change.

@@ -2,10 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://r5e02jfpqrpm"
+path="res://.godot/imported/hub_puddles.png-c4dead5b27298225fcb685583077384c.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://levels/undercity/hub/hub_puddles.png"
+dest_files=["res://.godot/imported/hub_puddles.png-c4dead5b27298225fcb685583077384c.ctex"]
 
 [params]
 

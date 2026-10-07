@@ -145,6 +145,8 @@ public partial class UndercityLevel : Node3D, ILevelHost
         _crowd = CrowdPicker.Assign(State.World.Seed, _def.Crowd, State.Data.Crowd);
         // Dry skin and wet cloth read the data's numbers (openspec/changes/archive/2026-09-29-character-lighting, design section 9).
         CharacterShading.Apply(State.Data.CharacterLighting.Wetness);
+        // The ground draws the plan's puddles from the level's mask (openspec/changes/archive/2026-09-30-street-puddles).
+        PuddleShading.Apply(_def.Puddles);
         State.World.CurrentLevel = LevelId;
 
         _player = PlayerScene.Instantiate<PlayerController>();

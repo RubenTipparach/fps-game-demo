@@ -12,6 +12,11 @@ def viaduct_y(x):
     return 64 + 82 * x / W
 
 
+# A car spot, length x width: the longest body the deal places (the full-size saloon, 5.22 m) and the
+# widest (the minivan, 2.41 m with its mirrors), with room round them (openspec/changes/archive/2026-09-30-cc0-vehicles,
+# design section 3.1).
+CAR_L, CAR_W = 5.6, 2.6
+
 MAP = {
     "id": "hub",
     "title": "LOW HARBOR",
@@ -217,7 +222,7 @@ MAP = {
          "label_at": (171, 116.2),
          "rooms": [{"name": "", "rect": (162, 113, 178, 126)}, {"name": "OFFICE", "rect": (178, 113, 184, 126)}],
          "doors": [(162, 119, 5), (178, 120)],
-         "fixtures": [("orect", 170, 119.5, 4.4, 2, 90, "car"), ("rect", 165, 114, 175, 115, "fix")]},
+         "fixtures": [("orect", 170, 119.5, CAR_L, CAR_W, 90, "car"), ("rect", 165, 114, 175, 115, "fix")]},
         {"id": "shrine", "name": "TSANG SHRINE", "poly": [(86, 134), (98, 134), (98, 150), (86, 150)], "height_m": 7,
          "frame_style": "shrine",
          "label_at": (92, 131.5),
@@ -262,12 +267,16 @@ MAP = {
          ("rect", 138.5, 98.5, 141.5, 101.5, "fix-cyan"),        # Oracle kiosk
          ("circle", 120, 96, 3.5, "fix-dark"),                   # drain well under the viaduct
          ("rect", 125, 105, 128, 108.5, "fix-lt")] +             # Skyway service lift
-        # parked cars on Lantern Row and Quay Road, trucks in the depot yard
-        [("orect", 12 + i * 11.5, 43.3, 4.6, 2.0, 0, "car") for i in range(4)] +
-        # no car in front of Pachinko Sunrise's entrance (openspec/changes/hub-doorways)
-        [("orect", 150 + i * 9, 34.6, 4.6, 2.0, 0, "car") for i in (0, 2)] +
-        [("orect", 215, 80 + i * 8, 2.0, 4.6, 0, "car") for i in range(5)] +
-        [("orect", 228, 80 + i * 7, 8.5, 2.8, 0, "car") for i in range(3)] +
+        # parked cars on Lantern Row's road, each spot's long side 0.2 m off the kerb where the kerb
+        # comes nearest (the pavement strips are irregular), on its south side and on its north
+        # (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.3; survey O2), and none in front of
+        # Pachinko Sunrise's entrance (openspec/changes/hub-doorways)
+        [("orect", x, y, CAR_L, CAR_W, 0, "car") for x, y in ((12, 40.99), (23.5, 40.65), (35, 40.41), (46.5, 40.07))] +
+        [("orect", x, y, CAR_L, CAR_W, 0, "car") for x, y in ((150, 36.5), (168, 37.65))] +
+        # on Quay Road, 0.2 m off the quay's raised edge at x 214.0
+        [("orect", 215.5, 80 + i * 8, CAR_W, CAR_L, 0, "car") for i in range(5)] +
+        # the depot yard's spots take what every car spot deals, the vans among it (survey O7)
+        [("orect", 228, 80 + i * 7, CAR_L, CAR_W, 0, "car") for i in range(3)] +
         # freight wagons on the siding, crates in the freight yard
         [("orect", 140 - i * 13.5, 153 + i * 7.2, 12, 3, -28, "container") for i in range(2)] +
         [("rect", 116 + (i % 4) * 3.1, 150 + (i // 4) * 3.1, 118.6 + (i % 4) * 3.1, 152.6 + (i // 4) * 3.1, "crate") for i in range(8)] +
@@ -314,12 +323,13 @@ MAP = {
 
     "patrols": [
         {"who": "MerSec pair: Lantern Row, Market Street, the market, Kiln Street",
-         # every leg clear of buildings, stalls and the Skyway's pillars for an NPC's capsule
-         # (city_plan.check_standing_room); the pair walks straight from stop to stop
-         "closed": True, "pts": [(40, 39), (118, 37), (120, 72), (146, 96), (156, 118), (166, 148),
+         # every leg clear of buildings, stalls, the Skyway's pillars and the parked cars for an
+         # NPC's capsule (city_plan.check_standing_room); the pair walks straight from stop to stop,
+         # along Lantern Row's north half, clear of the cars at its south kerb (vehicle-fixes)
+         "closed": True, "pts": [(40, 37.8), (118, 37), (120, 72), (146, 96), (156, 118), (166, 148),
                                  (158, 130), (156.5, 120.5), (150, 112), (126.5, 116.6), (100, 110), (84, 96),
                                  (86.7, 86), (85.5, 80.5), (79.5, 78.5), (64.5, 69), (56, 61.5), (56.5, 44),
-                                 (56, 42.5)]},
+                                 (56, 38.2)]},
     ],
 
     "enemies": [

@@ -43,7 +43,7 @@ import numpy as np
 from mathutils import Matrix, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from blendkit import GAME, HERE, MANIFEST, collection, material  # noqa: E402
+from blendkit import GAME, HERE, MANIFEST, G, collection, material  # noqa: E402
 from build_props import Kit, export, reset  # noqa: E402  (also puts tools/godot on sys.path)
 
 import import_presets  # noqa: E402  (tools/godot: the one writer of .glb.import presets)
@@ -108,6 +108,7 @@ MATERIALS = {
 # Faces of these materials get UVs fitted to their own rectangle (0..1 across the face, read
 # upright from outside) instead of world UVs: a screen, a label, a lens, a whole crate face.
 FITTED = {"terminal_screen", "mersec_label", "led_red", "led_amber", "led_cyan", "crate", "crate_stencil"}
+
 
 
 def _fmt(c):
@@ -423,11 +424,6 @@ def write_textures():
 
 
 # ----------------------------------------------------------------------------- modelling kit
-
-def G(p):
-    """Blender (x right, y front, z up) -> the Godot coordinates Kit takes."""
-    return (p[0], p[2], -p[1])
-
 
 class PropKit(Kit):
     """build_props.Kit in Blender coordinates, registering every box for the z-fighting check.
@@ -1288,9 +1284,12 @@ def main():
     bpy.context.scene.name = "UndercityProps"
     write_textures()
     write_materials()
-    counts = {name: build(name, fn, gi) for name, (fn, gi) in PROPS.items()}
-    bpy.ops.wm.save_as_mainfile(filepath=BLEND, relative_remap=True, compress=True)
-    print("[undercity_props] saved", BLEND)
+    only = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []     # name prefixes, to build a few
+    counts = {name: build(name, fn, gi) for name, (fn, gi) in PROPS.items()
+              if not only or any(name.startswith(o) for o in only)}
+    if not only:                        # the .blend holds every prop, so a partial build leaves it be
+        bpy.ops.wm.save_as_mainfile(filepath=BLEND, relative_remap=True, compress=True)
+        print("[undercity_props] saved", BLEND)
     print("[undercity_props] triangles:", ", ".join(f"{k} {v}" for k, v in counts.items()))
 
 

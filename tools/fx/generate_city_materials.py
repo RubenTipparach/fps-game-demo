@@ -22,9 +22,10 @@ Materials (tile_m is metres per texture repeat, see materials.json):
   awning            striped canvas
 Decals (DECALS), written straight to game/textures/decals/ with lossless import presets:
   gully             a kerb gully's cast-iron grate, 0.45 x 0.25 m
+  car_shadow        a parked car's contact shadow: dark and dry, soft-edged, stretched to the car
 
 The ground holds no standing water: the level plan places the puddles and the ground's shader
-draws them (openspec/changes/street-puddles). Every map is seeded, so the same script writes the
+draws them (openspec/changes/archive/2026-09-30-street-puddles). Every map is seeded, so the same script writes the
 same files.
 """
 import os
@@ -202,7 +203,7 @@ GULLY_PX_M = 1 / 512    # the grate's texels: 0.45 x 0.25 m at about 2 mm
 
 
 def gully():
-    """A kerb gully's cast-iron grate (openspec/changes/street-puddles, design section 3.2): a frame
+    """A kerb gully's cast-iron grate (openspec/changes/archive/2026-09-30-street-puddles, design section 3.2): a frame
     and nine slots across it, dark, wet, metallic. Its alpha is the grate's outline, so the decal
     paints nothing past it."""
     w, h = round(0.45 / GULLY_PX_M), round(0.25 / GULLY_PX_M)
@@ -232,7 +233,38 @@ def gully():
         postprocess.write_import(out, f"gully_{kind}.png", lossless=True, res_dir="res://textures/decals")
 
 
-DECALS = {"gully": gully}
+CAR_SHADOW_PX = (64, 128)     # across, along: the decal stretches it to the car's footprint plus 0.3 m
+CAR_SHADOW_EDGE = 1 / 3       # the share of each half-side over which it fades to nothing
+CAR_SHADOW_PEAK = 0.9         # its strength under the car's middle
+CAR_SHADOW_AO = 0.15          # the sky a car hides from the ground under it: the baked light and the reflections
+
+
+def car_shadow():
+    """A parked car's contact shadow (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.3): under a
+    car parked in the rain the road stays dry and the car hides the sky, so the decal darkens the
+    ground (albedo black), makes it matte (roughness 1) and occludes it (ambient occlusion
+    CAR_SHADOW_AO), which dims the baked light and the reflections there alike. Its alpha, the mask
+    for all three, is full under the middle and fades to nothing over the outer third of each
+    half-side, smoothly, so the edge is soft at any car's size."""
+    w, h = CAR_SHADOW_PX
+    y, x = (np.mgrid[0:h, 0:w].astype(np.float32) + 0.5)
+    u, v = np.abs(x / w * 2 - 1), np.abs(y / h * 2 - 1)            # 0 at the middle, 1 at an edge
+
+    def fade(t):
+        k = np.clip((1 - t) / CAR_SHADOW_EDGE, 0, 1)
+        return k * k * (3 - 2 * k)
+    alpha = CAR_SHADOW_PEAK * fade(u) * fade(v)
+    out = os.path.join(GAME, "textures", "decals")
+    os.makedirs(out, exist_ok=True)
+    albedo = np.dstack([np.zeros((h, w, 3), np.float32), alpha])
+    ormap = np.dstack([np.full((h, w), CAR_SHADOW_AO), np.ones((h, w)), np.zeros((h, w))]).astype(np.float32)
+    for kind, data, mode in (("albedo", albedo, "RGBA"), ("orm", ormap, "RGB")):
+        img = Image.fromarray((np.clip(data, 0, 1) * 255 + 0.5).astype(np.uint8), mode)
+        img.save(os.path.join(out, f"car_shadow_{kind}.png"), optimize=True)
+        postprocess.write_import(out, f"car_shadow_{kind}.png", lossless=True, res_dir="res://textures/decals")
+
+
+DECALS = {"gully": gully, "car_shadow": car_shadow}
 
 MATERIALS = {
     "asphalt": asphalt,

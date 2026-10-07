@@ -6,11 +6,18 @@ it ("People stand clear of the level"). Each test builds on the committed hub.
 """
 import contextlib
 import io
+import json
 import math
 import os
+import shutil
+import struct
 import sys
+import tempfile
 import unittest
 from unittest import mock
+
+import numpy as np
+from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import city_plan as CP  # noqa: E402
@@ -212,7 +219,7 @@ class DoorsAreFramedShownAndReachable(unittest.TestCase):
 
 
 class PuddlesLieWhereWaterGathers(unittest.TestCase):
-    """openspec/changes/street-puddles: "Puddles lie where water gathers". The hub's puddles pass
+    """openspec/changes/archive/2026-09-30-street-puddles: "Puddles lie where water gathers". The hub's puddles pass
     the check, a puddle forced into the wrong place is refused by name, and placing them moves
     nothing else in the level."""
 
@@ -272,6 +279,196 @@ class PuddlesLieWhereWaterGathers(unittest.TestCase):
             s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_gully_")]
         del wet["stats"], dry["stats"]    # counts of what's compared, gullies included
         self.assertTrue(wet == dry, "puddles draw from their own seeded streams, so nothing else in the plan moves")
+
+
+def car_spots(node):
+    """Every car spot in a layout: its ("orect", cx, cy, w, h, angle, "car") shapes, wherever they are."""
+    if isinstance(node, dict):
+        return [fx for v in node.values() for fx in car_spots(v)]
+    if isinstance(node, (list, tuple)):
+        if node and node[-1] == "car" and node[0] == "orect":
+            return [tuple(node)]
+        return [fx for v in node for fx in car_spots(v)]
+    return []
+
+
+class ParkedVehiclesAreModelsThatFitTheirSpots(unittest.TestCase):
+    """openspec/changes/archive/2026-09-30-vehicle-fixes: "Parked vehicles are generated models placed by the plan",
+    and openspec/changes/archive/2026-09-30-cc0-vehicles. Every car spot holds one model that fits it and stands on one
+    ground, read from the committed glb; each is a static model of the sector that owns its ground;
+    a model that doesn't fit, or a spot across a kerb, is refused by name; dealing the models moves
+    nothing else in the plan."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.city = built_hub()
+
+    def test_every_car_spot_holds_one_vehicle(self):
+        m, _ = CP.load("hub")
+        self.assertEqual(sorted(car_spots(m)), sorted(tuple(v["spot"]) for v in self.city.vehicles))
+        names = [e["name"] for s in self.city.P.to_json()["sectors"] for e in s["entities"]
+                 if e["name"].startswith("ENT_car_")]
+        self.assertEqual(sorted(names), sorted(v["name"] for v in self.city.vehicles))
+
+    def test_every_car_spot_is_a_car_spot_the_depot_s_too(self):
+        m, _ = CP.load("hub")
+        self.assertEqual({(5.6, 2.6)}, {(max(fx[3:5]), min(fx[3:5])) for fx in car_spots(m)},
+                         "survey O7: no trucks, so the depot's spots take what every car spot deals")
+
+    def test_no_model_parks_twice_before_every_model_has(self):
+        models = [v["model"] for v in self.city.vehicles]
+        self.assertEqual(len(models), len(set(models)), "15 spots deal 15 of the 22 variants, none twice")
+        self.assertTrue(set(models) <= {v["id"] for v in CP.VEHICLES["variants"]})
+
+    def test_every_vehicle_fits_its_spot_on_one_ground(self):
+        self.city.check_vehicles()
+
+    def test_each_car_is_a_model_of_the_sector_that_owns_its_ground(self):
+        plan = self.city.P.to_json()
+        models = {m["name"]: (s["name"], m) for s in plan["sectors"] for m in s["models"]}
+        for v in self.city.vehicles:
+            n = v["name"][len("ENT_car_"):]
+            sector, m = models[f"car_{n}"]
+            self.assertEqual("kiln" if v["inside"] else "streets", sector,
+                             f"{v['name']}: the streets own every road and yard; the garage's bay is the kiln's floor")
+            self.assertEqual(f"models/undercity/props/vehicle_{v['model']}.glb", m["path"])
+            self.assertEqual(CP.CAR_EXTRAS, m["extras"], "bakes at 0.1 m, a quarter of the level's texel")
+            ent = next(e for s in plan["sectors"] for e in s["entities"] if e["name"] == v["name"])
+            self.assertEqual((m["pos"], m["heading"]), (ent["pos"], ent["heading"]), "the contact shadow lies under its car")
+            (x0, y0, _), (x1, y1, _) = CP.vehicle_data.model_bounds(v["model"])
+            self.assertEqual(f"{x1 - x0 + 0.3:.2f},{y1 - y0 + 0.3:.2f}", ent["extras"]["size"],
+                             f"{v['name']}: the shadow is the committed model's footprint, 0.3 m longer and wider")
+        self.assertEqual(sorted(models), sorted(f"car_{v['name'][len('ENT_car_'):]}" for v in self.city.vehicles),
+                         "no model in the plan but the cars")
+
+    def test_a_van_too_long_for_its_spot_is_refused_naming_the_spot_and_the_model(self):
+        car = next(v for v in self.city.vehicles if not v["inside"])
+        small = ("orect", *car["spot"][1:3], 4.6, 2.0, *car["spot"][5:])
+        problems = self.city.vehicle_problems(dict(car, model="fullsize_red", spot=small))
+        self.assertEqual(1, len(problems), problems)
+        self.assertIn(f"{car['name']} (fullsize_red, 5.22 x 1.97 m) doesn't fit its 4.6 x 2 m spot", problems[0])
+
+    def test_a_car_turned_across_its_spot_is_refused(self):
+        car = next(v for v in self.city.vehicles if v["spot"][1] == 228)       # the depot's flat yard
+        self.assertEqual([], self.city.vehicle_problems(dict(car, heading=car["heading"] + 180.0)),
+                         "the spot fits either way round")
+        problems = self.city.vehicle_problems(dict(car, heading=car["heading"] + 90.0))
+        self.assertEqual(1, len(problems), problems)
+        self.assertIn("doesn't fit its 5.6 x 2.6 m spot", problems[0], "across the spot the car sticks out of its sides")
+
+    def test_a_spot_across_a_kerb_is_refused_naming_the_car_and_the_heights(self):
+        # the street-vehicles layout's spot on Lantern Row's south pavement, which hung a van's
+        # wheels over the road (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 1.1)
+        car = next(v for v in self.city.vehicles if v["spot"][1] == 12)
+        old = ("orect", 12, 43.3, 5.6, 2.6, 0, "car")
+        problems = self.city.vehicle_problems(dict(car, at=(12, 43.3, car["at"][2]), spot=old))
+        self.assertEqual([f"{car['name']} at (12.0, 43.3) straddles a kerb: ground at 0.00 and 0.15 m under it"], problems)
+
+    def test_a_car_indoors_stands_on_its_room_s_one_floor(self):
+        garage = next(v for v in self.city.vehicles if v["inside"])
+        self.assertEqual("kiln", garage["sector"])
+        self.assertEqual(CP.FLOOR_Z, garage["at"][2])
+        self.assertEqual([], self.city.vehicle_problems(garage))
+
+    def test_every_model_stays_in_its_triangle_budget(self):
+        for v in CP.VEHICLES["variants"]:
+            tris = glb_triangles(CP.vehicle_data.model_path(v["id"]))
+            self.assertLessEqual(tris, CP.VEHICLES["budget_tris"], v["id"])
+
+    def test_an_entity_named_with_a_godot_type_suffix_is_refused(self):
+        # Godot 4.7.2 imported "ENT_vehicle_008" as a VehicleBody3D named "ENT_008", and the level
+        # importer freed it with the empty under it: every parked vehicle went missing
+        with self.assertRaisesRegex(SystemExit, "ENT_vehicle_008: Godot's importer reads '_vehicle'"):
+            self.city.P.entity("streets", "ENT_vehicle_008", 0.0, 0.0, 0.0)
+        with self.assertRaisesRegex(SystemExit, "car_wheel: Godot's importer reads '_wheel'"):
+            self.city.P.model("streets", "car_wheel", "models/x.glb", 0.0, 0.0, 0.0)
+        for name in ("ENT_door_col", "ENT_crate-rigid", "ENT_x_navmesh_2"):
+            self.assertIsNotNone(CP.godot_type_suffix(name), name)
+        for name in ("ENT_car_008", "ENT_civ_12", "ENT_collector_1", "ENT_occupant_3", "ENT_wheelhouse", "car_008"):
+            self.assertIsNone(CP.godot_type_suffix(name), f"{name} carries no suffix")
+
+    def test_dealing_the_vehicles_moves_nothing_else(self):
+        m, ents = CP.load("hub")
+        empty = CP.City(m, ents)
+        with mock.patch.object(CP.City, "vehicle", lambda self, sector, fx, z: None), \
+                contextlib.redirect_stdout(io.StringIO()):
+            empty.build()
+        parked, empty = self.city.P.to_json(), empty.P.to_json()
+        for s in parked["sectors"]:
+            s["entities"] = [e for e in s["entities"] if not e["name"].startswith("ENT_car_")]
+            s["models"] = []
+        del parked["stats"], empty["stats"]     # counts of what's compared, the vehicles included
+        self.assertTrue(parked == empty, "the vehicles draw from their own seeded stream, so nothing else in the plan moves")
+
+
+class TheVehicleTableIsThePinnedPack(unittest.TestCase):
+    """openspec/changes/archive/2026-09-30-cc0-vehicles, "A vehicle taken from a CC0 pack is pinned and recorded": the
+    table names a pinned pack, its variants name bodies it has and textures beside them, and the
+    committed models and textures are all there with their albedo in range."""
+
+    def raw(self):
+        with open(CP.vehicle_data.TABLE) as f:
+            return json.load(f)
+
+    def test_the_committed_table_models_and_textures_pass(self):
+        self.assertEqual([], CP.vehicle_data.committed_problems(CP.VEHICLES))
+
+    def test_every_vehicle_is_the_psx_pack_s(self):
+        self.assertEqual("psx_style_cars", CP.VEHICLES["pack"], "one style: every vehicle from GGBotNet's PSX Style Cars")
+
+    def test_an_unpinned_pack_is_refused(self):
+        raw = dict(self.raw(), pack="kenney_car_kit")
+        with self.assertRaisesRegex(CP.vehicle_data.DataError, r"vehicles.json.pack: pack 'kenney_car_kit' is in none of"):
+            CP.vehicle_data.validate(raw)
+
+    def test_a_variant_of_a_body_the_table_lacks_is_refused(self):
+        raw = self.raw()
+        raw["variants"] = raw["variants"] + [{"id": "truck_red", "body": "truck", "texture": "Car 08/Car8.png"}]
+        with self.assertRaisesRegex(CP.vehicle_data.DataError, r"variants\[22\].body: no body 'truck'"):
+            CP.vehicle_data.validate(raw)
+
+    def test_a_texture_from_another_body_s_folder_is_refused(self):
+        raw = self.raw()
+        raw["variants"][0] = dict(raw["variants"][0], texture="Car 02/car2.png")
+        with self.assertRaisesRegex(CP.vehicle_data.DataError, r"is not a .png beside its body's blend in 'Car 01'"):
+            CP.vehicle_data.validate(raw)
+
+    def test_a_misspelt_key_is_refused(self):
+        raw = dict(self.raw(), budget_tri=2500)
+        with self.assertRaisesRegex(CP.vehicle_data.DataError, "vehicles.json.budget_tri: unknown key"):
+            CP.vehicle_data.validate(raw)
+
+    def test_a_missing_model_and_a_texture_out_of_range_are_named(self):
+        with tempfile.TemporaryDirectory() as d:
+            models, textures = os.path.join(d, "models"), os.path.join(d, "textures")
+            os.makedirs(models)
+            os.makedirs(textures)
+            one = CP.VEHICLES["variants"][0]["id"]
+            shutil.copy(CP.vehicle_data.texture_path(one), textures)
+            black = os.path.join(textures, CP.VEHICLES["variants"][1]["id"] + ".png")
+            Image.new("RGB", (8, 8), (10, 10, 10)).save(black)
+            table = dict(CP.VEHICLES, variants=CP.VEHICLES["variants"][:2])
+            problems = CP.vehicle_data.committed_problems(table, models, textures)
+        self.assertEqual(3, len(problems), problems)
+        self.assertIn(f"{one}: its model", problems[0])
+        self.assertIn("its texture's mean albedo 0.003 is outside 0.03-0.8", problems[2],
+                      "a car that reads black in the baked light (vehicle-fixes, design section 3.2)")
+
+    def test_the_png_reader_agrees_with_the_imaging_library(self):
+        for v in CP.VEHICLES["variants"][:4]:
+            path = CP.vehicle_data.texture_path(v["id"])
+            a = np.asarray(Image.open(path).convert("RGB"), np.float64) / 255.0
+            want = float(np.where(a <= 0.04045, a / 12.92, ((a + 0.055) / 1.055) ** 2.4).mean())
+            self.assertAlmostEqual(want, CP.vehicle_data.mean_albedo(path), places=9, msg=v["id"])
+
+
+def glb_triangles(path):
+    """The visible triangles in a glb: its meshes' index counts over three, collision aside."""
+    with open(path, "rb") as f:
+        data = f.read()
+    j = json.loads(data[20:20 + struct.unpack("<I", data[12:16])[0]])
+    return sum(j["accessors"][prim["indices"]]["count"] // 3 for node in j["nodes"] if "mesh" in node
+               and "colonly" not in node.get("name", "") for prim in j["meshes"][node["mesh"]]["primitives"])
 
 
 if __name__ == "__main__":

@@ -11,8 +11,10 @@
 // wall, or a bag hanging into a counter, fails (openspec/changes/archive/2026-09-29-crowd-variety, task 3.3). From
 // 1 m outside every exterior door of an enterable building (the level data's "approaches"), the
 // level's baked navmesh must reach the runner's spawn (openspec/changes/hub-doorways, "Every
-// door opens onto ground a person can reach"). Prints PASS or FAIL per check and quits with 1 on
-// any failure.
+// door opens onto ground a person can reach"). Every parked vehicle in the level data (the plan's
+// list) stands in the built level as a static mesh of the sector that owns its ground, where and as
+// the plan put it, with its collision, baked in that sector's lightmap (openspec/changes/archive/2026-09-30-vehicle-fixes).
+// Prints PASS or FAIL per check and quits with 1 on any failure.
 //
 //   flock /tmp/undercity-godot.lock timeout 900 godot --headless --path game res://scenes/undercity/tests/placement_test.tscn
 //
@@ -69,7 +71,11 @@ public partial class PlacementTest : Node3D
             }
             foreach (var f in glbs)
             {
-                AddChild(GD.Load<PackedScene>($"{LevelDir}/{f}").Instantiate());
+                // Named after its file (hub_streets): every sector glb's root is the level's name,
+                // and the car checks tell sectors apart by it (SectorOf).
+                var sector = GD.Load<PackedScene>($"{LevelDir}/{f}").Instantiate();
+                sector.Name = f.GetBaseName();
+                AddChild(sector);
             }
             // The level's trimeshes are one-sided, and a query ignores a face it sees from
             // behind, so a body whose centre is inside a solid (a counter, a hull) would touch
@@ -91,6 +97,7 @@ public partial class PlacementTest : Node3D
             }
             CheckSpawns();
             CheckLadders();
+            CheckParkedCars();
             await CheckApproaches();
             await CheckAccessories();
         }
@@ -156,6 +163,146 @@ public partial class PlacementTest : Node3D
 
     // Every exterior door's approach reaches the runner's spawn on the level's baked navmesh: the
     // walk starts 1 m outside the door, on the navmesh there, and must end at the spawn.
+    /// <summary>How far a parked vehicle may stand from its place in the level data, metres.</summary>
+    private const float CarPlaceToleranceM = 0.05f;
+
+    /// <summary>How far a parked vehicle's heading may be from the level data's, degrees.</summary>
+    private const float CarHeadingToleranceDeg = 1f;
+
+    /// <summary>A parked car's lightmap texel over the level's (city_plan.py, CAR_EXTRAS): 0.1 m against 0.4 m.</summary>
+    private const float CarTexelScale = 4f;
+
+    /// <summary>How much longer and wider a car's contact shadow is than its footprint, metres (city_plan.py, CAR_SHADOW_MARGIN_M).</summary>
+    private const float CarShadowMarginM = 0.3f;
+
+    // Every parked vehicle in the level data is a static mesh of the level, car_<id>, built into the
+    // sector that owns the ground under it (openspec/changes/archive/2026-09-30-vehicle-fixes, design section 2.2): where
+    // and as the plan put it, beside its ENT_car marker, with its static body, the ground a ray finds
+    // under it belonging to its own sector, and a user of that sector's baked lightmap, at the car's
+    // texel scale; its ENT_car is its contact shadow, a decal under it the size of the mesh's own
+    // footprint plus the margin (design section 2.3). The lightmap is read from the level's committed
+    // .lmbake, so the check holds after a bake, not before one.
+    private void CheckParkedCars()
+    {
+        var level = LevelDir.TrimEnd('/').Split('/')[^1];
+        var def = GameData.Load(new GodotDataSource()).Levels.GetValueOrDefault(level);
+        if (def is null)
+        {
+            return;
+        }
+        var markers = GetTree().GetNodesInGroup("ent_car").OfType<Node3D>()
+            .ToDictionary(n => n.GetMeta("id", "").AsString(), StringComparer.Ordinal);
+        foreach (var extra in markers.Keys.Where(id => def.Cars.All(c => c.Id != id)).Order(StringComparer.Ordinal))
+        {
+            _people++;
+            Fail($"car_{extra}: in the built level, not in the level data");
+        }
+        var lightmaps = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+        foreach (var car in def.Cars)
+        {
+            _people++;
+            var who = $"car_{car.Id} ({car.Model})";
+            var mesh = FindChildren($"car_{car.Id}", nameof(MeshInstance3D), true, false).OfType<MeshInstance3D>().FirstOrDefault();
+            var body = FindChildren($"car_{car.Id}_box", nameof(StaticBody3D), true, false).OfType<StaticBody3D>()
+                .FirstOrDefault(b => b.GetChildren().OfType<CollisionShape3D>().Any());
+            if (!markers.TryGetValue(car.Id, out var marker) || mesh is null)
+            {
+                Fail($"{who}: {(mesh is null ? "no static mesh" : "no ENT_car marker")} in the built level");
+                continue;
+            }
+            var sector = SectorOf(mesh);
+            var at = mesh.GlobalPosition;
+            var off = new Vector2(at.X - (float)car.At[0], at.Z - (float)car.At[1]).Length();
+            var front = -mesh.GlobalBasis.Z;
+            var heading = Mathf.PosMod(Mathf.RadToDeg(Mathf.Atan2(front.X, -front.Z)), 360f);
+            var turn = Mathf.Abs(Mathf.PosMod(heading - (float)car.HeadingDeg + 180f, 360f) - 180f);
+            var material = mesh.GetActiveMaterial(0)?.ResourceName ?? "";
+            var ground = body is null ? null : GroundSector(at, body.GetRid());
+            var users = sector is null ? null : LightmapUsers(level, sector, lightmaps);
+            var box = mesh.GetAabb();
+            var shadow = marker as Decal;
+            var shadowOff = shadow is null ? float.PositiveInfinity
+                : Mathf.Max(Mathf.Abs(shadow.Size.X - box.Size.X - CarShadowMarginM), Mathf.Abs(shadow.Size.Z - box.Size.Z - CarShadowMarginM));
+            if (marker.GetMeta("model", "").AsString() != car.Model || material != $"veh_psx_{car.Model}")
+            {
+                Fail($"{who}: the built level has model '{marker.GetMeta("model", "")}', material '{material}'");
+            }
+            else if (off > CarPlaceToleranceM || marker.GlobalPosition.DistanceTo(at) > CarPlaceToleranceM)
+            {
+                Fail($"{who}: stands {off:0.00} m from ({car.At[0]}, {car.At[1]}), its marker {marker.GlobalPosition.DistanceTo(at):0.00} m from it");
+            }
+            else if (turn > CarHeadingToleranceDeg)
+            {
+                Fail($"{who}: faces {heading:0.#} degrees, not {car.HeadingDeg:0.#}");
+            }
+            else if (body is null)
+            {
+                Fail($"{who}: has no static body (car_{car.Id}_box)");
+            }
+            else if (ground != sector)
+            {
+                Fail($"{who}: stands in the {sector} sector on the {ground ?? "(no)"} sector's ground");
+            }
+            else if (mesh.GIMode != GeometryInstance3D.GIModeEnum.Static || !Mathf.IsEqualApprox(mesh.GILightmapTexelScale, CarTexelScale))
+            {
+                Fail($"{who}: bakes as {mesh.GIMode} at texel scale {mesh.GILightmapTexelScale}, not static at {CarTexelScale}");
+            }
+            else if (users is null || !users.Contains($"../Geometry/{mesh.Name}"))
+            {
+                Fail($"{who}: not a user of the {sector} sector's lightmap ({level}_{sector}.lmbake)");
+            }
+            else if (shadowOff > 0.02f)
+            {
+                Fail($"{who}: its contact shadow is {(shadow is null ? "missing" : $"{shadow.Size.X:0.00} x {shadow.Size.Z:0.00} m")}, "
+                     + $"not its {box.Size.X:0.00} x {box.Size.Z:0.00} m footprint plus {CarShadowMarginM} m");
+            }
+            else
+            {
+                GD.Print($"PASS [placement_test] {who} at ({at.X:0.#}, {at.Z:0.#}) facing {heading:0.#}: a static mesh of the "
+                         + $"{sector} sector on its ground, with its body, in its lightmap, over its contact shadow");
+            }
+        }
+    }
+
+    /// <summary>The sector a node was built into, from its sector glb's root, which _Ready names
+    /// after the file ("hub_streets" for the streets).</summary>
+    private string? SectorOf(Node node)
+    {
+        var level = LevelDir.TrimEnd('/').Split('/')[^1];
+        for (var n = node; n is not null && n != this; n = n.GetParent())
+        {
+            if (n.GetParent() == this && n.Name.ToString().StartsWith(level + "_", StringComparison.Ordinal))
+            {
+                return n.Name.ToString()[(level.Length + 1)..];
+            }
+        }
+        return null;
+    }
+
+    /// <summary>The sector of the world collider a ray finds under a point, the car's own body aside.</summary>
+    private string? GroundSector(Vector3 at, Rid own)
+    {
+        var from = at + Vector3.Up * 1.0f;
+        var q = PhysicsRayQueryParameters3D.Create(from, from + Vector3.Down * 2.0f, Layers.World, new GArray { own });
+        var hit = GetWorld3D().DirectSpaceState.IntersectRay(q);
+        return hit.Count > 0 && hit["collider"].AsGodotObject() is Node n ? SectorOf(n) : null;
+    }
+
+    /// <summary>The node paths a sector's baked lightmap lists as its users, from the LightmapGI (a
+    /// sibling of the sector's "Geometry" in the level scene), or null when the sector has no bake.</summary>
+    private HashSet<string>? LightmapUsers(string level, string sector, Dictionary<string, HashSet<string>> cache)
+    {
+        if (!cache.TryGetValue(sector, out var users))
+        {
+            var path = $"{LevelDir.TrimEnd('/')}/{level}_{sector}.lmbake";
+            var data = ResourceLoader.Exists(path) ? GD.Load<LightmapGIData>(path) : null;
+            users = data is null ? null! : Enumerable.Range(0, data.GetUserCount())
+                .Select(i => data.GetUserPath(i).ToString()).ToHashSet(StringComparer.Ordinal);
+            cache[sector] = users;
+        }
+        return users;
+    }
+
     private async Task CheckApproaches()
     {
         var level = LevelDir.TrimEnd('/').Split('/')[^1];

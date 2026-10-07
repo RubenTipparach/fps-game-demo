@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://textures/decals/gully_albedo.png" id="1_gully_albedo"]
+[ext_resource type="Texture2D" path="res://textures/decals/gully_normal.png" id="2_gully_normal"]
+[ext_resource type="Texture2D" path="res://textures/decals/gully_orm.png" id="3_gully_orm"]
+
+[node name="Gully" type="Decal"]
+size = Vector3(0.45, 0.2, 0.25)
+texture_albedo = ExtResource("1_gully_albedo")
+texture_normal = ExtResource("2_gully_normal")
+texture_orm = ExtResource("3_gully_orm")
+albedo_mix = 1.0

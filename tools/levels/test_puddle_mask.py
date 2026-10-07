@@ -1,4 +1,4 @@
-"""Tests that the committed puddle mask agrees with the level plan (openspec/changes/street-puddles,
+"""Tests that the committed puddle mask agrees with the level plan (openspec/changes/archive/2026-09-30-street-puddles,
 "Puddles lie where water gathers", scenario "The mask"). It reads the real file the game loads
 (CLAUDE.md 5.6, "validate the real artifact"), not a copy of what the writer meant to write.
 

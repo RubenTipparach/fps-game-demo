@@ -23,6 +23,11 @@ def B(x, y, z):
     return Vector((x, -z, y))
 
 
+def G(p):
+    """Blender (x right, y front, z up) -> Godot coordinates: B's inverse, what Kit takes."""
+    return (p[0], p[2], -p[1])
+
+
 # ----------------------------------------------------------------------------- scene setup
 
 def collection(name, parent=None):
