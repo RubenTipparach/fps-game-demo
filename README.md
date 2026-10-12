@@ -199,6 +199,10 @@ the NaliCity hotlist and CliffyB's picks). It also has a style guide distilled f
    ```
    MATERIAL_MAKER_DIR=/path/to/material-maker tools/material_maker/export_materials.sh
    ```
+   With no GPU and no screen (a Claude Code cloud session) it runs the same way, on Mesa's
+   software Vulkan under Xvfb: `.claude/skills/material-maker-headless` sets that up. A full
+   export there rewrites every file under `game/` byte for byte, so a diff after one is the
+   graph's change and nothing else.
 3. The exporter drives Material Maker's command-line export and then post-processes:
    * a 2048 px render, Lanczos-downsampled to 1024 px;
    * renormalised OpenGL-convention normal maps (what Godot expects);
